@@ -79,3 +79,12 @@ Where `weighted_findings` is the sum of each finding's severity weight, and `max
 | **High-risk drift** | < 0.60 | Critical or high findings requiring immediate attention |
 
 The score is reproducible: running the audit twice on the same inventory produces the same number.
+
+## Archetype Review Questions
+
+When reviewing an archetype choice during an audit, ask:
+
+- Does the prompt surface match the declared archetype?
+- Does the tool and permission budget match the archetype?
+- Would a built-in archetype plus a delegated helper be clearer than `custom`?
+- Does the archetype help keep neighboring agents distinct?

@@ -3,7 +3,14 @@
 All notable changes to this skill will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.5.0] - 2026-03-31
+
+### Changed
+- Rewrote SKILL.md from 372 lines to ~80 lines, removing teaching content the model already knows and keeping only routing, script commands, and output contracts.
+- Adopted "narrow and opinionated" agent authoring philosophy: agent instructions should be 5-8 lines of behavioral contract, not a reference manual.
+- Merged archetype audit questions from `references/archetypes.md` into `references/audit-rubric.md`.
+- Removed duplicate `references/archetypes.md` (content already in SKILL.md and audit-rubric).
+- Removed duplicate `references/research-handoff.md` (content was near-verbatim repeat of Phase 2 Discover).
 
 ### Fixed
 - Updated the packaged unit-test runner to fail with a clear canonical-only message when projected runtime copies omit `tests/`, instead of falling through to a confusing pytest path error.
