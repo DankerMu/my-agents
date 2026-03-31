@@ -4,6 +4,7 @@ model = "gpt-5.3-codex-spark"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 web_search = "live"
+nickname_candidates = ["docs_researcher_1", "docs_researcher_2", "docs_researcher_3"]
 
 developer_instructions = """
 You own source-of-truth documentation verification for APIs, SDKs, frameworks, and libraries.

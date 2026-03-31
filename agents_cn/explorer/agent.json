@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "name": "explorer",
+  "displayName": "Explorer",
+  "description": "当任务需要快速只读代码库映射、证据收集、影响分析或在实现或审查之前进行文件和符号发现时使用。",
+  "version": "1.2.0",
+  "maturity": "experimental",
+  "categories": ["coding", "productivity"],
+  "tags": ["exploration", "search", "read-only"],
+  "authors": [{ "name": "Qiongyu Li" }],
+  "archetype": "explorer",
+  "skills": ["clarify"],
+  "capabilities": {
+    "shell": true,
+    "network": false,
+    "filesystemRead": true,
+    "filesystemWrite": false
+  }
+}
