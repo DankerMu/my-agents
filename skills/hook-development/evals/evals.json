@@ -1,0 +1,23 @@
+{
+  "skill_name": "hook-development",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a monorepo that uses both Claude Code and Codex. I want to add a hook that prevents the agent from writing to any file under packages/db/prisma/ because those are generated from upstream. Also block writes to .env files. Give me the complete configuration for both platforms and the shared script.",
+      "expected_output": "Should produce: 1) A shared bash script that blocks writes to prisma/ and .env paths, 2) Claude Code .claude/settings.json hooks config referencing the script, 3) Codex .codex/hooks.json config referencing the same script with statusMessage, 4) Both using PreToolUse with Write|Edit matcher",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "My Claude Code hooks work great but I just added Codex to the project and my prompt-based PreToolUse hook that validates bash commands isn't doing anything on Codex. The hook config looks like this: {\"type\": \"prompt\", \"prompt\": \"Check if this command is safe...\"}. Why doesn't it work and how do I fix it for Codex while keeping the prompt hook on Claude Code?",
+      "expected_output": "Should explain: 1) Codex silently skips prompt hooks, 2) Need a command hook equivalent for Codex, 3) Provide a bash script that does deterministic validation, 4) Show both platform configs - Claude Code keeps prompt hook, Codex uses command hook, 5) Mention the degradation tradeoff (command hook won't catch as many edge cases)",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I want to set up hooks so the agent can't stop working until it has run the tests. This is for a TypeScript project using vitest. I need it to work on both Claude Code and Codex.",
+      "expected_output": "Should produce: 1) A Stop hook script that checks transcript for vitest/test execution, 2) Blocks stop if code was edited but no tests ran, 3) Both platform configurations, 4) Correct use of exit code 2 for blocking",
+      "files": []
+    }
+  ]
+}
