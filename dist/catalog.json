@@ -135,6 +135,28 @@
       ]
     },
     {
+      "name": "control-plane-auditor",
+      "path": "skills/control-plane-auditor",
+      "displayName": "Control Plane Auditor",
+      "description": "Audit a repository's control plane health across seven layers (memory, invariant, protocol, permission, sensorium, evaluation, governance) and produce an actionable improvement report. Covers instruction-file completeness, rule enforcement coverage, doc freshness, test infrastructure, and agent readiness.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "workflow",
+        "documentation",
+        "review"
+      ],
+      "tags": [
+        "entropy",
+        "control-plane",
+        "audit",
+        "agents-md",
+        "repo-health",
+        "invariant",
+        "governance"
+      ]
+    },
+    {
       "name": "deep-research",
       "path": "skills/deep-research",
       "displayName": "Deep Research",
@@ -151,6 +173,27 @@
         "web-search",
         "citations",
         "report"
+      ]
+    },
+    {
+      "name": "dependency-audit",
+      "path": "skills/dependency-audit",
+      "displayName": "Dependency Audit",
+      "description": "Structured workflow for auditing project dependencies: security vulnerabilities, license compliance, outdated packages, and upgrade planning with risk-assessed migration paths.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "security",
+        "devops",
+        "workflow"
+      ],
+      "tags": [
+        "dependencies",
+        "npm-audit",
+        "cve",
+        "license",
+        "upgrade",
+        "supply-chain"
       ]
     },
     {
@@ -174,6 +217,28 @@
         "fact-check",
         "grammar",
         "publishing"
+      ]
+    },
+    {
+      "name": "entropy-review",
+      "path": "skills/entropy-review",
+      "displayName": "Entropy Review",
+      "description": "Review code changes for entropy introduction: naming drift, error-model fragmentation, dependency-direction violations, doc staleness, state-model splits, and pattern duplication. Produces severity-graded findings focused on consistency and drift rather than correctness.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "review",
+        "coding",
+        "workflow"
+      ],
+      "tags": [
+        "entropy",
+        "review",
+        "naming",
+        "consistency",
+        "drift",
+        "error-model",
+        "dependency"
       ]
     },
     {
@@ -317,6 +382,28 @@
       ]
     },
     {
+      "name": "repo-entropy-audit",
+      "path": "skills/repo-entropy-audit",
+      "displayName": "Repo Entropy Audit",
+      "description": "Scan an entire repository for entropy across six axes (structure, semantics, behavior, context, protocol, control) and produce a module-level heatmap, trend comparison against baseline, and prioritized cleanup targets. Use for periodic health checks or before major releases.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "workflow",
+        "review",
+        "refactoring"
+      ],
+      "tags": [
+        "entropy",
+        "audit",
+        "heatmap",
+        "baseline",
+        "refactoring",
+        "tech-debt",
+        "cleanup"
+      ]
+    },
+    {
       "name": "review",
       "path": "skills/review",
       "displayName": "Review",
@@ -377,6 +464,27 @@
         "ecosystem-research",
         "skill-creation"
       ]
+    },
+    {
+      "name": "testing-workflow",
+      "path": "skills/testing-workflow",
+      "displayName": "Testing Workflow",
+      "description": "Structured workflow for test strategy design, coverage analysis, test generation planning, and quality verification across unit, integration, and end-to-end testing layers.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "testing",
+        "coding",
+        "workflow"
+      ],
+      "tags": [
+        "test-strategy",
+        "coverage",
+        "unit-test",
+        "integration-test",
+        "e2e",
+        "tdd"
+      ]
     }
   ],
   "agents": [
@@ -401,6 +509,33 @@
       "skills": [
         "clarify"
       ],
+      "agents": [
+        "explorer"
+      ],
+      "platforms": [
+        "claude-code",
+        "codex"
+      ]
+    },
+    {
+      "name": "doc-writer",
+      "path": "agents/doc-writer",
+      "displayName": "Doc Writer",
+      "description": "Technical documentation agent that reads code and generates or updates API docs, architecture guides, and developer documentation.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "documentation",
+        "coding"
+      ],
+      "tags": [
+        "docs",
+        "api-docs",
+        "architecture",
+        "developer-guide"
+      ],
+      "archetype": "implementer",
+      "skills": [],
       "agents": [
         "explorer"
       ],
@@ -578,9 +713,132 @@
         "claude-code",
         "codex"
       ]
+    },
+    {
+      "name": "security-scanner",
+      "path": "agents/security-scanner",
+      "displayName": "Security Scanner",
+      "description": "Read-only security scanning agent that audits code and dependencies for vulnerabilities, secrets, and OWASP risks with severity-graded findings.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "security",
+        "coding"
+      ],
+      "tags": [
+        "security",
+        "vulnerability",
+        "owasp",
+        "secrets",
+        "audit"
+      ],
+      "archetype": "reviewer",
+      "skills": [],
+      "agents": [
+        "explorer"
+      ],
+      "platforms": [
+        "claude-code",
+        "codex"
+      ]
+    },
+    {
+      "name": "test-writer",
+      "path": "agents/test-writer",
+      "displayName": "Test Writer",
+      "description": "Test generation agent that reads code and requirements, then writes unit, integration, and regression tests without modifying business logic.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "testing",
+        "coding"
+      ],
+      "tags": [
+        "unit-test",
+        "integration-test",
+        "coverage",
+        "tdd"
+      ],
+      "archetype": "implementer",
+      "skills": [
+        "clarify"
+      ],
+      "agents": [
+        "explorer"
+      ],
+      "platforms": [
+        "claude-code",
+        "codex"
+      ]
     }
   ],
   "packs": [
+    {
+      "name": "developer-core",
+      "path": "packs/developer-core",
+      "displayName": "Developer Core Pack",
+      "description": "Core development cycle toolkit: explore, plan, implement, test, review, and debug.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "packType": "role-pack",
+      "persona": "developer",
+      "categories": [
+        "coding",
+        "testing",
+        "review"
+      ],
+      "tags": [
+        "developer",
+        "core",
+        "dev-cycle"
+      ],
+      "skills": [
+        "clarify",
+        "implementation-planning",
+        "review",
+        "testing-workflow"
+      ],
+      "agents": [
+        "explorer",
+        "implementer",
+        "reviewer",
+        "debugger",
+        "test-writer"
+      ]
+    },
+    {
+      "name": "issue-ops",
+      "path": "packs/issue-ops",
+      "displayName": "Issue Ops Pack",
+      "description": "Issue Agent OS pipeline: triage, decompose, implement, and review GitHub issues end-to-end.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "packType": "agent-team",
+      "categories": [
+        "workflow",
+        "coding"
+      ],
+      "tags": [
+        "issue",
+        "github",
+        "automation",
+        "issue-agent-os"
+      ],
+      "skills": [
+        "issue-controller",
+        "clarify",
+        "review"
+      ],
+      "agents": [
+        "triager",
+        "splitter",
+        "coder",
+        "reviewer",
+        "debugger",
+        "explorer"
+      ],
+      "leadAgent": "triager"
+    },
     {
       "name": "product-manager",
       "path": "packs/product-manager",
@@ -614,5 +872,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-03-31T05:58:54.702Z"
+  "generatedAt": "2026-05-24T09:33:29.956Z"
 }
