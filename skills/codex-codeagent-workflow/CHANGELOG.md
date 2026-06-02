@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-01
+- Decouple the workflow from the SHUD/rSHUD/AutoSHUD project family: extract the three hardcoded profiles into a new pluggable `references/project-profiles.md` and add a **Generic** default profile so the skill applies to any repository.
+- Generalize `references/issue-risk-contract.md`: core risk packs and mandatory expanded-triggers are now project-agnostic (added Auth/permissions/secrets and Concurrency/shared-state/ordering); domain packs (geospatial/CRS, time-series/forcing, numerical/conservation, solver/threading) and domain triggers move into the profile that contributes them.
+- Phase 0 step 0 now selects a profile from `project-profiles.md` (Generic when none matches) instead of assuming a SHUD project family; fixture templates carry `Project profile: Generic|...`.
+- No behavior change for SHUD-family repos: SHUD/rSHUD/AutoSHUD remain first-class profiles with full fidelity.
+
 ## [0.2.0] - 2026-06-01
 - Add Phase 4.5 independent finding verification gate, borrowing the find/verify separation from the `code-review` skill: Phase 4 reviewers now emit candidate findings, and a separate codeagent verifier adjudicates each deduped candidate as CONFIRMED/PLAUSIBLE/REFUTED before Phase 5.
 - Make verification recall/precision bias follow the fixture level (`high`/`broad-expanded` keep PLAUSIBLE merge-blocking; `low`/`compact` block only on CONFIRMED); REFUTED candidates are dropped with recorded rationale and do not count toward the review round budget.

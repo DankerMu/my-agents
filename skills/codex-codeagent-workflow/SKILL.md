@@ -98,7 +98,8 @@ Reference precedence:
 
 1. `SKILL.md` Core Rules: non-negotiable constraints.
 2. `references/phase-flow.md`: detailed execution steps and templates.
-3. `references/issue-risk-contract.md`: fixture levels, project profiles, and risk-pack requirements.
+3. `references/issue-risk-contract.md`: fixture levels, core risk packs, and triage requirements.
+   - `references/project-profiles.md`: pluggable project profiles (Generic default plus SHUD/rSHUD/AutoSHUD) that map core packs/triggers onto a concrete project.
 4. `references/phase-4-cross-review.md`: cross-review prompt structure and the Phase 4.5 verifier template.
 5. `references/parallel-worktree-delegation.md`: required mechanics for any parallel code-writing delegation.
 6. `risk-adaptive-cross-review` skill: canonical review vocabulary (reviewer packs, finding contract, failure-class synthesis) that this workflow consumes, not forks.
@@ -108,7 +109,8 @@ If a reference appears to conflict with a Core Rule, the Core Rule wins and the 
 ## References
 
 - `references/phase-flow.md`: detailed Phase 0-8 execution, prompts, evidence, and merge gate.
-- `references/issue-risk-contract.md`: SHUD/rSHUD/AutoSHUD project profiles, mandatory expanded triggers, risk-pack checklist, OpenSpec fixture templates, and fixture review prompt.
+- `references/issue-risk-contract.md`: fixture levels, core risk packs, mandatory expanded triggers, OpenSpec fixture templates, and fixture review prompt (project-profile-agnostic).
+- `references/project-profiles.md`: pluggable project profiles (Generic default plus SHUD/rSHUD/AutoSHUD examples) carrying domain entry surfaces, contracts, risk axes, domain packs, and domain triggers.
 - `references/phase-4-cross-review.md`: reusable codeagent parallel review template and the Phase 4.5 independent verifier template.
 - `references/parallel-worktree-delegation.md`: required worktree isolation, manifest, integration, and cleanup rules for parallel implementation/fix tasks.
 

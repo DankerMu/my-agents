@@ -11,7 +11,7 @@ Skip DAG selection if the user specified an issue number.
 3. Auto-select by phase `p0 > p1 > p2 > p3`, then priority `critical > high > medium`, then `type:backend` over `type:android`, then lower issue number.
 4. Read the selected issue body and relevant comments. Extract an OpenSpec change name if the issue names one.
 5. Locate `openspec/changes/<change-name>/{proposal.md,design.md,tasks.md}` in the active repo or workspace. If the change is missing, create it in Phase 0.5 before implementation.
-6. Identify project family from repo context: SHUD solver, rSHUD package, AutoSHUD pipeline, or other. Load `issue-risk-contract.md`.
+6. Identify the project profile from repo context using `project-profiles.md` (Generic when none matches), then load `issue-risk-contract.md`.
 7. Announce the DAG sketch and whether the OpenSpec change exists.
 
 ## Phase 0.5: Risk Triage + OpenSpec Fixture
