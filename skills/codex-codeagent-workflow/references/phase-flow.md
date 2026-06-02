@@ -27,7 +27,7 @@ skill reinstalls because it lives under `openspec/`, not inside the skill.
 
 1. Scan the repo for risk-bearing structure: primary language/build system, public entrypoints (CLI, API, services), data schemas/formats/serializers, external integrations and credentials, persisted/shared state, and shared helper roots.
 2. Match against `project-profiles.md`. If an example profile fits (e.g. an AutoSHUD repo), copy it as the starting point; otherwise start from Generic.
-3. Write `openspec/project-profile.md` with the six profile fields: entry surfaces, contracts, risk axes, typical evidence, domain risk packs, domain expanded-triggers. Keep it short; record only what the core packs do not already cover.
+3. Write `openspec/project-profile.md` with the six profile fields: entry surfaces, contracts, risk axes, typical evidence, domain risk packs, domain expanded-triggers. Respect the size budget in `project-profiles.md`: short bullets not prose, never restate core packs/triggers, and stay under ~25 lines for a simple project or ~60 for a broad multi-subsystem system. Over-budget means it restates core or the repo should split into narrower profiles.
 4. Note in the file that it is a living artifact maintained in Phase 0.5 as the project evolves.
 
 The profile is a living document, not a one-shot. It does not change per issue, but it is updated whenever the project grows a new risk surface (see Phase 0.5 profile-gap maintenance).

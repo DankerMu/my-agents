@@ -5,6 +5,9 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-06-01
+- Add a size budget for `openspec/project-profile.md` (in `project-profiles.md` authoring and Phase 0.0): scaled soft targets (~25 lines simple, ~60 broad) plus two hard rules — never restate core packs/triggers and use short bullets over prose — to keep the per-run profile lean and prevent re-accreting core content.
+
 ## [0.4.0] - 2026-06-01
 - Make the project profile a living, project-local artifact at `openspec/project-profile.md` instead of a selection from the shared skill. It survives skill reinstalls and never accretes project-specific surfaces back into the shared skill.
 - Add Phase 0.0 profile bootstrap: on first run in a project with no `openspec/project-profile.md`, scan the repo and generate one (copying the closest template or Generic). Phase 0 resolves the profile by lookup order: project-local file -> bootstrap -> Generic fallback.

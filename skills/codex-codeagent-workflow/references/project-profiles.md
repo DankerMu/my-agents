@@ -95,3 +95,23 @@ Keep domain packs and triggers in the project-local profile, not in
 `issue-risk-contract.md`, so the core contract stays portable. Add a new section
 to this shared catalog only when a profile is genuinely reusable across many
 repositories (as SHUD/rSHUD/AutoSHUD are).
+
+### Size budget
+
+The profile is read at the start of every workflow run, so keep it lean. The
+limit is not a flat line count; it scales with system breadth, with two hard
+rules:
+
+- **Do not restate core**: record only surfaces, packs, and triggers that the
+  core risk packs and triggers in `issue-risk-contract.md` do not already cover.
+  Restating core is the main source of bloat — delete it.
+- **Short bullets, not prose**: each of the six fields is a short bulleted list.
+
+Soft size targets (excluding the short header note):
+
+- Generic or single-purpose project: under ~25 lines.
+- Broad multi-subsystem system: under ~60 lines.
+
+If a profile exceeds its target, it is a signal that it restates core, drifts
+into prose, or the repository is really several subsystems that each deserve a
+narrower profile. Trim or split rather than growing it unbounded.
