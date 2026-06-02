@@ -11,12 +11,31 @@ Skip DAG selection if the user specified an issue number.
 3. Auto-select by phase `p0 > p1 > p2 > p3`, then priority `critical > high > medium`, then `type:backend` over `type:android`, then lower issue number.
 4. Read the selected issue body and relevant comments. Extract an OpenSpec change name if the issue names one.
 5. Locate `openspec/changes/<change-name>/{proposal.md,design.md,tasks.md}` in the active repo or workspace. If the change is missing, create it in Phase 0.5 before implementation.
-6. Identify the project profile from repo context using `project-profiles.md` (Generic when none matches), then load `issue-risk-contract.md`.
-7. Announce the DAG sketch and whether the OpenSpec change exists.
+6. Resolve the project profile (lookup order):
+   1. If `openspec/project-profile.md` exists, load it as the active profile.
+   2. If it is absent, run the one-time **profile bootstrap** (Phase 0.0 below), which writes `openspec/project-profile.md`, then load it.
+   3. Only if bootstrap cannot infer anything project-specific, fall back to the **Generic** profile in `project-profiles.md`.
+   Then load `issue-risk-contract.md`.
+7. Announce the DAG sketch, the active project profile, and whether the OpenSpec change exists.
+
+### Phase 0.0: Profile Bootstrap (one-time per project)
+
+Run only when `openspec/project-profile.md` is missing. The shared
+`project-profiles.md` provides the Generic default and SHUD/rSHUD/AutoSHUD
+example templates to copy from; the active profile is project-local and survives
+skill reinstalls because it lives under `openspec/`, not inside the skill.
+
+1. Scan the repo for risk-bearing structure: primary language/build system, public entrypoints (CLI, API, services), data schemas/formats/serializers, external integrations and credentials, persisted/shared state, and shared helper roots.
+2. Match against `project-profiles.md`. If an example profile fits (e.g. an AutoSHUD repo), copy it as the starting point; otherwise start from Generic.
+3. Write `openspec/project-profile.md` with the six profile fields: entry surfaces, contracts, risk axes, typical evidence, domain risk packs, domain expanded-triggers. Keep it short; record only what the core packs do not already cover.
+4. Note in the file that it is a living artifact maintained in Phase 0.5 as the project evolves.
+
+The profile is a living document, not a one-shot. It does not change per issue, but it is updated whenever the project grows a new risk surface (see Phase 0.5 profile-gap maintenance).
 
 ## Phase 0.5: Risk Triage + OpenSpec Fixture
 
-1. Create a short triage from issue, repo context, expected change surface, and project profile.
+1. Create a short triage from issue, repo context, expected change surface, and the active project profile (`openspec/project-profile.md`).
+   - Profile-gap maintenance: if the issue touches an entry surface, contract, risk axis, or domain pack the profile does not yet describe, update `openspec/project-profile.md` before continuing. Keep the profile a living artifact; do not edit it for ordinary issues that already fit it.
 2. Assign fixture level: `none`, `compact`, or `expanded`. Mandatory expanded triggers live in `issue-risk-contract.md`.
 3. Assign repair intensity:
    - `low`: isolated, low blast-radius change; focused fixes are acceptable.

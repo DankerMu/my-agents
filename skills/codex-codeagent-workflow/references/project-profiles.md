@@ -5,6 +5,13 @@ A project profile maps the generic risk packs and expanded-triggers in
 pluggable: pick the one that matches the repository, or use the **Generic**
 profile. Nothing in the core workflow assumes a specific profile.
 
+This file is the **shared template catalog**: the Generic default plus
+SHUD/rSHUD/AutoSHUD examples. The **active** profile for a project is
+project-local at `openspec/project-profile.md`, bootstrapped in Phase 0.0 and
+maintained in Phase 0.5. It lives under `openspec/` (project content), so it
+survives skill reinstalls and never accretes into this shared skill. Use the
+sections here only as starting templates to copy from.
+
 A profile contributes:
 
 - entry surfaces (where changes and risk concentrate)
@@ -68,8 +75,23 @@ the core Risk Packs only when the active profile lists them.
 - Numerical stability / conservation / NaN
 - Solver runtime / performance / threading
 
-## Adding a Profile
+## Authoring a Project-Local Profile
 
-To target a new project family, add a section with the six profile fields above.
-Keep domain packs and triggers in the profile, not in `issue-risk-contract.md`,
-so the core contract stays portable.
+For a new project, do not edit this shared file. Instead, Phase 0.0 bootstrap
+writes `openspec/project-profile.md` for that project, copying the closest
+template below (or Generic) and filling the six fields from a repo scan:
+
+```text
+Project profile: <name>
+Entry surfaces: <where changes/risk concentrate>
+Contracts: <what callers/consumers depend on>
+Risk axes: <how this project breaks>
+Typical evidence: <what proves a change is safe>
+Domain risk packs: <added packs, or "none">
+Domain expanded-triggers: <added trigger keywords, or "none">
+```
+
+Keep domain packs and triggers in the project-local profile, not in
+`issue-risk-contract.md`, so the core contract stays portable. Add a new section
+to this shared catalog only when a profile is genuinely reusable across many
+repositories (as SHUD/rSHUD/AutoSHUD are).

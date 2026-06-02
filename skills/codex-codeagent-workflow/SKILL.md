@@ -36,6 +36,7 @@ This workflow assumes every input issue is already implementation-ready. When is
 
 - **OpenSpec change is mandatory**: Every implemented issue must have `openspec/changes/<change>/{proposal.md,design.md,tasks.md}` plus required spec deltas. If missing, Codex creates and fills it before implementation.
 - **OpenSpec is the fixture**: Risk triage, must-preserve behavior, selected/not-selected risk packs with reasons, evidence mapping, and non-goals belong in the OpenSpec change.
+- **Project profile is project-local and living**: The active risk profile lives at `openspec/project-profile.md`, not inside this skill. Phase 0.0 bootstraps it on first run by scanning the repo (Generic when nothing project-specific is found); Phase 0.5 updates it when an issue exposes a new risk surface. The shared `references/project-profiles.md` holds only the Generic default and reusable example templates (SHUD/rSHUD/AutoSHUD). Never hand-fork project-specific surfaces into the shared skill.
 - **Fixture review is mandatory**: Every OpenSpec change must pass one focused `codeagent-wrapper --backend codex` read-only fixture review before implementation, then `openspec validate <change> --strict --no-interactive`.
 - **Codex may edit specs, not implementation**: Codex may directly create/edit `openspec/changes/<change>/**`. Source, runtime tests, configs, and PR templates go through `codeagent-wrapper --backend codex` unless the user explicitly overrides.
 - **Serial execution**: Process one issue through Phase 0-8 before starting another.
@@ -99,7 +100,7 @@ Reference precedence:
 1. `SKILL.md` Core Rules: non-negotiable constraints.
 2. `references/phase-flow.md`: detailed execution steps and templates.
 3. `references/issue-risk-contract.md`: fixture levels, core risk packs, and triage requirements.
-   - `references/project-profiles.md`: pluggable project profiles (Generic default plus SHUD/rSHUD/AutoSHUD) that map core packs/triggers onto a concrete project.
+   - `references/project-profiles.md`: shared template catalog (Generic default plus SHUD/rSHUD/AutoSHUD examples); the active profile is project-local at `openspec/project-profile.md`, bootstrapped in Phase 0.0.
 4. `references/phase-4-cross-review.md`: cross-review prompt structure and the Phase 4.5 verifier template.
 5. `references/parallel-worktree-delegation.md`: required mechanics for any parallel code-writing delegation.
 6. `risk-adaptive-cross-review` skill: canonical review vocabulary (reviewer packs, finding contract, failure-class synthesis) that this workflow consumes, not forks.
@@ -110,7 +111,7 @@ If a reference appears to conflict with a Core Rule, the Core Rule wins and the 
 
 - `references/phase-flow.md`: detailed Phase 0-8 execution, prompts, evidence, and merge gate.
 - `references/issue-risk-contract.md`: fixture levels, core risk packs, mandatory expanded triggers, OpenSpec fixture templates, and fixture review prompt (project-profile-agnostic).
-- `references/project-profiles.md`: pluggable project profiles (Generic default plus SHUD/rSHUD/AutoSHUD examples) carrying domain entry surfaces, contracts, risk axes, domain packs, and domain triggers.
+- `references/project-profiles.md`: shared template catalog of profiles (Generic default plus SHUD/rSHUD/AutoSHUD examples); the active per-project profile lives at `openspec/project-profile.md` and is bootstrapped in Phase 0.0, maintained in Phase 0.5.
 - `references/phase-4-cross-review.md`: reusable codeagent parallel review template and the Phase 4.5 independent verifier template.
 - `references/parallel-worktree-delegation.md`: required worktree isolation, manifest, integration, and cleanup rules for parallel implementation/fix tasks.
 

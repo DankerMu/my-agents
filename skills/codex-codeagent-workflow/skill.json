@@ -3,7 +3,7 @@
   "name": "codex-codeagent-workflow",
   "displayName": "Codex Codeagent Workflow",
   "description": "End-to-end GitHub issue implementation workflow for Codex orchestration with codeagent-wrapper, OpenSpec fixtures, risk-adaptive review, verification, PR evidence, CI, and human-gated merge.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "maturity": "experimental",
   "categories": ["workflow", "coding", "review"],
   "tags": ["github-issues", "codeagent", "openspec", "risk-review", "ci"],
