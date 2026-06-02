@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "name": "agentic-issue-delivery",
+  "displayName": "Agentic Issue Delivery Pack",
+  "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through Codex + codeagent review and delivery gates.",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "packType": "role-pack",
+  "persona": "agentic-developer",
+  "categories": ["workflow", "coding", "review"],
+  "skills": [
+    "stage-change-pipeline",
+    "codex-codeagent-workflow",
+    "risk-adaptive-cross-review",
+    "codeagent",
+    "gh-create-issue",
+    "clarify",
+    "brainstorming",
+    "future-aware-architecture",
+    "implementation-planning",
+    "review",
+    "entropy-review",
+    "git-worktree-workflows",
+    "project-documentation",
+    "deep-research"
+  ],
+  "agents": [],
+  "tags": ["github-issues", "openspec", "codeagent", "delivery-workflow", "small-pr"],
+  "authors": [
+    {
+      "name": "danker"
+    }
+  ]
+}

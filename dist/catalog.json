@@ -135,6 +135,46 @@
       ]
     },
     {
+      "name": "codeagent",
+      "path": "skills/codeagent",
+      "displayName": "Codeagent",
+      "description": "Execute codeagent-wrapper for multi-backend AI code tasks with Codex, Claude, and Gemini backends, file references, structured output, and parallel task execution.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "coding",
+        "workflow",
+        "ai"
+      ],
+      "tags": [
+        "codeagent-wrapper",
+        "codex",
+        "claude",
+        "gemini",
+        "parallel"
+      ]
+    },
+    {
+      "name": "codex-codeagent-workflow",
+      "path": "skills/codex-codeagent-workflow",
+      "displayName": "Codex Codeagent Workflow",
+      "description": "End-to-end GitHub issue implementation workflow for Codex orchestration with codeagent-wrapper, OpenSpec fixtures, risk-adaptive review, verification, PR evidence, CI, and human-gated merge.",
+      "version": "0.2.0",
+      "maturity": "experimental",
+      "categories": [
+        "workflow",
+        "coding",
+        "review"
+      ],
+      "tags": [
+        "github-issues",
+        "codeagent",
+        "openspec",
+        "risk-review",
+        "ci"
+      ]
+    },
+    {
       "name": "control-plane-auditor",
       "path": "skills/control-plane-auditor",
       "displayName": "Control Plane Auditor",
@@ -173,27 +213,6 @@
         "web-search",
         "citations",
         "report"
-      ]
-    },
-    {
-      "name": "dependency-audit",
-      "path": "skills/dependency-audit",
-      "displayName": "Dependency Audit",
-      "description": "Structured workflow for auditing project dependencies: security vulnerabilities, license compliance, outdated packages, and upgrade planning with risk-assessed migration paths.",
-      "version": "0.1.0",
-      "maturity": "experimental",
-      "categories": [
-        "security",
-        "devops",
-        "workflow"
-      ],
-      "tags": [
-        "dependencies",
-        "npm-audit",
-        "cve",
-        "license",
-        "upgrade",
-        "supply-chain"
       ]
     },
     {
@@ -266,6 +285,26 @@
         "adr",
         "technical-strategy",
         "future-aware"
+      ]
+    },
+    {
+      "name": "gh-create-issue",
+      "path": "skills/gh-create-issue",
+      "displayName": "GitHub Issue Creation",
+      "description": "Create GitHub issues from PRDs, requirements, or feature descriptions, choosing between a single issue and an epic plus sub-issues using gh CLI labels and dependencies.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "workflow",
+        "productivity",
+        "coding"
+      ],
+      "tags": [
+        "github",
+        "issues",
+        "epic",
+        "requirements",
+        "gh-cli"
       ]
     },
     {
@@ -426,6 +465,26 @@
       ]
     },
     {
+      "name": "risk-adaptive-cross-review",
+      "path": "skills/risk-adaptive-cross-review",
+      "displayName": "Risk-Adaptive Cross Review",
+      "description": "Run multi-perspective risk-adaptive reviews for PRs, diffs, branches, OpenSpec changes, or stage-change artifacts, scaling reviewer packs by risk and synthesizing actionable findings by failure class.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "review",
+        "coding",
+        "workflow"
+      ],
+      "tags": [
+        "code-review",
+        "risk-review",
+        "cross-review",
+        "openspec",
+        "pr-review"
+      ]
+    },
+    {
       "name": "skill-lifecycle-manager",
       "path": "skills/skill-lifecycle-manager",
       "displayName": "Skill Lifecycle Manager",
@@ -466,24 +525,23 @@
       ]
     },
     {
-      "name": "testing-workflow",
-      "path": "skills/testing-workflow",
-      "displayName": "Testing Workflow",
-      "description": "Structured workflow for test strategy design, coverage analysis, test generation planning, and quality verification across unit, integration, and end-to-end testing layers.",
+      "name": "stage-change-pipeline",
+      "path": "skills/stage-change-pipeline",
+      "displayName": "Stage Change Pipeline",
+      "description": "Turn a development-stage design package into an reviewed OpenSpec change and fine-grained GitHub issues with clear module boundaries and small-PR execution scope.",
       "version": "0.1.0",
       "maturity": "experimental",
       "categories": [
-        "testing",
-        "coding",
-        "workflow"
+        "workflow",
+        "design",
+        "coding"
       ],
       "tags": [
-        "test-strategy",
-        "coverage",
-        "unit-test",
-        "integration-test",
-        "e2e",
-        "tdd"
+        "openspec",
+        "github-issues",
+        "stage-planning",
+        "codeagent",
+        "small-pr"
       ]
     }
   ],
@@ -509,33 +567,6 @@
       "skills": [
         "clarify"
       ],
-      "agents": [
-        "explorer"
-      ],
-      "platforms": [
-        "claude-code",
-        "codex"
-      ]
-    },
-    {
-      "name": "doc-writer",
-      "path": "agents/doc-writer",
-      "displayName": "Doc Writer",
-      "description": "Technical documentation agent that reads code and generates or updates API docs, architecture guides, and developer documentation.",
-      "version": "0.1.0",
-      "maturity": "experimental",
-      "categories": [
-        "documentation",
-        "coding"
-      ],
-      "tags": [
-        "docs",
-        "api-docs",
-        "architecture",
-        "developer-guide"
-      ],
-      "archetype": "implementer",
-      "skills": [],
       "agents": [
         "explorer"
       ],
@@ -713,131 +744,47 @@
         "claude-code",
         "codex"
       ]
-    },
-    {
-      "name": "security-scanner",
-      "path": "agents/security-scanner",
-      "displayName": "Security Scanner",
-      "description": "Read-only security scanning agent that audits code and dependencies for vulnerabilities, secrets, and OWASP risks with severity-graded findings.",
-      "version": "0.1.0",
-      "maturity": "experimental",
-      "categories": [
-        "security",
-        "coding"
-      ],
-      "tags": [
-        "security",
-        "vulnerability",
-        "owasp",
-        "secrets",
-        "audit"
-      ],
-      "archetype": "reviewer",
-      "skills": [],
-      "agents": [
-        "explorer"
-      ],
-      "platforms": [
-        "claude-code",
-        "codex"
-      ]
-    },
-    {
-      "name": "test-writer",
-      "path": "agents/test-writer",
-      "displayName": "Test Writer",
-      "description": "Test generation agent that reads code and requirements, then writes unit, integration, and regression tests without modifying business logic.",
-      "version": "0.1.0",
-      "maturity": "experimental",
-      "categories": [
-        "testing",
-        "coding"
-      ],
-      "tags": [
-        "unit-test",
-        "integration-test",
-        "coverage",
-        "tdd"
-      ],
-      "archetype": "implementer",
-      "skills": [
-        "clarify"
-      ],
-      "agents": [
-        "explorer"
-      ],
-      "platforms": [
-        "claude-code",
-        "codex"
-      ]
     }
   ],
   "packs": [
     {
-      "name": "developer-core",
-      "path": "packs/developer-core",
-      "displayName": "Developer Core Pack",
-      "description": "Core development cycle toolkit: explore, plan, implement, test, review, and debug.",
+      "name": "agentic-issue-delivery",
+      "path": "packs/agentic-issue-delivery",
+      "displayName": "Agentic Issue Delivery Pack",
+      "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through Codex + codeagent review and delivery gates.",
       "version": "0.1.0",
       "maturity": "experimental",
       "packType": "role-pack",
-      "persona": "developer",
-      "categories": [
-        "coding",
-        "testing",
-        "review"
-      ],
-      "tags": [
-        "developer",
-        "core",
-        "dev-cycle"
-      ],
-      "skills": [
-        "clarify",
-        "implementation-planning",
-        "review",
-        "testing-workflow"
-      ],
-      "agents": [
-        "explorer",
-        "implementer",
-        "reviewer",
-        "debugger",
-        "test-writer"
-      ]
-    },
-    {
-      "name": "issue-ops",
-      "path": "packs/issue-ops",
-      "displayName": "Issue Ops Pack",
-      "description": "Issue Agent OS pipeline: triage, decompose, implement, and review GitHub issues end-to-end.",
-      "version": "0.1.0",
-      "maturity": "experimental",
-      "packType": "agent-team",
+      "persona": "agentic-developer",
       "categories": [
         "workflow",
-        "coding"
-      ],
-      "tags": [
-        "issue",
-        "github",
-        "automation",
-        "issue-agent-os"
-      ],
-      "skills": [
-        "issue-controller",
-        "clarify",
+        "coding",
         "review"
       ],
-      "agents": [
-        "triager",
-        "splitter",
-        "coder",
-        "reviewer",
-        "debugger",
-        "explorer"
+      "tags": [
+        "github-issues",
+        "openspec",
+        "codeagent",
+        "delivery-workflow",
+        "small-pr"
       ],
-      "leadAgent": "triager"
+      "skills": [
+        "stage-change-pipeline",
+        "codex-codeagent-workflow",
+        "risk-adaptive-cross-review",
+        "codeagent",
+        "gh-create-issue",
+        "clarify",
+        "brainstorming",
+        "future-aware-architecture",
+        "implementation-planning",
+        "review",
+        "entropy-review",
+        "git-worktree-workflows",
+        "project-documentation",
+        "deep-research"
+      ],
+      "agents": []
     },
     {
       "name": "product-manager",
@@ -872,5 +819,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-05-24T09:33:29.956Z"
+  "generatedAt": "2026-06-02T00:39:02.384Z"
 }
