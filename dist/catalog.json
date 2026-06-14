@@ -775,8 +775,8 @@
       "name": "agentic-issue-delivery",
       "path": "packs/agentic-issue-delivery",
       "displayName": "Agentic Issue Delivery Pack",
-      "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through subagent-driven review and delivery gates.",
-      "version": "0.2.0",
+      "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through subagent-driven review and delivery gates, with whole-repo entropy governance.",
+      "version": "0.3.0",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "agentic-developer",
@@ -804,6 +804,7 @@
         "implementation-planning",
         "review",
         "entropy-review",
+        "repo-entropy-audit",
         "git-worktree-workflows",
         "project-documentation",
         "deep-research"
@@ -848,5 +849,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-06-14T14:57:00.661Z"
+  "generatedAt": "2026-06-14T15:06:31.840Z"
 }

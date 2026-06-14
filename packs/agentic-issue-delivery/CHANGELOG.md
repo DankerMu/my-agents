@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-14
+
+- Add `repo-entropy-audit` (whole-repo entropy governance: six-axis scan, module heatmap, baseline trend, prioritized cleanup) for periodic health checks and pre-release hygiene. Complements the per-change `entropy-review` already in the pack.
+
 ## [0.2.0] - 2026-06-14
 
 - Replace the `codex-codeagent-workflow` member with its renamed successor `subagent-workflow`, which delegates implementation, review, and verification to native subagents instead of an external code-agent CLI.

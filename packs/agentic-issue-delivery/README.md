@@ -20,6 +20,7 @@ This pack bundles the repository's design-to-issue and issue-to-PR delivery work
 - `implementation-planning`
 - `review`
 - `entropy-review`
+- `repo-entropy-audit`
 - `git-worktree-workflows`
 - `project-documentation`
 - `deep-research`
