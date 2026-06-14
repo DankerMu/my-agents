@@ -1,8 +1,8 @@
 # Phase 4 Parallel Cross-Review Template
 
-Use this template when running Phase 4 and follow-up cross-review rounds after Phase 6 fixes. Replace placeholders before invoking `codeagent-wrapper`.
+Use this template when running Phase 4 and follow-up cross-review rounds after Phase 6 fixes. Replace placeholders before spawning the `reviewer` subagents.
 
-Canonical source: reviewer-pack scope and the actionable finding contract are defined by the `risk-adaptive-cross-review` skill (`reviewer-packages.md`, `finding-contract.md`, `failure-class-synthesis.md`). This file does not redefine them; it is the codex/OpenSpec instantiation — the concrete `codeagent-wrapper` task scaffolding, the `Invariant Matrix` binding, and the Phase 4.5 verifier. If a checklist here drifts from the canonical contract, the `risk-adaptive-cross-review` definition wins.
+Canonical source: reviewer-pack scope and the actionable finding contract are defined by the `risk-adaptive-cross-review` skill (`reviewer-packages.md`, `finding-contract.md`, `failure-class-synthesis.md`). This file does not redefine them; it is the OpenSpec instantiation — the concrete reviewer-subagent task scaffolding, the `Invariant Matrix` binding, and the Phase 4.5 verifier. If a checklist here drifts from the canonical contract, the `risk-adaptive-cross-review` definition wins.
 
 Reviewers are recall-biased producers. Everything a reviewer writes under `Findings:` is a **candidate finding**, not a final merge-blocking verdict. Candidates pass through the Phase 4.5 independent verification gate (verifier template at the bottom of this file) before entering Phase 5. Reviewers should therefore surface any candidate with a nameable failure scenario instead of self-censoring half-believed ones; the verifier, not the reviewer, decides REFUTED.
 
@@ -12,12 +12,12 @@ Required variables:
 - `<branch>`: Current PR branch
 - `<FULL_SHA>`: `git rev-parse HEAD`
 - `<REVIEW_DIR>`: Local review output directory
-- `<absolute repo path>`: Repository root
-- `<@path list>`: Changed files referenced with `@`
+- `<absolute repo path>`: Repository root (each reviewer subagent's working directory)
+- `<path list>`: Changed files referenced by path
 - `<fixture summary>`: Phase 0.5 fixture level and selected risk packs.
 - `<review round>`: `round 1` for the initial cross-review, or `follow-up round N after fixes`.
 - `<fix summary>`: Required for follow-up rounds; summarize Phase 6 changes and prior findings.
-- `<@proposal.md> <@design.md> <@tasks.md>`: OpenSpec change references. These are required.
+- `<proposal.md> <design.md> <tasks.md>`: OpenSpec change references. These are required.
 
 Risk-adaptive selection:
 
@@ -29,8 +29,8 @@ Risk-adaptive selection:
   - `review-invariant-state`: traces the governing invariant across state machines, stale-state boundaries, retry/cancel transitions, and backward compatibility.
 - Follow-up rounds after fixes: run the same risk-adaptive reviewer count and reviewer mix as a fresh Phase 4 review of the current head. Do not downgrade to targeted-only reviewers, because the prior round may have missed unrelated issues.
 - Initial round only: if a repository policy requires a fixed number of evidence comments, follow it only when it does not conflict with the 6-review high-risk escalation in `SKILL.md`; otherwise post a consolidated evidence bundle rather than reducing reviewer coverage.
-- High or broad-expanded PRs: the prompt must include the OpenSpec `Invariant Matrix`. Each reviewer must evaluate the matrix rows, not just the touched lines. If a reviewer cannot map a row to evidence, it should report that as missing evidence or explain why the row is out of scope under the fixture.
-- Use one `codeagent-wrapper --parallel --backend codex` invocation for the selected reviewer set unless a documented wrapper/tooling failure requires a fallback. A failed no-report invocation is not a review round.
+- High or broad-expanded PRs: the brief must include the OpenSpec `Invariant Matrix`. Each reviewer must evaluate the matrix rows, not just the touched lines. If a reviewer cannot map a row to evidence, it should report that as missing evidence or explain why the row is out of scope under the fixture.
+- Spawn the selected reviewer set as parallel subagents in one batch (Claude Code: multiple Task calls in one message; Codex: parallel subagents) unless a documented subagent/tooling failure requires a fallback. A failed no-report invocation is not a review round.
 
 Reviewer invariant rule:
 
@@ -45,13 +45,13 @@ Reviewer invariant rule:
   - `<row>`: covered|missing|out-of-scope - <evidence or rationale>
   Missing coverage for a selected row is a finding unless the fixture itself declares it a non-goal.
 
-```bash
-"$CODEAGENT" --parallel --backend codex --full-output <<'EOF'
----TASK---
-id: review-spec-compliance
-backend: codex
-workdir: <absolute repo path>
----CONTENT---
+## Reviewer Subagent Briefs
+
+Spawn one `reviewer` subagent per selected brief, in parallel. Each subagent's working directory is `<absolute repo path>`. Each brief is self-contained; pass it as the subagent task.
+
+### Reviewer subagent: `review-spec-compliance`
+
+```text
 # Code Review: Spec Compliance
 
 Review PR #<N> on branch <branch>.
@@ -61,14 +61,14 @@ Write the complete report to <REVIEW_DIR>/spec-compliance.md.
 
 Rules:
 - Do not edit files, commit, push, or change state.
-- You are a leaf reviewer. Do not invoke codeagent-wrapper, use the codeagent skill, use codex-codeagent-workflow, spawn subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
+- You are a leaf reviewer subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
 - Output only a structured review report.
 
 Inputs:
-- Changed files: <@path list>
+- Changed files: <path list>
 - Fixture summary: <fixture summary>
 - Fix summary for follow-up rounds: <fix summary>
-- Spec references: <@proposal.md> <@design.md> <@tasks.md>
+- Spec references: <proposal.md> <design.md> <tasks.md>
 
 Checklist:
 - Cross-check every task in tasks.md against the diff; mark DONE or MISSING.
@@ -91,12 +91,11 @@ Findings:
 - ...or "None." if clean
 Non-blocking notes:
 - <items without concrete scenario/test, or "None.">
+```
 
----TASK---
-id: review-correctness
-backend: codex
-workdir: <absolute repo path>
----CONTENT---
+### Reviewer subagent: `review-correctness`
+
+```text
 # Code Review: Correctness
 
 Review PR #<N> on branch <branch>.
@@ -106,14 +105,14 @@ Write the complete report to <REVIEW_DIR>/correctness.md.
 
 Rules:
 - Do not edit files, commit, push, or change state.
-- You are a leaf reviewer. Do not invoke codeagent-wrapper, use the codeagent skill, use codex-codeagent-workflow, spawn subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
+- You are a leaf reviewer subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
 - Output only a structured review report.
 
 Inputs:
-- Changed files: <@path list>
+- Changed files: <path list>
 - Fixture summary: <fixture summary>
 - Fix summary for follow-up rounds: <fix summary>
-- Spec references: <@proposal.md> <@design.md> <@tasks.md>
+- Spec references: <proposal.md> <design.md> <tasks.md>
 
 Checklist:
 - Logic correctness within each changed file.
@@ -137,12 +136,11 @@ Findings:
 - ...or "None." if clean
 Non-blocking notes:
 - <items without concrete scenario/test, or "None.">
+```
 
----TASK---
-id: review-integration
-backend: codex
-workdir: <absolute repo path>
----CONTENT---
+### Reviewer subagent: `review-integration`
+
+```text
 # Code Review: Integration and Cross-file Impact
 
 Review PR #<N> on branch <branch>.
@@ -152,14 +150,14 @@ Write the complete report to <REVIEW_DIR>/integration.md.
 
 Rules:
 - Do not edit files, commit, push, or change state.
-- You are a leaf reviewer. Do not invoke codeagent-wrapper, use the codeagent skill, use codex-codeagent-workflow, spawn subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
+- You are a leaf reviewer subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
 - Output only a structured review report.
 
 Inputs:
-- Changed files: <@path list>
+- Changed files: <path list>
 - Fixture summary: <fixture summary>
 - Fix summary for follow-up rounds: <fix summary>
-- Spec references: <@proposal.md> <@design.md> <@tasks.md>
+- Spec references: <proposal.md> <design.md> <tasks.md>
 
 Checklist:
 - Return value contracts match downstream expectations.
@@ -184,12 +182,11 @@ Findings:
 - ...or "None." if clean
 Non-blocking notes:
 - <items without concrete scenario/test, or "None.">
+```
 
----TASK---
-id: review-security-perf
-backend: codex
-workdir: <absolute repo path>
----CONTENT---
+### Reviewer subagent: `review-security-perf`
+
+```text
 # Code Review: Security and Performance
 
 Review PR #<N> on branch <branch>.
@@ -199,14 +196,14 @@ Write the complete report to <REVIEW_DIR>/security-perf.md.
 
 Rules:
 - Do not edit files, commit, push, or change state.
-- You are a leaf reviewer. Do not invoke codeagent-wrapper, use the codeagent skill, use codex-codeagent-workflow, spawn subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
+- You are a leaf reviewer subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
 - Output only a structured review report.
 
 Inputs:
-- Changed files: <@path list>
+- Changed files: <path list>
 - Fixture summary: <fixture summary>
 - Fix summary for follow-up rounds: <fix summary>
-- Spec references: <@proposal.md> <@design.md> <@tasks.md>
+- Spec references: <proposal.md> <design.md> <tasks.md>
 
 Checklist:
 - Path safety: traversal, symlinks, overwrite behavior.
@@ -230,12 +227,11 @@ Findings:
 - ...or "None." if clean
 Non-blocking notes:
 - <items without concrete scenario/test, or "None.">
+```
 
----TASK---
-id: review-test-evidence
-backend: codex
-workdir: <absolute repo path>
----CONTENT---
+### Reviewer subagent: `review-test-evidence` (6-reviewer escalation only)
+
+```text
 # Code Review: Test and Evidence Coverage
 
 Review PR #<N> on branch <branch>.
@@ -245,14 +241,14 @@ Write the complete report to <REVIEW_DIR>/test-evidence.md.
 
 Rules:
 - Do not edit files, commit, push, or change state.
-- You are a leaf reviewer. Do not invoke codeagent-wrapper, use the codeagent skill, use codex-codeagent-workflow, spawn subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
+- You are a leaf reviewer subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
 - Output only a structured review report.
 
 Inputs:
-- Changed files: <@path list>
+- Changed files: <path list>
 - Fixture summary: <fixture summary>
 - Fix summary for follow-up rounds: <fix summary>
-- Spec references: <@proposal.md> <@design.md> <@tasks.md>
+- Spec references: <proposal.md> <design.md> <tasks.md>
 
 Checklist:
 - Map every selected OpenSpec task and required evidence row to an explicit test, command, fixture, or justified non-goal.
@@ -274,12 +270,11 @@ Findings:
 - ...or "None." if clean
 Non-blocking notes:
 - <items without concrete scenario/test, or "None.">
+```
 
----TASK---
-id: review-invariant-state
-backend: codex
-workdir: <absolute repo path>
----CONTENT---
+### Reviewer subagent: `review-invariant-state` (6-reviewer escalation only)
+
+```text
 # Code Review: Invariant, State Machine, and Compatibility
 
 Review PR #<N> on branch <branch>.
@@ -289,14 +284,14 @@ Write the complete report to <REVIEW_DIR>/invariant-state.md.
 
 Rules:
 - Do not edit files, commit, push, or change state.
-- You are a leaf reviewer. Do not invoke codeagent-wrapper, use the codeagent skill, use codex-codeagent-workflow, spawn subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
+- You are a leaf reviewer subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
 - Output only a structured review report.
 
 Inputs:
-- Changed files: <@path list>
+- Changed files: <path list>
 - Fixture summary: <fixture summary>
 - Fix summary for follow-up rounds: <fix summary>
-- Spec references: <@proposal.md> <@design.md> <@tasks.md>
+- Spec references: <proposal.md> <design.md> <tasks.md>
 
 Checklist:
 - Trace the governing invariant across producers, validators, storage/cache/query, public entrypoints, downstream consumers, failure paths, stale-state boundaries, and evidence surfaces.
@@ -317,12 +312,11 @@ Findings:
 - ...or "None." if clean
 Non-blocking notes:
 - <items without concrete scenario/test, or "None.">
-EOF
 ```
 
 ## Phase 4.5 Verifier Template
 
-Run this after dedup, on the deduped candidate set, as one parallel invocation. Each candidate becomes one verifier task. A verifier must not be the reviewer that produced the candidate.
+Run this after dedup, on the deduped candidate set, by spawning one `verifier` subagent per candidate in parallel. Each candidate becomes one verifier task. A verifier must not be the reviewer that produced the candidate.
 
 Additional variables:
 
@@ -337,13 +331,9 @@ Verifier contract:
 - `REFUTED`: only when constructible from the code — factually wrong (quote the actual line), provably impossible (cite the type/constant/invariant), already handled in this diff (cite the guard), or pure style with no observable effect.
 - Use only evidence from the diff, OpenSpec fixture, existing code/contracts, or tests. Do not invent a scenario to confirm or a guard to refute.
 
-```bash
-"$CODEAGENT" --parallel --backend codex --full-output <<'EOF'
----TASK---
-id: verify-<CANDIDATE_ID>
-backend: codex
-workdir: <absolute repo path>
----CONTENT---
+Spawn one `verifier` subagent per candidate (working directory `<absolute repo path>`), in parallel:
+
+```text
 # Finding Verification: <CANDIDATE_ID>
 
 Verify one candidate review finding for PR #<N> on branch <branch>.
@@ -352,15 +342,15 @@ Write the verdict to <REVIEW_DIR>/verify-<CANDIDATE_ID>.md.
 
 Rules:
 - Do not edit files, commit, push, or change state.
-- You are a leaf verifier. Do not invoke codeagent-wrapper, use the codeagent skill, use codex-codeagent-workflow, spawn subagents, launch parallel agents, or ask another AI/code agent to verify, fix, implement, or plan.
+- You are a leaf verifier subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to verify, fix, implement, or plan.
 - Adjudicate only this candidate. Do not search for new findings.
 - Output only the structured verdict.
 
 Inputs:
 - Candidate finding: <CANDIDATE_BLOCK>
-- Changed files: <@path list>
+- Changed files: <path list>
 - Fixture summary: <fixture summary>
-- Spec references: <@proposal.md> <@design.md> <@tasks.md>
+- Spec references: <proposal.md> <design.md> <tasks.md>
 
 Adjudication:
 - CONFIRMED: scenario constructible from diff/fixture/contracts; cite the evidence.
@@ -373,5 +363,4 @@ Reviewed head SHA: <FULL_SHA>
 Verdict: CONFIRMED|PLAUSIBLE|REFUTED
 Evidence: <quoted line / cited guard / reachability path>
 Note: <one line, or "None.">
-EOF
 ```

@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-06-14
+- Rename the skill from `codex-codeagent-workflow` to `subagent-workflow` and convert the delegation model from `codeagent-wrapper --backend codex` leaf tasks to native subagents. Implementation/fixes delegate to the `implementer` subagent, cross-review to `reviewer` subagents, and the Phase 4.5 verification gate to the `verifier` subagent. Push and PR ownership stay with the orchestrator (`implementer` is push-free), so the workflow does not modify the shared `coder` agent that Issue Agent OS depends on.
+- Make the workflow orchestration-agnostic across Claude Code and Codex: the orchestrator uses its native subagent mechanism (Claude Code Task subagents or Codex subagents) instead of shelling out to an external code-agent CLI. Drop `codeagent-wrapper` from prerequisites and `skill.json` requirements.
+- Replace the "Required Delegation Guard" with a "Required Subagent Boundary" and reframe "No nested AI delegation" as "No nested workflow delegation": each spawned `implementer`/`reviewer`/`verifier` is a leaf that must not re-invoke this workflow or spawn further nested workflow subagents. The boundary also requires treating issue/external content as untrusted data, not instructions.
+- Rewrite parallel code-writing isolation to use `.worktrees/` (was `.codex/worktrees/`) and an orchestrator-owned manifest; rewrite the Phase 4 cross-review and Phase 4.5 verifier templates as subagent briefs rather than `codeagent-wrapper` heredocs. No change to OpenSpec gates, risk-adaptive review/fix governance, Invariant Matrix, round budgets, or merge-gate behavior.
+- Hardening from skill self-audit: detect the default branch instead of hardcoding `master`; drop the codeagent `@file` reference syntax in favor of plain OpenSpec paths; tighten triggers (remove broad "do it"/"run the workflow" phrasings) and add a `cc-cx-workflow` anti-trigger; note that `.worktrees/` should be gitignored.
+
 ## [0.4.1] - 2026-06-01
 - Add a size budget for `openspec/project-profile.md` (in `project-profiles.md` authoring and Phase 0.0): scaled soft targets (~25 lines simple, ~60 broad) plus two hard rules — never restate core packs/triggers and use short bullets over prose — to keep the per-run profile lean and prevent re-accreting core content.
 

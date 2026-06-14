@@ -155,26 +155,6 @@
       ]
     },
     {
-      "name": "codex-codeagent-workflow",
-      "path": "skills/codex-codeagent-workflow",
-      "displayName": "Codex Codeagent Workflow",
-      "description": "End-to-end GitHub issue implementation workflow for Codex orchestration with codeagent-wrapper, OpenSpec fixtures, risk-adaptive review, verification, PR evidence, CI, and human-gated merge.",
-      "version": "0.4.1",
-      "maturity": "experimental",
-      "categories": [
-        "workflow",
-        "coding",
-        "review"
-      ],
-      "tags": [
-        "github-issues",
-        "codeagent",
-        "openspec",
-        "risk-review",
-        "ci"
-      ]
-    },
-    {
       "name": "control-plane-auditor",
       "path": "skills/control-plane-auditor",
       "displayName": "Control Plane Auditor",
@@ -543,6 +523,26 @@
         "codeagent",
         "small-pr"
       ]
+    },
+    {
+      "name": "subagent-workflow",
+      "path": "skills/subagent-workflow",
+      "displayName": "Subagent Issue Workflow",
+      "description": "End-to-end GitHub issue implementation workflow orchestrated by Claude Code or Codex, delegating implementation, cross-review, and finding verification to subagents (implementer, reviewer, verifier). Covers OpenSpec fixtures, risk-adaptive review, verification, PR evidence, CI, and human-gated merge.",
+      "version": "0.5.0",
+      "maturity": "experimental",
+      "categories": [
+        "workflow",
+        "coding",
+        "review"
+      ],
+      "tags": [
+        "github-issues",
+        "subagent",
+        "openspec",
+        "risk-review",
+        "ci"
+      ]
     }
   ],
   "agents": [
@@ -744,6 +744,30 @@
         "claude-code",
         "codex"
       ]
+    },
+    {
+      "name": "verifier",
+      "path": "agents/verifier",
+      "displayName": "Verifier",
+      "description": "Independent finding-verification agent. Adjudicates a single candidate review finding as CONFIRMED, PLAUSIBLE, or REFUTED using only diff/spec/code/test evidence. Read-only; never the reviewer that produced the candidate.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "review",
+        "coding"
+      ],
+      "tags": [
+        "verification",
+        "code-review",
+        "finding-gate"
+      ],
+      "archetype": "custom",
+      "skills": [],
+      "agents": [],
+      "platforms": [
+        "claude-code",
+        "codex"
+      ]
     }
   ],
   "packs": [
@@ -751,8 +775,8 @@
       "name": "agentic-issue-delivery",
       "path": "packs/agentic-issue-delivery",
       "displayName": "Agentic Issue Delivery Pack",
-      "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through Codex + codeagent review and delivery gates.",
-      "version": "0.1.0",
+      "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through subagent-driven review and delivery gates.",
+      "version": "0.2.0",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "agentic-developer",
@@ -770,7 +794,7 @@
       ],
       "skills": [
         "stage-change-pipeline",
-        "codex-codeagent-workflow",
+        "subagent-workflow",
         "risk-adaptive-cross-review",
         "codeagent",
         "gh-create-issue",
@@ -784,7 +808,12 @@
         "project-documentation",
         "deep-research"
       ],
-      "agents": []
+      "agents": [
+        "implementer",
+        "reviewer",
+        "verifier",
+        "explorer"
+      ]
     },
     {
       "name": "product-manager",
@@ -819,5 +848,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-06-02T03:06:59.918Z"
+  "generatedAt": "2026-06-14T14:57:00.661Z"
 }

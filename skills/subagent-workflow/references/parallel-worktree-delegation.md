@@ -1,13 +1,14 @@
 # Parallel Worktree Delegation
 
-Use this reference for any parallel code-writing delegation in the Codex + codeagent workflow, including Phase 1 implementation and Phase 6 fix passes.
+Use this reference for any parallel code-writing delegation in the subagent workflow, including Phase 1 implementation and Phase 6 fix passes.
 
-This reference does not apply to read-only fixture review, cross-review, invariant audit, or final review tasks. Read-only tasks can share the PR worktree and should normally run through `codeagent-wrapper --parallel --backend codex`.
+This reference does not apply to read-only fixture review, cross-review, invariant audit, or final review tasks. Read-only tasks can share the PR worktree and should normally run as parallel read-only subagents.
 
 ## Non-Negotiable Rules
 
-- Parallel code-writing workers must use separate git worktrees under `.codex/worktrees/`.
-- The parent Codex workflow is the only actor that integrates patches into the PR branch.
+- Parallel code-writing workers must use separate git worktrees under `.worktrees/`.
+- Add `.worktrees/` to the target repository's `.gitignore` so delegated worktrees are never accidentally committed.
+- The parent orchestrator workflow is the only actor that integrates patches into the PR branch.
 - Workers must not write directly in the parent PR worktree.
 - Workers must not commit, push, merge, rebase, reset, or run destructive git commands.
 - Workers must not revert or overwrite changes made by other workers.
@@ -38,19 +39,19 @@ In those cases, use one code-writing owner for the shared implementation. Other 
 
 ## Parallel Worktree Manifest
 
-Before starting any parallel code-writing workers, persist a manifest under the local evidence directory, for example `.codex/workplans/<issue-or-pr>/parallel-worktree-manifest.md`.
+Before starting any parallel code-writing workers, persist a manifest under the local evidence directory, for example `.workplans/<issue-or-pr>/parallel-worktree-manifest.md`.
 
 ```text
 Parallel Worktree Manifest:
 Issue/PR: #<N>
 Phase: <Phase 1 implementation | Phase 6 fix>
 Parent branch/head: <branch> <sha>
-Integration owner: Codex parent workflow
+Integration owner: orchestrator parent workflow
 
 Workers:
 - id: <worker-id>
   purpose: <implementation slice or fix group>
-  worktree: .codex/worktrees/pr-<N>-<worker-id>
+  worktree: .worktrees/pr-<N>-<worker-id>
   base sha: <sha>
   allowed write set:
   - <file/glob>
@@ -78,15 +79,15 @@ Cleanup plan:
 Create worker worktrees from the current PR head. Use unique paths.
 
 ```bash
-mkdir -p .codex/worktrees
-git worktree add .codex/worktrees/pr-<N>-<worker-id> HEAD
+mkdir -p .worktrees
+git worktree add .worktrees/pr-<N>-<worker-id> HEAD
 ```
 
 If two workers need different starting commits, record that explicitly in the manifest. Do not create worker worktrees from stale local branches unless the manifest explains why.
 
 ## Worker Prompt Boundary
 
-Every parallel code-writing worker prompt must include the normal delegation guard plus this boundary:
+Every parallel code-writing worker brief must include the Required Subagent Boundary from `SKILL.md` plus this parallel-worktree boundary:
 
 ```text
 Parallel worktree boundary:
@@ -117,8 +118,8 @@ After each worker finishes:
 Example patch flow:
 
 ```bash
-git -C .codex/worktrees/pr-<N>-<worker-id> diff -- <allowed-files> > .codex/workplans/<N>/<worker-id>.patch
-git apply --3way .codex/workplans/<N>/<worker-id>.patch
+git -C .worktrees/pr-<N>-<worker-id> diff -- <allowed-files> > .workplans/<N>/<worker-id>.patch
+git apply --3way .workplans/<N>/<worker-id>.patch
 ```
 
 Do not integrate by copying whole files over the parent worktree unless the file is wholly owned by that worker and the manifest explicitly allows it.
@@ -135,8 +136,8 @@ Before committing, merging, or leaving the workflow, inspect and clean delegated
 
 ```bash
 git worktree list
-git -C .codex/worktrees/pr-<N>-<worker-id> status --short
-git worktree remove .codex/worktrees/pr-<N>-<worker-id>
+git -C .worktrees/pr-<N>-<worker-id> status --short
+git worktree remove .worktrees/pr-<N>-<worker-id>
 git worktree prune
 ```
 
@@ -146,9 +147,9 @@ Persist any retained worktree in the local evidence directory:
 
 ```text
 Retained worktree:
-- path: .codex/worktrees/pr-<N>-<worker-id>
+- path: .worktrees/pr-<N>-<worker-id>
 - reason: <debugging / waiting for user decision / blocked integration>
-- owner: <Codex or worker id>
+- owner: <orchestrator or worker id>
 - cleanup trigger: <event/date/action>
 ```
 
@@ -159,4 +160,4 @@ Retained worktree:
 - No unreviewed whole-file copy from a worker worktree into the PR worktree.
 - No worker-created commits on the PR branch.
 - No worker-created pushes.
-- No cleanup by deleting `.codex/worktrees` recursively without checking `git worktree list` and worker status.
+- No cleanup by deleting `.worktrees` recursively without checking `git worktree list` and worker status.

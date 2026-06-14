@@ -48,7 +48,7 @@ The profile is a living document, not a one-shot. It does not change per issue, 
    openspec new change <change-name> --description "<short issue summary>"
    openspec instructions --change <change-name>
    ```
-6. Codex may directly edit `openspec/changes/<change>/**`; keep artifacts concise and focused.
+6. The orchestrator may directly edit `openspec/changes/<change>/**`; keep artifacts concise and focused.
 7. Ensure `tasks.md` maps every selected risk pack to a scenario-level test, verification command, or explicit non-goal with input and expected output.
 8. For high or broad-expanded repair intensity, add a compact `Invariant Matrix` to the fixture before implementation. This is a hard gate, not an optional review aid:
    ```text
@@ -69,25 +69,25 @@ The profile is a living document, not a one-shot. It does not change per issue, 
    - <unchanged sibling consumer> -> <expected compatibility behavior>
    ```
 9. For high or broad-expanded repair intensity, also add a compact boundary-surface checklist to the fixture. Use only relevant categories: shared helper roots, public entrypoints, read surfaces, write/delete/overwrite surfaces, staging/publish/rollback surfaces, producer/consumer evidence boundaries, stale-state/idempotency boundaries, and unchanged downstream consumers.
-10. Run one focused fixture review via `codeagent-wrapper --backend codex`; reviewer is read-only and checks only fixture completeness. For high or broad-expanded fixtures, the review must specifically validate the `Invariant Matrix`; if it is absent or too vague, the fixture review is `revise`.
+10. Run one focused fixture review with a read-only `reviewer` subagent; it checks only fixture completeness. For high or broad-expanded fixtures, the review must specifically validate the `Invariant Matrix`; if it is absent or too vague, the fixture review is `revise`.
 11. If review says `revise`, update the OpenSpec change and rerun the fixture review once.
 12. Run `openspec validate <change-name> --strict --no-interactive`; do not proceed until it passes.
 
-## Phase 1: codeagent Implementation
+## Phase 1: Implementer Subagent Implementation
 
-1. Resolve codeagent:
-   ```bash
-   CODEAGENT=$(which codeagent-wrapper 2>/dev/null || echo "$HOME/.claude/bin/codeagent-wrapper")
-   test -x "$CODEAGENT"
-   ```
+1. Ensure the `implementer` subagent is available in the orchestrator (Claude Code Task subagent or Codex subagent).
 2. Create branch from integration base:
    ```bash
-   git checkout -b feat/issue-<N>-<change-name> master
+   DEFAULT_BRANCH=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null)
+   DEFAULT_BRANCH=${DEFAULT_BRANCH#origin/}
+   : "${DEFAULT_BRANCH:=$(git rev-parse --abbrev-ref HEAD)}"
+   git checkout -b feat/issue-<N>-<change-name> "$DEFAULT_BRANCH"
    ```
 3. Decide whether the implementation can be safely split into parallel code-writing slices. Use serial implementation for one shared state machine, one shared helper root, one schema/contract/public API boundary, uncertain design, or overlapping tests. If parallel implementation is safe, load and follow `parallel-worktree-delegation.md` before delegating any code-writing worker. The parent PR worktree remains the integration surface.
-4. Prompt must include:
-   - Required delegation guard from `SKILL.md`.
-   - Issue reference, `@proposal.md`, `@design.md`, `@tasks.md`, fixture level/risk packs, and key source files.
+4. The implementer brief must include:
+   - Required subagent boundary from `SKILL.md`.
+   - Git ownership: implement and test only; the orchestrator owns commit, push, and PR — do not push or open/update PRs.
+   - Issue reference, the OpenSpec files `proposal.md`, `design.md`, `tasks.md`, fixture level/risk packs, and key source files.
    - Repair intensity and any boundary-surface checklist from Phase 0.5.
    - The `Invariant Matrix` for high or broad-expanded work, with an instruction that implementation must preserve the governing invariant across every listed surface and report unchanged sibling surfaces inspected.
    - Clear scope and acceptance criteria.
@@ -97,15 +97,10 @@ The profile is a living document, not a one-shot. It does not change per issue, 
    - Instruction to list changed files and verification results.
    - For high or broad-expanded work, instruction to report shared helper/boundary surfaces inspected, which were changed, and which were intentionally left unchanged with rationale.
    - For high or broad-expanded work, instruction to report regression evidence for every `Invariant Matrix` row, or explain why a row is out of scope only by citing the fixture.
-5. Invoke either a serial task or the parallel worktree delegation defined by `parallel-worktree-delegation.md`:
-   ```bash
-   "$CODEAGENT" --backend codex --full-output - "$(pwd)" <<'EOF'
-   <implementation prompt>
-   EOF
-   ```
-6. Use timeouts by complexity: simple 30 min, medium 1 h, complex 2 h. Do not kill a running codeagent task. While it runs, wait silently with a long tool timeout; do not poll every few seconds or stream intermediate logs unless diagnosing a stuck/failing task. If it fails, refine prompt and retry, up to 2 attempts.
+5. Spawn either a single `implementer` subagent or the parallel worktree delegation defined by `parallel-worktree-delegation.md`, passing the implementation brief built above and the repository root as the working directory (Claude Code: a Task subagent; Codex: a subagent).
+6. Use timeouts by complexity: simple 30 min, medium 1 h, complex 2 h. Do not kill a running implementer subagent. While it runs, wait silently with a long tool timeout; do not poll every few seconds or stream intermediate logs unless diagnosing a stuck/failing task. If it fails, refine the brief and retry, up to 2 attempts.
 
-## Phase 2: Codex Verification Only
+## Phase 2: Orchestrator Verification Only
 
 Run the local CI-equivalent pipeline for the project. Examples:
 
@@ -141,7 +136,7 @@ Select reviewers from fixture level:
 - `high` or `broad-expanded`: use all 4 standard reviewers. Escalate to 6 reviewers when the PR touches DB-backed state, retry/cancellation, publish/delete/rollback, schema/evidence contracts, security boundaries, production config, or shared helper/state-machine roots. The two additional reviewers are `Test & Evidence Coverage` and `Invariant / State Machine / Compatibility`.
 - Initial round only: if repository policy requires a fixed number of evidence comments, follow it only when it does not conflict with the 6-review high-risk escalation in `SKILL.md`; otherwise post a consolidated evidence bundle rather than reducing reviewer coverage.
 
-Use `phase-4-cross-review.md` to build the parallel codeagent prompt. Prefer one `codeagent-wrapper --parallel --backend codex` invocation for the full reviewer set. Do not post PR comments in this phase.
+Use `phase-4-cross-review.md` to build the parallel reviewer-subagent briefs. Prefer spawning the full reviewer set as parallel subagents in one batch (Claude Code: multiple Task calls in one message; Codex: parallel subagents). Do not post PR comments in this phase.
 
 Review rounds:
 
@@ -149,13 +144,13 @@ Review rounds:
 - After a Phase 6 fix pass, rerun cross-review before Phase 7 using the same risk-adaptive reviewer count and reviewer mix as Phase 4 on the current head.
 - Do not narrow follow-up rounds to only the risk areas touched by the fix. A prior round can miss issues outside the fix area, so each post-fix round must be a comprehensive review of the updated PR diff and OpenSpec fixture before Phase 7.
 - A cross-review round is clean only when it has no actionable findings. Critical/major findings and test coverage gaps always return to Phase 5-6. Minor findings must be fixed or explicitly deferred with issue/OpenSpec/user-instruction basis.
-- A finding is actionable only if it satisfies the finding contract defined in the `risk-adaptive-cross-review` skill (`finding-contract.md`): severity, failure class, violated invariant/contract, concrete scenario, evidence, fix direction, required test/proof, sibling surfaces, and blocking status. Treat vague concerns, style preferences, and untestable possibilities as non-blocking notes unless Codex can complete the missing fields from the diff and fixture.
+- A finding is actionable only if it satisfies the finding contract defined in the `risk-adaptive-cross-review` skill (`finding-contract.md`): severity, failure class, violated invariant/contract, concrete scenario, evidence, fix direction, required test/proof, sibling surfaces, and blocking status. Treat vague concerns, style preferences, and untestable possibilities as non-blocking notes unless the orchestrator can complete the missing fields from the diff and fixture.
 - If a follow-up round finds the same failure class in another module, helper, or sibling surface, treat that as an invariant miss, not as a new isolated finding. Trigger Phase 6.2 before issuing the next fix prompt.
 - If Round 3 still reports the same failure class after an invariant-closure pass, stop ordinary review looping. Run a Review Failure Retro before another fix or review pass.
-- If the PR reaches 5 comprehensive cross-review rounds total, the five-round hard gate triggers. Stop ordinary review/fix looping immediately and transition to a root-cause strategy path; this is not permission to abandon the issue. Do not run another codeagent fix, cross-review, Phase 7 final review, CI wait-for-merge, or merge until a Deep Review Failure Retro, Gate-Level PR Strategy Review, Invariant Surface Inventory, and Regression Matrix are written to the local evidence directory or PR working notes.
+- If the PR reaches 5 comprehensive cross-review rounds total, the five-round hard gate triggers. Stop ordinary review/fix looping immediately and transition to a root-cause strategy path; this is not permission to abandon the issue. Do not run another implementer fix, cross-review, Phase 7 final review, CI wait-for-merge, or merge until a Deep Review Failure Retro, Gate-Level PR Strategy Review, Invariant Surface Inventory, and Regression Matrix are written to the local evidence directory or PR working notes.
 - If review/fix activity has consumed more than one working day, or the same invariant keeps failing in sibling surfaces, run a Review Failure Retro before any further review round. The retro must change the next action: update fixture/matrix, broaden or split implementation scope, strengthen reviewer prompts, or make a user-visible scope call only when the decision cannot be derived from issue/OpenSpec evidence.
 - While reviewers run, use the same silent long-wait rule as Phase 1. Avoid verbose `tail`, `watch`, or frequent status polling unless a reviewer fails or exceeds the expected timeout.
-- If parallel review tooling fails without producing reports, diagnose the wrapper/API failure once, then rerun the same reviewer set with `codeagent-wrapper --parallel`. Do not count a failed no-report invocation as a comprehensive review round.
+- If parallel review tooling fails without producing reports, diagnose the subagent failure once, then re-spawn the same reviewer-subagent set in parallel. Do not count a failed no-report invocation as a comprehensive review round.
 - Phase 4 reviewers emit candidate findings, not final merge-blocking verdicts. Do not feed reviewer reports straight into Phase 5; they must pass the Phase 4.5 verification gate first.
 
 ## Phase 4.5: Independent Finding Verification Gate
@@ -166,7 +161,7 @@ Steps:
 
 1. Collect every candidate finding from the Phase 4 reports actually run on the current head.
 2. Dedup near-duplicates: same defect + same location + same root reason collapse to one candidate. Merge the cited sibling surfaces and keep the highest severity.
-3. Run one `codeagent-wrapper --parallel --backend codex` verification pass using the verifier template in `phase-4-cross-review.md`. Assign each candidate to a separate verifier task. A verifier must not be the reviewer that produced the candidate, and Codex must not self-adjudicate in place of a verifier.
+3. Run one parallel `verifier` subagent pass using the verifier template in `phase-4-cross-review.md`. Assign each candidate to a separate `verifier` subagent. A verifier must not be the reviewer that produced the candidate, and the orchestrator must not self-adjudicate in place of a verifier.
 4. Each verifier returns exactly one verdict:
    - `CONFIRMED`: the failing scenario is constructible from the diff/fixture/contracts.
    - `PLAUSIBLE`: reachable but not fully constructible — rare error paths, falsy-zero treated as missing, off-by-one at a non-excluded boundary, races, retry storms, stale cache/DB rows, regex/allowlist that lost an anchor.
@@ -190,7 +185,7 @@ Combine:
 
 - OpenSpec fixture and selected risk packs
 - Verified findings from Phase 4.5 (CONFIRMED plus risk-weighted PLAUSIBLE), including follow-up rounds after fixes
-- Codex read-only diff review
+- Orchestrator read-only diff review
 - Local verification failures
 - Test coverage gaps from `tasks.md`
 
@@ -205,7 +200,7 @@ First classify all findings by failure class and selected risk pack. Common clas
 - numerical / resource / runtime bounds
 - compatibility / legacy consumer drift
 
-Drop or downgrade non-actionable review notes before fix planning unless Codex can complete the actionable finding contract from the diff, fixture, and verification evidence.
+Drop or downgrade non-actionable review notes before fix planning unless the orchestrator can complete the actionable finding contract from the diff, fixture, and verification evidence.
 
 Phase 4.5 already adjudicated each candidate. Do not re-litigate REFUTED candidates here. Treat the CONFIRMED and risk-weighted PLAUSIBLE set as the actionable input. The only additional filter at this stage is the `wontfix` rule below for findings the OpenSpec fixture, issue text, or explicit user instruction places out of scope; test coverage gaps are never `wontfix`.
 
@@ -291,7 +286,7 @@ Rules:
   Decision:
   - <continue with invariant closure | refactor/redesign | split PR within issue/OpenSpec boundary | revise OpenSpec scope | ask user for scope/product decision only if not derivable from issue/OpenSpec | downgrade non-actionable reviewer pattern>
   Execution plan:
-  - <concrete next codeagent/spec task, verification command, and expected evidence>
+  - <concrete next implementer/spec task, verification command, and expected evidence>
 
   Invariant Surface Inventory:
   - Shared helper roots: <helpers or "none">
@@ -316,14 +311,14 @@ Rules:
 - The gate package must be persisted before any further implementation/review action. It is not enough to summarize it in chat. After it is persisted, continue the workflow by executing the selected root-cause action unless a genuine product/scope decision is required from the user.
 - Do not edit implementation files while synthesizing.
 
-## Phase 6: codeagent Fix Pass
+## Phase 6: Implementer Subagent Fix Pass
 
 Before delegating fixes, decide whether parallel writing is safe. If any Phase 6 code-writing fix is parallelized, load and follow `parallel-worktree-delegation.md`. Use serial fixing for one shared state machine, one shared helper root, one schema/contract/public API boundary, uncertain design, or overlapping tests. Read-only audits may still run in parallel without worktrees.
 
 Serial fix prompt template:
 
 ```text
-<Required delegation guard>
+<Required subagent boundary>
 
 # Fix List for PR #<N>
 
@@ -342,7 +337,7 @@ List changed files and verification results.
 For pattern escalation or high-risk classes, replace the narrow fix list with an invariant-closure prompt:
 
 ```text
-<Required delegation guard>
+<Required subagent boundary>
 
 # Invariant Closure for PR #<N>
 
@@ -380,7 +375,7 @@ Report:
 - Verification commands/results
 ```
 
-Run Phase 2 verification after codeagent returns. If verification passes, commit/push the fix and rerun a full Phase 4-style cross-review on the current head, except for CI-only repairs classified in Phase 8. Continue Phase 5-6-review only while no ordinary-loop gate has triggered and until the latest comprehensive cross-review round is clean.
+Run Phase 2 verification after the implementer subagent returns. If verification passes, commit/push the fix and rerun a full Phase 4-style cross-review on the current head, except for CI-only repairs classified in Phase 8. Continue Phase 5-6-review only while no ordinary-loop gate has triggered and until the latest comprehensive cross-review round is clean.
 
 Before cross-review after a pattern escalation, run Phase 6.2. Do not skip Phase 6.2 merely because local tests passed.
 
@@ -392,7 +387,7 @@ Continue fix/review loops only while no ordinary-loop gate has triggered. Count 
 
 Run this phase when Phase 5 marks pattern escalation or when a high-risk selected pack has a reusable unsafe pattern.
 
-Codex may do the audit read-only, or delegate one read-only codeagent audit. The audit must not edit files. It must answer:
+The orchestrator may do the audit read-only, or delegate one read-only `reviewer` subagent audit. The audit must not edit files. It must answer:
 
 ```text
 Invariant audit for PR #<N>
@@ -432,7 +427,7 @@ If the invariant audit reports findings, return to Phase 6 with an invariant-clo
 Mandatory for every PR.
 
 1. Ensure build/lint/tests pass and the latest cross-review round is clean.
-2. Spawn a clean-context subagent for read-only final review. It must not edit files, invoke `codeagent-wrapper`, use skills, or spawn agents.
+2. Spawn a clean-context `reviewer` subagent for read-only final review. It must not edit files, invoke this workflow, use skills, or spawn further subagents.
 3. Provide PR number, branch, full SHA, diff scope/changed files, OpenSpec files, fixture level/risk packs, all cross-review round summaries, and fix summary.
 4. Ask it to focus on error recovery, backward compatibility, test coverage vs `tasks.md`, and pre-existing consumers.
 5. Convert critical/major findings into Phase 6 style fix prompts.
@@ -535,7 +530,10 @@ After approval:
 
 ```bash
 gh pr merge <PR#> --merge --delete-branch
-git checkout master && git pull
+DEFAULT_BRANCH=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null)
+DEFAULT_BRANCH=${DEFAULT_BRANCH#origin/}
+: "${DEFAULT_BRANCH:=main}"
+git checkout "$DEFAULT_BRANCH" && git pull
 gh issue close <ISSUE#> --comment "Closed via merged PR #<PR#>. <summary>"
 ```
 

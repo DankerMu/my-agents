@@ -25,7 +25,7 @@ openspec validate <change-name> --strict --no-interactive
 openspec show <change-name>
 ```
 
-If `openspec new change` creates only a skeleton, the orchestrator should directly fill `proposal.md`, `design.md`, `tasks.md`, and any required spec deltas according to `openspec instructions --change <change-name>`. Keep this concise; implementation code and runtime tests still go through codeagent.
+If `openspec new change` creates only a skeleton, the orchestrator should directly fill `proposal.md`, `design.md`, `tasks.md`, and any required spec deltas according to `openspec instructions --change <change-name>`. Keep this concise; implementation code and runtime tests still go through the `implementer` subagent.
 
 ## Project Profiles
 
@@ -234,22 +234,21 @@ Review focus:
 
 ## OpenSpec Fixture Review
 
-Run one short `codeagent-wrapper --backend codex` review for every OpenSpec fixture before implementation. The review checks only whether the selected risk packs and evidence are sufficient.
+Run one short read-only `reviewer` subagent review for every OpenSpec fixture before implementation. The review checks only whether the selected risk packs and evidence are sufficient.
 
 Reviewer prompt must include:
 
 ```text
-Delegation boundary:
-- You are a leaf codeagent task in a parent Codex workflow.
-- Do not invoke codeagent-wrapper.
-- Do not use the codeagent skill or codex-codeagent-workflow skill.
-- Do not spawn subagents, parallel agents, nested reviewers, or any other AI/code agent.
+Subagent boundary:
+- You are a leaf reviewer subagent in a parent issue workflow.
+- Do not invoke this workflow or the subagent-workflow skill.
+- Do not spawn further subagents, parallel agents, nested reviewers, or any other AI/code agent.
 - Do not ask another agent to implement, fix, review, or plan.
 - Use ordinary shell/read-only tools only. Do not edit files.
 - If the task cannot be completed without nested AI delegation, stop and report the blocker.
 
 Review the OpenSpec change fixture for issue #<N>.
-Inputs: issue body/comments, @proposal.md, @design.md, @tasks.md, relevant nearby docs/tests.
+Inputs: issue body/comments, the OpenSpec files proposal.md, design.md, tasks.md, relevant nearby docs/tests.
 Check:
 - Fixture level is not under-classified, especially mandatory expanded triggers.
 - Every risk pack is marked selected/not selected with a defensible reason.
