@@ -2,6 +2,12 @@
 
 All notable changes to the **issue-scout** agent will be documented in this file.
 
+## [0.1.1] - 2026-06-14
+
+### Changed
+
+- Codex definition: reasoning effort `high` -> `xhigh` (model `gpt-5.3-codex-spark` unchanged).
+
 ## [0.1.0] - 2026-03-31
 
 ### Added

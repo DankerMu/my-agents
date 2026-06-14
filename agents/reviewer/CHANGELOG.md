@@ -2,6 +2,12 @@
 
 All notable changes to the **reviewer** agent will be documented in this file.
 
+## [1.1.4] - 2026-06-14
+
+### Changed
+
+- Codex definition: model `gpt-5.4` -> `gpt-5.5` and reasoning effort `high` -> `xhigh`.
+
 ## [1.1.3] - 2026-03-30
 
 ### Changed

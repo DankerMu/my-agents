@@ -1,7 +1,7 @@
 name = "issue-scout"
 description = "Given a GitHub issue or bug description, search the codebase for relevant files, symbols, and context to scope the change surface before implementation."
 model = "gpt-5.3-codex-spark"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 nickname_candidates = ["issue_scout_1", "issue_scout_2", "issue_scout_3"]
 

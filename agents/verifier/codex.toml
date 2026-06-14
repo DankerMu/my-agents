@@ -1,7 +1,7 @@
 name = "verifier"
 description = "Independent finding-verification gate. Adjudicates one candidate review finding as CONFIRMED, PLAUSIBLE, or REFUTED using only diff/spec/code/test evidence. Read-only; never the reviewer that produced the candidate."
-model = "gpt-5.4"
-model_reasoning_effort = "high"
+model = "gpt-5.5"
+model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 
 developer_instructions = """

@@ -2,6 +2,12 @@
 
 All notable changes to the **explorer** agent will be documented in this file.
 
+## [1.2.1] - 2026-06-14
+
+### Changed
+
+- Codex definition: reasoning effort `high` -> `xhigh` (model `gpt-5.3-codex-spark` unchanged).
+
 ## [1.2.0] - 2026-03-26
 
 ### Added

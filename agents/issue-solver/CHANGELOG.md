@@ -3,6 +3,12 @@
 All notable changes to this agent will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2026-06-14
+
+### Changed
+
+- Codex definition: model `gpt-5.4` -> `gpt-5.5` and reasoning effort `high` -> `xhigh`.
+
 ## [Unreleased]
 
 ## [0.2.1] - 2026-03-31
