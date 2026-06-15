@@ -1,14 +1,14 @@
 ---
 name: stage-change-pipeline
 description: >
-  设计文档 → openspec change → codex 并行审核 → 修复 → GitHub issue 全流水线。
+  设计文档 → openspec change → subagent 并行审核 → 修复 → GitHub issue 全流水线。
   将 tasks 拆为细粒度、模块边界清晰、适合小 PR 审核的 GitHub issue。
   触发词："开始下一个阶段"、"stage change pipeline"、"设计到issue"、"阶段实施"、
   "openspec审核"、"创建 M* change"，或用户指定一个开发阶段要求生成审核过的 issue。
 license: MIT
 metadata:
   author: danker
-  version: "1.0"
+  version: "0.3.0"
 ---
 
 # Stage Change Pipeline
@@ -17,11 +17,13 @@ metadata:
 
 整个流水线分 5 个阶段，每个阶段有明确的输入输出契约。可以从任意阶段切入——如果 openspec change 已存在，直接跳到审核；如果审核已完成，直接跳到创建 issue。
 
-**依赖**：需要 `openspec` CLI（npm）、已配置 codex backend 的 `codeagent-wrapper`、已认证的 `gh` CLI、包含设计文档的 git repo。可选读取 `IMPLEMENTATION_PLAN.md` 作为阶段上下文。
+**依赖**：需要 `openspec` CLI（npm）、具备并行 subagent 能力的编排器（Claude Code Task subagents 或 Codex subagents）、已认证的 `gh` CLI、包含设计文档的 git repo。可选读取 `IMPLEMENTATION_PLAN.md` 作为阶段上下文。
 
 **支撑 skill**：按需要复用本仓库已有 skill，不把它们的完整流程复制进来。
 
 - `clarify`：阶段目标、验收标准、范围边界或设计文档优先级不清时，在 Stage 1 前先澄清。
+- `grill-me`：Stage 1 收尾、创建 OpenSpec change 之前，对阶段计划/设计文档做对抗式压测——沿决策树逐分支追问、一次一个问题，把未言明的假设和模糊边界逼清，降低 Stage 3 审核返工。
+- `grill-with-docs`：Stage 2 写 design/specs 时，对领域复杂、术语易漂的 change 做领域压测——对齐术语并 inline 沉淀到 `openspec/glossary.md`，够格的长期决策落 `docs/adr/`。
 - `future-aware-architecture`：Stage 2 的 `design.md` 涉及架构方向、技术选型、可逆性或长期演进风险时，用它形成决策输入。
 - `implementation-planning`：Stage 2 的 `tasks.md` 或 Stage 5 issue 分组需要复杂依赖、回滚、验证矩阵或分阶段交付时，用它补执行计划。
 - `risk-adaptive-cross-review`：Stage 3 的三路审核按 OpenSpec Review 模式组织 finding contract 和失败类汇总。
@@ -30,7 +32,7 @@ metadata:
 
 ## When Not to Use
 
-- 不用于单个 GitHub issue 的实现、修复、PR review、CI 或合并；这些属于 `codex-codeagent-workflow`。
+- 不用于单个 GitHub issue 的实现、修复、PR review、CI 或合并；这些属于 `subagent-workflow`。
 - 不用于纯头脑风暴、需求澄清或架构选型；先用 `clarify`、`brainstorming` 或 `future-aware-architecture`。
 - 不用于没有设计文档、阶段目标或实施计划的临时小改动。
 - 不用于只想创建一个普通 issue、且不需要 OpenSpec change 和并行审核的场景。
@@ -44,7 +46,7 @@ Stage 1: 上下文收集
     ↓
 Stage 2: OpenSpec Change 创建
     ↓
-Stage 3: Codex 并行审核 (3 路)
+Stage 3: 并行 Subagent 审核 (3 路)
     ↓
 Stage 4: 审核修复
     ↓
@@ -65,6 +67,8 @@ Stage 5: GitHub Issue 创建
 2. 如果没有实施计划文档，从用户描述中提取阶段目标，然后搜索项目中的设计文档（用 `find . -name "*.md" -path "*/docs/*" | head -30` 发现文档结构，不假设固定路径）。
 3. 并行读取目标阶段涉及的核心设计文档（通常 3-6 个文件），记录关键实体：表名、API 端点、ENUM 值、ID 规范等。
 4. 输出一份简要的阶段上下文摘要，确认后进入 Stage 2。
+
+**压测门禁（可选但推荐）**：在创建 OpenSpec change 之前，如果阶段计划或设计文档存在未言明假设、隐藏依赖或模糊边界，先用 `grill-me` 沿决策树逐分支压测，把决策逼清后再进入 Stage 2，可显著降低 Stage 3 审核返工。
 
 **判断切入点**：如果 `openspec/changes/<name>/` 已存在且 `openspec status` 显示 artifacts complete，跳到 Stage 3。
 
@@ -99,6 +103,7 @@ Stage 5: GitHub Issue 创建
    - 获取指令：`openspec instructions design --change "<name>" --json`
    - 写技术决策（选型理由、备选方案）、风险和缓解
    - 如果技术决策还没有稳定依据，先用 `future-aware-architecture` 形成架构决策输入
+   - 领域概念多、术语易漂时，用 `grill-with-docs` 对齐术语并 inline 沉淀到 `openspec/glossary.md`/`docs/adr/`，再定稿 design/specs
 
    **specs/**（依赖 proposal，可与 design 并行）：
    - 获取指令：`openspec instructions specs --change "<name>" --json`
@@ -121,20 +126,20 @@ Stage 5: GitHub Issue 创建
 
 ---
 
-## Stage 3: Codex 并行审核
+## Stage 3: 并行 Subagent 审核
 
 **目标**：从 3 个独立视角审核 change 质量，发现错项和漏项。
 
-**关键约束**：通过 `codeagent` skill 以 `--parallel --full-output` 模式同时发起 3 个审核任务，不能串行。`--full-output` 确保返回完整审核文本而非摘要。
+**关键约束**：通过编排器的原生并行 subagent 机制（Claude Code Task subagents 或 Codex subagents）同时发起 3 个审核任务，不能串行。每个 `reviewer` subagent 必须返回完整审核文本而非摘要。
 
 **审核契约**：使用 `risk-adaptive-cross-review` 的 OpenSpec Review 模式作为审查语义参考：三路审核分别对应 Design Consistency、Spec Completeness、Tasks Executability；P0/P1 问题必须包含失败类型、证据、影响、修复方向和需要回归检查的相邻 artifact。
 
 **步骤**：
 
-1. 构建 3 个审核 prompt，每个约 200-400 字，包含：
+1. 构建 3 个审核 brief，每个约 200-400 字，包含：
    - 明确的审核范围和检查项
-   - `@file` 引用指向 change 文件和设计文档
-   - 期望的输出格式
+   - 指向 change 文件和设计文档的 OpenSpec 路径（如 `openspec/changes/<name>/proposal.md`）
+   - 期望的输出格式（候选 finding 列表，含失败类型/证据/影响/修复方向）
 
 2. 三路审核的标准分工：
 
@@ -144,33 +149,11 @@ Stage 5: GitHub Issue 创建
    | Review 2: Spec 完整性 | 各 spec 之间 + 对照实施计划 | Requirement-Scenario 完备性、WHEN/THEN 可测试性、边界条件覆盖、跨 spec 一致性、功能点遗漏 |
    | Review 3: Tasks 可执行性 | tasks.md vs design + specs | 任务粒度、依赖顺序、spec 覆盖率、多余任务、验证方法明确性、技术决策落地 |
 
-3. 通过 `codeagent` skill 执行（skill 参数格式：`backend=codex mode=parallel prompts=[...]`）。底层命令：
-   ```bash
-   codeagent-wrapper --parallel --full-output --backend codex <<'EOF'
-   ---TASK---
-   id: review-design-consistency
-   backend: codex
-   workdir: <project-root>
-   ---CONTENT---
-   <Review 1 prompt with @file references>
-   ---TASK---
-   id: review-spec-completeness
-   backend: codex
-   workdir: <project-root>
-   ---CONTENT---
-   <Review 2 prompt with @file references>
-   ---TASK---
-   id: review-tasks-executability
-   backend: codex
-   workdir: <project-root>
-   ---CONTENT---
-   <Review 3 prompt with @file references>
-   EOF
-   ```
+3. 用编排器的原生并行 subagent 机制同时 spawn 3 个 `reviewer` subagent（每路一个 brief），并行执行、互不通信。每个 subagent 是只读 leaf：只审核、不修改 change 文件，也不再嵌套发起本流水线。建议的 task id：`review-design-consistency` / `review-spec-completeness` / `review-tasks-executability`。
 
-4. `--full-output` 模式会返回每个 task 的完整消息文本（而非仅摘要），直接从输出中提取审核意见。
+4. 等三路 subagent 全部返回完整审核文本，从中提取各自的候选 finding。
 
-5. 汇总三路审核的交叉验证结果，按 P0（必须修复）/ P1（建议改进）分类。
+5. 汇总三路审核的交叉验证结果，去重后按 P0（必须修复）/ P1（建议改进）分类。
 
 ---
 
@@ -205,7 +188,7 @@ Stage 5: GitHub Issue 创建
 
 **规划门禁**：如果 tasks 无法自然映射到小 PR issue，或存在跨模块依赖链，先用 `implementation-planning` 明确分阶段交付、依赖顺序、验证和回滚；不要为了减少 issue 数量合并模块边界。
 
-**实现就绪契约**：Stage 5 创建的每个子 issue 都必须可被 `codex-codeagent-workflow` 自动执行，不得把需求澄清留到实现阶段。每个子 issue 必须具备：
+**实现就绪契约**：Stage 5 创建的每个子 issue 都必须可被 `subagent-workflow` 自动执行，不得把需求澄清留到实现阶段。每个子 issue 必须具备：
 
 - `Implementation Ready: yes`
 - 单一模块或 ownership 范围
@@ -264,7 +247,7 @@ Stage 5: GitHub Issue 创建
 
 ## 快速参考
 
-**完整流水线用时**：约 30-60 分钟（取决于 capability 数量和 codex 审核耗时）
+**完整流水线用时**：约 30-60 分钟（取决于 capability 数量和 subagent 审核耗时）
 
 **最小命令集**：
 ```bash
@@ -273,23 +256,22 @@ openspec new change "<name>"
 openspec status --change "<name>" --json
 openspec instructions <artifact> --change "<name>" --json
 
-# Stage 3（通过 codeagent skill 调用）
-codeagent-wrapper --parallel --full-output --backend codex <<'EOF'
-...
-EOF
+# Stage 3：用编排器原生并行 subagent 同时 spawn 3 个 reviewer subagent
+#   review-design-consistency / review-spec-completeness / review-tasks-executability
 
 # Stage 5
 gh label create ...
 gh issue create --title "..." --label "..." --body "..."
 ```
 
-**依赖的其他 skill**：
-- `codeagent` — Stage 3 审核执行
-- `gh-create-issue` — Stage 5 可选调用（或直接用 gh CLI）
+**依赖**：
+- `grill-me` skill — Stage 1→2 之间的设计压测（可选）
+- `reviewer` subagent — Stage 3 三路并行审核执行
+- `gh-create-issue` skill — Stage 5 可选调用（或直接用 gh CLI）
 
 **跳过策略**：
 - change 已存在 → 跳过 Stage 2
-- 不需要 codex 审核 → 跳过 Stage 3-4
+- 不需要 subagent 审核 → 跳过 Stage 3-4
 - 不需要 GitHub issue → 跳过 Stage 5
 - 用户说"只做审核" → 只执行 Stage 3
 - 用户说"只创建 issue" → 只执行 Stage 5

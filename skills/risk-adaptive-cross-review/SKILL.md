@@ -121,4 +121,4 @@ Return concise structured output:
 - Do not approve high-risk work when the governing invariant has not been
   stated or tested.
 - Use `stage-change-pipeline` for turning design stages into issues.
-- Use `codex-codeagent-workflow` for implementing a GitHub issue end to end.
+- Use `subagent-workflow` for implementing a GitHub issue end to end.

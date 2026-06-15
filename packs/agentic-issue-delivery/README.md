@@ -15,6 +15,8 @@ This pack bundles the repository's design-to-issue and issue-to-PR delivery work
 - `codeagent`
 - `gh-create-issue`
 - `clarify`
+- `grill-me`
+- `grill-with-docs`
 - `brainstorming`
 - `future-aware-architecture`
 - `implementation-planning`

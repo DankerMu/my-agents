@@ -5,6 +5,15 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-06-15
+
+- Add `grill-with-docs`: the domain-aware variant of `grill-me` (glossary alignment, concrete-scenario boundary probing, code cross-referencing) wired into `stage-change-pipeline` Stage 2. Persistence is localized to this repo's stack: ubiquitous-language glossary at `openspec/glossary.md`, long-lived ADRs at `docs/adr/`. Ported from `mattpocock/skills` (zh-CN reference `vinvcn/mattpocock-skills-zh-CN`).
+
+## [0.4.0] - 2026-06-15
+
+- Add `grill-me`: adversarial plan/design stress-testing (decision-tree interrogation, one question at a time, recommended answer per question) wired into `stage-change-pipeline` as a pre-OpenSpec design gate between Stage 1 and Stage 2. Ported from `mattpocock/skills` (zh-CN reference `vinvcn/mattpocock-skills-zh-CN`).
+- `stage-change-pipeline` (now 0.2.0) migrates Stage 3 review execution to native parallel subagents (`reviewer`) and drops the `codeagent-wrapper` dependency; stale `codex-codeagent-workflow` references across bundled skills are renamed to `subagent-workflow`.
+
 ## [0.3.0] - 2026-06-14
 
 - Add `repo-entropy-audit` (whole-repo entropy governance: six-axis scan, module heatmap, baseline trend, prioritized cleanup) for periodic health checks and pre-release hygiene. Complements the per-change `entropy-review` already in the pack.

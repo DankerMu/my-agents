@@ -3,10 +3,10 @@
   "name": "stage-change-pipeline",
   "displayName": "Stage Change Pipeline",
   "description": "Turn a development-stage design package into an reviewed OpenSpec change and fine-grained GitHub issues with clear module boundaries and small-PR execution scope.",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "maturity": "experimental",
   "categories": ["workflow", "design", "coding"],
-  "tags": ["openspec", "github-issues", "stage-planning", "codeagent", "small-pr"],
+  "tags": ["openspec", "github-issues", "stage-planning", "subagent", "small-pr"],
   "authors": [
     {
       "name": "danker"
@@ -17,7 +17,7 @@
     "changelog": "CHANGELOG.md"
   },
   "requirements": {
-    "tools": ["openspec", "codeagent-wrapper", "gh", "git"],
+    "tools": ["openspec", "gh", "git"],
     "network": "optional"
   },
   "capabilities": {
