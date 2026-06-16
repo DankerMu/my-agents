@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-06-16
+
+- Add a "Pairs With" section cross-linking `codebase-stewardship` and the delivery + stewardship pairing overview (`docs/architecture/delivery-and-stewardship.md`). Docs only; no membership change.
+
 ## [0.5.0] - 2026-06-15
 
 - Add `grill-with-docs`: the domain-aware variant of `grill-me` (glossary alignment, concrete-scenario boundary probing, code cross-referencing) wired into `stage-change-pipeline` Stage 2. Persistence is localized to this repo's stack: ubiquitous-language glossary at `openspec/glossary.md`, long-lived ADRs at `docs/adr/`. Ported from `mattpocock/skills` (zh-CN reference `vinvcn/mattpocock-skills-zh-CN`).

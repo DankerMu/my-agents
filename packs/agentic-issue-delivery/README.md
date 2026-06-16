@@ -54,3 +54,9 @@ External tools are still required by the workflows and are not installed by this
 - a subagent-capable orchestrator (Claude Code Task subagents or Codex subagents)
 
 The pack membership is explicit. It includes local support skills that the two main workflows route to or reference. `subagent-workflow` delegates to the bundled `implementer`, `reviewer`, and `verifier` subagents instead of an external code-agent CLI. The `codeagent` skill remains bundled as optional documentation for the `codeagent-wrapper` CLI; it is no longer required by the delivery path.
+
+## Pairs With: `codebase-stewardship`
+
+This pack and [`codebase-stewardship`](../codebase-stewardship/README.md) form a loop: stewardship decides _what to improve_ and holds the code-health baseline; this pack turns those decisions into reviewed PRs, and the new code it produces flows back into the next stewardship pass. They share `openspec/glossary.md` + `docs/adr/` as the single source of truth, the grill skills as a common decision base, and `entropy-review` as the in-delivery health gate.
+
+Full workflow: [Delivery + Stewardship pairing](../../docs/architecture/delivery-and-stewardship.md).

@@ -4,5 +4,6 @@
 
 | Name | Type | Version | Maturity | Categories | Members | Description |
 | --- | --- | --- | --- | --- | --- | --- |
-| [agentic-issue-delivery](../../packs/agentic-issue-delivery/README.md) | role-pack | 0.5.0 | experimental | workflow, coding, review | 17 skills, 4 agents | Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through subagent-driven review and delivery gates, with whole-repo entropy governance. |
+| [agentic-issue-delivery](../../packs/agentic-issue-delivery/README.md) | role-pack | 0.5.1 | experimental | workflow, coding, review | 17 skills, 4 agents | Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through subagent-driven review and delivery gates, with whole-repo entropy governance. |
+| [codebase-stewardship](../../packs/codebase-stewardship/README.md) | role-pack | 0.1.0 | experimental | coding, refactoring, review | 8 skills, 1 agents | 周期性/按需的代码健康治理：深化模块、治乱删冗、定架构方向，共用 grill 对抗式对话与 openspec/glossary.md + docs/adr/ 领域沉淀。区别于 agentic-issue-delivery 的一次性 issue 交付流水线。 |
 | [product-manager](../../packs/product-manager/README.md) | role-pack | 0.1.1 | experimental | business, productivity, research | 5 skills, 3 agents | Product strategy, requirements, and research workflow pack. |
