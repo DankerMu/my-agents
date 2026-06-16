@@ -205,6 +205,13 @@ async function runInstallCli(argv = process.argv) {
     return;
   }
 
+  if (ok && !isUninstall && scope === "project" && type !== "project") {
+    console.log("");
+    console.log(
+      "Next: run the `project-instruction-bootstrap` skill to bootstrap or align this project's CLAUDE.md / AGENTS.md (it presents a plan/diff before writing)."
+    );
+  }
+
   if (!ok) {
     process.exitCode = 1;
   }
