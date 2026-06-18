@@ -394,6 +394,30 @@
       ]
     },
     {
+      "name": "meta-loop",
+      "path": "skills/meta-loop",
+      "displayName": "Meta-Loop",
+      "description": "Judge whether any produce → check → fix → re-check loop (verification, review, maker/checker, evaluator-optimizer, agent self-review) is well-designed against a 10-dimension rubric, or design a new one in 9 steps. Grounded in TDD, Reflexion, LLM-as-judge, process-supervision, and agentic-workflow research.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "workflow",
+        "review",
+        "ai"
+      ],
+      "tags": [
+        "loop",
+        "verification",
+        "review",
+        "maker-checker",
+        "evaluator-optimizer",
+        "llm-as-judge",
+        "self-review",
+        "meta-methodology",
+        "rubric"
+      ]
+    },
+    {
       "name": "project-documentation",
       "path": "skills/project-documentation",
       "displayName": "Docs Governance",
@@ -969,5 +993,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-06-16T15:05:10.660Z"
+  "generatedAt": "2026-06-18T06:55:09.467Z"
 }
