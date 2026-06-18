@@ -8,7 +8,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.3.0"
+  version: "0.5.0"
 ---
 
 # Stage Change Pipeline
@@ -48,8 +48,10 @@ Stage 2: OpenSpec Change 创建
     ↓
 Stage 3: 并行 Subagent 审核 (3 路)
     ↓
-Stage 4: 审核修复
-    ↓
+Stage 4: 审核修复 (P0 阻塞 + P1 顺带)  ←─────┐
+    ↓ (强制经过验证门，不可跳到 Stage 5)      │ 仍有 P0 未解决/回归且轮次 < 3
+Stage 4.5: 独立验证门 ──────────────────────┘
+    ↓ (P0 清零 + P1 已解决或携带 issue，或触顶 3 轮)
 Stage 5: GitHub Issue 创建
 ```
 
@@ -159,11 +161,11 @@ Stage 5: GitHub Issue 创建
 
 ## Stage 4: 审核修复
 
-**目标**：根据审核意见修改 change 文件，解决全部 P0 问题。
+**目标**：根据审核意见修改 change 文件，解决 P0（必须修复）与 P1（建议改进）问题。每轮带着 Stage 4.5 验证门反馈的未解决/回归 finding 进入；首轮直接消费 Stage 3 的去重 finding。
 
 **步骤**：
 
-1. 从三路审核中提取去重后的 P0 问题清单，识别共性问题（如命名不一致、字段遗漏、计数矛盾）。
+1. 从三路审核中提取去重后的 P0 + P1 问题清单，识别共性问题（如命名不一致、字段遗漏、计数矛盾）。P0 优先（阻塞带，必须修到清零）；P1 顺带处理——低成本即修，否则显式携带到 issue，不单独驱动回环。
 
 2. 按文件分组修改。典型的 P0 问题类型：
    - **命名不一致**：目录名、文件名、表名在 spec/tasks/design 之间不统一
@@ -176,7 +178,38 @@ Stage 5: GitHub Issue 创建
 
 4. 修复后验证 `openspec status --change "<name>"` 仍然 4/4 complete。
 
-5. P1 问题如果修改成本低（<5 分钟），一并处理；否则记录到 issue 中作为后续优化。
+5. 记录本轮改动的文件清单和每条 finding 的修复证据（文件 + 行/片段），交给 Stage 4.5 核销。不要在 Stage 4 自行宣告"已修复"——结论由独立验证门给出。
+
+---
+
+## Stage 4.5: 独立验证门（有界回环）
+
+**目标**：由不参与修复的独立视角确认 Stage 4 真正解决了 P0/P1，且修复没有引入新的不一致；未达标则带证据回到 Stage 4，最多 3 轮。
+
+**关键约束**：
+- 验证者必须是**不参与本轮修复**的独立 subagent（只读 leaf：只核销、不改 change 文件，也不再嵌套发起本流水线）。建议 task id：`verify-review-fixes`。
+- 对抗式判定：每条 finding **默认"未解决"**，必须有修复证据才判 `resolved`。证据不足、含糊或对不上即判 `unresolved`。
+
+**触发与确认（不可跳过）**：
+- 禁止从 Stage 4 直接跳到 Stage 5——每完成一轮 Stage 4 修复，必须经过本验证门。
+- 每轮进入验证门时编排器显式输出 ack：`Stage 4.5 round <N>: started`；退出时输出 `round <N> verdict: <resolved>/<total> resolved, residual P0=<n> P1=<n>`。这两行是该轮验证门确实运行的可审计凭据，缺失即视为门被跳过，不得进入 Stage 5。
+- **可靠性限制（诚实声明）**：本 skill 是可移植的文档方法论，无法替消费项目安装 pre-commit/pre-PR hook，因此触发可靠性依赖上述 ack 凭据 + 编排器纪律。若消费仓库存在可挂载的硬动作（如 PR 创建前钩子），应把本门锚定其上。各项目真实 skip-rate 为开放实测项，需在使用中审计，不可假设"写了就一定会跑"。
+
+**步骤**：
+
+1. 用编排器原生 subagent spawn 一个 `verifier`，输入：本轮去重后的 P0/P1 清单 + Stage 4 改动的文件列表 + 各 finding 的修复证据。
+2. 逐条核销：每条 finding 标 `resolved` / `unresolved` / `regressed`（修复引入的新问题），附文件 + 行/片段证据。
+3. Delta 一致性扫描：只对**被改文件触及**的跨 artifact 关系（命名、计数、覆盖、ID 规范）复查，不重跑全量三路审核。仅当修复改动了实体名、表/ENUM 计数等会全局扩散的项时，升级为 Stage 3 三路全审。
+4. 汇总：残留的 P0/P1（`unresolved`）+ 新增的 P0/P1（`regressed`）。
+
+**回环判定**：
+
+**band 划分**：P0 是 **blocking 带**——驱动回环，必须修到清零才放行；P1 是 **non-blocking 携带带**——每轮顺带修，但不阻塞退出，未修的 P1 携带到 issue。
+
+- **退出（进 Stage 5）**：P0 全部 `resolved` **且** P1 已 `resolved` 或显式携带到 issue **且** `openspec status` 4/4 complete **且** 验证门本轮无新增 P0。
+- **继续**：仍有 `unresolved`/`regressed` 的 **P0** **且** 已完成轮次 < 3 → 带验证门证据回 Stage 4 再修，轮次 +1；同轮可低成本顺带的 P1 一并修，但 P1 不单独触发回环。
+- **触顶（已完成 3 轮）**：把残留 P0/P1 如实写入对应 issue 正文并标 `needs-followup`，不假装干净；P0 残留必须在 Epic 中显著标注阻塞风险。
+- **收敛停止（提前退出）**：若某轮净新增 finding 不再下降，可在 3 轮内提前停，按"触顶"方式记录残留，避免空转。
 
 ---
 
@@ -259,6 +292,9 @@ openspec instructions <artifact> --change "<name>" --json
 # Stage 3：用编排器原生并行 subagent 同时 spawn 3 个 reviewer subagent
 #   review-design-consistency / review-spec-completeness / review-tasks-executability
 
+# Stage 4.5：spawn 独立 verifier 核销 P0/P1，未清且 < 3 轮则回 Stage 4
+#   verify-review-fixes
+
 # Stage 5
 gh label create ...
 gh issue create --title "..." --label "..." --body "..."
@@ -267,11 +303,12 @@ gh issue create --title "..." --label "..." --body "..."
 **依赖**：
 - `grill-me` skill — Stage 1→2 之间的设计压测（可选）
 - `reviewer` subagent — Stage 3 三路并行审核执行
+- `verifier` subagent — Stage 4.5 独立验证门核销（不得复用修复者）
 - `gh-create-issue` skill — Stage 5 可选调用（或直接用 gh CLI）
 
 **跳过策略**：
 - change 已存在 → 跳过 Stage 2
-- 不需要 subagent 审核 → 跳过 Stage 3-4
+- 不需要 subagent 审核 → 跳过 Stage 3-4.5
 - 不需要 GitHub issue → 跳过 Stage 5
 - 用户说"只做审核" → 只执行 Stage 3
 - 用户说"只创建 issue" → 只执行 Stage 5
