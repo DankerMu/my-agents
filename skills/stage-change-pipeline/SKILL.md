@@ -8,7 +8,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.5.0"
+  version: "0.6.0"
 ---
 
 # Stage Change Pipeline
@@ -278,6 +278,36 @@ Stage 5: GitHub Issue 创建
 
 ---
 
+## 跨运行问责（Loop Accountability）
+
+> 对应 meta-loop rubric dim 6（跨运行记忆）。Stage 4.5 的回环只解决"单次运行内"的记忆；本节解决"这道验证门长期是否还值得跑"。**仅做问责，不做跨 change 学习**——不把某个 change 的 finding 带进另一个 change 的审核 brief，避免跨 change 偏见。
+
+**1. catch-rate 日志（提交进仓库）**
+
+每次流水线跑完 Stage 4.5（无论 clean 还是 residual），向消费仓库里一个**已提交、append-only** 的日志追加一行。默认 `docs/stage-pipeline-log.jsonl`（或该项目存放运维记录的既有位置）。一行 schema：
+
+```json
+{"change":"<name>","date":"<run-date>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
+```
+
+- `gate_net_catch`：**本节核心指标**——验证门独有的价值。统计"修复者声称已解决、但独立验证者判为 `unresolved`/`regressed` 的 finding 数"，即若没有 Stage 4.5 这道门就会漏过去的问题数。Stage 3 审核和 `openspec status` 已经抓到的不计入。
+- 其余字段供横向看趋势（轮次、残留、回归、成本）。
+
+**2. kill 标准**
+
+验证门要持续证明自己值得那份成本。判定（最小样本 = 5 次运行，不足不下结论）：
+
+- 若连续 **≥5 次** 运行 `gate_net_catch` 都 ≈ 0（验证者从不推翻修复者、也不抓回归），说明它在橡皮图章 → **收窄**（改成只在修复触及实体名、表/ENUM 计数等全局扩散项时才跑）或**退役**。
+- 收窄/退役的决定连同日志证据记入 change 或 `docs/adr/`，不悄悄关掉。
+
+**3. ratchet（把复发问题棘轮成永久校验）**
+
+当同一 finding 类（如"表/ENUM 计数不一致"、"OpenAPI schema 缺字段"）跨 **≥2 次** 运行复发，就把它从"每次靠人审抓"提升为**永久自动校验**——加一条 openspec validation / lint / CI 检查。已解决的问题从此变成不变量，不再消耗回环预算，也顺带降低 dim 9 成本。
+
+**非目标**：不做 Reflexion 式跨 change 学习（不把历史 change 的 finding 模式注入新 change 的审核）。catch-rate 日志是**组织级问责**，不是循环内记忆。
+
+---
+
 ## 快速参考
 
 **完整流水线用时**：约 30-60 分钟（取决于 capability 数量和 subagent 审核耗时）
@@ -304,6 +334,7 @@ gh issue create --title "..." --label "..." --body "..."
 - `grill-me` skill — Stage 1→2 之间的设计压测（可选）
 - `reviewer` subagent — Stage 3 三路并行审核执行
 - `verifier` subagent — Stage 4.5 独立验证门核销（不得复用修复者）
+- `docs/stage-pipeline-log.jsonl`（消费仓库内，已提交）— 跨运行 catch-rate 问责与 kill 标准
 - `gh-create-issue` skill — Stage 5 可选调用（或直接用 gh CLI）
 
 **跳过策略**：
