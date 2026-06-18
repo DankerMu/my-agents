@@ -2,7 +2,7 @@
 
 Use this template when running Phase 4 and follow-up cross-review rounds after Phase 6 fixes. Replace placeholders before spawning the `reviewer` subagents.
 
-Canonical source: reviewer-pack scope and the actionable finding contract are defined by the `risk-adaptive-cross-review` skill (`reviewer-packages.md`, `finding-contract.md`, `failure-class-synthesis.md`). This file does not redefine them; it is the OpenSpec instantiation — the concrete reviewer-subagent task scaffolding, the `Invariant Matrix` binding, and the Phase 4.5 verifier. If a checklist here drifts from the canonical contract, the `risk-adaptive-cross-review` definition wins.
+Canonical source: reviewer-pack scope, the per-reviewer checklists, the cross-cutting review lenses, and the actionable finding contract are defined by the `risk-adaptive-cross-review` skill (`reviewer-packages.md`, `finding-contract.md`, `failure-class-synthesis.md`). This file does not redefine them; it is the OpenSpec instantiation — the concrete reviewer-subagent task scaffolding, the `Invariant Matrix` binding, and the Phase 4.5 verifier. If anything here drifts from the canonical contract, the `risk-adaptive-cross-review` definition wins.
 
 Reviewers are recall-biased producers. Everything a reviewer writes under `Findings:` is a **candidate finding**, not a final merge-blocking verdict. Candidates pass through the Phase 4.5 independent verification gate (verifier template at the bottom of this file) before entering Phase 5. Reviewers should therefore surface any candidate with a nameable failure scenario instead of self-censoring half-believed ones; the verifier, not the reviewer, decides REFUTED.
 
@@ -36,28 +36,38 @@ Reviewer invariant rule:
 
 - When a reviewer finds a bug class, it must report the invariant and likely sibling surfaces, not only the first cited line.
 - If the same unsafe pattern appears in multiple files or could plausibly apply to sibling validators/helpers/producers/consumers, the reviewer should request a cross-cutting audit/fix.
-- Findings must be actionable. Each finding must include severity, `Failure class:`, violated invariant/contract, concrete failing scenario or reproduction path, required test/evidence, sibling surfaces to audit, merge-blocking status, impact, and requested fix.
+- Findings must be actionable per `finding-contract.md`: severity, `Failure class:`, violated invariant/contract, concrete failing scenario or reproduction path, required test/evidence, sibling surfaces to audit, merge-blocking status, impact, and requested fix.
 - If the reviewer cannot provide a concrete scenario and required test/evidence, it must list the item under `Non-blocking notes`, not `Findings`.
 - Do not invent a scenario, repro, or test to satisfy the format. Use only evidence from the diff, OpenSpec fixture, existing code/contracts, tests, or a concrete reasoning path grounded in those inputs.
 - Do not repeat a known prior finding as current unless the current head still violates it. For follow-up rounds, mark prior findings closed or still failing with evidence.
-- Failure class examples: path binding, bounded read, JSON complexity, lane lifecycle, schema/audit contract, retry semantics, resource limit, compatibility drift.
 - For high or broad-expanded PRs, every report must include an `Invariant Matrix Coverage` section:
   - `<row>`: covered|missing|out-of-scope - <evidence or rationale>
   Missing coverage for a selected row is a finding unless the fixture itself declares it a non-goal.
 
-## Reviewer Subagent Briefs
+## Reviewer Subagent Brief (assembly)
 
-Spawn one `reviewer` subagent per selected brief, in parallel. Each subagent's working directory is `<absolute repo path>`. Each brief is self-contained; pass it as the subagent task.
+Do not maintain per-reviewer checklists here. Build one brief per selected reviewer from the template below, inlining that reviewer's checklist from `risk-adaptive-cross-review` (`reviewer-packages.md` → Reviewer Checklists) plus any diff-triggered cross-cutting lens (removed-behavior, wrapper/proxy, altitude) that reviewer owns. Spawn the selected set as parallel subagents in one batch; each subagent's working directory is `<absolute repo path>`.
 
-### Reviewer subagent: `review-spec-compliance`
+Reviewer roles and report files:
+
+| Reviewer role | Report file | Escalation |
+| --- | --- | --- |
+| `review-spec-compliance` | `<REVIEW_DIR>/spec-compliance.md` | standard |
+| `review-correctness` | `<REVIEW_DIR>/correctness.md` | standard |
+| `review-integration` | `<REVIEW_DIR>/integration.md` | standard |
+| `review-security-perf` | `<REVIEW_DIR>/security-perf.md` | standard |
+| `review-test-evidence` | `<REVIEW_DIR>/test-evidence.md` | 6-reviewer only |
+| `review-invariant-state` | `<REVIEW_DIR>/invariant-state.md` | 6-reviewer only |
+
+Brief template (fill the bracketed slots per reviewer):
 
 ```text
-# Code Review: Spec Compliance
+# Code Review: <reviewer role>
 
 Review PR #<N> on branch <branch>.
 Head SHA: <FULL_SHA>
 Review round: <review round>
-Write the complete report to <REVIEW_DIR>/spec-compliance.md.
+Write the complete report to <REVIEW_DIR>/<report file>.
 
 Rules:
 - Do not edit files, commit, push, or change state.
@@ -71,244 +81,19 @@ Inputs:
 - Spec references: <proposal.md> <design.md> <tasks.md>
 
 Checklist:
-- Cross-check every task in tasks.md against the diff; mark DONE or MISSING.
+- <inline this reviewer's checklist from reviewer-packages.md -> Reviewer Checklists>
+- <plus any diff-triggered cross-cutting lens owned by this reviewer (removed-behavior, wrapper/proxy, altitude)>
 - For high or broad-expanded fixtures, cross-check every Invariant Matrix row against code and tests.
-- Flag scope creep not covered by the issue or OpenSpec change.
-- Verify acceptance criteria.
-- Check test coverage against tasks.md.
-- Check selected risk packs are addressed.
-- If a selected risk pack has repeated or analogous surfaces, verify the evidence covers the invariant across those surfaces, not only one example.
 
 Output:
-Reviewer agent: Spec Compliance Reviewer
+Reviewer agent: <reviewer role>
 Review round: <review round>
 Reviewed head SHA: <FULL_SHA>
 Summary: <one-line conclusion>
-Invariant Matrix Coverage:
+Invariant Matrix Coverage:        # high / broad-expanded only
 - <row>: covered|missing|out-of-scope - <evidence or rationale>
 Findings:
-- <Severity: critical/major/minor> Failure class: <class>. Contract/invariant: <rule>. Scenario/repro: <concrete case>. Required test/evidence: <test or command>. Sibling surfaces to audit: <files/helpers or "none">. Blocks merge: yes|no. Impact: <impact>. Requested fix: <fix>
-- ...or "None." if clean
-Non-blocking notes:
-- <items without concrete scenario/test, or "None.">
-```
-
-### Reviewer subagent: `review-correctness`
-
-```text
-# Code Review: Correctness
-
-Review PR #<N> on branch <branch>.
-Head SHA: <FULL_SHA>
-Review round: <review round>
-Write the complete report to <REVIEW_DIR>/correctness.md.
-
-Rules:
-- Do not edit files, commit, push, or change state.
-- You are a leaf reviewer subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
-- Output only a structured review report.
-
-Inputs:
-- Changed files: <path list>
-- Fixture summary: <fixture summary>
-- Fix summary for follow-up rounds: <fix summary>
-- Spec references: <proposal.md> <design.md> <tasks.md>
-
-Checklist:
-- Logic correctness within each changed file.
-- For high or broad-expanded fixtures, verify the governing invariant cannot be violated by valid boundary, stale, mismatched, or unauthorized inputs named by the Invariant Matrix.
-- Function signatures match the target API.
-- Edge cases: null/empty inputs, boundary values, off-by-one.
-- Type safety at call sites.
-- Control flow: error branches, early returns, loop bounds.
-- Correctness against selected risk packs from the OpenSpec fixture.
-- If a cited bug reveals a reusable unsafe pattern, identify all sibling call sites/helpers that should satisfy the same invariant.
-
-Output:
-Reviewer agent: Correctness Reviewer
-Review round: <review round>
-Reviewed head SHA: <FULL_SHA>
-Summary: <one-line conclusion>
-Invariant Matrix Coverage:
-- <row>: covered|missing|out-of-scope - <evidence or rationale>
-Findings:
-- <Severity: critical/major/minor> Failure class: <class>. Contract/invariant: <rule>. Scenario/repro: <concrete case>. Required test/evidence: <test or command>. Sibling surfaces to audit: <files/helpers or "none">. Blocks merge: yes|no. Impact: <impact>. Requested fix: <fix>
-- ...or "None." if clean
-Non-blocking notes:
-- <items without concrete scenario/test, or "None.">
-```
-
-### Reviewer subagent: `review-integration`
-
-```text
-# Code Review: Integration and Cross-file Impact
-
-Review PR #<N> on branch <branch>.
-Head SHA: <FULL_SHA>
-Review round: <review round>
-Write the complete report to <REVIEW_DIR>/integration.md.
-
-Rules:
-- Do not edit files, commit, push, or change state.
-- You are a leaf reviewer subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
-- Output only a structured review report.
-
-Inputs:
-- Changed files: <path list>
-- Fixture summary: <fixture summary>
-- Fix summary for follow-up rounds: <fix summary>
-- Spec references: <proposal.md> <design.md> <tasks.md>
-
-Checklist:
-- Return value contracts match downstream expectations.
-- Removed-behavior audit: for every line the diff deletes or replaces, name the invariant, guard, validation, or error path it enforced, then locate where the new code re-establishes it. If you cannot find the re-establishment, that is a candidate finding (dropped guard, narrowed validation, removed error branch, deleted covering test).
-- For high or broad-expanded fixtures, trace the source-of-truth identity/contract through every producer, validator, storage/cache/query, route/entrypoint, downstream consumer, failure path, and evidence surface named by the Invariant Matrix.
-- Shared variables flow correctly from setup/config to consumers.
-- Execution order satisfies prerequisites before first use.
-- Unchanged consumers of changed outputs still work.
-- Global state is explicit or intentionally preserved.
-- Compatibility axes named in the OpenSpec fixture are preserved.
-- For producer/consumer, receipt/summary, schema, and evidence flows, verify that all linked artifacts are bound to the same identity/contract and cannot be mixed from sibling paths or stale states.
-
-Output:
-Reviewer agent: Integration Reviewer
-Review round: <review round>
-Reviewed head SHA: <FULL_SHA>
-Summary: <one-line conclusion>
-Invariant Matrix Coverage:
-- <row>: covered|missing|out-of-scope - <evidence or rationale>
-Findings:
-- <Severity: critical/major/minor> Failure class: <class>. Contract/invariant: <rule>. Scenario/repro: <concrete case>. Required test/evidence: <test or command>. Sibling surfaces to audit: <files/helpers or "none">. Blocks merge: yes|no. Impact: <impact>. Requested fix: <fix>
-- ...or "None." if clean
-Non-blocking notes:
-- <items without concrete scenario/test, or "None.">
-```
-
-### Reviewer subagent: `review-security-perf`
-
-```text
-# Code Review: Security and Performance
-
-Review PR #<N> on branch <branch>.
-Head SHA: <FULL_SHA>
-Review round: <review round>
-Write the complete report to <REVIEW_DIR>/security-perf.md.
-
-Rules:
-- Do not edit files, commit, push, or change state.
-- You are a leaf reviewer subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
-- Output only a structured review report.
-
-Inputs:
-- Changed files: <path list>
-- Fixture summary: <fixture summary>
-- Fix summary for follow-up rounds: <fix summary>
-- Spec references: <proposal.md> <design.md> <tasks.md>
-
-Checklist:
-- Path safety: traversal, symlinks, overwrite behavior.
-- For high or broad-expanded fixtures, verify adversarial/boundary rows in the Invariant Matrix have stable failures and cannot bypass the selected risk-pack controls.
-- Resource management: file handles, connections, device open/close pairing.
-- Unbounded operations: loops without guards, large allocations, memory safety.
-- Data integrity: no silent numerical or semantic changes.
-- Info leakage: tokens, keys, credentials in logs or output.
-- Security/performance risk packs selected in the OpenSpec fixture are addressed.
-- For path/evidence/resource findings, check analogous sibling modules and shared helper patterns before concluding the risk pack is closed.
-
-Output:
-Reviewer agent: Security and Performance Reviewer
-Review round: <review round>
-Reviewed head SHA: <FULL_SHA>
-Summary: <one-line conclusion>
-Invariant Matrix Coverage:
-- <row>: covered|missing|out-of-scope - <evidence or rationale>
-Findings:
-- <Severity: critical/major/minor> Failure class: <class>. Contract/invariant: <rule>. Scenario/repro: <concrete case>. Required test/evidence: <test or command>. Sibling surfaces to audit: <files/helpers or "none">. Blocks merge: yes|no. Impact: <impact>. Requested fix: <fix>
-- ...or "None." if clean
-Non-blocking notes:
-- <items without concrete scenario/test, or "None.">
-```
-
-### Reviewer subagent: `review-test-evidence` (6-reviewer escalation only)
-
-```text
-# Code Review: Test and Evidence Coverage
-
-Review PR #<N> on branch <branch>.
-Head SHA: <FULL_SHA>
-Review round: <review round>
-Write the complete report to <REVIEW_DIR>/test-evidence.md.
-
-Rules:
-- Do not edit files, commit, push, or change state.
-- You are a leaf reviewer subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
-- Output only a structured review report.
-
-Inputs:
-- Changed files: <path list>
-- Fixture summary: <fixture summary>
-- Fix summary for follow-up rounds: <fix summary>
-- Spec references: <proposal.md> <design.md> <tasks.md>
-
-Checklist:
-- Map every selected OpenSpec task and required evidence row to an explicit test, command, fixture, or justified non-goal.
-- For high or broad-expanded fixtures, verify every Invariant Matrix row has both positive and failure/boundary regression evidence where applicable.
-- Verify tests exercise real integration surfaces when the fixture requires real DB/state/orchestrator/API behavior; fake-only coverage is insufficient unless the fixture says so.
-- Check unchanged downstream consumer compatibility tests named by the fixture.
-- Check local verification commands cover touched modules and do not omit a selected risk pack.
-- Identify stale, overbroad, or misleading evidence claims.
-
-Output:
-Reviewer agent: Test and Evidence Coverage Reviewer
-Review round: <review round>
-Reviewed head SHA: <FULL_SHA>
-Summary: <one-line conclusion>
-Invariant Matrix Coverage:
-- <row>: covered|missing|out-of-scope - <evidence or rationale>
-Findings:
-- <Severity: critical/major/minor> Failure class: <class>. Contract/invariant: <rule>. Scenario/repro: <concrete case>. Required test/evidence: <test or command>. Sibling surfaces to audit: <files/helpers or "none">. Blocks merge: yes|no. Impact: <impact>. Requested fix: <fix>
-- ...or "None." if clean
-Non-blocking notes:
-- <items without concrete scenario/test, or "None.">
-```
-
-### Reviewer subagent: `review-invariant-state` (6-reviewer escalation only)
-
-```text
-# Code Review: Invariant, State Machine, and Compatibility
-
-Review PR #<N> on branch <branch>.
-Head SHA: <FULL_SHA>
-Review round: <review round>
-Write the complete report to <REVIEW_DIR>/invariant-state.md.
-
-Rules:
-- Do not edit files, commit, push, or change state.
-- You are a leaf reviewer subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan.
-- Output only a structured review report.
-
-Inputs:
-- Changed files: <path list>
-- Fixture summary: <fixture summary>
-- Fix summary for follow-up rounds: <fix summary>
-- Spec references: <proposal.md> <design.md> <tasks.md>
-
-Checklist:
-- Trace the governing invariant across producers, validators, storage/cache/query, public entrypoints, downstream consumers, failure paths, stale-state boundaries, and evidence surfaces.
-- For state-machine work, verify transition ordering, terminal/active/permanent/manual states, retry limits, cancellation proof gaps, stale DB/cache boundaries, and no duplicate or lost transition.
-- Verify candidate/run/object identity cannot collapse across siblings, stale rows, aggregate rows, or partial-success manifests.
-- Verify backward compatibility for unchanged consumers and older persisted state shapes.
-- If one issue exposes a reusable unsafe state/helper pattern, identify the full sibling surface that must be audited or fixed.
-
-Output:
-Reviewer agent: Invariant and State Compatibility Reviewer
-Review round: <review round>
-Reviewed head SHA: <FULL_SHA>
-Summary: <one-line conclusion>
-Invariant Matrix Coverage:
-- <row>: covered|missing|out-of-scope - <evidence or rationale>
-Findings:
-- <Severity: critical/major/minor> Failure class: <class>. Contract/invariant: <rule>. Scenario/repro: <concrete case>. Required test/evidence: <test or command>. Sibling surfaces to audit: <files/helpers or "none">. Blocks merge: yes|no. Impact: <impact>. Requested fix: <fix>
+- <one per finding in the finding-contract.md field shape: Severity / Failure class / Contract or invariant / Scenario or repro / Required test or evidence / Sibling surfaces / Blocks merge / Impact / Requested fix>
 - ...or "None." if clean
 Non-blocking notes:
 - <items without concrete scenario/test, or "None.">

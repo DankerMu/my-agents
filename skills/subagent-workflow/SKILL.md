@@ -31,7 +31,7 @@ This workflow assumes every input issue is already implementation-ready. When is
 - Use `review` for focused artifact review when the work does not justify multi-perspective cross-review, and `entropy-review` when a follow-up check is specifically about consistency, naming drift, error-model splits, or pattern duplication.
 - Use `git-worktree-workflows` only for user-facing worktree guidance or recovery; this workflow's parallel code-writing isolation remains governed by `references/parallel-worktree-delegation.md`.
 - Use `project-documentation` when implementation changes require docs-set refresh, docs drift checks, or source-of-truth cleanup outside the PR evidence summary.
-- Within this workflow, Phase 4 and follow-up review rounds use `references/phase-4-cross-review.md`. That reference is only the OpenSpec instantiation — concrete subagent task scaffolding, the `Invariant Matrix` binding, and the Phase 4.5 verifier. Reviewer-pack scope and the finding contract themselves are not redefined there; they come from `risk-adaptive-cross-review`.
+- Within this workflow, Phase 4 and follow-up review rounds use `references/phase-4-cross-review.md`. That reference is only the OpenSpec instantiation — concrete subagent task scaffolding, the `Invariant Matrix` binding, and the Phase 4.5 verifier. Reviewer-pack scope, the per-reviewer checklists, the cross-cutting lenses, and the finding contract are not redefined there; reviewer briefs inline them from `risk-adaptive-cross-review` (`reviewer-packages.md`).
 
 ## Core Rules
 

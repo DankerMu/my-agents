@@ -8,7 +8,7 @@ description: >
   test evidence, spec compliance, or invariant/state-machine compatibility. Do
   not use for ordinary quick review unless the user asks for multi-perspective
   or risk-adaptive depth.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Risk-Adaptive Cross Review
@@ -63,6 +63,10 @@ reviewer set. Defaults:
 - PR Review high: add Spec Compliance when a fixture exists, plus
   Invariant/State-Machine/Compatibility.
 - OpenSpec Review: Design Consistency, Spec Completeness, Tasks Executability.
+
+Beyond pack scope, every reviewer also applies the change-triggered **cross-cutting
+lenses** in `reviewer-packages.md` — removed-behavior audit, wrapper/proxy
+faithfulness, and altitude/ownership — whenever the diff trips a lens trigger.
 
 Use `codeagent-wrapper --parallel --full-output --backend codex` when multiple
 independent reviewers can run concurrently. If that tool is unavailable, run the
