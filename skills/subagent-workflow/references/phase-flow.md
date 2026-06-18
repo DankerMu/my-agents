@@ -524,6 +524,17 @@ Post Chinese work-summary comment before the merge gate or pre-authorized auto-m
 - <需要人工重点看的点；没有则写“无额外关注点”>
 ```
 
+### Pre-merge evidence hard-gate
+
+Before requesting merge approval or running a pre-authorized auto-merge, verify all of the following for the frozen final HEAD. If any fails, do not merge — re-run the missing phase or fix the gap, and record a skip block for the accountability log:
+
+- The PR `Agent Review` section lists the reviewer agents actually used and a `Reviewed head SHA` equal to the frozen `FULL_SHA`.
+- The Phase 4.5 verifier verdict table for the final head is persisted in the review evidence directory.
+- The latest comprehensive cross-review round is clean (no actionable findings) and the Phase 7 final review is complete on the final head.
+- No posted evidence presents stale findings as current.
+
+This gate is orchestrator-enforced by default. Where the host repo supports it, add a required CI/branch-protection status check that fails the merge unless the `Agent Review` evidence block is present and SHA-matched, so skipping the review/verify loop is a detectable hard action rather than discretionary. A portable skill cannot install that check; recommend it as host-repo setup and, until it exists, treat the orchestrator gate as the enforcement point and log every skip block.
+
 Then stop for explicit merge approval unless the user explicitly pre-authorized auto-merge for the run. When auto-merge is pre-authorized, merge only after final review is clean, required CI passes, PR evidence comments are posted, and the Chinese work-summary comment is posted; delete the merged branch when appropriate and continue to the next unblocked issue.
 
 After approval:
@@ -536,5 +547,24 @@ DEFAULT_BRANCH=${DEFAULT_BRANCH#origin/}
 git checkout "$DEFAULT_BRANCH" && git pull
 gh issue close <ISSUE#> --comment "Closed via merged PR #<PR#>. <summary>"
 ```
+
+### Cross-Run Loop Accountability
+
+After a successful merge, append exactly one line to the host repo's committed, append-only review-loop log (`docs/review-loop-log.jsonl`, or the project's existing operational-log location). Commit it as merge follow-up, not inside the PR.
+
+```json
+{"issue":<N>,"pr":<N>,"date":"<merge-date>","fixture":"none|compact|expanded|high|broad-expanded","rounds":<comprehensive-rounds>,"gate_net_catch":<n>,"verdicts":{"confirmed":<n>,"plausible":<n>,"refuted":<n>},"residual_deferred":<n>,"premerge_skip_blocks":<n>}
+```
+
+- `gate_net_catch`: the accountability metric — count of verified findings (CONFIRMED plus merge-blocking PLAUSIBLE) the review/verify loop caught that local Phase 2 verification AND CI did not already surface. It measures the unique value the cross-review + verifier loop adds beyond the cheaper machine gates.
+- `premerge_skip_blocks`: times the pre-merge evidence hard-gate had to block this PR for missing/stale evidence (the dim-8 skip-rate signal).
+
+Keep / narrow criterion (a human call; minimum sample ~8 merged PRs at a given fixture level; **default to keep when in doubt**, because this workflow prioritizes correctness over cost):
+
+- If `gate_net_catch` stays ≈ 0 across the sample for a fixture level, surface it for a recorded keep/cut decision in `docs/adr/` — narrow that level's reviewer set or drop a reviewer role that never produces a verified finding.
+- If one reviewer role's candidates are almost always REFUTED, narrow or retune that role's brief rather than dropping coverage.
+- Never auto-narrow; the log informs a deliberate, recorded decision.
+
+This is organizational accountability — whether the review loop keeps earning its keep across PRs. Cross-run risk *learning* (a newly exposed risk surface) already ratchets through the living `openspec/project-profile.md` (Phase 0.0/0.5) and through committed regression tests, so resolved issues become durable invariants.
 
 Report next unblocked issue if any, but do not auto-start it.
