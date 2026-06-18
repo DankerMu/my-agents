@@ -40,6 +40,11 @@ Do not hand-edit this file.
 - 目录约定：{{layout}}
 <!-- TODO: 领域规则 / 不变量 / 禁区（扫描无法确定，需人工补） -->
 
+## 开发环境约定
+
+- **Python 一律用 `uv`**（`uv run`、`uv pip` 等），禁止裸 `python` / `python3` / `pip`，避免污染 macOS / 系统 Python 环境。**无条件默认**——即使项目当前无 Python 也写入（防御性约定，项目长出 Python 工具时不踩坑）。
+<!-- 其它语言工具链按扫描到的栈补：C++ 编译/构建纪律、Node 包管理器、Rust toolchain 等 -->
+
 ## 已装能力（来源：my-agents.project.json + 实际投影）
 
 - Packs：{{packs}}
@@ -49,6 +54,7 @@ Do not hand-edit this file.
   - `{{skill-a}}` — {{一句触发/用途}}
   - `{{skill-b}}` — {{一句触发/用途}}
 <!-- 若装了成对 pack（如 agentic-issue-delivery + codebase-stewardship），在此指向其搭配说明 -->
+<!-- 执行编排：装了 `subagent-workflow` 时写明"执行交 native 子代理（implementer/reviewer/verifier），编排见 subagent-workflow"；**不要**默认套用 `codeagent` 或旧名 `codex-codeagent-workflow`（codeagent 仅限确需 codex CLI 执行的场景）。 -->
 
 ## 项目本地适配（living 文件，按需创建）
 

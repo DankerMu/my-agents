@@ -8,7 +8,7 @@ description: >
   触发词："补全项目指令"、"装完 pack 初始化 CLAUDE.md/AGENTS.md"、"bootstrap project instructions"。
   不用于 my-agents 仓库自身的根指令（那是 instructions/root 生成的）。
 invocation_posture: manual-first
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Project Instruction Bootstrap
@@ -65,8 +65,8 @@ version: 0.1.0
 模板与源结构见 [references/instruction-templates.md](references/instruction-templates.md)。
 
 1. **项目自身约定**（→ `shared.md`）：技术栈、build/test/lint 命令、目录与命名约定、领域规则。能扫描确定的填实；不确定的留**显式 TODO 占位**，不臆造。
-2. **已装能力**（→ `shared.md`）：从 manifest/投影列出 packs、skills、agents；关键触发与用法、平台分工（Claude 读 `CLAUDE.md`/投影在 `.claude/`，Codex 读 `AGENTS.md`/投影在 `.agents/`+`.codex/`）；装了成对 pack 时指向其搭配说明。
-3. **可移植骨架**：项目无关、从 my-agents 编排理念移植——`shared.md` 放 Observable Completion（`Execution Summary` 契约）、反熵下沉、项目本地适配指引（`openspec/project-profile.md` / `openspec/glossary.md` / `docs/adr/`）；`claude.md` 放 Claude 特有项（知识域 skill 显式 `/调用` 等）；`codex.md` 放 Codex 按模型纠偏（自然段落写作、禁末尾追问）。
+2. **已装能力**（→ `shared.md`）：从 manifest/投影列出 packs、skills、agents；关键触发与用法、平台分工（Claude 读 `CLAUDE.md`/投影在 `.claude/`，Codex 读 `AGENTS.md`/投影在 `.agents/`+`.codex/`）；装了成对 pack 时指向其搭配说明；执行编排默认引用已装的 `subagent-workflow` + native 子代理（implementer/reviewer/verifier），勿默认套用 `codeagent` 或旧名 `codex-codeagent-workflow`。
+3. **可移植骨架**：项目无关、从 my-agents 编排理念移植——`shared.md` 放 Observable Completion（`Execution Summary` 契约）、反熵下沉、开发环境约定（Python→`uv` 防御性默认，其它语言工具链按扫描到的栈补）、项目本地适配指引（`openspec/project-profile.md` / `openspec/glossary.md` / `docs/adr/`）；`claude.md` 放 Claude 特有项（知识域 skill 显式 `/调用` 等）；`codex.md` 放 Codex 按模型纠偏（自然段落写作、禁末尾追问）。
 
 ### 5. 生成 / 写入
 

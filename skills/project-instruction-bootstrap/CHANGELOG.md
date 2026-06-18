@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-06-16
+- The portable skeleton carries a defensive Python->`uv` convention (no bare `python`/`python3`/`pip`, to avoid polluting the system/Homebrew Python on macOS) unconditionally — written even when the project currently has no Python — while other language toolchain conventions are added per detected stack.
+- Templates and process steer execution orchestration to the installed `subagent-workflow` + native subagents (implementer/reviewer/verifier) and explicitly warn against defaulting to `codeagent` or the old `codex-codeagent-workflow` name.
+
 ## [0.1.0] - 2026-06-16
 - Initial release: a post-install skill that bootstraps or aligns a target project's own `CLAUDE.md` / `AGENTS.md` after a pack is installed into it.
 - Two modes: a recommended generation mode where the project keeps `instructions/agents/{shared,claude,codex}.md` sources and the skill itself acts as the generator (`CLAUDE.md = shared + claude`, `AGENTS.md = shared + codex`, with a do-not-edit header) — single source of truth for the shared section, zero drift, no scripts/hooks imposed on the business project; and an incremental-compat mode that respects existing hand-written root instructions (append-only, with optional migration to the source layout).
