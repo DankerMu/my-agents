@@ -8,7 +8,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.6.0"
+  version: "0.7.0"
 ---
 
 # Stage Change Pipeline
@@ -134,7 +134,7 @@ Stage 5: GitHub Issue 创建
 
 **关键约束**：通过编排器的原生并行 subagent 机制（Claude Code Task subagents 或 Codex subagents）同时发起 3 个审核任务，不能串行。每个 `reviewer` subagent 必须返回完整审核文本而非摘要。
 
-**审核契约**：使用 `risk-adaptive-cross-review` 的 OpenSpec Review 模式作为审查语义参考：三路审核分别对应 Design Consistency、Spec Completeness、Tasks Executability；P0/P1 问题必须包含失败类型、证据、影响、修复方向和需要回归检查的相邻 artifact。
+**审核契约**：使用 `risk-adaptive-cross-review` 的 OpenSpec Review 模式作为审查语义参考：三路审核分别对应 Design Consistency、Spec Completeness、Tasks Executability;P0/P1 问题必须包含失败类型、证据、影响、修复方向和需要回归检查的相邻 artifact。失败类型从 `finding-contract.md` 的 Failure-Class Vocabulary（含 `design-consistency`/`spec-completeness`/`task-executability` 等 spec 类）取一个标签;含糊、无锚点、纯风格的条目按 Reject 精度门降级为 note，不进 P0/P1。
 
 **步骤**：
 
@@ -189,6 +189,7 @@ Stage 5: GitHub Issue 创建
 **关键约束**：
 - 验证者必须是**不参与本轮修复**的独立 subagent（只读 leaf：只核销、不改 change 文件，也不再嵌套发起本流水线）。建议 task id：`verify-review-fixes`。
 - 对抗式判定：每条 finding **默认"未解决"**，必须有修复证据才判 `resolved`。证据不足、含糊或对不上即判 `unresolved`。
+- **Oracle 完整性**：源设计文档、实施计划、Stage 1 的阶段目标与验收标准是不可篡改的 oracle——是判定 finding 的标准，不是为了让 change 过审而拧的旋钮。只修 change 文件，不改判定它的东西；确需改源设计的，按"方向选择"回 `brainstorming`/`future-aware-architecture`，并显式记录,不得静默改写来消 finding。
 
 **触发与确认（不可跳过）**：
 - 禁止从 Stage 4 直接跳到 Stage 5——每完成一轮 Stage 4 修复，必须经过本验证门。
@@ -206,7 +207,7 @@ Stage 5: GitHub Issue 创建
 
 **band 划分**：P0 是 **blocking 带**——驱动回环，必须修到清零才放行；P1 是 **non-blocking 携带带**——每轮顺带修，但不阻塞退出，未修的 P1 携带到 issue。
 
-- **退出（进 Stage 5）**：P0 全部 `resolved` **且** P1 已 `resolved` 或显式携带到 issue **且** `openspec status` 4/4 complete **且** 验证门本轮无新增 P0。
+- **退出（进 Stage 5）**：P0 全部 `resolved` **且** P1 已 `resolved` 或显式携带到 issue **且** `openspec status` 4/4 complete **且** 验证门本轮无新增 P0 **且** 完成自审通过——对照 Stage 1 收集的阶段目标与验收标准逐条核对，每个要求都有对应的 spec requirement + task 覆盖、无遗漏的设计目标或边界、change 内部无相互矛盾的修复;任一要求未覆盖则回 Stage 4，不靠"看起来修完了"放行。
 - **继续**：仍有 `unresolved`/`regressed` 的 **P0** **且** 已完成轮次 < 3 → 带验证门证据回 Stage 4 再修，轮次 +1；同轮可低成本顺带的 P1 一并修，但 P1 不单独触发回环。
 - **触顶（已完成 3 轮）**：把残留 P0/P1 如实写入对应 issue 正文并标 `needs-followup`，不假装干净；P0 残留必须在 Epic 中显著标注阻塞风险。
 - **收敛停止（提前退出）**：若某轮净新增 finding 不再下降，可在 3 轮内提前停，按"触顶"方式记录残留，避免空转。

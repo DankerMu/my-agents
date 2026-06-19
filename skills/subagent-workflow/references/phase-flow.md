@@ -428,8 +428,8 @@ Mandatory for every PR.
 
 1. Ensure build/lint/tests pass and the latest cross-review round is clean.
 2. Spawn a clean-context `reviewer` subagent for read-only final review. It must not edit files, invoke this workflow, use skills, or spawn further subagents.
-3. Provide PR number, branch, full SHA, diff scope/changed files, OpenSpec files, fixture level/risk packs, all cross-review round summaries, and fix summary.
-4. Ask it to focus on error recovery, backward compatibility, test coverage vs `tasks.md`, and pre-existing consumers.
+3. Provide PR number, branch, full SHA, diff scope/changed files, OpenSpec files, fixture level/risk packs, all cross-review round summaries, the verified-findings list, and fix summary.
+4. Run this as the **Gap Sweep** defined in `risk-adaptive-cross-review` (`SKILL.md` → Synthesis): a fresh clean-slate pass with the already-verified findings visible, looking only for real defects not already listed — especially removed behavior never re-established, caller/callee contract drift, boundary/error/cleanup paths, async ordering and cancellation, cross-tenant/permission paths, migration/backfill, cache invalidation, and wrapper recursion. It must also confirm test coverage vs `tasks.md` and pre-existing consumer compatibility. Apply the Reject When precision gate; do not pad when the sweep is clean.
 5. Convert critical/major findings into Phase 6 style fix prompts.
 6. Commit each logical fix after verification and push.
 7. Do not post PR comments until Phase 7 is complete.
@@ -532,6 +532,10 @@ Before requesting merge approval or running a pre-authorized auto-merge, verify 
 - The Phase 4.5 verifier verdict table for the final head is persisted in the review evidence directory.
 - The latest comprehensive cross-review round is clean (no actionable findings) and the Phase 7 final review is complete on the final head.
 - No posted evidence presents stale findings as current.
+- **Completion self-audit (premature-completion guard)**: re-derive each issue acceptance criterion and each selected `tasks.md` item and confirm the diff/tests actually satisfy it — not "the agent said done". Confirm no leftover edge/error path the fixture required is unhandled, and that the final changes are internally consistent (no two fixes that contradict each other). Any uncovered criterion blocks the merge and returns to Phase 5-6; it does not become a silent deferral.
+- **Oracle integrity**: confirm the OpenSpec fixture, acceptance criteria, existing tests, and CI gates were not weakened, deleted, or rewritten to make the gate pass (`risk-adaptive-cross-review` → `finding-contract.md` Oracle Integrity). A test/spec change is legitimate only when it tracks a real contract change recorded in the OpenSpec change, never to silence a failure.
+
+The frozen final HEAD is the clean rollback anchor for this gate: it is a deterministic check, so a failure blocks the merge rather than producing a "probably fine" pass. If a late fix round corrupts a previously clean reviewed state, reset the branch to the last clean reviewed SHA and re-run the fix rather than layering patches on a broken head.
 
 This gate is orchestrator-enforced by default. Where the host repo supports it, add a required CI/branch-protection status check that fails the merge unless the `Agent Review` evidence block is present and SHA-matched, so skipping the review/verify loop is a detectable hard action rather than discretionary. A portable skill cannot install that check; recommend it as host-repo setup and, until it exists, treat the orchestrator gate as the enforcement point and log every skip block.
 
