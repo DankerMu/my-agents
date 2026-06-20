@@ -12,7 +12,8 @@ module.exports = [
       "**/dist/**",
       "**/docs/catalog/**",
       "**/workspaces/**",
-      "**/.venv/**"
+      "**/.venv/**",
+      "**/*.workflow.js"
     ]
   },
   js.configs.recommended,

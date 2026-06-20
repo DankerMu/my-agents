@@ -8,7 +8,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.7.0"
+  version: "0.8.0"
 ---
 
 # Stage Change Pipeline
@@ -48,11 +48,16 @@ Stage 2: OpenSpec Change 创建
     ↓
 Stage 3: 并行 Subagent 审核 (3 路)
     ↓
-Stage 4: 审核修复 (P0 阻塞 + P1 顺带)  ←─────┐
-    ↓ (强制经过验证门，不可跳到 Stage 5)      │ 仍有 P0 未解决/回归且轮次 < 3
-Stage 4.5: 独立验证门 ──────────────────────┘
-    ↓ (P0 清零 + P1 已解决或携带 issue，或触顶 3 轮)
+Stage 4: 审核修复 (P0 + P1 均阻塞)  ←────────┐
+    ↓                                         │ 仍有 P0/P1 未解决/回归且轮次 < 3
+Stage 4.5: 独立验证门 ───────────────────────┘
+    ↓ (P0 + P1 全部 resolved，或触顶 3 轮)
 Stage 5: GitHub Issue 创建
+    ↓
+Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
+
+推荐用 full-pipeline.workflow.js 一次调用完成 Stage 3→5.5，
+回环由 review-loop / issue-alignment workflow 硬编码执行。
 ```
 
 ---
@@ -161,11 +166,13 @@ Stage 5: GitHub Issue 创建
 
 ## Stage 4: 审核修复
 
-**目标**：根据审核意见修改 change 文件，解决 P0（必须修复）与 P1（建议改进）问题。每轮带着 Stage 4.5 验证门反馈的未解决/回归 finding 进入；首轮直接消费 Stage 3 的去重 finding。
+**目标**：根据审核意见修改 change 文件，解决所有 P0 和 P1 问题——两者均为阻塞带。每轮带着 Stage 4.5 验证门反馈的未解决/回归 finding 进入；首轮直接消费 Stage 3 的去重 finding。
+
+> **执行方式**：Stage 3→4→4.5 回环由 `review-loop.workflow.js` 的 `while` 循环硬编码执行，不依赖编排器自觉遵守散文回环指令。
 
 **步骤**：
 
-1. 从三路审核中提取去重后的 P0 + P1 问题清单，识别共性问题（如命名不一致、字段遗漏、计数矛盾）。P0 优先（阻塞带，必须修到清零）；P1 顺带处理——低成本即修，否则显式携带到 issue，不单独驱动回环。
+1. 从三路审核中提取去重后的 P0 + P1 问题清单，识别共性问题（如命名不一致、字段遗漏、计数矛盾）。P0 和 P1 均为阻塞带，全部必须修复。
 
 2. 按文件分组修改。典型的 P0 问题类型：
    - **命名不一致**：目录名、文件名、表名在 spec/tasks/design 之间不统一
@@ -205,11 +212,11 @@ Stage 5: GitHub Issue 创建
 
 **回环判定**：
 
-**band 划分**：P0 是 **blocking 带**——驱动回环，必须修到清零才放行；P1 是 **non-blocking 携带带**——每轮顺带修，但不阻塞退出，未修的 P1 携带到 issue。
+**band 划分**：P0 和 P1 均为 **blocking 带**——两者都驱动回环，必须全部修到 `resolved` 才放行。回环逻辑由 `review-loop.workflow.js` 的 `while (activeFindings.length > 0 && round < MAX_ROUNDS)` 硬编码执行，编排器无法跳过。
 
-- **退出（进 Stage 5）**：P0 全部 `resolved` **且** P1 已 `resolved` 或显式携带到 issue **且** `openspec status` 4/4 complete **且** 验证门本轮无新增 P0 **且** 完成自审通过——对照 Stage 1 收集的阶段目标与验收标准逐条核对，每个要求都有对应的 spec requirement + task 覆盖、无遗漏的设计目标或边界、change 内部无相互矛盾的修复;任一要求未覆盖则回 Stage 4，不靠"看起来修完了"放行。
-- **继续**：仍有 `unresolved`/`regressed` 的 **P0** **且** 已完成轮次 < 3 → 带验证门证据回 Stage 4 再修，轮次 +1；同轮可低成本顺带的 P1 一并修，但 P1 不单独触发回环。
-- **触顶（已完成 3 轮）**：把残留 P0/P1 如实写入对应 issue 正文并标 `needs-followup`，不假装干净；P0 残留必须在 Epic 中显著标注阻塞风险。
+- **退出（进 Stage 5）**：P0 + P1 全部 `resolved` **且** `openspec status` 4/4 complete **且** 验证门本轮无回归 **且** 完成自审通过——对照 Stage 1 收集的阶段目标与验收标准逐条核对，每个要求都有对应的 spec requirement + task 覆盖、无遗漏的设计目标或边界、change 内部无相互矛盾的修复;任一要求未覆盖则回 Stage 4，不靠"看起来修完了"放行。
+- **继续**：仍有 `unresolved`/`regressed` 的 P0 或 P1 **且** 已完成轮次 < 3 → workflow 脚本自动带验证门证据回 Stage 4 再修，轮次 +1。
+- **触顶（已完成 3 轮）**：把残留 P0/P1 如实写入对应 issue 正文并标 `needs-followup`，不假装干净；残留 P0 必须在 Epic 中显著标注阻塞风险。
 - **收敛停止（提前退出）**：若某轮净新增 finding 不再下降，可在 3 轮内提前停，按"触顶"方式记录残留，避免空转。
 
 ---
@@ -279,6 +286,59 @@ Stage 5: GitHub Issue 创建
 
 ---
 
+## Stage 5.5: Issue-Change 对齐审核
+
+**目标**：验证创建的 GitHub Issue 与 OpenSpec change 完全对齐——覆盖完整、边界正确、依赖一致、内容不漂移。
+
+> **执行方式**：由 `issue-alignment.workflow.js` 的 `while` 循环硬编码执行，最多 2 轮。调用方式：`Workflow({ scriptPath: "<path>/issue-alignment.workflow.js", args: { changeName: "<name>", epicNumber: <N> } })`
+
+**审核维度**：
+
+| 维度 | 检查内容 |
+|---|---|
+| missing-coverage | tasks.md 中的 task 未被任何 issue 覆盖 |
+| wrong-boundary | 单个 issue 混合了多个模块或 ownership 范围 |
+| wrong-dependency | issue 间依赖链与 task 依赖顺序不一致 |
+| scope-mismatch | issue 的 In Scope / Out of Scope 与 task 实际内容不符 |
+| missing-reference | issue 缺少 change 中的 spec 或设计文档引用 |
+| content-drift | issue 内容（任务清单、验收标准、PR 边界）与 change artifact 矛盾或偏离 |
+
+**流程**：
+
+1. 审核 agent 读取所有 change artifact 和已创建的 issue，逐条比对，输出结构化对齐缺口（P0/P1）。
+2. 修复 agent 通过 `gh issue edit` / `gh issue create` 修复缺口。
+3. 独立验证 agent 确认修复。
+4. P0 + P1 均阻塞，未清则继续，最多 2 轮。残留如实记录到 Epic。
+
+---
+
+## 触发锚定（Trigger Anchoring）
+
+> 对应 meta-loop rubric dim 8（触发可靠性）。workflow 脚本解决了"回环内部不可跳过"，本节解决"workflow 本身会不会忘记调用"。
+
+**推荐做法：单次调用 `full-pipeline.workflow.js`**
+
+Stage 1 + 2 由编排器交互式完成后，Stage 3→5.5 应通过 **一次** `Workflow()` 调用链式执行，不要分步手动调用 `review-loop` 和 `issue-alignment`——每多一次手动调用就多一个忘记的触发面。
+
+```
+Workflow({
+  scriptPath: "<skill-dir>/full-pipeline.workflow.js",
+  args: {
+    changeName: "<name>",
+    designDocs: ["path/to/doc.md"],
+    skillDir: "<skill-dir>"
+  }
+})
+```
+
+**消费仓库锚定指引**：
+
+- 如果仓库有 CI 或 pre-PR hook 可挂载：在 PR 创建前检查 `docs/stage-pipeline-log.jsonl` 最新条目是否覆盖本 change（change name + 日期），缺失则阻塞 PR。这把触发从"编排器记得调"变成"不调就过不了 CI"。
+- 如果没有可挂载的硬动作：依赖 SKILL.md 指令 + 上述单次调用模式；定期审计 skip-rate（检查哪些 change 有 openspec 产物但 `stage-pipeline-log.jsonl` 无对应条目）。
+- **诚实声明**：本 skill 无法替消费仓库安装 hook。per-project skip-rate 是开放实测项，需在使用中审计，不可假设"写了就一定会跑"。
+
+---
+
 ## 跨运行问责（Loop Accountability）
 
 > 对应 meta-loop rubric dim 6（跨运行记忆）。Stage 4.5 的回环只解决"单次运行内"的记忆；本节解决"这道验证门长期是否还值得跑"。**仅做问责，不做跨 change 学习**——不把某个 change 的 finding 带进另一个 change 的审核 brief，避免跨 change 偏见。
@@ -332,15 +392,18 @@ gh issue create --title "..." --label "..." --body "..."
 ```
 
 **依赖**：
+- `full-pipeline.workflow.js` — **推荐入口**，Stage 3→5.5 单次调用链式编排（Claude Code Workflow），调用：`Workflow({ scriptPath: "<dir>/full-pipeline.workflow.js", args: { changeName: "<name>", designDocs: [...], skillDir: "<dir>" } })`
+- `review-loop.workflow.js` — Stage 3→4→4.5 回环（由 full-pipeline 内部 `workflow()` 调用，或单独使用）
+- `issue-alignment.workflow.js` — Stage 5.5 对齐审核（由 full-pipeline 内部 `workflow()` 调用，或单独使用）
 - `grill-me` skill — Stage 1→2 之间的设计压测（可选）
-- `reviewer` subagent — Stage 3 三路并行审核执行
-- `verifier` subagent — Stage 4.5 独立验证门核销（不得复用修复者）
+- `reviewer` subagent — Stage 3 三路并行审核执行（由 workflow 脚本 spawn）
+- `verifier` subagent — Stage 4.5 独立验证门核销（由 workflow 脚本 spawn，不得复用修复者）
 - `docs/stage-pipeline-log.jsonl`（消费仓库内，已提交）— 跨运行 catch-rate 问责与 kill 标准
 - `gh-create-issue` skill — Stage 5 可选调用（或直接用 gh CLI）
 
 **跳过策略**：
 - change 已存在 → 跳过 Stage 2
 - 不需要 subagent 审核 → 跳过 Stage 3-4.5
-- 不需要 GitHub issue → 跳过 Stage 5
+- 不需要 GitHub issue → 跳过 Stage 5-5.5
 - 用户说"只做审核" → 只执行 Stage 3
-- 用户说"只创建 issue" → 只执行 Stage 5
+- 用户说"只创建 issue" → 执行 Stage 5 + 5.5（对齐审核不可跳过）

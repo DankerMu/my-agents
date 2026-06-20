@@ -78,7 +78,7 @@ function main() {
 
   const eslintFiles = selectFiles(files, eslintExtensions);
   if (eslintFiles.length > 0) {
-    run(binaryPath("eslint"), ["--fix", "--max-warnings=0", ...eslintFiles]);
+    run(binaryPath("eslint"), ["--fix", "--no-warn-ignored", "--max-warnings=0", ...eslintFiles]);
     run("git", ["add", "--", ...eslintFiles]);
   }
 }
