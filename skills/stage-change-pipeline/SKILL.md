@@ -85,7 +85,7 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
 
 **目标**：生成 proposal → design → specs → tasks 四个 artifact。
 
-**前置**：确认 `openspec` CLI 可用（`which openspec`），项目已初始化（`openspec/` 目录存在，否则执行 `openspec init --tools claude`）。确认 `openspec/` 在 `.gitignore` 中。
+**前置**：确认 `openspec` CLI 可用（`which openspec`），项目已初始化（`openspec/` 目录存在，否则执行 `openspec init --tools claude`）。
 
 **步骤**：
 
