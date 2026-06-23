@@ -615,7 +615,7 @@
       "path": "skills/stage-change-pipeline",
       "displayName": "Stage Change Pipeline",
       "description": "Turn a development-stage design package into an reviewed OpenSpec change and fine-grained GitHub issues with clear module boundaries and small-PR execution scope.",
-      "version": "0.8.0",
+      "version": "0.8.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -993,5 +993,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-06-20T10:50:53.948Z"
+  "generatedAt": "2026-06-23T02:08:43.804Z"
 }
