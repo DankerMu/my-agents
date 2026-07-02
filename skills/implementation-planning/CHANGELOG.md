@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-07-02
+
+### Added
+- Added a `Pipeline Consumers` note naming the two downstream consumers and this skill's role for each: `stage-change-pipeline` (Stage 2 `tasks.md`, Stage 5 issue grouping) and `subagent-workflow` (execution-strategy aid).
+
 ## [0.1.4] - 2026-03-29
 
 ### Changed

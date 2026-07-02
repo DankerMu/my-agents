@@ -5,6 +5,9 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-02
+- Fix a circular claim in the convergence step: this skill runs **inside** `stage-change-pipeline` Stage 2, so its round summary cannot be "Stage 2 的输入". Rephrased to say the summary feeds Stage 2 `design.md`/`specs/` finalization and Stage 3 review.
+
 ## [0.1.0] - 2026-06-15
 - Initial port of `grill-with-docs`, the domain-aware variant of `grill-me`, adapted from `mattpocock/skills` (zh-CN reference `vinvcn/mattpocock-skills-zh-CN`).
 - Adds glossary alignment, fuzzy-language sharpening, concrete-scenario boundary probing, and code cross-referencing on top of `grill-me`'s decision-tree interrogation.

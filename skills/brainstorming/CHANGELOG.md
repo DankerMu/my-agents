@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-07-02
+
+### Changed
+- Added a `When Not To Use` routing line for architecture direction / technology selection / reversibility decisions → `future-aware-architecture`, noting that faa cedes open-ended ideation back to this skill.
+
 ## [0.2.3] - 2026-03-28
 
 ### Changed
