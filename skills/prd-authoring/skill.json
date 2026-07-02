@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "name": "prd-authoring",
+  "displayName": "PRD Authoring",
+  "description": "Turn validated discovery output (clarified requirements, a chosen direction, research findings) into a structured, review-ready Product Requirements Document with prioritized requirements, testable acceptance criteria, and measurable success metrics. Use when the user asks to write a PRD, product spec, or requirements document for an already-chosen direction — not for open-ended ideation, requirement disambiguation, fresh cited research, business-model work, or technical execution planning.",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "categories": ["business", "productivity", "documentation"],
+  "tags": ["prd", "requirements", "product", "spec", "acceptance-criteria"],
+  "authors": [
+    {
+      "name": "danker"
+    }
+  ],
+  "entrypoints": {
+    "skillDoc": "SKILL.md",
+    "changelog": "CHANGELOG.md"
+  },
+  "capabilities": {
+    "shell": false,
+    "network": false,
+    "filesystemRead": true,
+    "filesystemWrite": true
+  }
+}
