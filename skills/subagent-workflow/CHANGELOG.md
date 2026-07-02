@@ -5,6 +5,9 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-07-02
+- Trim the SKILL.md description from ~1000 to ~640 characters: compress the feature enumeration into one clause while keeping every trigger phrase and the full Do-NOT / cc-cx disambiguation. The old run-on description was diluting the trigger signal and brushing the practical description-length ceiling.
+
 ## [0.8.0] - 2026-06-18
 - Sharpen Phase 7 into the canonical **Gap Sweep** (defined in `risk-adaptive-cross-review` Synthesis): the independent final reviewer now runs a fresh clean-slate pass with the verified-findings list visible, looking only for real defects the recall-biased rounds systematically miss (removed behavior, contract drift, boundary/error/async/auth/migration/cache/wrapper paths), in addition to test coverage vs `tasks.md` and consumer compatibility. Consumes the canonical definition instead of restating it.
 - Add a **completion self-audit (premature-completion guard)** and an **oracle-integrity** check to the Phase 8 pre-merge evidence hard-gate, and reflect both in the always-loaded `SKILL.md` gate rule: before merge the orchestrator re-derives each acceptance criterion and selected task and confirms the diff/tests actually satisfy it (not "the agent said done"), confirms no required edge/error path is unhandled and the changes are internally consistent, and confirms no test/spec/CI was weakened to pass. The frozen final HEAD is the clean rollback anchor — a gate failure blocks the merge (deterministic, no "probably fine"), and a fix round that corrupts a clean reviewed state resets to the last clean reviewed SHA rather than patching a broken head. Adapted from stellarlinkco/skills `harness` (validation-required completion, started-commit rollback) and `code-review` (oracle non-tampering), clean-room with author permission.

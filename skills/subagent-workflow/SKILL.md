@@ -1,7 +1,7 @@
 ---
 name: subagent-workflow
 description: >
-  End-to-end GitHub issue implementation workflow orchestrated by Claude Code or Codex, delegating implementation, fix passes, cross-review, and finding verification to subagents (implementer, reviewer, verifier). Covers issue selection, mandatory OpenSpec change fixture creation/review, risk-adaptive implementation review, verification, PR evidence, Chinese work-summary comment, CI, and default human-gated merge with explicit user pre-authorization for auto-merge. Use when the user wants to implement a GitHub issue, process the next DAG issue, run the workflow, or says triggers such as "implement #XX", "do the next issue", "subagent workflow", "处理下一个issue", "开始实现", or "下一个该做什么". Do NOT use for documentation-only/spec-only work without implementation, intentional emergency hotfixes that skip review, pure brainstorming, or when the user explicitly wants the cc-cx pipeline where Claude Code orchestrates and Codex implements (use cc-cx-workflow instead).
+  GitHub issue → verified PR workflow: the orchestrator (Claude Code or Codex) delegates implementation, cross-review, and finding verification to the implementer/reviewer/verifier subagents, with mandatory OpenSpec fixtures, risk-adaptive review, CI, and human-gated merge. Use when the user wants to implement a GitHub issue or process the next DAG issue — triggers: "implement #XX", "do the next issue", "subagent workflow", "处理下一个issue", "开始实现", "下一个该做什么". Do NOT use for docs/spec-only work, emergency hotfixes that skip review, pure brainstorming, or when the user wants Codex to implement under Claude Code orchestration (use cc-cx-workflow instead).
 ---
 
 # Subagent Issue Workflow

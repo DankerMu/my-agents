@@ -4,11 +4,14 @@ description: >
   设计文档 → openspec change → subagent 并行审核 → 修复 → GitHub issue 全流水线。
   将 tasks 拆为细粒度、模块边界清晰、适合小 PR 审核的 GitHub issue。
   触发词："开始下一个阶段"、"stage change pipeline"、"设计到issue"、"阶段实施"、
-  "openspec审核"、"创建 M* change"，或用户指定一个开发阶段要求生成审核过的 issue。
+  "openspec审核"、"创建 M* change"、"start the next stage"、"turn this design into
+  issues"、"create issues from the spec/design"、"run the stage pipeline"，
+  或用户指定一个开发阶段要求生成审核过的 issue（a design/stage doc that should become
+  a reviewed OpenSpec change plus implementation-ready GitHub issues）。
 license: MIT
 metadata:
   author: danker
-  version: "0.8.1"
+  version: "0.8.2"
 ---
 
 # Stage Change Pipeline

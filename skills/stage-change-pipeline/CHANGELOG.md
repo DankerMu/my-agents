@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-07-02
+- Add English trigger phrases to the SKILL.md description ("start the next stage", "turn this design into issues", "create issues from the spec/design", "run the stage pipeline"): the trigger surface was almost entirely Chinese, so English prompts rarely auto-activated the skill.
+- Fix a typo in the `skill.json` description ("an reviewed" → "a reviewed").
+
 ## [0.8.1] - 2026-06-22
 - **Fix**: Rewrite `full-pipeline.workflow.js` to inline all review-loop and issue-alignment logic instead of using `workflow()` sub-calls. Fixes "nesting is limited to one level" error when the script is invoked via `Workflow()` (the `workflow()` calls to child scripts created an implicit second nesting level). `review-loop.workflow.js` and `issue-alignment.workflow.js` remain available as standalone scripts.
 - **Fix**: Add defensive args parsing — if `args` is passed as a JSON string instead of an object (caller-side serialization bug), parse it; abort early with clear error if `changeName` is missing.
