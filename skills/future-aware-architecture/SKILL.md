@@ -7,7 +7,7 @@ description: >
   architecture direction or selection decisions; do not use for pure
   implementation planning, narrow stack research, or review-only tasks.
 invocation_posture: manual-first
-version: 0.2.4
+version: 0.3.0
 ---
 
 # Future-Aware Architecture
