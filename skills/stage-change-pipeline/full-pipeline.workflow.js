@@ -16,17 +16,35 @@ export const meta = {
   ]
 };
 
-// args: { changeName: string, designDocs?: string[], stageLabel?: string }
+// args: { changeName: string, designDocs?: string[], stageLabel?: string, grillGate: "passed" | "skipped:<reason>" }
 // Defensive: handle args passed as JSON string (caller-side serialization bug)
 const _args = typeof args === "string" ? JSON.parse(args) : args || {};
 const changeName = _args.changeName;
 const changePath = `openspec/changes/${changeName}`;
 const designDocs = (_args.designDocs || []).join(", ");
 const stageLabel = _args.stageLabel || "";
+const grillGate = typeof _args.grillGate === "string" ? _args.grillGate : "";
 
 if (!changeName) {
   log("FATAL: changeName is missing from args — aborting");
   return { verdict: "error", reason: "changeName is undefined" };
+}
+
+// Grill-gate attestation. The Stage 1→2 grill-me stress-test is multi-round and
+// user-interactive, so it can only happen in the main conversation BEFORE this
+// script launches — workflow subagents cannot talk to the user, and this script
+// cannot run it retroactively. All it can enforce is refusing to start until the
+// orchestrator attests the gate decision was made: grill-me ran ("passed") or the
+// skip was recorded with a reason ("skipped:<reason>").
+if (grillGate !== "passed" && !/^skipped:.+/.test(grillGate)) {
+  log(
+    'FATAL: grillGate missing or invalid — run grill-me in the main conversation first (grillGate: "passed"), or record an explicit skip (grillGate: "skipped:<reason>")'
+  );
+  return {
+    verdict: "error",
+    reason:
+      'grillGate must be "passed" or "skipped:<reason>" — decide the Stage 1→2 grill gate before Stage 3 starts'
+  };
 }
 
 // Count of subagent (agent()) invocations across the whole run — for the accountability log.
@@ -665,6 +683,7 @@ const p0Residual = activeFindings.filter((f) => f.severity === "P0").length;
 const p1Residual = activeFindings.filter((f) => f.severity === "P1").length;
 const logEntry = {
   change: changeName,
+  grill_gate: grillGate,
   rounds: reviewRound,
   gate_net_catch: gateNetCatch,
   p0: { in: p0In, resolved: Math.max(0, p0In - p0Residual), residual: p0Residual },

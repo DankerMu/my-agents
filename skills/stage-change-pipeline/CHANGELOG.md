@@ -5,6 +5,17 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-07-02
+
+Closes the audit finding that the hardened Stage 3→5.5 entry point silently bypassed the documented grill gate: the multi-round `grill-me` stress-test lived only in Stage 1 prose ("可选但推荐"), was absent from all workflow scripts, and — being user-interactive — cannot run inside a workflow at all. In practice it never fired.
+
+### Added
+- **Breaking: grill-gate attestation** in `full-pipeline.workflow.js`: a required `grillGate` arg — `"passed"` (grill-me ran in the main conversation) or `"skipped:<reason>"` (explicit, reasoned skip). Missing or malformed → the script refuses to start. Since workflow subagents cannot interact with the user, the gate is enforced as a launch precondition rather than an in-script step.
+- `grill_gate` field in `full-pipeline`'s returned `logEntry`, so the pass/skip decision (with reason) lands in `docs/stage-pipeline-log.jsonl` and skip-rate becomes auditable. `review-loop` standalone runs operate on an existing change (the gate decision is upstream) and do not carry the field.
+
+### Changed
+- SKILL.md Stage 1 压测门禁 upgraded from "可选但推荐" to an EITHER/OR gate (run `grill-me` OR record an explicit skip reason), stating explicitly that the multi-round grill can only happen in the main conversation before the workflow launches; invocation examples, the logEntry schema, and the dependency list now include `grillGate`/`grill_gate`.
+
 ## [0.9.0] - 2026-07-02
 
 Hardening pass from a defect audit of the workflow scripts and `SKILL.md`. **Minor** bump because it adds a new exit gate (completion self-audit) and a returned `logEntry` contract.

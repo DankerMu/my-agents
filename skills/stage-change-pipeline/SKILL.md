@@ -78,7 +78,12 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
 3. 并行读取目标阶段涉及的核心设计文档（通常 3-6 个文件），记录关键实体：表名、API 端点、ENUM 值、ID 规范等。
 4. 输出一份简要的阶段上下文摘要，确认后进入 Stage 2。
 
-**压测门禁（可选但推荐）**：在创建 OpenSpec change 之前，如果阶段计划或设计文档存在未言明假设、隐藏依赖或模糊边界，先用 `grill-me` 沿决策树逐分支压测，把决策逼清后再进入 Stage 2，可显著降低 Stage 3 审核返工。
+**压测门禁（EITHER/OR，必须留痕）**：进入 Stage 2 之前，对设计压测做出显式决策，二选一：
+
+- **跑**：用 `grill-me` 沿决策树逐分支压测（多轮、一次一问），把未言明假设、隐藏依赖和模糊边界逼清，再创建 OpenSpec change；启动 `full-pipeline.workflow.js` 时传 `grillGate: "passed"`。
+- **跳过**：阶段计划确实简单清晰时可以跳过，但必须写明理由，传 `grillGate: "skipped:<理由>"`。
+
+`full-pipeline.workflow.js` 校验该参数：缺失或格式不符**直接拒绝启动**——"忘了"不再是合法状态。注意时序：grill-me 的多轮盘问只能发生在主会话（Workflow 子代理无法与用户交互），必须在启动脚本之前完成，脚本内无法补跑。该决策随 `logEntry.grill_gate` 落入 `docs/stage-pipeline-log.jsonl`，跳过率可审计。
 
 **判断切入点**：如果 `openspec/changes/<name>/` 已存在且 `openspec status` 显示 artifacts complete，跳到 Stage 3。
 
@@ -329,7 +334,8 @@ Workflow({
   args: {
     changeName: "<name>",
     designDocs: ["path/to/doc.md"],
-    stageLabel: "<optional-stage-label>"
+    stageLabel: "<optional-stage-label>",
+    grillGate: "passed"   // 或 "skipped:<理由>"；缺失/格式不符脚本拒绝启动（见 Stage 1 压测门禁）
   }
 })
 ```
@@ -360,13 +366,15 @@ Workflow({
 脚本返回的 `logEntry` schema（未含 date，编排器写入前补上）：
 
 ```json
-{"change":"<name>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
+{"change":"<name>","grill_gate":"passed|skipped:<reason>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
 ```
+
+（`grill_gate` 仅 `full-pipeline` 返回；`review-loop` 独立运行时作用于已存在的 change，门禁决策在其上游，无此字段。）
 
 编排器补 date 后写入文件的完整一行：
 
 ```json
-{"date":"<run-date>","change":"<name>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
+{"date":"<run-date>","change":"<name>","grill_gate":"passed|skipped:<reason>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
 ```
 
 - `gate_net_catch`：**本节核心指标**——验证门独有的价值。统计"修复者声称已解决但独立验证者判为 unresolved 或 regressed 的数量——即没有这道门就会被漏过的量"。Stage 3 审核和 `openspec status` 已经抓到的不计入。
@@ -412,10 +420,10 @@ gh issue create --title "..." --label "..." --body "..."
 ```
 
 **依赖**：
-- `full-pipeline.workflow.js` — **推荐入口**，Stage 3→5.5 全逻辑 inline（无 `workflow()` 嵌套，可安全作为顶层或子 workflow 调用），调用：`Workflow({ scriptPath: "<dir>/full-pipeline.workflow.js", args: { changeName: "<name>", designDocs: ["..."], stageLabel: "<optional>" } })`
+- `full-pipeline.workflow.js` — **推荐入口**，Stage 3→5.5 全逻辑 inline（无 `workflow()` 嵌套，可安全作为顶层或子 workflow 调用），调用：`Workflow({ scriptPath: "<dir>/full-pipeline.workflow.js", args: { changeName: "<name>", designDocs: ["..."], stageLabel: "<optional>", grillGate: "passed" | "skipped:<理由>" } })`
 - `review-loop.workflow.js` — Stage 3→4→4.5 回环（独立使用，不需要 full-pipeline 时调用）
 - `issue-alignment.workflow.js` — Stage 5.5 对齐审核（独立使用，不需要 full-pipeline 时调用）
-- `grill-me` skill — Stage 1→2 之间的设计压测（可选）
+- `grill-me` skill — Stage 1→2 之间的设计压测（EITHER/OR 门禁：要么在主会话跑完，要么留痕跳过；由 `full-pipeline` 的 `grillGate` 参数强制，缺失拒绝启动）
 - `reviewer` subagent — Stage 3 三路并行审核执行（由 workflow 脚本 spawn）
 - `verifier` subagent — Stage 4.5 独立验证门核销（由 workflow 脚本 spawn，不得复用修复者）
 - `docs/stage-pipeline-log.jsonl`（消费仓库内，已提交）— 跨运行 catch-rate 问责与 kill 标准
