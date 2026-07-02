@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-02
+
+### Changed
+- Give the Deep-output ADR seed a durable default persistence target: the project's existing ADR directory, or `docs/adr/` created lazily (previously "saved to file" with no path, so seeds landed in unspecified locations). When `grill-with-docs` is installed, follow its `ADR-FORMAT.md`. This aligns the skill with the `openspec/glossary.md` + `docs/adr/` persistence convention shared by the stewardship pack.
+
 ## [0.2.4] - 2026-03-29
 
 ### Added

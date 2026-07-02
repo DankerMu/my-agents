@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-02
+
+### Added
+- Handoff step (Process step 4): once a deepening survives grilling and the user wants execution, route it out of the skill — `gh-create-issue` for a single well-bounded refactor, `stage-change-pipeline` for a batch that forms a stage. Closes the audit-findings-stop-at-recommendations gap; the skill's own scope stays "decide what and why".
+
 ## [0.1.0] - 2026-06-15
 - Initial port of `improve-codebase-architecture`, adapted from `mattpocock/skills` (zh-CN reference `vinvcn/mattpocock-skills-zh-CN`).
 - Deep-modules architecture review: explorer-subagent codebase sweep, deletion-test triage, a self-contained HTML report (Tailwind + Mermaid, before/after per candidate), then a grilling loop to land each deepening.

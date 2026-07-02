@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-02
+
+### Changed
+- Recognize `openspec/glossary.md` as the canonical domain glossary in constraint loading (step 1b), aligning naming-drift checks with the persistence convention maintained by `grill-with-docs`. AGENTS.md-level constraints remain supplementary.
+- Add a dimension-to-axes mapping table to `entropy-checklist.md`: the review dimensions are the diff-granularity instantiation of the suite's shared six-axes vocabulary (owned by `control-plane-auditor`'s methodology reference). Dimension names stay as-is for findings; the axes are for cross-change aggregation and comparison with `repo-entropy-audit`.
+
 ## [0.1.0] - 2026-05-24
 
 ### Added

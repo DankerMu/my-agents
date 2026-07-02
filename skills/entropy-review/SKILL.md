@@ -67,7 +67,8 @@ For each affected module/directory:
 1. Read the nearest AGENTS.md (walk up from the changed file)
 2. Read the root AGENTS.md
 3. Extract: glossary, dependency rules, error model, naming conventions, doc freshness rules, state model references
-4. If none found, note "no formal constraints available; reviewing against surrounding code patterns"
+4. When `openspec/glossary.md` exists, treat it as the canonical domain glossary (the convention maintained by `grill-with-docs`); AGENTS.md-level constraints supplement it
+5. If none found, note "no formal constraints available; reviewing against surrounding code patterns"
 
 ### 1c. Read surrounding context
 

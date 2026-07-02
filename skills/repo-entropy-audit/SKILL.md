@@ -67,7 +67,7 @@ If a baseline exists, load it for trend comparison in Phase 3.
 
 ### 1d. Load constraint context
 
-Read available instruction files and extract any defined constraints (glossary, dependency rules, error model, naming conventions). These improve scan accuracy but are not required.
+Read available instruction files and extract any defined constraints (glossary, dependency rules, error model, naming conventions). These improve scan accuracy but are not required. When `openspec/glossary.md` exists, treat it as the canonical domain glossary (the convention maintained by `grill-with-docs`); AGENTS.md-level constraints supplement it.
 
 ---
 
@@ -173,6 +173,8 @@ For each target, suggest which tool or skill can help:
 - Error model → `review` + architecture decision
 - Structural issues → `implementation-planning` for phased refactor
 - Doc gaps → `project-documentation` or `control-plane-auditor`
+
+After the user confirms the priority list, offer to make the top targets trackable instead of leaving them as report-only recommendations: `gh-create-issue` for direct cleanup issues (epic + sub-issues for multi-module efforts), or `stage-change-pipeline` when a target needs a reviewed OpenSpec change and design review before implementation. Do not start implementing cleanups inside the audit.
 
 ---
 

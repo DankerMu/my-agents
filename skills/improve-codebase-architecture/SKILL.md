@@ -7,7 +7,7 @@ description: >
   触发词："improve architecture"、"找重构机会"、"合并紧耦合模块"、"让代码更可测"、"架构评审"。
   不用于纯需求澄清（用 clarify）或纯方向选型（用 future-aware-architecture）。
 invocation_posture: hybrid
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Improve Codebase Architecture
@@ -86,11 +86,20 @@ Report 用 **Tailwind via CDN** 做 layout，**Mermaid via CDN** 处理 graph/fl
 - **用户用有分量的理由拒绝 candidate？** 提议落 ADR 到 `docs/adr/`（格式与三门槛见 [../grill-with-docs/ADR-FORMAT.md](../grill-with-docs/ADR-FORMAT.md)）：_"要我把这记录成 ADR，避免未来 architecture review 再次建议它吗？"_ 只有当未来的 explorer 真的需要这个理由来避免重复建议时才提议；短期理由和显而易见的理由跳过。
 - **想探索 deepened module 的替代 interfaces？** 见 [INTERFACE-DESIGN.md](INTERFACE-DESIGN.md)。
 
+### 4. Handoff（决策 → 交付）
+
+Grilling 落定、用户要执行时，不要在本 skill 内实现——本 skill 的职责止于"决定改什么、为什么"：
+
+- 单个边界清晰的 deepening → 提议用 `gh-create-issue` 创建可追踪 issue（或直接 `gh` CLI）。
+- 一批相关 deepening 构成一个阶段 → 交给 `stage-change-pipeline`，变成 reviewed OpenSpec change + 细粒度 issues（随 `agentic-issue-delivery` pack 安装）。
+- 用户只想留档不想排期 → glossary/ADR 沉淀（第 3 步）已覆盖，无需额外动作。
+
 ## 与本仓库其它 skill 的关系
 
 - `grill-with-docs`：本 skill 复用其 `openspec/glossary.md` / `docs/adr/` 落点与术语/ADR 纪律；grilling loop 与它同源。
 - `future-aware-architecture`：定架构方向与可逆性；本 skill 在既定方向内找模块深化机会。
 - `repo-entropy-audit` / `entropy-review`：治全仓库的乱与冗余（广度）；本 skill 深化模块、提升可测试性（深度）。
+- `gh-create-issue` / `stage-change-pipeline`：第 4 步 Handoff 的出口，把落定的 deepening 变成可追踪的交付工作项。
 - `explorer` subagent：第 1 步 codebase 遍历的执行者。
 
 ---
