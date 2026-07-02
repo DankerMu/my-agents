@@ -11,7 +11,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.8.2"
+  version: "0.9.0"
 ---
 
 # Stage Change Pipeline
@@ -142,7 +142,7 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
 
 **关键约束**：通过编排器的原生并行 subagent 机制（Claude Code Task subagents 或 Codex subagents）同时发起 3 个审核任务，不能串行。每个 `reviewer` subagent 必须返回完整审核文本而非摘要。
 
-**审核契约**：使用 `risk-adaptive-cross-review` 的 OpenSpec Review 模式作为审查语义参考：三路审核分别对应 Design Consistency、Spec Completeness、Tasks Executability;P0/P1 问题必须包含失败类型、证据、影响、修复方向和需要回归检查的相邻 artifact。失败类型从 `finding-contract.md` 的 Failure-Class Vocabulary（含 `design-consistency`/`spec-completeness`/`task-executability` 等 spec 类）取一个标签;含糊、无锚点、纯风格的条目按 Reject 精度门降级为 note，不进 P0/P1。
+**审核契约**：使用 `risk-adaptive-cross-review` 的 OpenSpec Review 模式作为审查语义参考：三路审核分别对应 Design Consistency、Spec Completeness、Tasks Executability;P0/P1 问题必须包含失败类型、证据、影响、修复方向和需要回归检查的相邻 artifact。失败类型从 `finding-contract.md` 的 Failure-Class Vocabulary（含 `design-consistency`/`spec-completeness`/`task-executability` 等 spec 类）取一个标签;含糊、无锚点、纯风格的条目按 Reject 精度门直接拒收，不进入 finding 列表（既不作 P0/P1，也不留作 note）。
 
 **步骤**：
 
@@ -273,7 +273,7 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
 
 4. 为每个分组创建子 issue，包含：
    - `Part of #<epic>` 链接
-   - `**Dependencies:** #<dep1>, #<dep2>` 依赖声明
+   - 依赖声明：每个依赖单独一行 `Depends on #<dep>`（不要合并成 `**Dependencies:** #a, #b`）——下游 `subagent-workflow` 的 DAG reader 逐行 grep 字面量 `Depends on #NN` 解析依赖图
    - `**Module / Scope:** <module-or-path>` 单一模块或路径范围
    - `**In Scope:**` 本 issue 明确包含的行为、文件或交付物
    - `**Out of Scope:**` 相邻模块、后续能力或明确不做的工作
@@ -329,7 +329,7 @@ Workflow({
   args: {
     changeName: "<name>",
     designDocs: ["path/to/doc.md"],
-    skillDir: "<skill-dir>"
+    stageLabel: "<optional-stage-label>"
   }
 })
 ```
@@ -348,13 +348,30 @@ Workflow({
 
 **1. catch-rate 日志（提交进仓库）**
 
-每次流水线跑完 Stage 4.5（无论 clean 还是 residual），向消费仓库里一个**已提交、append-only** 的日志追加一行。默认 `docs/stage-pipeline-log.jsonl`（或该项目存放运维记录的既有位置）。一行 schema：
+每次流水线跑完 Stage 4.5（无论 clean 还是 residual），向消费仓库里一个**已提交、append-only** 的日志追加一行。默认 `docs/stage-pipeline-log.jsonl`（或该项目存放运维记录的既有位置）。
+
+日志由 workflow 脚本和编排器分工写入：`full-pipeline.workflow.js` / `review-loop.workflow.js` 在返回值里给出一个 `logEntry` 对象（脚本跑在无时钟沙箱，不自带日期）。**编排器收尾必须执行以下编号步骤，缺一即视为漏记：**
+
+1. 从 workflow 返回值取出 `logEntry`。
+2. 补一个 `"date":"<本次运行日期>"` 字段（日期由编排器侧提供，脚本无法生成）。
+3. 把补全后的对象序列化为**一行** JSON，append 到 `docs/stage-pipeline-log.jsonl`。
+4. 连同本次 change 一起提交，保持文件 append-only。
+
+脚本返回的 `logEntry` schema（未含 date，编排器写入前补上）：
 
 ```json
-{"change":"<name>","date":"<run-date>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
+{"change":"<name>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
 ```
 
-- `gate_net_catch`：**本节核心指标**——验证门独有的价值。统计"修复者声称已解决、但独立验证者判为 `unresolved`/`regressed` 的 finding 数"，即若没有 Stage 4.5 这道门就会漏过去的问题数。Stage 3 审核和 `openspec status` 已经抓到的不计入。
+编排器补 date 后写入文件的完整一行：
+
+```json
+{"date":"<run-date>","change":"<name>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
+```
+
+- `gate_net_catch`：**本节核心指标**——验证门独有的价值。统计"修复者声称已解决但独立验证者判为 unresolved 或 regressed 的数量——即没有这道门就会被漏过的量"。Stage 3 审核和 `openspec status` 已经抓到的不计入。
+- `p1.carried`：仅在触顶（`verdict=residual`）时出现；clean 时该字段省略。
+- `approx_subagent_calls`：脚本本次实际发起的 subagent 调用计数（review + fix/verify/完成自审 + issue 创建 + 对齐审核，逐次累加）。
 - 其余字段供横向看趋势（轮次、残留、回归、成本）。
 
 **2. kill 标准**
@@ -395,7 +412,7 @@ gh issue create --title "..." --label "..." --body "..."
 ```
 
 **依赖**：
-- `full-pipeline.workflow.js` — **推荐入口**，Stage 3→5.5 全逻辑 inline（无 `workflow()` 嵌套，可安全作为顶层或子 workflow 调用），调用：`Workflow({ scriptPath: "<dir>/full-pipeline.workflow.js", args: { changeName: "<name>", designDocs: ["..."] } })`
+- `full-pipeline.workflow.js` — **推荐入口**，Stage 3→5.5 全逻辑 inline（无 `workflow()` 嵌套，可安全作为顶层或子 workflow 调用），调用：`Workflow({ scriptPath: "<dir>/full-pipeline.workflow.js", args: { changeName: "<name>", designDocs: ["..."], stageLabel: "<optional>" } })`
 - `review-loop.workflow.js` — Stage 3→4→4.5 回环（独立使用，不需要 full-pipeline 时调用）
 - `issue-alignment.workflow.js` — Stage 5.5 对齐审核（独立使用，不需要 full-pipeline 时调用）
 - `grill-me` skill — Stage 1→2 之间的设计压测（可选）
