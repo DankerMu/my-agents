@@ -159,7 +159,7 @@
       "path": "skills/control-plane-auditor",
       "displayName": "Control Plane Auditor",
       "description": "Audit a repository's control plane health across seven layers (memory, invariant, protocol, permission, sensorium, evaluation, governance) and produce an actionable improvement report. Covers instruction-file completeness, rule enforcement coverage, doc freshness, test infrastructure, and agent readiness.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -223,7 +223,7 @@
       "path": "skills/entropy-review",
       "displayName": "Entropy Review",
       "description": "Review code changes for entropy introduction: naming drift, error-model fragmentation, dependency-direction violations, doc staleness, state-model splits, and pattern duplication. Produces severity-graded findings focused on consistency and drift rather than correctness.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -245,7 +245,7 @@
       "path": "skills/future-aware-architecture",
       "displayName": "Future-Aware Architecture",
       "description": "Manual-first architecture methodology for system design and technology selection using problem-first framing, stack-agnostic trade-offs, uncertainty handling, future-aware decision lenses, and context-aware grounding.",
-      "version": "0.2.4",
+      "version": "0.3.0",
       "maturity": "experimental",
       "categories": [
         "design",
@@ -377,7 +377,7 @@
       "path": "skills/improve-codebase-architecture",
       "displayName": "Improve Codebase Architecture",
       "description": "基于“深模块”哲学寻找架构改进点：用 explorer subagent 扫描 codebase，对照 openspec/glossary.md 术语与 docs/adr/ 决策，找出 shallow modules 并提出 deepening 重构（提升 testability 与 AI 可导航性），产出可视化 HTML 评审并进入 grill 对话逐个落地。Use to improve architecture, find refactoring opportunities, consolidate tightly-coupled modules, or make a codebase more testable.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "refactoring",
@@ -415,6 +415,26 @@
         "self-review",
         "meta-methodology",
         "rubric"
+      ]
+    },
+    {
+      "name": "prd-authoring",
+      "path": "skills/prd-authoring",
+      "displayName": "PRD Authoring",
+      "description": "Turn validated discovery output (clarified requirements, a chosen direction, research findings) into a structured, review-ready Product Requirements Document with prioritized requirements, testable acceptance criteria, and measurable success metrics. Use when the user asks to write a PRD, product spec, or requirements document for an already-chosen direction — not for open-ended ideation, requirement disambiguation, fresh cited research, business-model work, or technical execution planning.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "business",
+        "productivity",
+        "documentation"
+      ],
+      "tags": [
+        "prd",
+        "requirements",
+        "product",
+        "spec",
+        "acceptance-criteria"
       ]
     },
     {
@@ -511,7 +531,7 @@
       "path": "skills/repo-entropy-audit",
       "displayName": "Repo Entropy Audit",
       "description": "Scan an entire repository for entropy across six axes (structure, semantics, behavior, context, protocol, control) and produce a module-level heatmap, trend comparison against baseline, and prioritized cleanup targets. Use for periodic health checks or before major releases.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -614,8 +634,8 @@
       "name": "stage-change-pipeline",
       "path": "skills/stage-change-pipeline",
       "displayName": "Stage Change Pipeline",
-      "description": "Turn a development-stage design package into an reviewed OpenSpec change and fine-grained GitHub issues with clear module boundaries and small-PR execution scope.",
-      "version": "0.8.1",
+      "description": "Turn a development-stage design package into a reviewed OpenSpec change and fine-grained GitHub issues with clear module boundaries and small-PR execution scope.",
+      "version": "0.8.2",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -635,7 +655,7 @@
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
       "description": "End-to-end GitHub issue implementation workflow orchestrated by Claude Code or Codex, delegating implementation, cross-review, and finding verification to subagents (implementer, reviewer, verifier). Covers OpenSpec fixtures, risk-adaptive review, verification, PR evidence, CI, and human-gated merge.",
-      "version": "0.8.0",
+      "version": "0.8.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -713,7 +733,7 @@
       "path": "agents/explorer",
       "displayName": "Explorer",
       "description": "Use when a task needs fast read-only codebase mapping, evidence gathering, impact analysis, or file and symbol discovery before implementation or review.",
-      "version": "1.2.1",
+      "version": "1.2.2",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -725,9 +745,7 @@
         "read-only"
       ],
       "archetype": "explorer",
-      "skills": [
-        "clarify"
-      ],
+      "skills": [],
       "agents": [],
       "platforms": [
         "claude-code",
@@ -768,7 +786,7 @@
       "path": "agents/planner",
       "displayName": "Planner",
       "description": "Architecture and implementation planning agent that designs step-by-step plans with trade-off analysis and escalates to implementation-planning for complex technical execution plans.",
-      "version": "1.2.2",
+      "version": "1.2.3",
       "maturity": "experimental",
       "categories": [
         "design",
@@ -800,7 +818,7 @@
       "path": "agents/researcher",
       "displayName": "Researcher",
       "description": "Web research agent for deep investigation, multi-source verification, and structured report generation.",
-      "version": "1.1.3",
+      "version": "1.1.4",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -813,8 +831,7 @@
       ],
       "archetype": "explorer",
       "skills": [
-        "deep-research",
-        "clarify"
+        "deep-research"
       ],
       "agents": [],
       "platforms": [
@@ -882,7 +899,7 @@
       "path": "packs/agentic-issue-delivery",
       "displayName": "Agentic Issue Delivery Pack",
       "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through subagent-driven review and delivery gates, with whole-repo entropy governance.",
-      "version": "0.5.1",
+      "version": "0.6.0",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "agentic-developer",
@@ -894,7 +911,6 @@
       "tags": [
         "github-issues",
         "openspec",
-        "codeagent",
         "delivery-workflow",
         "small-pr"
       ],
@@ -902,7 +918,6 @@
         "stage-change-pipeline",
         "subagent-workflow",
         "risk-adaptive-cross-review",
-        "codeagent",
         "gh-create-issue",
         "clarify",
         "grill-me",
@@ -914,8 +929,7 @@
         "entropy-review",
         "repo-entropy-audit",
         "git-worktree-workflows",
-        "project-documentation",
-        "deep-research"
+        "project-documentation"
       ],
       "agents": [
         "implementer",
@@ -929,7 +943,7 @@
       "path": "packs/codebase-stewardship",
       "displayName": "Codebase Stewardship Pack",
       "description": "周期性/按需的代码健康治理：深化模块、治乱删冗、定架构方向，共用 grill 对抗式对话与 openspec/glossary.md + docs/adr/ 领域沉淀。区别于 agentic-issue-delivery 的一次性 issue 交付流水线。",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "codebase-steward",
@@ -954,7 +968,8 @@
         "future-aware-architecture",
         "grill-with-docs",
         "grill-me",
-        "clarify"
+        "clarify",
+        "gh-create-issue"
       ],
       "agents": [
         "explorer"
@@ -965,7 +980,7 @@
       "path": "packs/product-manager",
       "displayName": "Product Manager Pack",
       "description": "Product strategy, requirements, and research workflow pack.",
-      "version": "0.1.1",
+      "version": "0.3.0",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "product-manager",
@@ -984,7 +999,10 @@
         "brainstorming",
         "business-plan",
         "deep-research",
-        "implementation-planning"
+        "implementation-planning",
+        "prd-authoring",
+        "gh-create-issue",
+        "project-documentation"
       ],
       "agents": [
         "explorer",
@@ -993,5 +1011,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-06-23T02:08:43.804Z"
+  "generatedAt": "2026-07-02T09:00:33.545Z"
 }

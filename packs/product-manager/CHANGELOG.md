@@ -5,6 +5,16 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-02
+
+- Add `prd-authoring` (new skill, 0.1.0): the requirements-authoring capability the persona was missing — no PRD skill existed anywhere in the repo. It bridges the discovery skills (`clarify`/`brainstorming`/`deep-research`/`business-plan`) and `gh-create-issue`.
+
+## [0.2.0] - 2026-07-02
+
+- Add `gh-create-issue` and `project-documentation`: the pack previously stopped before backlog creation and docs governance; these close the discovery → backlog handoff for the PM persona.
+- Fix README drift: `implementation-planning` was missing from the Included Skills list since 0.1.1; the skill list now matches `pack.json` and carries one-line rationales.
+- Modernize the README install command to `npx my-agents install pack` (the `npm run install-pack --` form still works but sibling packs use the newer CLI form).
+
 ## [0.1.1] - 2026-03-28
 
 - Added `implementation-planning` because the pack includes the `planner` agent and should install its deep-planning dependency explicitly.

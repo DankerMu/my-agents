@@ -3,7 +3,7 @@
   "name": "product-manager",
   "displayName": "Product Manager Pack",
   "description": "Product strategy, requirements, and research workflow pack.",
-  "version": "0.1.1",
+  "version": "0.3.0",
   "maturity": "experimental",
   "packType": "role-pack",
   "persona": "product-manager",
@@ -13,7 +13,10 @@
     "brainstorming",
     "business-plan",
     "deep-research",
-    "implementation-planning"
+    "implementation-planning",
+    "prd-authoring",
+    "gh-create-issue",
+    "project-documentation"
   ],
   "agents": ["explorer", "planner", "researcher"],
   "tags": ["pm", "product", "strategy"],

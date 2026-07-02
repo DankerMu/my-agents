@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-07-02
+
+- Remove `codeagent`: legacy documentation for the `codeagent-wrapper` CLI with zero live references from any other member since the 0.2.0 native-subagent migration. Install it separately if you still use that CLI. The `codeagent` pack tag is dropped with it.
+- Remove `deep-research`: never wired into either backbone workflow (`stage-change-pipeline`, `subagent-workflow`); it was thematic filler in a delivery pack.
+- Add a README "Versioning" section: the pack version tracks membership and pack-level docs only; member skills evolve on their own changelogs (the bundled backbones are currently at `stage-change-pipeline` 0.8.x / `subagent-workflow` 0.8.x).
+
 ## [0.5.1] - 2026-06-16
 
 - Add a "Pairs With" section cross-linking `codebase-stewardship` and the delivery + stewardship pairing overview (`docs/architecture/delivery-and-stewardship.md`). Docs only; no membership change.

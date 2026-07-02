@@ -3,7 +3,7 @@
   "name": "agentic-issue-delivery",
   "displayName": "Agentic Issue Delivery Pack",
   "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through subagent-driven review and delivery gates, with whole-repo entropy governance.",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "maturity": "experimental",
   "packType": "role-pack",
   "persona": "agentic-developer",
@@ -12,7 +12,6 @@
     "stage-change-pipeline",
     "subagent-workflow",
     "risk-adaptive-cross-review",
-    "codeagent",
     "gh-create-issue",
     "clarify",
     "grill-me",
@@ -24,11 +23,10 @@
     "entropy-review",
     "repo-entropy-audit",
     "git-worktree-workflows",
-    "project-documentation",
-    "deep-research"
+    "project-documentation"
   ],
   "agents": ["implementer", "reviewer", "verifier", "explorer"],
-  "tags": ["github-issues", "openspec", "codeagent", "delivery-workflow", "small-pr"],
+  "tags": ["github-issues", "openspec", "delivery-workflow", "small-pr"],
   "authors": [
     {
       "name": "danker"

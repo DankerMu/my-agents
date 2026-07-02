@@ -12,7 +12,6 @@ This pack bundles the repository's design-to-issue and issue-to-PR delivery work
 - `stage-change-pipeline`
 - `subagent-workflow`
 - `risk-adaptive-cross-review`
-- `codeagent`
 - `gh-create-issue`
 - `clarify`
 - `grill-me`
@@ -25,7 +24,6 @@ This pack bundles the repository's design-to-issue and issue-to-PR delivery work
 - `repo-entropy-audit`
 - `git-worktree-workflows`
 - `project-documentation`
-- `deep-research`
 
 ## Included Agents
 
@@ -53,7 +51,11 @@ External tools are still required by the workflows and are not installed by this
 - the target project's build/test toolchain
 - a subagent-capable orchestrator (Claude Code Task subagents or Codex subagents)
 
-The pack membership is explicit. It includes local support skills that the two main workflows route to or reference. `subagent-workflow` delegates to the bundled `implementer`, `reviewer`, and `verifier` subagents instead of an external code-agent CLI. The `codeagent` skill remains bundled as optional documentation for the `codeagent-wrapper` CLI; it is no longer required by the delivery path.
+The pack membership is explicit: every member is routed to or referenced by the two main workflows. `subagent-workflow` delegates to the bundled `implementer`, `reviewer`, and `verifier` subagents instead of an external code-agent CLI. The legacy `codeagent` skill (docs for the `codeagent-wrapper` CLI) is no longer bundled; install it separately if you still use that CLI.
+
+## Versioning
+
+The pack version tracks membership and pack-level docs only. Bundled skills evolve independently on their own changelogs (see `skills/<name>/CHANGELOG.md`, e.g. `stage-change-pipeline`, `subagent-workflow`); a member-skill release does not bump this pack.
 
 ## Pairs With: `codebase-stewardship`
 
