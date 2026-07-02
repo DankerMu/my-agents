@@ -2,6 +2,12 @@
 
 All notable changes to the **planner** agent will be documented in this file.
 
+## [1.2.3] - 2026-07-02
+
+### Changed
+
+- Name the declared `clarify` skill dependency in the prompt bodies (Claude Code + Codex): the clarify-requirements step now routes through the skill when available. Previously the dependency was declared in `agent.json` but invisible in the projected instructions.
+
 ## [1.2.2] - 2026-06-14
 
 ### Changed

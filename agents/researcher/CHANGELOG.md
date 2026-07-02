@@ -2,6 +2,13 @@
 
 All notable changes to the **researcher** agent will be documented in this file.
 
+## [1.1.4] - 2026-07-02
+
+### Changed
+
+- Wire the declared `deep-research` skill dependency into the prompt bodies (Claude Code + Codex): Deep-scope requests now route through the skill's harness when installed, with the inline process as fallback. Previously the dependency was metadata-only.
+- Remove the declared `clarify` skill dependency: the prompt's inline scope-clarification step covers it, and the skill was never referenced by the projected instructions.
+
 ## [1.1.3] - 2026-06-14
 
 ### Changed

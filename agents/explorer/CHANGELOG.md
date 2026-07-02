@@ -2,6 +2,12 @@
 
 All notable changes to the **explorer** agent will be documented in this file.
 
+## [1.2.2] - 2026-07-02
+
+### Changed
+
+- Remove the declared `clarify` skill dependency. It was never projected into the Claude Code or Codex prompt bodies, and an interactive requirements-clarification skill does not fit a read-only recon subagent. Declared skill dependencies must be visible in the projected instructions.
+
 ## [1.2.1] - 2026-06-14
 
 ### Changed

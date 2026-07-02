@@ -3,7 +3,7 @@
   "name": "researcher",
   "displayName": "Researcher",
   "description": "Web research agent for deep investigation, multi-source verification, and structured report generation.",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "maturity": "experimental",
   "categories": ["research", "productivity"],
   "tags": ["research", "web", "citations"],
@@ -13,7 +13,7 @@
     }
   ],
   "archetype": "explorer",
-  "skills": ["deep-research", "clarify"],
+  "skills": ["deep-research"],
   "capabilities": {
     "shell": false,
     "network": true,
