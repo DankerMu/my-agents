@@ -5,7 +5,7 @@ description: >
   OpenSpec fixture, and existing code/tests, return exactly one verdict — CONFIRMED, PLAUSIBLE,
   or REFUTED — with cited evidence. Read-only. Must not be the reviewer that produced the
   candidate, and must not search for new findings.
-tools: Read, Glob, Grep, Bash
+tools: Read, Glob, Grep, Bash(readonly)
 model: opus
 ---
 

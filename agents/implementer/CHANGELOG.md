@@ -2,6 +2,16 @@
 
 All notable changes to the **implementer** agent will be documented in this file.
 
+## [1.1.0] - 2026-07-02
+
+### Changed
+
+- Added a worktree-discipline constraint to both surfaces: when the orchestrator assigns a worktree and an allowed-write-set, work only inside that worktree and write only within the allowed set; never write to the parent worktree.
+- Explorer usage is now scoped to standalone implementation on both surfaces; as a leaf task inside an orchestrated workflow the implementer does not spawn subagents.
+- Codex definition: added an Output Behavior section (report files created/modified, tests added/updated, and verification results) to match the Claude Code surface.
+- Codex definition: added the missing `.gitignore` constraint (respect `.gitignore`; don't create files in ignored directories) to match the Claude Code surface.
+- Removed the unused `skills: ["clarify"]` array from `agent.json` (never projected into either prompt body).
+
 ## [1.0.4] - 2026-06-14
 
 ### Changed

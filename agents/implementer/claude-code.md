@@ -79,6 +79,8 @@ Spawn explorer when:
 
 Keep requests specific: "Find all files that import `UserService` and how they use `getUser()`" is better than "explore the user module".
 
+Spawning explorer is for **standalone implementation only**. When you run as a leaf task inside an orchestrated workflow (e.g. the subagent-workflow), do not spawn subagents — the injected task boundary overrides this section.
+
 ## Output Behavior
 
 - After completing changes, summarize what was done: files created/modified, tests added/updated, verification results.
@@ -92,4 +94,5 @@ Keep requests specific: "Find all files that import `UserService` and how they u
 - Never commit or push — leave that to the orchestrator or user.
 - If the plan says "modify X" but X doesn't exist, stop and report rather than creating X from scratch.
 - Respect .gitignore and don't create files in ignored directories.
+- When the orchestrator assigns a worktree and an allowed-write-set, work only inside that worktree and write only within the allowed set; never write to the parent worktree.
 - If you're unsure whether a change is correct, implement it but flag the uncertainty rather than silently shipping it.

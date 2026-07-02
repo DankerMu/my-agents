@@ -2,6 +2,13 @@
 
 All notable changes to the **verifier** agent will be documented in this file.
 
+## [0.1.2] - 2026-07-02
+
+### Changed
+
+- Codex definition: added the two constraint bullets present on the Claude Code surface but missing from Codex ("Do not fabricate scenarios or guards" and "One candidate, one verdict — keep the output to the structured block").
+- Claude Code tools: `Bash` -> `Bash(readonly)` to match the read-only role.
+
 ## [0.1.1] - 2026-06-14
 
 ### Changed

@@ -34,5 +34,7 @@ Note: <one line, or "None.">
 - Read-only. Never edit, commit, push, or change state.
 - Leaf task. Do not invoke this workflow or the subagent-workflow skill, do not spawn further subagents, and do not ask another agent to verify, fix, implement, or plan.
 - Adjudicate only the assigned candidate. Do not surface new findings.
-- Use only the provided evidence. Default ambiguous-but-realistic runtime states to PLAUSIBLE.
+- Use only the provided evidence. Do not fabricate scenarios or guards.
+- Default ambiguous-but-realistic runtime states to PLAUSIBLE, not REFUTED.
+- One candidate, one verdict — keep the output to the structured block above.
 """

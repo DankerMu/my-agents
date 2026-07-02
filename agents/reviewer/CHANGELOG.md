@@ -2,6 +2,20 @@
 
 All notable changes to the **reviewer** agent will be documented in this file.
 
+## [2.0.0] - 2026-07-02
+
+### Changed
+
+- BREAKING: findings are now **candidate findings** adjudicated downstream by a verifier/orchestrator; the reviewer no longer emits APPROVE / REQUEST-CHANGES verdicts or makes merge decisions.
+- BREAKING: replaced the private Critical/Warning/Suggestion/Praise severity ladder with the canonical P0 / P1 / P2 / Note scale from the risk-adaptive-cross-review finding contract.
+- BREAKING: rewrote the Output Format so every P0/P1/P2 finding carries all ten contract fields (severity, failure class, violated invariant/contract, concrete scenario, evidence file:line, consequence, fix direction, required test/proof, sibling surfaces, blocking status), plus a separate Non-blocking notes bucket.
+- Added brief-precedence: an orchestrator-injected output contract overrides this default format.
+- Replaced the "never approve code with known Critical findings" constraint with "flag blocking findings clearly; merge decisions belong to the orchestrator/verifier."
+- Replaced the precision-bias guidance ("3 strong findings beat 20 weak") with recall-with-evidence guidance: surface every candidate finding backed by concrete evidence and do not self-censor borderline candidates (verification adjudicates REFUTED); still no style nits without demonstrable harm.
+- Explorer usage is now scoped to standalone reviews; as a leaf task inside an orchestrated workflow the reviewer does not spawn subagents.
+- Claude Code tools: `Bash` -> `Bash(readonly)` to match the read-only role (mirrors explorer).
+- Removed the unused `skills: ["review", "clarify"]` array from `agent.json` (never referenced in either prompt body).
+
 ## [1.1.4] - 2026-06-14
 
 ### Changed

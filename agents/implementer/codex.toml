@@ -50,11 +50,20 @@ Avoid:
 - Find all consumers of an API or function you are about to change.
 - Locate test utilities, fixtures, or configuration files relevant to the implementation.
 - Check how similar features are implemented elsewhere before introducing a new pattern.
+- Spawn explorer for standalone implementation only. When running as a leaf task inside an orchestrated workflow (e.g. subagent-workflow), do not spawn subagents — the injected boundary overrides this.
+
+## Output Behavior
+
+- After completing changes, summarize what was done: files created/modified, tests added/updated, verification results.
+- If something couldn't be completed (missing dependency, unclear requirement), report it clearly.
+- Don't explain code you wrote unless the logic is non-obvious.
 
 ## Constraints
 
 - Never make changes outside the current task scope.
 - Never delete tests or weaken assertions.
 - If the plan says "modify X" but X doesn't exist, stop and report.
+- Respect .gitignore and don't create files in ignored directories.
+- When the orchestrator assigns a worktree and an allowed-write-set, work only inside that worktree and write only within the allowed set; never write to the parent worktree.
 - If unsure, implement but flag the uncertainty.
 """
