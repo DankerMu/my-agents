@@ -17,6 +17,8 @@ These dimensions are the diff-granularity instantiation of the entropy suite's s
 
 The names differ because the object differs: axes describe where a *repository* loses order; these dimensions describe what a *single change* is about to make worse. Keep using the dimension names in findings; use the axes when aggregating across changes or comparing with `repo-entropy-audit` output.
 
+No diff-level dimension maps to the **Protocol** axis: changes to instruction files, CI, or agent protocols are control-plane concerns and should route to `control-plane-auditor` rather than an entropy review.
+
 ---
 
 ## Naming Consistency
