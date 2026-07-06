@@ -27,12 +27,17 @@ This pack bundles the repository's design-to-issue and issue-to-PR delivery work
 
 ## Included Agents
 
-This pack installs the three worker subagents that `subagent-workflow` delegates to:
+This pack installs the worker subagents that `subagent-workflow` delegates to:
 
 - `implementer` — implements features, fixes, refactors, and tests from a spec/plan/brief; push-free (the orchestrator owns commit/push/PR).
 - `reviewer` — risk-adaptive cross-review plus read-only fixture and final review.
 - `verifier` — independent Phase 4.5 finding verification (CONFIRMED/PLAUSIBLE/REFUTED).
 - `explorer` — read-only codebase investigation that `reviewer` spawns for deeper context.
+- `monitor` — cheap-model watchdog (Claude: haiku, Codex: spark) for harness-external waits such as CI runs during Phase 8; ID-based completion detection, quiet blocking waits, read-only.
+
+## Included Hooks
+
+- `worktree-guard` — PreToolUse path guard that mechanically enforces the parallel-worktree write discipline `subagent-workflow` relies on. Installed everywhere but inert until the orchestrator declares `.worktree-guard.json` at the project root when entering worktree-delegation mode; blocked writes are denied with the reason fed back to the model.
 
 ## Install
 

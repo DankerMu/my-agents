@@ -53,6 +53,33 @@ function getAgentTargets(name, platforms, scope) {
   return targets;
 }
 
+function getHookTargets(name, platforms, scope) {
+  const targets = [];
+  const base = getScopeBase(scope);
+
+  if (platforms.includes("claude")) {
+    targets.push({
+      platformKey: "claude",
+      platform: "Claude Code",
+      fragmentFile: "claude-code.json",
+      scriptsDestDir: path.join(base, ".claude", "hooks", name),
+      configPath: path.join(base, ".claude", "settings.json")
+    });
+  }
+
+  if (platforms.includes("codex")) {
+    targets.push({
+      platformKey: "codex",
+      platform: "Codex",
+      fragmentFile: "codex.json",
+      scriptsDestDir: path.join(base, ".codex", "hooks", name),
+      configPath: path.join(base, ".codex", "hooks.json")
+    });
+  }
+
+  return targets;
+}
+
 function getExternalAssetTarget(kind, entry, scope) {
   const base = getScopeBase(scope);
 
@@ -92,5 +119,6 @@ function getExternalAssetTarget(kind, entry, scope) {
 module.exports = {
   getExternalAssetTarget,
   getSkillTargets,
-  getAgentTargets
+  getAgentTargets,
+  getHookTargets
 };

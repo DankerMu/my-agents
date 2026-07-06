@@ -44,7 +44,7 @@ async function handlePackageCommand(command, args) {
     return;
   }
 
-  if (!["skill", "agent", "pack"].includes(type)) {
+  if (!["skill", "agent", "hook", "pack"].includes(type)) {
     printCommandError(`Unknown package type: ${type}`);
     return;
   }
@@ -90,6 +90,11 @@ async function handleLegacyAlias(command, args) {
     return true;
   }
 
+  if (command === "install-hook") {
+    await forwardInstallArgs(["--hook", ...args]);
+    return true;
+  }
+
   if (command === "install-pack") {
     await forwardInstallArgs(["--pack", ...args]);
     return true;
@@ -102,6 +107,11 @@ async function handleLegacyAlias(command, args) {
 
   if (command === "uninstall-agent") {
     await forwardInstallArgs(["--agent", "--uninstall", ...args]);
+    return true;
+  }
+
+  if (command === "uninstall-hook") {
+    await forwardInstallArgs(["--hook", "--uninstall", ...args]);
     return true;
   }
 

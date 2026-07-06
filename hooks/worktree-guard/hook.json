@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "name": "worktree-guard",
+  "displayName": "Worktree Guard",
+  "description": "PreToolUse hook that blocks file writes outside declared worktree roots. No-op until the project declares .worktree-guard.json, so it is safe to install everywhere.",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "categories": ["security", "workflow"],
+  "tags": ["worktree", "guardrail", "pre-tool-use", "path-safety"],
+  "authors": [
+    {
+      "name": "danker"
+    }
+  ],
+  "events": ["PreToolUse"],
+  "requirements": {
+    "os": ["macos", "linux"],
+    "tools": ["bash", "python3"],
+    "network": "none"
+  }
+}

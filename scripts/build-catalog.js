@@ -4,6 +4,7 @@ const path = require("node:path");
 const {
   SKILLS_CATALOG_PATH,
   AGENTS_CATALOG_PATH,
+  HOOKS_CATALOG_PATH,
   PACKS_CATALOG_PATH,
   MACHINE_CATALOG_PATH,
   generateCatalogSnapshot
@@ -28,6 +29,7 @@ async function main() {
 
   await fs.writeFile(path.join(repoRoot, SKILLS_CATALOG_PATH), snapshot.skillsMarkdown, "utf8");
   await fs.writeFile(path.join(repoRoot, AGENTS_CATALOG_PATH), snapshot.agentsMarkdown, "utf8");
+  await fs.writeFile(path.join(repoRoot, HOOKS_CATALOG_PATH), snapshot.hooksMarkdown, "utf8");
   await fs.writeFile(path.join(repoRoot, PACKS_CATALOG_PATH), snapshot.packsMarkdown, "utf8");
 }
 

@@ -164,6 +164,13 @@
           }
         ]
       }
+    },
+    "hooks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/localNameEntry"
+      },
+      "description": "本地 hook 包名称列表（暂不支持外部 hook）。"
     }
   }
 }

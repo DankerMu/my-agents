@@ -9,9 +9,11 @@ const { appendProjectManifestEntry } = require("./lib/project-manifest-write");
 const {
   installSkill,
   installAgent,
+  installHook,
   installPack,
   uninstallSkill,
   uninstallAgent,
+  uninstallHook,
   uninstallPack,
   syncProject,
   runAll
@@ -42,6 +44,8 @@ function parseArgs(argv) {
       type = "skill";
     } else if (arg === "--agent" || arg === "-a") {
       type = "agent";
+    } else if (arg === "--hook") {
+      type = "hook";
     } else if (arg === "--pack") {
       type = "pack";
     } else if (arg === "--sync-project") {
@@ -107,6 +111,12 @@ async function runNamedOperation(repoRoot, type, name, platforms, scope, isUnins
     return isUninstall
       ? uninstallAgent(name, platforms, scope)
       : installAgent(repoRoot, name, platforms, scope);
+  }
+
+  if (type === "hook") {
+    return isUninstall
+      ? uninstallHook(repoRoot, name, platforms, scope)
+      : installHook(repoRoot, name, platforms, scope);
   }
 
   if (type === "pack") {

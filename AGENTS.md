@@ -15,13 +15,13 @@ The root `AGENTS.md` and `CLAUDE.md` files are generated outputs. Edit `instruct
 
 ## Coding Style & Naming Conventions
 
-Match the existing style in surrounding files. JavaScript in `scripts/` uses CommonJS, 2-space indentation, semicolons, and double quotes. Python helpers use 4-space indentation and should stay deterministic and CLI-friendly. Use kebab-case for package directories and keep `name` fields in `skill.json`, `agent.json`, and `pack.json` aligned with the folder name. Prefer ASCII Markdown. Do not hand-edit generated catalogs, `dist/catalog.json`, or the generated root instruction files.
+Match the existing style in surrounding files. JavaScript in `scripts/` uses CommonJS, 2-space indentation, semicolons, and double quotes. Python helpers use 4-space indentation and should stay deterministic and CLI-friendly. Use kebab-case for package directories and keep `name` fields in `skill.json`, `agent.json`, `hook.json`, and `pack.json` aligned with the folder name. Prefer ASCII Markdown. Do not hand-edit generated catalogs, `dist/catalog.json`, or the generated root instruction files.
 
 ## Quality & Validation Rules
 
 - Categories must come from `categories.json`; add a new category there before using it in package metadata.
-- Skill docs, agent platform docs, and pack READMEs must be substantive and not placeholders.
-- When a version changes in `skill.json`, `agent.json`, or `pack.json`, add a matching `## [x.y.z]` entry to the package `CHANGELOG.md`.
+- Skill docs, agent platform docs, hook docs (`HOOK.md`), and pack READMEs must be substantive and not placeholders.
+- When a version changes in `skill.json`, `agent.json`, `hook.json`, or `pack.json`, add a matching `## [x.y.z]` entry to the package `CHANGELOG.md`.
 - Follow SemVer: MAJOR for breaking changes, MINOR for new capabilities, PATCH for fixes.
 - Run `npm run sync-instructions`, `npm run build`, and `npm test` before opening a PR after changing canonical packages, metadata, generated outputs, or contributor instructions.
 - The versioned `pre-commit` hook keeps local commits fast: it syncs root instructions, formats staged files, auto-fixes staged JavaScript where possible, and re-stages the results.

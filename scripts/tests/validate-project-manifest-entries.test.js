@@ -11,6 +11,7 @@ function runValidation(manifest) {
     new Set(["product-manager"]),
     new Set(["brainstorming"]),
     new Set(["explorer"]),
+    new Set(["worktree-guard"]),
     errors
   );
   return errors;

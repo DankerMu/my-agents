@@ -24,7 +24,7 @@ function runNodeScriptWithStatus(scriptPath, args) {
 test("top-level CLI help documents the canonical command surface", () => {
   const output = runNodeScript(cliPath, ["--help"]);
 
-  assert.match(output, /npx my-agents install <skill\|agent\|pack> <name> \[options\]/);
+  assert.match(output, /npx my-agents install <skill\|agent\|hook\|pack> <name> \[options\]/);
   assert.match(output, /npx my-agents project sync \[options\]/);
   assert.match(output, /npx my-agents references <command> \[options\]/);
   assert.match(output, /Compatibility aliases:/);
@@ -33,7 +33,7 @@ test("top-level CLI help documents the canonical command surface", () => {
 test("legacy install wrapper help points to the canonical CLI", () => {
   const output = runNodeScript(installPath, ["--help"]);
 
-  assert.match(output, /npx my-agents install <skill\|agent\|pack> <name> \[options\]/);
+  assert.match(output, /npx my-agents install <skill\|agent\|hook\|pack> <name> \[options\]/);
   assert.match(output, /npm run install-skill -- <name>/);
 });
 
@@ -48,7 +48,10 @@ test("top-level CLI still accepts legacy flag-first install syntax", () => {
   const result = runNodeScriptWithStatus(cliPath, ["--skill", "--help"]);
 
   assert.equal(result.status, 0);
-  assert.match(result.stdout, /npx my-agents install <skill\|agent\|pack> <name> \[options\]/);
+  assert.match(
+    result.stdout,
+    /npx my-agents install <skill\|agent\|hook\|pack> <name> \[options\]/
+  );
   assert.doesNotMatch(result.stderr, /Unknown command/);
 });
 

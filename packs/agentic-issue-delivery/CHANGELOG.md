@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-07-06
+
+- 新增 `monitor` agent（Claude haiku / Codex spark）：Phase 8 CI 等待等 harness 外部长任务的廉价看护——JobID/RunID 级完成检测、单次阻塞静默等待、只读。
+- 新增 `worktree-guard` hook：并行 worktree 委派的写入纪律机械化，项目根声明 `.worktree-guard.json` 后拦截越界文件写入，未声明时为 no-op。
+- README 补充 Included Hooks 节。
+
 ## [0.6.0] - 2026-07-02
 
 - Remove `codeagent`: legacy documentation for the `codeagent-wrapper` CLI with zero live references from any other member since the 0.2.0 native-subagent migration. Install it separately if you still use that CLI. The `codeagent` pack tag is dropped with it.

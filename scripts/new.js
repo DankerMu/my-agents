@@ -25,6 +25,8 @@ function parseArgs(argv) {
       type = "agent";
     } else if (arg === "--pack" || arg === "-p") {
       type = "pack";
+    } else if (arg === "--hook") {
+      type = "hook";
     } else if (arg === "--skill" || arg === "-s") {
       type = "skill";
     } else if (!arg.startsWith("-")) {
@@ -346,15 +348,138 @@ async function scaffoldPack(repoRoot, name) {
   console.log("  npm test");
 }
 
+async function scaffoldHook(repoRoot, name) {
+  const hookDir = path.join(repoRoot, "hooks", name);
+  if (await fileExists(hookDir)) {
+    console.error(`Hook already exists: hooks/${name}`);
+    process.exitCode = 2;
+    return;
+  }
+
+  await fs.mkdir(path.join(hookDir, "scripts"), { recursive: true });
+
+  const hookJson = {
+    schemaVersion: 1,
+    name,
+    displayName: name,
+    description: "TODO: one-line description",
+    version: "0.1.0",
+    maturity: "experimental",
+    categories: ["general"],
+    tags: [],
+    authors: [{ name: "TODO: your name" }],
+    events: ["PreToolUse"]
+  };
+
+  await fs.writeFile(
+    path.join(hookDir, "hook.json"),
+    `${JSON.stringify(hookJson, null, 2)}\n`,
+    "utf8"
+  );
+
+  const claudeFragment = {
+    hooks: {
+      PreToolUse: [
+        {
+          matcher: "TODO-tool-matcher",
+          hooks: [
+            {
+              type: "command",
+              command: `bash "$CLAUDE_PROJECT_DIR/.claude/hooks/${name}/${name}.sh"`,
+              timeout: 15
+            }
+          ]
+        }
+      ]
+    }
+  };
+
+  await fs.writeFile(
+    path.join(hookDir, "claude-code.json"),
+    `${JSON.stringify(claudeFragment, null, 2)}\n`,
+    "utf8"
+  );
+
+  await fs.writeFile(
+    path.join(hookDir, "scripts", `${name}.sh`),
+    [
+      "#!/usr/bin/env bash",
+      `# ${name}: TODO describe what this hook enforces.`,
+      "# Receives the tool-call JSON on stdin; exit 2 with stderr to deny.",
+      "set -euo pipefail",
+      "",
+      "input=$(cat)",
+      "# TODO: implement the check against $input",
+      "exit 0",
+      ""
+    ].join("\n"),
+    "utf8"
+  );
+
+  await fs.writeFile(
+    path.join(hookDir, "HOOK.md"),
+    [
+      `# ${name}`,
+      "",
+      "## Purpose",
+      "",
+      "<!-- What policy does this hook enforce, and why mechanically instead of via prompts? -->",
+      "",
+      "TODO",
+      "",
+      "## Behavior",
+      "",
+      "<!-- Which events/tools it intercepts, when it allows vs denies, safe-by-default story. -->",
+      "",
+      "TODO",
+      "",
+      "## Install",
+      "",
+      "```bash",
+      `npx my-agents install hook ${name}`,
+      "```",
+      "",
+      "## Limitations",
+      "",
+      "TODO",
+      ""
+    ].join("\n"),
+    "utf8"
+  );
+
+  await fs.writeFile(
+    path.join(hookDir, "CHANGELOG.md"),
+    [
+      "# Changelog",
+      "",
+      "All notable changes to this hook will be documented in this file.",
+      "This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).",
+      "",
+      "## [Unreleased]",
+      "",
+      `## [0.1.0] - ${todayISODate()}`,
+      "- Initial release.",
+      ""
+    ].join("\n"),
+    "utf8"
+  );
+
+  console.log(`Created hooks/${name}`);
+  console.log("Next:");
+  console.log("  npm run build");
+  console.log("  npm test");
+}
+
 async function main() {
   const repoRoot = path.resolve(__dirname, "..");
   const { type, name } = parseArgs(process.argv);
 
   if (!name) {
-    console.error("Usage: npm run new -- [--skill | --agent | --pack] <name>");
+    console.error("Usage: npm run new -- [--skill | --agent | --hook | --pack] <name>");
     console.error("");
     console.error("  --skill, -s   Create a new skill (default)");
     console.error("  --agent, -a   Create a new agent");
+    console.error("  --hook        Create a new hook");
     console.error("  --pack,  -p   Create a new pack");
     process.exitCode = 2;
     return;
@@ -370,6 +495,8 @@ async function main() {
     await scaffoldAgent(repoRoot, name);
   } else if (type === "pack") {
     await scaffoldPack(repoRoot, name);
+  } else if (type === "hook") {
+    await scaffoldHook(repoRoot, name);
   } else {
     await scaffoldSkill(repoRoot, name);
   }

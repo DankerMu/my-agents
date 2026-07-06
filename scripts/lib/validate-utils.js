@@ -45,6 +45,7 @@ function validateProjectManifestReferences(
   packNames,
   skillNames,
   agentNames,
+  hookNames,
   errors
 ) {
   for (const duplicate of findDuplicates(manifest.packs)) {
@@ -53,6 +54,7 @@ function validateProjectManifestReferences(
 
   const localSkillEntries = getLocalProjectManifestEntries(manifest.skills);
   const localAgentEntries = getLocalProjectManifestEntries(manifest.agents);
+  const localHookEntries = getLocalProjectManifestEntries(manifest.hooks);
   const externalSkillEntries = getExternalProjectManifestEntries(manifest.skills);
   const externalAgentEntries = getExternalProjectManifestEntries(manifest.agents);
 
@@ -62,6 +64,10 @@ function validateProjectManifestReferences(
 
   for (const duplicate of findDuplicates(localAgentEntries)) {
     errors.push(`${label}: duplicate agent "${duplicate}"`);
+  }
+
+  for (const duplicate of findDuplicates(localHookEntries)) {
+    errors.push(`${label}: duplicate hook "${duplicate}"`);
   }
 
   for (const packName of manifest.packs ?? []) {
@@ -79,6 +85,12 @@ function validateProjectManifestReferences(
   for (const agentName of localAgentEntries) {
     if (!agentNames.has(agentName)) {
       errors.push(`${label}: references unknown agent "${agentName}"`);
+    }
+  }
+
+  for (const hookName of localHookEntries) {
+    if (!hookNames.has(hookName)) {
+      errors.push(`${label}: references unknown hook "${hookName}"`);
     }
   }
 

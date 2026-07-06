@@ -52,6 +52,15 @@ jobs:
             fi
           done
 
+          for dir in hooks/*/; do
+            [ -f "$dir/CHANGELOG.md" ] || continue
+            HOOK_NAME=$(basename "$dir")
+            SECTION=$(awk '/^## \[/{if(found) exit; found=1} found' "$dir/CHANGELOG.md")
+            if [ -n "$SECTION" ]; then
+              NOTES="${NOTES}### ${HOOK_NAME} (hook)\n${SECTION}\n\n"
+            fi
+          done
+
           if [ -z "$NOTES" ]; then
             NOTES="Release ${TAG}"
           fi

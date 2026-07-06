@@ -7,7 +7,8 @@ function emptyManagedPlatformState() {
   return {
     packs: [],
     skills: [],
-    agents: []
+    agents: [],
+    hooks: []
   };
 }
 
@@ -27,7 +28,8 @@ function normalizeManagedPlatformState(entry) {
   return {
     packs: uniqueSorted(entry?.packs),
     skills: uniqueSorted(entry?.skills),
-    agents: uniqueSorted(entry?.agents)
+    agents: uniqueSorted(entry?.agents),
+    hooks: uniqueSorted(entry?.hooks)
   };
 }
 

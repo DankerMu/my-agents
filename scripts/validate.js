@@ -8,9 +8,11 @@ const { fileExists, readJson, listDirs } = require("./lib/fs-utils");
 const {
   SKILLS_CATALOG_PATH,
   AGENTS_CATALOG_PATH,
+  HOOKS_CATALOG_PATH,
   PACKS_CATALOG_PATH,
   MACHINE_CATALOG_PATH,
   detectPlatforms,
+  detectHookPlatforms,
   generateCatalogSnapshot
 } = require("./lib/catalog");
 const {
@@ -54,6 +56,7 @@ async function checkDocLength(filePath, label, errors) {
 async function loadValidators(repoRoot) {
   const skillSchema = await readJson(path.join(repoRoot, "schemas", "skill.schema.json"));
   const agentSchema = await readJson(path.join(repoRoot, "schemas", "agent.schema.json"));
+  const hookSchema = await readJson(path.join(repoRoot, "schemas", "hook.schema.json"));
   const packSchema = await readJson(path.join(repoRoot, "schemas", "pack.schema.json"));
   const projectManifestSchema = await readJson(
     path.join(repoRoot, "schemas", "project-manifest.schema.json")
@@ -66,6 +69,7 @@ async function loadValidators(repoRoot) {
   return {
     validateSkill: ajv.compile(skillSchema),
     validateAgent: ajv.compile(agentSchema),
+    validateHook: ajv.compile(hookSchema),
     validatePack: ajv.compile(packSchema),
     validateProjectManifest: ajv.compile(projectManifestSchema),
     validateCatalog: ajv.compile(catalogSchema)
@@ -267,12 +271,116 @@ async function validateAgents(
   );
 }
 
+const HOOK_FRAGMENT_FILES = ["claude-code.json", "codex.json"];
+
+async function validateHooks(repoRoot, validateHook, allowedCategories, errors, hookNames) {
+  const hookDirs = await listDirs(path.join(repoRoot, "hooks"));
+
+  for (const dirName of hookDirs) {
+    const baseDir = path.join(repoRoot, "hooks", dirName);
+    const hookJsonPath = path.join(baseDir, "hook.json");
+
+    if (!(await fileExists(hookJsonPath))) {
+      continue;
+    }
+
+    let hook;
+    try {
+      hook = await readJson(hookJsonPath);
+    } catch (err) {
+      errors.push(`hooks/${dirName}/hook.json: invalid JSON (${err.message})`);
+      continue;
+    }
+
+    if (!validateHook(hook)) {
+      errors.push(
+        `hooks/${dirName}/hook.json: schema validation failed\n${formatAjvErrors(
+          validateHook.errors
+        )}`
+      );
+      continue;
+    }
+
+    if (hook.name !== dirName) {
+      errors.push(
+        `hooks/${dirName}/hook.json: name mismatch (hook.name=${hook.name}, dir=${dirName})`
+      );
+    }
+
+    if (hookNames.has(hook.name)) {
+      errors.push(`Duplicate hook name: ${hook.name}`);
+    }
+    hookNames.add(hook.name);
+
+    pushUnknownCategoryErrors(
+      `hooks/${dirName}/hook.json`,
+      hook.categories,
+      allowedCategories,
+      errors
+    );
+
+    const platforms = await detectHookPlatforms(baseDir);
+    if (platforms.length === 0) {
+      errors.push(
+        `hooks/${dirName}: must have at least one platform fragment (claude-code.json or codex.json)`
+      );
+    }
+
+    const declaredEvents = new Set(hook.events ?? []);
+    for (const fragmentFile of HOOK_FRAGMENT_FILES) {
+      const fragmentPath = path.join(baseDir, fragmentFile);
+      if (!(await fileExists(fragmentPath))) {
+        continue;
+      }
+
+      let fragment;
+      try {
+        fragment = await readJson(fragmentPath);
+      } catch (err) {
+        errors.push(`hooks/${dirName}/${fragmentFile}: invalid JSON (${err.message})`);
+        continue;
+      }
+
+      if (!fragment.hooks || typeof fragment.hooks !== "object" || Array.isArray(fragment.hooks)) {
+        errors.push(
+          `hooks/${dirName}/${fragmentFile}: must contain a top-level "hooks" object keyed by event`
+        );
+        continue;
+      }
+
+      for (const [event, entries] of Object.entries(fragment.hooks)) {
+        if (!declaredEvents.has(event)) {
+          errors.push(
+            `hooks/${dirName}/${fragmentFile}: event "${event}" is not declared in hook.json events`
+          );
+        }
+        if (!Array.isArray(entries) || entries.length === 0) {
+          errors.push(
+            `hooks/${dirName}/${fragmentFile}: event "${event}" must map to a non-empty array`
+          );
+        }
+      }
+    }
+
+    await checkDocLength(path.join(baseDir, "HOOK.md"), `hooks/${dirName}/HOOK.md`, errors);
+
+    const changelog = hook.entrypoints?.changelog ?? "CHANGELOG.md";
+    const changelogPath = path.join(baseDir, changelog);
+    if (!(await fileExists(changelogPath))) {
+      errors.push(`Missing changelog: hooks/${dirName}/${changelog}`);
+    } else if (!(await checkChangelogHasVersion(fs, changelogPath, hook.version))) {
+      errors.push(`hooks/${dirName}/${changelog}: must contain a '## [${hook.version}]' section`);
+    }
+  }
+}
+
 async function validatePacks(
   repoRoot,
   validatePack,
   allowedCategories,
   skillNames,
   agentNames,
+  hookNames,
   agentMetadata,
   errors
 ) {
@@ -339,6 +447,10 @@ async function validatePacks(
       errors.push(`packs/${dirName}/pack.json: duplicate agent "${duplicate}"`);
     }
 
+    for (const duplicate of findDuplicates(pack.hooks)) {
+      errors.push(`packs/${dirName}/pack.json: duplicate hook "${duplicate}"`);
+    }
+
     for (const skillRef of pack.skills ?? []) {
       if (!skillNames.has(skillRef)) {
         errors.push(`packs/${dirName}/pack.json: references unknown skill "${skillRef}"`);
@@ -348,6 +460,12 @@ async function validatePacks(
     for (const agentRef of pack.agents ?? []) {
       if (!agentNames.has(agentRef)) {
         errors.push(`packs/${dirName}/pack.json: references unknown agent "${agentRef}"`);
+      }
+    }
+
+    for (const hookRef of pack.hooks ?? []) {
+      if (!hookNames.has(hookRef)) {
+        errors.push(`packs/${dirName}/pack.json: references unknown hook "${hookRef}"`);
       }
     }
 
@@ -396,6 +514,7 @@ async function validateProjectManifestFiles(
   packNames,
   skillNames,
   agentNames,
+  hookNames,
   errors
 ) {
   const projectManifestCandidates = [
@@ -442,6 +561,7 @@ async function validateProjectManifestFiles(
       packNames,
       skillNames,
       agentNames,
+      hookNames,
       errors
     );
   }
@@ -479,6 +599,11 @@ async function validateGeneratedOutputs(repoRoot, validateCatalog, errors) {
     errors.push(`Missing ${AGENTS_CATALOG_PATH} (run \`npm run build\`)`);
   }
 
+  const hooksMdPath = path.join(repoRoot, HOOKS_CATALOG_PATH);
+  if (!(await fileExists(hooksMdPath))) {
+    errors.push(`Missing ${HOOKS_CATALOG_PATH} (run \`npm run build\`)`);
+  }
+
   const packsMdPath = path.join(repoRoot, PACKS_CATALOG_PATH);
   if (!(await fileExists(packsMdPath))) {
     errors.push(`Missing ${PACKS_CATALOG_PATH} (run \`npm run build\`)`);
@@ -491,6 +616,7 @@ async function validateGeneratedOutputs(repoRoot, validateCatalog, errors) {
       schemaVersion: catalog.schemaVersion,
       skills: catalog.skills,
       agents: catalog.agents,
+      hooks: catalog.hooks,
       packs: catalog.packs
     };
     if (JSON.stringify(actualComparable) !== JSON.stringify(snapshot.catalogBase)) {
@@ -513,6 +639,13 @@ async function validateGeneratedOutputs(repoRoot, validateCatalog, errors) {
   }
 
   if (
+    (await fileExists(hooksMdPath)) &&
+    (await fs.readFile(hooksMdPath, "utf8")) !== snapshot.hooksMarkdown
+  ) {
+    errors.push(`${HOOKS_CATALOG_PATH} is out of date (run \`npm run build\`)`);
+  }
+
+  if (
     (await fileExists(packsMdPath)) &&
     (await fs.readFile(packsMdPath, "utf8")) !== snapshot.packsMarkdown
   ) {
@@ -529,6 +662,7 @@ async function main() {
   const warnings = [];
   const skillNames = new Set();
   const agentNames = new Set();
+  const hookNames = new Set();
   const agentMetadata = new Map();
 
   await validateSkills(repoRoot, validators.validateSkill, allowedCategories, errors, skillNames);
@@ -543,12 +677,15 @@ async function main() {
     agentMetadata
   );
 
+  await validateHooks(repoRoot, validators.validateHook, allowedCategories, errors, hookNames);
+
   const packNames = await validatePacks(
     repoRoot,
     validators.validatePack,
     allowedCategories,
     skillNames,
     agentNames,
+    hookNames,
     agentMetadata,
     errors
   );
@@ -559,6 +696,7 @@ async function main() {
     packNames,
     skillNames,
     agentNames,
+    hookNames,
     errors
   );
   await validateGeneratedOutputs(repoRoot, validators.validateCatalog, errors);

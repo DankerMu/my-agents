@@ -19,10 +19,10 @@ function difference(previousValues, nextValues) {
 
 const USAGE = `Usage:
   npx my-agents add <github-url> [options]
-  npx my-agents install <skill|agent|pack> <name> [options]
-  npx my-agents install <skill|agent|pack> --all [options]
-  npx my-agents uninstall <skill|agent|pack> <name> [options]
-  npx my-agents uninstall <skill|agent|pack> --all [options]
+  npx my-agents install <skill|agent|hook|pack> <name> [options]
+  npx my-agents install <skill|agent|hook|pack> --all [options]
+  npx my-agents uninstall <skill|agent|hook|pack> <name> [options]
+  npx my-agents uninstall <skill|agent|hook|pack> --all [options]
   npx my-agents project sync [options]
 
   npx my-agents references <command> [options]
@@ -38,6 +38,7 @@ Examples:
   npx my-agents add https://github.com/affaan-m/everything-claude-code/tree/main/skills/agentic-engineering
   npx my-agents install skill clarify
   npx my-agents install agent explorer --platform codex --scope project
+  npx my-agents install hook worktree-guard --platform claude --scope project
   npx my-agents install pack product-manager --platform codex --scope project
   npx my-agents project sync --manifest docs/examples/my-agents.project.example.json
   npx my-agents project sync --prune
@@ -47,10 +48,12 @@ Examples:
 Compatibility aliases:
   npm run install-skill -- <name>
   npm run install-agent -- <name>
+  npm run install-hook -- <name>
   npm run install-pack -- <name>
   npm run sync-project -- [options]
   npm run uninstall-skill -- <name>
   npm run uninstall-agent -- <name>
+  npm run uninstall-hook -- <name>
   npm run uninstall-pack -- <name>
   npm run sync-references -- <command> [options]`;
 

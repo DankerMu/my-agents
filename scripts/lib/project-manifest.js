@@ -69,8 +69,10 @@ async function expandManifestMembers(repoRoot, manifest) {
   const desiredPacks = unique(manifest.packs);
   const packSkillNames = [];
   const packAgentNames = [];
+  const packHookNames = [];
   const directLocalSkills = unique(getLocalProjectManifestEntries(manifest.skills));
   const directLocalAgents = unique(getLocalProjectManifestEntries(manifest.agents));
+  const directLocalHooks = unique(getLocalProjectManifestEntries(manifest.hooks));
   const externalSkills = [];
   const externalAgents = [];
   let ok = true;
@@ -83,6 +85,7 @@ async function expandManifestMembers(repoRoot, manifest) {
     }
     packSkillNames.push(...(pack.skills ?? []));
     packAgentNames.push(...(pack.agents ?? []));
+    packHookNames.push(...(pack.hooks ?? []));
   }
 
   const seenExternalSkillIds = new Set();
@@ -110,12 +113,15 @@ async function expandManifestMembers(repoRoot, manifest) {
     packs: desiredPacks,
     packSkills: unique(packSkillNames),
     packAgents: unique(packAgentNames),
+    packHooks: unique(packHookNames),
     directLocalSkills,
     directLocalAgents,
+    directLocalHooks,
     externalSkills,
     externalAgents,
     effectiveLocalSkills: unique([...packSkillNames, ...directLocalSkills]),
-    effectiveLocalAgents: unique([...packAgentNames, ...directLocalAgents])
+    effectiveLocalAgents: unique([...packAgentNames, ...directLocalAgents]),
+    effectiveLocalHooks: unique([...packHookNames, ...directLocalHooks])
   };
 }
 

@@ -11,13 +11,13 @@
 
 ## 编码风格与命名约定
 
-与周围文件的现有风格保持一致。`scripts/` 中的 JavaScript 使用 CommonJS、2 空格缩进、分号和双引号。Python 辅助脚本使用 4 空格缩进，应保持确定性且对 CLI 友好。包目录使用 kebab-case，`skill.json`、`agent.json` 和 `pack.json` 中的 `name` 字段与文件夹名称保持一致。优先使用 ASCII Markdown。不要手动编辑生成的目录、`dist/catalog.json` 或生成的根指令文件。
+与周围文件的现有风格保持一致。`scripts/` 中的 JavaScript 使用 CommonJS、2 空格缩进、分号和双引号。Python 辅助脚本使用 4 空格缩进，应保持确定性且对 CLI 友好。包目录使用 kebab-case，`skill.json`、`agent.json`、`hook.json` 和 `pack.json` 中的 `name` 字段与文件夹名称保持一致。优先使用 ASCII Markdown。不要手动编辑生成的目录、`dist/catalog.json` 或生成的根指令文件。
 
 ## 质量与验证规则
 
 - 分类必须来自 `categories.json`；在包元数据中使用新分类前，先在该文件中添加。
-- 技能文档、代理平台文档和 Pack README 必须有实质内容，不得为占位符。
-- 当 `skill.json`、`agent.json` 或 `pack.json` 中的版本号发生变化时，需要在包的 `CHANGELOG.md` 中添加对应的 `## [x.y.z]` 条目。
+- 技能文档、代理平台文档、钩子文档（`HOOK.md`）和 Pack README 必须有实质内容，不得为占位符。
+- 当 `skill.json`、`agent.json`、`hook.json` 或 `pack.json` 中的版本号发生变化时，需要在包的 `CHANGELOG.md` 中添加对应的 `## [x.y.z]` 条目。
 - 遵循语义化版本：MAJOR 用于破坏性变更，MINOR 用于新功能，PATCH 用于修复。
 - 在修改规范包、元数据、生成产物或贡献者指南后开 PR 之前，运行 `npm run sync-instructions`、`npm run build` 和 `npm test`。
 - 版本化 `pre-commit` 钩子保持本地提交快速：它同步根指令、格式化暂存文件、尽可能自动修复暂存的 JavaScript，并重新暂存结果。

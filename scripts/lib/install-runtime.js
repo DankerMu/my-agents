@@ -4,7 +4,13 @@ const path = require("node:path");
 const { copyPath, fileExists, readJson, listDirs } = require("./fs-utils");
 const { buildExcludedRoots, loadProjectionConfig, copySkillDirAtomic } = require("./projection");
 const { getExternalAssetManagedKey, withExternalRepositoryCheckout } = require("./external-assets");
-const { getSkillTargets, getAgentTargets, getExternalAssetTarget } = require("./runtime-targets");
+const {
+  getSkillTargets,
+  getAgentTargets,
+  getHookTargets,
+  getExternalAssetTarget
+} = require("./runtime-targets");
+const { mergeHooksConfig, removeHooksConfig } = require("./settings-merge");
 const {
   readPackMetadata,
   readProjectManifest,
@@ -99,6 +105,82 @@ async function installAgent(repoRoot, name, platforms, scope) {
   if (installed === 0) {
     console.error(`No platform files found in agents/${name}`);
     return false;
+  }
+
+  return true;
+}
+
+async function installHook(repoRoot, name, platforms, scope) {
+  const hookDir = path.join(repoRoot, "hooks", name);
+  if (!(await fileExists(hookDir))) {
+    console.error(`Hook not found: hooks/${name}`);
+    return false;
+  }
+
+  const targets = getHookTargets(name, platforms, scope);
+  const scriptsDir = path.join(hookDir, "scripts");
+  const hasScripts = await fileExists(scriptsDir);
+  let installed = 0;
+
+  for (const target of targets) {
+    const fragmentPath = path.join(hookDir, target.fragmentFile);
+    if (!(await fileExists(fragmentPath))) {
+      continue;
+    }
+
+    let fragment;
+    try {
+      fragment = await readJson(fragmentPath);
+    } catch (err) {
+      console.error(`hooks/${name}/${target.fragmentFile}: invalid JSON (${err.message})`);
+      return false;
+    }
+
+    if (hasScripts) {
+      await fs.rm(target.scriptsDestDir, { recursive: true, force: true });
+      await copyPath(scriptsDir, target.scriptsDestDir);
+    }
+
+    const added = await mergeHooksConfig(target.configPath, fragment.hooks);
+    console.log(
+      `Installed (${target.platform}, ${scope}): hook ${name} -> ${target.configPath} (${added} new entries)`
+    );
+    installed += 1;
+  }
+
+  if (installed === 0) {
+    console.error(`No platform files found in hooks/${name} (claude-code.json or codex.json)`);
+    return false;
+  }
+
+  return true;
+}
+
+async function uninstallHook(repoRoot, name, platforms, scope) {
+  const hookDir = path.join(repoRoot, "hooks", name);
+  const targets = getHookTargets(name, platforms, scope);
+
+  for (const target of targets) {
+    const fragmentPath = path.join(hookDir, target.fragmentFile);
+    if (await fileExists(fragmentPath)) {
+      try {
+        const fragment = await readJson(fragmentPath);
+        const removed = await removeHooksConfig(target.configPath, fragment.hooks);
+        if (removed > 0) {
+          console.log(
+            `Uninstalled (${target.platform}, ${scope}): hook ${name} (${removed} entries from ${target.configPath})`
+          );
+        } else {
+          console.log(`Not installed (${target.platform}, ${scope}): hook ${name}`);
+        }
+      } catch (err) {
+        console.error(`hooks/${name}/${target.fragmentFile}: invalid JSON (${err.message})`);
+      }
+    }
+
+    if (await removeDirRecursive(target.scriptsDestDir)) {
+      console.log(`Removed (${target.platform}, ${scope}): ${target.scriptsDestDir}/`);
+    }
   }
 
   return true;
@@ -217,6 +299,13 @@ async function installPack(repoRoot, name, platforms, scope) {
     }
   }
 
+  for (const hookName of unique(pack.hooks)) {
+    if (!(await installHook(repoRoot, hookName, platforms, scope))) {
+      console.error(`Pack ${name}: failed to install hook "${hookName}"`);
+      ok = false;
+    }
+  }
+
   if (ok) {
     console.log(`Installed pack: ${name}`);
   }
@@ -236,6 +325,9 @@ async function uninstallPack(repoRoot, name, platforms, scope) {
   }
   for (const agentName of unique(pack.agents)) {
     await uninstallAgent(agentName, platforms, scope);
+  }
+  for (const hookName of unique(pack.hooks)) {
+    await uninstallHook(repoRoot, hookName, platforms, scope);
   }
   console.log(`Uninstalled pack: ${name}`);
   return true;
@@ -259,7 +351,10 @@ function buildDesiredManagedEntry(platform, expanded) {
       ...expanded.externalAgents
         .filter((entry) => entry.platform === platform)
         .map((entry) => getExternalAssetManagedKey("agents", entry))
-    ])
+    ]),
+    hooks: uniqueSorted(
+      expanded.effectiveLocalHooks.map((name) => getProjectManifestManagedEntryKey("hook", name))
+    )
   };
 }
 
@@ -286,6 +381,10 @@ function collectRuntimeDestinationCollisions(expanded, effectivePlatforms) {
 
     for (const name of expanded.effectiveLocalAgents) {
       record("agent", platform, name, `local agent "${name}"`);
+    }
+
+    for (const name of expanded.effectiveLocalHooks) {
+      record("hook", platform, name, `local hook "${name}"`);
     }
   }
 
@@ -314,7 +413,7 @@ function collectRuntimeDestinationCollisions(expanded, effectivePlatforms) {
   return errors;
 }
 
-async function uninstallManagedProjectEntry(kind, managedKey, platform, scope) {
+async function uninstallManagedProjectEntry(repoRoot, kind, managedKey, platform, scope) {
   const parsed = parseProjectManifestManagedEntryKey(managedKey);
   if (!parsed) {
     console.error(`Invalid managed entry key: ${managedKey}`);
@@ -331,6 +430,10 @@ async function uninstallManagedProjectEntry(kind, managedKey, platform, scope) {
       return uninstallSkill(parsed.name, [platform], scope);
     }
 
+    if (kind === "hook") {
+      return uninstallHook(repoRoot, parsed.name, [platform], scope);
+    }
+
     return uninstallAgent(parsed.name, [platform], scope);
   }
 
@@ -342,17 +445,23 @@ async function uninstallManagedProjectEntry(kind, managedKey, platform, scope) {
   );
 }
 
-async function pruneManagedMembers(previousEntry, desiredEntry, platform) {
+async function pruneManagedMembers(repoRoot, previousEntry, desiredEntry, platform) {
   let ok = true;
 
   for (const agentKey of difference(previousEntry.agents, desiredEntry.agents)) {
-    if (!(await uninstallManagedProjectEntry("agent", agentKey, platform, "project"))) {
+    if (!(await uninstallManagedProjectEntry(repoRoot, "agent", agentKey, platform, "project"))) {
       ok = false;
     }
   }
 
   for (const skillKey of difference(previousEntry.skills, desiredEntry.skills)) {
-    if (!(await uninstallManagedProjectEntry("skill", skillKey, platform, "project"))) {
+    if (!(await uninstallManagedProjectEntry(repoRoot, "skill", skillKey, platform, "project"))) {
+      ok = false;
+    }
+  }
+
+  for (const hookKey of difference(previousEntry.hooks, desiredEntry.hooks)) {
+    if (!(await uninstallManagedProjectEntry(repoRoot, "hook", hookKey, platform, "project"))) {
       ok = false;
     }
   }
@@ -424,6 +533,16 @@ async function syncProject(repoRoot, manifestPath, cliPlatforms, platformsSpecif
     }
   }
 
+  for (const hookName of expanded.directLocalHooks) {
+    if (expanded.packHooks.includes(hookName)) {
+      continue;
+    }
+    if (!(await installHook(repoRoot, hookName, effectivePlatforms, "project"))) {
+      console.error(`Project manifest: failed to install hook "${hookName}"`);
+      ok = false;
+    }
+  }
+
   for (const entry of expanded.externalSkills) {
     if (!(await installExternalAsset("skills", entry, "project"))) {
       console.error(`Project manifest: failed to install external skill "${entry.name}"`);
@@ -448,7 +567,7 @@ async function syncProject(repoRoot, manifestPath, cliPlatforms, platformsSpecif
     const desiredEntry = buildDesiredManagedEntry(platform, expanded);
 
     if (prune) {
-      if (!(await pruneManagedMembers(previousEntry, desiredEntry, platform))) {
+      if (!(await pruneManagedMembers(repoRoot, previousEntry, desiredEntry, platform))) {
         ok = false;
       }
       nextState.platforms[platform] = desiredEntry;
@@ -456,7 +575,8 @@ async function syncProject(repoRoot, manifestPath, cliPlatforms, platformsSpecif
       nextState.platforms[platform] = {
         packs: desiredEntry.packs,
         skills: uniqueSorted([...previousEntry.skills, ...desiredEntry.skills]),
-        agents: uniqueSorted([...previousEntry.agents, ...desiredEntry.agents])
+        agents: uniqueSorted([...previousEntry.agents, ...desiredEntry.agents]),
+        hooks: uniqueSorted([...previousEntry.hooks, ...desiredEntry.hooks])
       };
     }
   }
@@ -476,7 +596,8 @@ async function syncProject(repoRoot, manifestPath, cliPlatforms, platformsSpecif
 }
 
 async function runAll(repoRoot, type, platforms, scope, isUninstall) {
-  const dirName = type === "agent" ? "agents" : type === "pack" ? "packs" : "skills";
+  const dirName =
+    type === "agent" ? "agents" : type === "pack" ? "packs" : type === "hook" ? "hooks" : "skills";
   const names = (await listDirs(path.join(repoRoot, dirName))).sort((left, right) =>
     left.localeCompare(right)
   );
@@ -492,6 +613,10 @@ async function runAll(repoRoot, type, platforms, scope, isUninstall) {
       currentOk = isUninstall
         ? await uninstallPack(repoRoot, name, platforms, scope)
         : await installPack(repoRoot, name, platforms, scope);
+    } else if (type === "hook") {
+      currentOk = isUninstall
+        ? await uninstallHook(repoRoot, name, platforms, scope)
+        : await installHook(repoRoot, name, platforms, scope);
     } else {
       currentOk = isUninstall
         ? await uninstallSkill(name, platforms, scope)
@@ -507,9 +632,11 @@ async function runAll(repoRoot, type, platforms, scope, isUninstall) {
 module.exports = {
   installSkill,
   installAgent,
+  installHook,
   installPack,
   uninstallSkill,
   uninstallAgent,
+  uninstallHook,
   uninstallPack,
   syncProject,
   runAll
