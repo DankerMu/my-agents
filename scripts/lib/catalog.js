@@ -13,10 +13,6 @@ function hasSuppressedCatalogTag(metadata) {
 }
 
 function isCatalogVisible(dirName, metadata) {
-  if (dirName.startsWith("issue-")) {
-    return false;
-  }
-
   return !hasSuppressedCatalogTag(metadata);
 }
 

@@ -3,6 +3,12 @@
 All notable changes to this agent will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.3] - 2026-07-06
+
+### Changed
+
+- Add the `issue-agent-os` suppression tag: catalog visibility is now purely tag-driven. The old `issue-` directory-name-prefix rule in `catalog.js` is removed (see `issue-scout` 0.1.2 for the rationale). No visibility change for this agent.
+
 ## [0.2.2] - 2026-06-14
 
 ### Changed

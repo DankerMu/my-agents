@@ -143,7 +143,7 @@ Review rounds:
 - Round 1 uses the risk-adaptive reviewer count above.
 - After a Phase 6 fix pass, rerun cross-review before Phase 7 using the same risk-adaptive reviewer count and reviewer mix as Phase 4 on the current head.
 - Do not narrow follow-up rounds to only the risk areas touched by the fix. A prior round can miss issues outside the fix area, so each post-fix round must be a comprehensive review of the updated PR diff and OpenSpec fixture before Phase 7.
-- A cross-review round is clean only when it has no actionable findings. Critical/major findings and test coverage gaps always return to Phase 5-6. Minor findings must be fixed or explicitly deferred with issue/OpenSpec/user-instruction basis.
+- A cross-review round is clean only when it has no actionable findings. Critical/major findings and test coverage gaps always return to Phase 5-6. Minor findings must be fixed or explicitly deferred with issue/OpenSpec/user-instruction basis. When the `issue-scribe` agent is installed, "deferred with issue basis" means delegating the deferred finding to `issue-scribe` (it verifies, dedups, and files the tracked issue) and recording the returned issue URL in the evidence bundle; a deferral with neither an issue URL nor a recorded reason is not a valid deferral.
 - When a comprehensive cross-review round comes back clean, record `Last clean reviewed SHA: <sha>` in the evidence bundle. This recorded SHA — not the frozen final HEAD — is the rollback anchor the Phase 8 pre-merge gate resets to if a later fix round corrupts a clean reviewed state.
 - A finding is actionable only if it satisfies the finding contract defined in the `risk-adaptive-cross-review` skill (`finding-contract.md`): severity, failure class, violated invariant/contract, concrete scenario, evidence, fix direction, required test/proof, sibling surfaces, and blocking status. Treat vague concerns, style preferences, and untestable possibilities as non-blocking notes unless the orchestrator can complete the missing fields from the diff and fixture.
 - If a follow-up round finds the same failure class in another module, helper, or sibling surface, treat that as an invariant miss, not as a new isolated finding. Trigger Phase 6.2 before issuing the next fix prompt.
@@ -523,7 +523,7 @@ Post Chinese work-summary comment before the merge gate or pre-authorized auto-m
 
 ### 兼容性、风险与已知限制
 - <API/数据格式/迁移兼容性>
-- <剩余风险或明确不覆盖范围>
+- <剩余风险或明确不覆盖范围：每条附 follow-up issue 链接（issue-scribe 产出），或一行不落 issue 的理由>
 
 ### 维护者关注点
 - <需要人工重点看的点；没有则写“无额外关注点”>
@@ -541,6 +541,7 @@ Before requesting merge approval or running a pre-authorized auto-merge, verify 
   - **(b) "review not required" record**: the fixture risk tier is `none` and the Phase 2 audit found no risk, and that fact is persisted in the evidence bundle against the frozen `FULL_SHA`. This is the only path that legitimately skips Phase 4/4.5/7 (see Phase 4 `none` handling and the Phase 2 audit).
   - Missing both (a) and (b) is a skip block: do not merge, and record it for the accountability log.
 - No posted evidence presents stale findings as current.
+- **Deferral routing**: every explicitly deferred finding and every 剩余风险/已知限制 entry in the work summary carries either a tracked issue URL (delegated to `issue-scribe` when installed) or a recorded one-line reason why no issue is filed. An unrouted deferral is a gate failure, not a silent drop.
 - **Completion self-audit (premature-completion guard)**: re-derive each issue acceptance criterion and each selected `tasks.md` item and confirm the diff/tests actually satisfy it — not "the agent said done". Use the project profile's verification matrix to map each touched surface to its verification command and expected evidence; a matrix row for a touched surface that was never executed on the final head counts as an uncovered criterion. Confirm no leftover edge/error path the fixture required is unhandled, and that the final changes are internally consistent (no two fixes that contradict each other). Any uncovered criterion blocks the merge and returns to Phase 5-6; it does not become a silent deferral.
 - **Oracle integrity**: confirm the OpenSpec fixture, acceptance criteria, existing tests, and CI gates were not weakened, deleted, or rewritten to make the gate pass (`risk-adaptive-cross-review` → `finding-contract.md` Oracle Integrity). A test/spec change is legitimate only when it tracks a real contract change recorded in the OpenSpec change, never to silence a failure.
 

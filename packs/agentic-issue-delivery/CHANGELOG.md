@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-07-06
+
+- 新增 `issue-scribe` agent：范围纪律的机械出口——主线工作中顺手发现的 follow-up（顺带撞见的 bug、tech debt、被 defer 的评审发现）委派给它，只读取证、去重后提交一个结构化 issue（来源/问题/边界/解决思路/验收标准/元信息+readiness 判定），后续交付轮经正常 issue DAG 拾起。绝不自己修；一个观察至多一个 issue，过大则标 needs-triage 并推荐 `splitter`/`stage-change-pipeline`。
+
 ## [0.7.0] - 2026-07-06
 
 - 新增 `monitor` agent（Claude haiku / Codex spark）：Phase 8 CI 等待等 harness 外部长任务的廉价看护——JobID/RunID 级完成检测、单次阻塞静默等待、只读。

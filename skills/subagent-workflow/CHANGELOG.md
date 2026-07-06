@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-07-06
+
+- **Deferrals are routed, not dropped** (new Core Rule + Phase 8 gate bullet): every explicitly deferred verified finding and every 剩余风险/已知限制 entry in the merge-time work summary must carry either a tracked issue URL — delegated to the `issue-scribe` agent when installed (verify → dedup → one structured issue → URL) — or a recorded one-line reason why no issue is filed. An unrouted deferral fails the pre-merge gate instead of silently dropping. This makes issue-scribe's trigger structural (gate-checked at the places deferrals are born: the cross-review deferral rule, the Chinese work-summary template's 已知限制 line, the gate itself) rather than description-driven.
+- `issue-scribe` added to the optional-prerequisites line alongside `worktree-guard` and `monitor`.
+
 ## [0.11.0] - 2026-07-06
 
 - **Verification matrix becomes a standing project asset** (eng-init alignment): the project profile grows from six to eight fields — Phase 0.0 bootstrap now also records the repo's real command entry points (package scripts / Makefile / justfile / CI steps) and a verification matrix (`surface -> command -> evidence`). Phase 2 executes the matrix rows for the touched surfaces plus the default build+test row instead of improvising a pipeline each run (falling back to discovery only when a row is missing, then writing it back via Phase 0.5 profile-gap maintenance), and the Phase 8 completion self-audit treats a touched-surface matrix row never executed on the final head as an uncovered criterion. Templates in `project-profiles.md` (contributes-list, Generic, authoring block, size budget).

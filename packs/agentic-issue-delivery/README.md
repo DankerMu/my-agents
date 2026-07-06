@@ -34,6 +34,7 @@ This pack installs the worker subagents that `subagent-workflow` delegates to:
 - `verifier` — independent Phase 4.5 finding verification (CONFIRMED/PLAUSIBLE/REFUTED).
 - `explorer` — read-only codebase investigation that `reviewer` spawns for deeper context.
 - `monitor` — cheap-model watchdog (Claude: haiku, Codex: spark) for harness-external waits such as CI runs during Phase 8; ID-based completion detection, quiet blocking waits, read-only.
+- `issue-scribe` — follow-up capture for scope discipline: when primary work surfaces an out-of-scope finding (bug in passing, tech debt, deferred review finding), the orchestrator delegates the raw observation; issue-scribe verifies it read-only, dedups, and files one structured issue (来源/边界/解决思路/验收标准/readiness) that a later delivery run picks up via the normal issue DAG. Never fixes anything itself.
 
 ## Included Hooks
 
