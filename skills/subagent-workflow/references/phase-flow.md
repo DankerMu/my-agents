@@ -95,6 +95,7 @@ The profile is a living document, not a one-shot. It does not change per issue, 
    - Full `tasks.md` test/evidence section.
    - Project verification commands.
    - Instruction to list changed files and verification results.
+   - Instruction to report every deviation from the plan (fixture, `tasks.md`, or this brief) as one line each — what changed, why, which surfaces it touches: unexpected upstream/API behavior, a component that could not be reused as planned, a switched implementation path, or a constraint discovered mid-implementation. "No deviations" must be stated explicitly; an omitted deviation report is an incomplete result.
    - For high or broad-expanded work, instruction to report shared helper/boundary surfaces inspected, which were changed, and which were intentionally left unchanged with rationale.
    - For high or broad-expanded work, instruction to report regression evidence for every `Invariant Matrix` row, or explain why a row is out of scope only by citing the fixture.
 5. Spawn either a single `implementer` subagent or the parallel worktree delegation defined by `parallel-worktree-delegation.md`, passing the implementation brief built above and the repository root as the working directory (Claude Code: a Task subagent; Codex: a subagent).
@@ -124,7 +125,7 @@ If any issue is found, create a precise Phase 6 style fix prompt. Do not patch i
 2. Stage specific files only; never use `git add -A`.
 3. Commit with conventional format: `feat(<scope>): <desc> (#<issue>)`.
 4. Push branch.
-5. Create PR. Leave Agent Review section empty until Phase 8.
+5. Create PR. Leave Agent Review section empty until Phase 8. Seed a `偏离记录` section in the PR description from the implementer's reported deviations (write `无偏离` when none); Phase 6 fix passes append to this section so it stays the single running log of plan departures.
 
 ## Phase 4: Risk-Adaptive Cross-Review
 
@@ -136,7 +137,7 @@ Select reviewers from fixture level:
 - `high` or `broad-expanded`: use all 4 standard reviewers (Correctness, Integration, Security/Performance, Test & Evidence Coverage). Escalate to 6 reviewers when the PR touches DB-backed state, retry/cancellation, publish/delete/rollback, schema/evidence contracts, security boundaries, production config, or shared helper/state-machine roots. The two additional reviewers are `Spec Compliance` and `Invariant / State Machine / Compatibility`.
 - Initial round only: if repository policy requires a fixed number of evidence comments, follow it only when it does not conflict with the 6-review high-risk escalation in `SKILL.md`; otherwise post a consolidated evidence bundle rather than reducing reviewer coverage.
 
-Use `phase-4-cross-review.md` to build the parallel reviewer-subagent briefs. Prefer spawning the full reviewer set as parallel subagents in one batch (Claude Code: multiple Task calls in one message; Codex: parallel subagents). Reviewer subagents are read-only and return their complete reports as their final messages; the orchestrator collects each returned report and persists it to `<REVIEW_DIR>/<report file>` (default `<REVIEW_DIR>` = `.workplans/<issue-or-pr>/review/`). Do not post PR comments in this phase.
+Include the PR description's `偏离记录` section in every reviewer brief: deviations are where the implementer made choices the plan did not cover, so review attention goes there first. Use `phase-4-cross-review.md` to build the parallel reviewer-subagent briefs. Prefer spawning the full reviewer set as parallel subagents in one batch (Claude Code: multiple Task calls in one message; Codex: parallel subagents). Reviewer subagents are read-only and return their complete reports as their final messages; the orchestrator collects each returned report and persists it to `<REVIEW_DIR>/<report file>` (default `<REVIEW_DIR>` = `.workplans/<issue-or-pr>/review/`). Do not post PR comments in this phase.
 
 Review rounds:
 
@@ -333,7 +334,10 @@ Test: <new or changed test case>
 After all changes: <build+lint+test command>
 All must pass. Do not break existing tests.
 List changed files and verification results.
+Report any deviation from this fix list (what/why/impact); state "no deviations" explicitly.
 ```
+
+Append reported deviations to the PR description's `偏离记录` section before the next review round.
 
 For pattern escalation or high-risk classes, replace the narrow fix list with an invariant-closure prompt:
 
@@ -512,6 +516,9 @@ Post Chinese work-summary comment before the merge gate or pre-authorized auto-m
 
 ### 本次具体改动
 - <按模块/文件/行为列出主要改动>
+
+### 计划偏离
+- <汇总 PR 描述 `偏离记录` section：每条 偏离点/原因/影响面；全程无偏离则写"无偏离">
 
 ### 测试与验证
 - <本地 build/lint/test/check 命令和结果>

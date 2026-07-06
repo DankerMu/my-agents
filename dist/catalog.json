@@ -375,7 +375,7 @@
       "path": "skills/implementation-planning",
       "displayName": "Implementation Planning",
       "description": "Manual-first heavy planning protocol for complex technical implementation work. Use when the user or the planner agent explicitly needs a deep executable plan for a feature, refactor, migration, or architecture change after the direction is already chosen. Do not use for brainstorming, choosing between competing directions, requirements clarification, business planning, generic project management, or code execution.",
-      "version": "0.1.5",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -656,7 +656,7 @@
       "path": "skills/stage-change-pipeline",
       "displayName": "Stage Change Pipeline",
       "description": "Turn a development-stage design package into a reviewed OpenSpec change and fine-grained GitHub issues with clear module boundaries and small-PR execution scope.",
-      "version": "0.10.0",
+      "version": "0.10.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -676,7 +676,7 @@
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
       "description": "End-to-end GitHub issue implementation workflow orchestrated by Claude Code or Codex, delegating implementation, cross-review, and finding verification to subagents (implementer, reviewer, verifier). Covers OpenSpec fixtures, risk-adaptive review, verification, PR evidence, CI, and human-gated merge.",
-      "version": "0.12.0",
+      "version": "0.13.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1142,5 +1142,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-06T13:36:02.764Z"
+  "generatedAt": "2026-07-06T13:39:33.500Z"
 }

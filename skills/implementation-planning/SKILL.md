@@ -7,7 +7,7 @@ description: >
   brainstorming, choosing between competing directions, requirements clarification, business
   planning, generic project management, or code execution.
 invocation_posture: manual-first
-version: 0.1.5
+version: 0.2.0
 ---
 
 # Implementation Planning
@@ -175,7 +175,7 @@ Use `references/plan-structure.md` for the required sections and the deep-plan s
 Build the plan top-down:
 
 1. Identify the phases or workstreams.
-2. Order them by dependency.
+2. Order them by dependency. Within dependency constraints, front-load decision-dense phases — data models, type interfaces, user-visible flows — and push mechanical refactors and low-judgment work to late phases. The parts most likely to be adjusted by a human belong where review attention is highest: phase ordering is a review-attention allocation, not just a build order.
 3. Mark risk points and review gates.
 4. Add concrete files, components, services, or interfaces when the evidence supports that level of specificity.
 5. Add verification for each substantial phase.

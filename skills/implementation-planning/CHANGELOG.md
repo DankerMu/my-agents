@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-06
+- Phase ordering is now a review-attention allocation, not just a build order (adapted from Thariq's "A Field Guide to Fable"): within dependency constraints, front-load decision-dense phases — data models, type interfaces, user-visible flows — and push mechanical refactors and low-judgment work to late phases.
+- `plan-structure.md`: each phase template gains a `Review attention` field (decision-dense — review closely / mechanical — skim) so plan consumers (`stage-change-pipeline` Stage 5, `subagent-workflow`) know where human attention belongs.
+
 ## [0.1.5] - 2026-07-02
 
 ### Added

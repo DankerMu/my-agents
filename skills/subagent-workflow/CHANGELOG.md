@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-07-06
+- New core rule "Deviations are recorded, not silent" (adapted from Thariq's implementation-notes practice): Phase 1 implementer briefs and Phase 6 fix briefs must report every departure from the plan (unexpected upstream/API behavior, non-reusable component, switched implementation path, mid-work constraint) as one line each — what/why/impact — with "no deviations" stated explicitly.
+- The PR description carries a running `偏离记录` section (seeded at Phase 3, appended by Phase 6 fix passes); Phase 4 reviewer briefs include it so review attention goes first to where the implementer chose in territory the plan did not cover; the Phase 8 Chinese work summary consumes it as a new `计划偏离` section.
+- Complements 0.12.0 deferral routing: deferrals track what was found but not done; deviations track what was done differently than planned. Reuses the PR body — no new artifact file.
+
 ## [0.12.0] - 2026-07-06
 
 - **Deferrals are routed, not dropped** (new Core Rule + Phase 8 gate bullet): every explicitly deferred verified finding and every 剩余风险/已知限制 entry in the merge-time work summary must carry either a tracked issue URL — delegated to the `issue-scribe` agent when installed (verify → dedup → one structured issue → URL) — or a recorded one-line reason why no issue is filed. An unrouted deferral fails the pre-merge gate instead of silently dropping. This makes issue-scribe's trigger structural (gate-checked at the places deferrals are born: the cross-review deferral rule, the Chinese work-summary template's 已知限制 line, the gate itself) rather than description-driven.

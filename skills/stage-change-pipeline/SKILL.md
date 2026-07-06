@@ -256,6 +256,7 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
 - 跨模块能力必须拆成多个子 issue，用 `Dependencies` 串联：先创建共享契约或接口准备 issue，再分别创建各模块实现 issue，最后创建必要的集成验证 issue。
 - 只有当多个 task 位于同一模块、同一 owner、同一验证路径，且拆开会制造无意义阻塞时，才允许合并。
 - 不以 capability 名称机械合并 issue；同一 capability 可以拆成多个模块 issue，不同 capability 也只有在同一模块内强耦合时才可合并。
+- 依赖允许的前提下，issue 排序按决策密度前置：数据模型、接口契约、用户可见流程的 issue 排在 DAG 前面，机械重构殿后——让人工 review 注意力落在最可能被调整的部分（与 `implementation-planning` 0.2 的 phase 排序原则一致）。
 - 每个 issue 必须包含：任务清单、必读文档表、验收标准
 
 **步骤**：

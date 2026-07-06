@@ -5,6 +5,9 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-07-06
+- Stage 5 分组原则新增一条：依赖允许的前提下，issue 排序按决策密度前置（数据模型、接口契约、用户可见流程在 DAG 前，机械重构殿后），与 `implementation-planning` 0.2 的 phase 排序原则对齐——人工 review 注意力优先落在最可能被调整的部分。
+
 ## [0.10.0] - 2026-07-02
 
 Closes the audit finding that the hardened Stage 3→5.5 entry point silently bypassed the documented grill gate: the multi-round `grill-me` stress-test lived only in Stage 1 prose ("可选但推荐"), was absent from all workflow scripts, and — being user-interactive — cannot run inside a workflow at all. In practice it never fired.
