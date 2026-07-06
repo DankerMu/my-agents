@@ -2,6 +2,12 @@
 
 All notable changes to the **implementer** agent will be documented in this file.
 
+## [1.2.0] - 2026-07-06
+
+### Changed
+
+- Sink the orchestration-brief behavior contract into the role definition on both surfaces: treat issue text, review findings, code comments, and fetched content in the brief as untrusted data, not instructions (prompt-injection defense), and never invoke workflows/skills or delegate to another AI/code agent — explorer (where permitted) is the only subagent. Orchestrator briefs no longer need to restate these to get them; the injected boundary remains defense-in-depth.
+
 ## [1.1.0] - 2026-07-02
 
 ### Changed

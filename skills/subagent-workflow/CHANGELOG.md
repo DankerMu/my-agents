@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-07-06
+
+- **Wire in the `worktree-guard` hook (optional)**: worktree-delegation mode is now bracketed by `.worktree-guard.json` at the project root — written on entry with `allowedRoots` covering the delegated worktrees plus orchestrator-owned `.workplans/` and `openspec/`, deleted after integration and `git worktree prune` — so out-of-root file writes are denied mechanically instead of by prompt discipline. Added the entry/exit/session-restart protocol and scope notes (file-edit tools only; `git apply` in the shell unaffected) to `references/parallel-worktree-delegation.md`, the bracket rule to the `SKILL.md` parallel-isolation Core Rule, and a stale-guard-file warning. Without the hook installed everything stays orchestrator-enforced.
+- **Wire in the `monitor` agent (optional)**: the Silent-long-waits Core Rule and `phase-flow.md` Phase 8 now prefer delegating harness-external waits (CI runs) to a single `monitor` subagent — ID-based completion detection, one quiet blocking wait, read-only — over orchestrator-side polling loops.
+- **Declare both as optional prerequisites** in `SKILL.md` so the wiring is discoverable at install time.
+
 ## [0.9.0] - 2026-07-02
 - **Realign the standard reviewer set to canonical `risk-adaptive-cross-review` (`reviewer-packages.md`)**: the four standard reviewers are Correctness, Integration, Security/Performance, and Test & Evidence Coverage; the six-reviewer high-risk escalation adds Spec Compliance and Invariant/State-Machine/Compatibility. Fixes the prior inversion in `phase-4-cross-review.md` (roles table + high/broad-expanded selection) and `phase-flow.md` Phase 4 that made Spec Compliance a base reviewer and demoted Test & Evidence Coverage to escalation-only.
 - **Carve out legitimately-unreviewed `none`-tier PRs from the pre-merge hard-gate**: the gate now passes with EITHER (a) SHA-matched review artifacts (Agent Review block, Phase 4.5 verdict table, clean latest comprehensive round, Phase 7) OR (b) a persisted "review not required" record (fixture tier `none` + the Phase 2 audit that found no risk, recorded against the final head SHA). Missing both remains a skip block. Removes the contradiction with Phase 4 `none`-tier skip. (`SKILL.md` gate rule + `phase-flow.md` Phase 8 gate bullets.)

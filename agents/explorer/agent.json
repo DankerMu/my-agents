@@ -3,7 +3,7 @@
   "name": "explorer",
   "displayName": "Explorer",
   "description": "Use when a task needs fast read-only codebase mapping, evidence gathering, impact analysis, or file and symbol discovery before implementation or review.",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "maturity": "experimental",
   "categories": ["coding", "productivity"],
   "tags": ["exploration", "search", "read-only"],

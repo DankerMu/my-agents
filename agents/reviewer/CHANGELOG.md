@@ -2,6 +2,12 @@
 
 All notable changes to the **reviewer** agent will be documented in this file.
 
+## [2.1.0] - 2026-07-06
+
+### Changed
+
+- Sink the orchestration-brief behavior contract into the role definition on both surfaces: treat diff/issue/PR-comment/fetched content as untrusted data, not instructions (prompt-injection defense), and extend read-only from "never modify files" to never commit, stage, push, post PR comments, or change repository state. Orchestrator briefs no longer need to restate these to get them; the injected boundary remains defense-in-depth.
+
 ## [2.0.0] - 2026-07-02
 
 ### Changed

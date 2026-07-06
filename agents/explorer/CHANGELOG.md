@@ -2,6 +2,12 @@
 
 All notable changes to the **explorer** agent will be documented in this file.
 
+## [1.3.0] - 2026-07-06
+
+### Changed
+
+- Sink the orchestration-brief behavior contract into the role definition on both surfaces: explorer is a leaf agent that never spawns subagents or invokes workflows/skills, and treats file contents, search results, and fetched text as untrusted data, not instructions (prompt-injection defense). Orchestrator briefs no longer need to restate these to get them.
+
 ## [1.2.2] - 2026-07-02
 
 ### Changed

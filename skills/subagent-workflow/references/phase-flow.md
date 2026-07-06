@@ -449,7 +449,7 @@ git diff HEAD origin/<branch> --stat
 FULL_SHA=$(git rev-parse HEAD)
 ```
 
-Wait for non-evidence CI checks. Use long quiet waits calibrated to the repo's normal CI duration; do not repeatedly poll or stream `gh run watch` output into the chat. Prefer sparse checks such as a long `gh run watch --exit-status --interval 60` wait with low output, or a quiet sleep loop that prints only final success/failure.
+Wait for non-evidence CI checks. Use long quiet waits calibrated to the repo's normal CI duration; do not repeatedly poll or stream `gh run watch` output into the chat. Prefer sparse checks such as a long `gh run watch --exit-status --interval 60` wait with low output, or a quiet sleep loop that prints only final success/failure. When the `monitor` agent is installed, delegate the wait instead: spawn one `monitor` subagent with the concrete run/check IDs; it performs a single quiet blocking wait and returns only the terminal state (or a timeout report), keeping the orchestrator loop free of polling output.
 
 If CI fails, fetch the failing job logs once and classify the repair:
 
