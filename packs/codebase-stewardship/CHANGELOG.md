@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-06
+
+- 新增 `blind-spot-pass` skill：动手改陌生模块前的盲区侦察——代码库考古（历史/范式/隐形约定/危险区/邻接面）挖 unknown unknowns，产出带证据的盲区清单与更好的任务 prompt。与审计套件互补：`repo-entropy-audit` 面向全仓体检，本 skill 面向单任务开工前；发现的决策点喂 `grill-me`，值得沉淀的约定走 `grill-with-docs`。
+
 ## [0.3.0] - 2026-07-06
 
 - 新增 `large-file-guard` hook：提交前拦截超过行数阈值（默认 1000）的文本文件——熵治理从"审计报告里的事后建议"补上"提交时的机械前置"。增量棘轮语义（只查本次提交触碰的文件）+ `.large-file-guard.json` 显式逃生口，与 `control-plane-auditor` 的 informational metric 口径不冲突。

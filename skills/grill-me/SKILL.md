@@ -7,7 +7,7 @@ description: >
   或用户希望在动手前把计划/设计的每个决策点逼到清晰。
   不用于开放式头脑风暴、方向选型，或已经明确、无歧义的任务。
 invocation_posture: hybrid
-version: 0.1.1
+version: 0.2.0
 ---
 
 # Grill Me
@@ -23,6 +23,7 @@ version: 0.1.1
 3. **能查就别问**：凡是能从 codebase、设计文档或已有产物查到的，自己去查，不要拿来占用用户。
 4. **沿决策树逐分支推进**：每解决一个决策，顺着它新暴露的子决策继续，直到该分支收敛，再换下一个分支。
 5. **目标是 shared understanding，不是攒答案**：发现矛盾、含糊、未言明的假设，当场逼清。
+6. **说不清就要 reference**：用户对某分支说不清偏好时（unknown knowns——看到才知道的那类），改要参考物——文档、截图、源码目录，源码最佳；或建议先做一次性假数据原型逼出偏好。不要在同一分支追问第三遍。
 
 ## When To Activate
 
@@ -34,13 +35,14 @@ version: 0.1.1
 
 - 开放式选型、方向探索、头脑风暴 → `brainstorming` / `future-aware-architecture`
 - 从零把模糊需求变成 actionable scope → `clarify`（grill-me 针对**已有计划**做对抗，不做从零需求澄清）
+- 任务进入陌生区域、计划还不存在、要找 unknown unknowns → `blind-spot-pass`（它从代码库考古出发挖你没问的问题；本 skill 从已有计划出发拷问）
 - 已经明确、无歧义、可直接执行的小任务
 - 需要边谈边沉淀术语表（`openspec/glossary.md`）或 ADR（`docs/adr/`）的领域建模场景 → 那是同仓的 `grill-with-docs` 的职责；**本 skill 只对话、不写任何文档**
 
 ## 怎么 Grill（流程）
 
 1. **锚定靶子**：确认要压测的是哪个 plan/design——用户给的文档、上一步产出、或口头计划。必要时先快速读相关 codebase/docs 建立事实基线（这一步用查，不用问）。
-2. **画决策树**：把计划拆成相互依赖的决策点（脑内或一句话列出），找出最关键、最不确定的分支。
+2. **画决策树**：把计划拆成相互依赖的决策点（脑内或一句话列出），找出最关键、最不确定的分支。排序判据：**答案会改变架构、接口、数据模型或用户可见流程的分支先问**；纯实现细节的分支放最后，机械性的部分甚至可以不问。
 3. **逐分支追问**：从最关键分支起手，一次一个问题，每问附推荐答案 + 理由。
 4. **顺依赖深入**：用户定了一个决策后，顺着它新引出的子决策继续问，直到该分支无悬念。
 5. **交叉核对**：用户的说法与 codebase 不一致时，当场指出并引用具体文件/行（"你说整单取消，但代码里 `orders.ts:88` 支持部分取消——以哪个为准？"）。
@@ -53,6 +55,7 @@ version: 0.1.1
 
 ## 与本仓库其它 skill 的关系
 
+- `blind-spot-pass`：反向箭头——它挖 territory（代码库 → 问题），grill-me 拷 map（计划 → 问题）。陌生区域先跑 blind-spot-pass，其暴露的决策点作为 grill 分支输入。
 - `clarify`：从零把模糊需求变 actionable scope。grill-me 假设计划已存在，专做对抗式压测。可串联：`clarify` 产出 scope → grill-me 压测该 scope/design。
 - `stage-change-pipeline`：在 Stage 1 收尾、创建 OpenSpec change（Stage 2）之前，用 grill-me 压测阶段计划与设计文档，把假设和边界逼清，降低 Stage 3 审核返工。
 - `brainstorming` / `future-aware-architecture`：负责"做什么 / 选哪条路"；grill-me 负责"这条路的每个决策是否真的想清楚了"。

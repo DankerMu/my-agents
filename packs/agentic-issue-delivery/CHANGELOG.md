@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-07-06
+
+- 新增 `blind-spot-pass` skill：开工前对陌生区域的盲区侦察（源自 Thariq《A Field Guide to Fable: Finding Your Unknowns》）。从代码库考古出发（git 历史、相似实现、隐形约定、危险区、邻接面）挖 unknown unknowns，产出带证据的盲区清单 + 改写后的更好 prompt + reference 清单；决策点喂 `grill-me`（0.2.0 起互相引用），隐形约定沉淀走 `grill-with-docs`，范围外的雷交 `issue-scribe`。
+
 ## [0.8.0] - 2026-07-06
 
 - 新增 `issue-scribe` agent：范围纪律的机械出口——主线工作中顺手发现的 follow-up（顺带撞见的 bug、tech debt、被 defer 的评审发现）委派给它，只读取证、去重后提交一个结构化 issue（来源/问题/边界/解决思路/验收标准/元信息+readiness 判定），后续交付轮经正常 issue DAG 拾起。绝不自己修；一个观察至多一个 issue，过大则标 needs-triage 并推荐 `splitter`/`stage-change-pipeline`。

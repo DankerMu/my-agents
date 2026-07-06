@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-06
+- New non-negotiable #6 "说不清就要 reference": when the user can't articulate a preference on a branch (unknown knowns), switch to asking for a reference (doc / screenshot / source directory — source code is best) or suggest a disposable fake-data prototype, instead of asking a third time. Adapted from Thariq's "A Field Guide to Fable: Finding Your Unknowns".
+- Branch-ordering criterion added to the decision-tree step: branches whose answer would change architecture, interfaces, data models, or user-visible flows are grilled first; pure implementation-detail branches go last or are skipped.
+- Cross-referenced the new sibling `blind-spot-pass` (When Not To Use + relations): it digs the territory (codebase → questions) before a plan exists; grill-me interrogates the map (plan → questions). Run blind-spot-pass first in unfamiliar territory and feed its decision points in as grill branches.
+
 ## [0.1.1] - 2026-07-02
 - Fix stale persistence path in `When Not To Use`: the sibling `grill-with-docs` writes `openspec/glossary.md` (+ `docs/adr/`), not `CONTEXT.md`.
 - Correct wording that called `grill-with-docs` "上游": it is a same-repo sibling (`同仓的`); the true upstream is `mattpocock/skills`. Kept the genuine upstream reference where it describes the mattpocock original.

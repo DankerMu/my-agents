@@ -17,6 +17,7 @@
 - `future-aware-architecture` — 架构方向、技术选型、可逆性与长期演进决策。
 - `grill-with-docs` — 领域压测 + 术语/决策沉淀到 `openspec/glossary.md`、`docs/adr/`。
 - `grill-me` — 轻量对抗式计划/设计压测。
+- `blind-spot-pass` — 动手前的盲区侦察：对陌生模块做代码库考古（历史/范式/隐形约定/危险区/邻接面），挖 unknown unknowns 并产出更好的任务 prompt；grill-me 的反向箭头。
 - `clarify` — 需求/范围澄清；各审计 skill 的 when-not-to-use 分流目标，grill 之前先把模糊需求收敛。
 - `gh-create-issue` — 审计发现的落地出口：`improve-codebase-architecture` 与 `repo-entropy-audit` 在结论确认后经它把高优先级目标变成可追踪 issue。
 

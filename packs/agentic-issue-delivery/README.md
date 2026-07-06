@@ -14,6 +14,7 @@ This pack bundles the repository's design-to-issue and issue-to-PR delivery work
 - `risk-adaptive-cross-review`
 - `gh-create-issue`
 - `clarify`
+- `blind-spot-pass`
 - `grill-me`
 - `grill-with-docs`
 - `brainstorming`
