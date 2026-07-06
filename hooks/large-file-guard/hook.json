@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "name": "large-file-guard",
+  "displayName": "Large File Guard",
+  "description": "PreToolUse hook that blocks `git commit` when the commit includes text files over a line-count threshold (default 1000). Incremental ratchet: only files touched by the commit are checked; legacy large files do not block until modified. Configurable via .large-file-guard.json.",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "categories": ["workflow", "review"],
+  "tags": ["entropy", "large-files", "pre-commit", "guardrail", "repo-hygiene"],
+  "authors": [
+    {
+      "name": "danker"
+    }
+  ],
+  "events": ["PreToolUse"],
+  "requirements": {
+    "os": ["macos", "linux"],
+    "tools": ["bash", "python3", "git"],
+    "network": "none"
+  }
+}

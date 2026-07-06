@@ -2,6 +2,12 @@
 
 All notable changes to the **implementer** agent will be documented in this file.
 
+## [1.3.0] - 2026-07-06
+
+### Changed
+
+- Anti-parallel-implementation constraint on both surfaces (eng-init alignment): fix in place — never create parallel `_v2`/`_new`/`_backup`/`-copy` files or directories to sidestep modifying the original; evolve the existing file unless the plan explicitly calls for a new module.
+
 ## [1.2.0] - 2026-07-06
 
 ### Changed

@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-06
+
+- 新增 `large-file-guard` hook：提交前拦截超过行数阈值（默认 1000）的文本文件——熵治理从"审计报告里的事后建议"补上"提交时的机械前置"。增量棘轮语义（只查本次提交触碰的文件）+ `.large-file-guard.json` 显式逃生口，与 `control-plane-auditor` 的 informational metric 口径不冲突。
+- README 补充 Included Hooks 节。
+
 ## [0.2.0] - 2026-07-02
 
 - Add `gh-create-issue`: the in-pack findings-to-delivery exit. `improve-codebase-architecture` (0.2.0) and `repo-entropy-audit` (0.2.0) now offer to turn confirmed audit targets into tracked issues instead of stopping at report-only recommendations; design-level targets route to `stage-change-pipeline` (installed with `agentic-issue-delivery`).

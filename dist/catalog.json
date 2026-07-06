@@ -158,8 +158,8 @@
       "name": "control-plane-auditor",
       "path": "skills/control-plane-auditor",
       "displayName": "Control Plane Auditor",
-      "description": "Audit a repository's control plane health across seven layers (memory, invariant, protocol, permission, sensorium, evaluation, governance) and produce an actionable improvement report. Covers instruction-file completeness, rule enforcement coverage, doc freshness, test infrastructure, and agent readiness.",
-      "version": "0.2.0",
+      "description": "Audit a repository's control plane health across seven layers (memory, invariant, protocol, permission, sensorium, evaluation, governance) and produce an actionable improvement report. Covers instruction-file completeness, rule enforcement coverage (mechanical / review-only / phantom), doc freshness, test infrastructure, and agent readiness. Explicit bootstrap/repair write modes turn audit gaps into the control plane itself: spec-previewed scaffolding of instruction files, command entry points, verification matrix, and guardrails, validated by guardrail self-test.",
+      "version": "0.3.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -173,7 +173,8 @@
         "agents-md",
         "repo-health",
         "invariant",
-        "governance"
+        "governance",
+        "bootstrap"
       ]
     },
     {
@@ -655,7 +656,7 @@
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
       "description": "End-to-end GitHub issue implementation workflow orchestrated by Claude Code or Codex, delegating implementation, cross-review, and finding verification to subagents (implementer, reviewer, verifier). Covers OpenSpec fixtures, risk-adaptive review, verification, PR evidence, CI, and human-gated merge.",
-      "version": "0.10.0",
+      "version": "0.11.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -757,7 +758,7 @@
       "path": "agents/implementer",
       "displayName": "Implementer",
       "description": "Code implementation agent that writes, modifies, and refactors code based on plans, specs, or direct instructions.",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -916,6 +917,32 @@
   ],
   "hooks": [
     {
+      "name": "large-file-guard",
+      "path": "hooks/large-file-guard",
+      "displayName": "Large File Guard",
+      "description": "PreToolUse hook that blocks `git commit` when the commit includes text files over a line-count threshold (default 1000). Incremental ratchet: only files touched by the commit are checked; legacy large files do not block until modified. Configurable via .large-file-guard.json.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "workflow",
+        "review"
+      ],
+      "tags": [
+        "entropy",
+        "large-files",
+        "pre-commit",
+        "guardrail",
+        "repo-hygiene"
+      ],
+      "events": [
+        "PreToolUse"
+      ],
+      "platforms": [
+        "claude-code",
+        "codex"
+      ]
+    },
+    {
       "name": "worktree-guard",
       "path": "hooks/worktree-guard",
       "displayName": "Worktree Guard",
@@ -995,7 +1022,7 @@
       "path": "packs/codebase-stewardship",
       "displayName": "Codebase Stewardship Pack",
       "description": "周期性/按需的代码健康治理：深化模块、治乱删冗、定架构方向，共用 grill 对抗式对话与 openspec/glossary.md + docs/adr/ 领域沉淀。区别于 agentic-issue-delivery 的一次性 issue 交付流水线。",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "codebase-steward",
@@ -1026,7 +1053,9 @@
       "agents": [
         "explorer"
       ],
-      "hooks": []
+      "hooks": [
+        "large-file-guard"
+      ]
     },
     {
       "name": "product-manager",
@@ -1065,5 +1094,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-06T10:56:47.326Z"
+  "generatedAt": "2026-07-06T11:27:47.270Z"
 }

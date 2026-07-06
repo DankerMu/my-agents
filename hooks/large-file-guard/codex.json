@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "exec_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .codex/hooks/large-file-guard/large-file-guard.sh",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}

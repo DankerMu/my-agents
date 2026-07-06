@@ -24,6 +24,10 @@
 
 - `explorer` — 只读 codebase 侦查，`improve-codebase-architecture` 的 Explore 步骤执行者。
 
+## Included Hooks
+
+- `large-file-guard` — 提交时的大文件机械闸：`git commit` 触碰到超过 1000 行（可配）的文本文件即拒绝并把清单喂回模型。增量棘轮：只检查本次提交触碰的文件，存量大文件由 `repo-entropy-audit` 治理，本 hook 保证新债务不再进入历史。`.large-file-guard.json` 可调阈值/排除/关闭。
+
 ## Install
 
 ```bash

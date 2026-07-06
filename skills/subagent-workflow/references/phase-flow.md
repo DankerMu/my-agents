@@ -25,9 +25,9 @@ Run only when `openspec/project-profile.md` is missing. The shared
 example templates to copy from; the active profile is project-local and survives
 skill reinstalls because it lives under `openspec/`, not inside the skill.
 
-1. Scan the repo for risk-bearing structure: primary language/build system, public entrypoints (CLI, API, services), data schemas/formats/serializers, external integrations and credentials, persisted/shared state, and shared helper roots.
+1. Scan the repo for risk-bearing structure: primary language/build system, public entrypoints (CLI, API, services), data schemas/formats/serializers, external integrations and credentials, persisted/shared state, and shared helper roots — plus the command entry points (package scripts, Makefile/justfile targets, CI workflow steps) for setup/check/lint/typecheck/test/build.
 2. Match against `project-profiles.md`. If an example profile fits (e.g. an AutoSHUD repo), copy it as the starting point; otherwise start from Generic. A pure-Generic bootstrap (nothing project-specific inferred) still produces a file: stamp it as Generic with a one-line note that nothing project-specific was found.
-3. Always write `openspec/project-profile.md` with the six profile fields: entry surfaces, contracts, risk axes, typical evidence, domain risk packs, domain expanded-triggers. Respect the size budget in `project-profiles.md`: short bullets not prose, never restate core packs/triggers, and stay under ~25 lines for a simple project or ~60 for a broad multi-subsystem system. Over-budget means it restates core or the repo should split into narrower profiles.
+3. Always write `openspec/project-profile.md` with the eight profile fields: entry surfaces, contracts, risk axes, typical evidence, command entry points, verification matrix (surface -> command -> evidence), domain risk packs, domain expanded-triggers. Respect the size budget in `project-profiles.md`: short bullets not prose, never restate core packs/triggers, and stay under ~25 lines for a simple project or ~60 for a broad multi-subsystem system. Over-budget means it restates core or the repo should split into narrower profiles.
 4. Note in the file that it is a living artifact maintained in Phase 0.5 as the project evolves.
 
 The profile is a living document, not a one-shot. It does not change per issue, but it is updated whenever the project grows a new risk surface (see Phase 0.5 profile-gap maintenance).
@@ -35,7 +35,7 @@ The profile is a living document, not a one-shot. It does not change per issue, 
 ## Phase 0.5: Risk Triage + OpenSpec Fixture
 
 1. Create a short triage from issue, repo context, expected change surface, and the active project profile (`openspec/project-profile.md`).
-   - Profile-gap maintenance: if the issue touches an entry surface, contract, risk axis, or domain pack the profile does not yet describe, update `openspec/project-profile.md` before continuing. Keep the profile a living artifact; do not edit it for ordinary issues that already fit it.
+   - Profile-gap maintenance: if the issue touches an entry surface, contract, risk axis, domain pack, or verification-matrix surface the profile does not yet describe, update `openspec/project-profile.md` before continuing. Keep the profile a living artifact; do not edit it for ordinary issues that already fit it.
 2. Assign fixture level: `none`, `compact`, or `expanded`. Mandatory expanded triggers live in `issue-risk-contract.md`.
 3. Assign repair intensity:
    - `low`: isolated, low blast-radius change; focused fixes are acceptable.
@@ -102,7 +102,7 @@ The profile is a living document, not a one-shot. It does not change per issue, 
 
 ## Phase 2: Orchestrator Verification Only
 
-Run the local CI-equivalent pipeline for the project. Examples:
+Run the local CI-equivalent pipeline for the project as recorded in the active profile's command entry points and verification matrix (`openspec/project-profile.md`): execute the matrix rows mapped to the surfaces this change touches, plus the default build+test row. Fall back to discovering commands only when the profile predates the matrix or a row is missing — and then update the profile (Phase 0.5 profile-gap maintenance) so the next run consumes it instead of re-deriving. Example full pipelines:
 
 - Node: `npm run build`, `npm test`
 - Android: `cd packages/android && ./gradlew detekt ktlintMainSourceSetCheck ktlintTestSourceSetCheck ktlintAndroidTestSourceSetCheck testDebugUnitTest assembleDebug`
@@ -541,7 +541,7 @@ Before requesting merge approval or running a pre-authorized auto-merge, verify 
   - **(b) "review not required" record**: the fixture risk tier is `none` and the Phase 2 audit found no risk, and that fact is persisted in the evidence bundle against the frozen `FULL_SHA`. This is the only path that legitimately skips Phase 4/4.5/7 (see Phase 4 `none` handling and the Phase 2 audit).
   - Missing both (a) and (b) is a skip block: do not merge, and record it for the accountability log.
 - No posted evidence presents stale findings as current.
-- **Completion self-audit (premature-completion guard)**: re-derive each issue acceptance criterion and each selected `tasks.md` item and confirm the diff/tests actually satisfy it — not "the agent said done". Confirm no leftover edge/error path the fixture required is unhandled, and that the final changes are internally consistent (no two fixes that contradict each other). Any uncovered criterion blocks the merge and returns to Phase 5-6; it does not become a silent deferral.
+- **Completion self-audit (premature-completion guard)**: re-derive each issue acceptance criterion and each selected `tasks.md` item and confirm the diff/tests actually satisfy it — not "the agent said done". Use the project profile's verification matrix to map each touched surface to its verification command and expected evidence; a matrix row for a touched surface that was never executed on the final head counts as an uncovered criterion. Confirm no leftover edge/error path the fixture required is unhandled, and that the final changes are internally consistent (no two fixes that contradict each other). Any uncovered criterion blocks the merge and returns to Phase 5-6; it does not become a silent deferral.
 - **Oracle integrity**: confirm the OpenSpec fixture, acceptance criteria, existing tests, and CI gates were not weakened, deleted, or rewritten to make the gate pass (`risk-adaptive-cross-review` → `finding-contract.md` Oracle Integrity). A test/spec change is legitimate only when it tracks a real contract change recorded in the OpenSpec change, never to silence a failure.
 
 This gate mixes deterministic and judgment-based checks. The SHA-match and artifact-presence clauses above are deterministic: they either hold against the frozen final HEAD or they do not. The completion self-audit and oracle-integrity clauses are mandatory checkable procedures — enumerate each acceptance criterion and selected task and confirm the diff/tests satisfy it, and diff the test/spec/CI files against the reviewed baseline — that still require reviewer judgment. A failure of any clause, deterministic or judgment-based, blocks the merge rather than producing a "probably fine" pass.

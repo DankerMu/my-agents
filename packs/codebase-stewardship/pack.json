@@ -3,7 +3,7 @@
   "name": "codebase-stewardship",
   "displayName": "Codebase Stewardship Pack",
   "description": "周期性/按需的代码健康治理：深化模块、治乱删冗、定架构方向，共用 grill 对抗式对话与 openspec/glossary.md + docs/adr/ 领域沉淀。区别于 agentic-issue-delivery 的一次性 issue 交付流水线。",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "maturity": "experimental",
   "packType": "role-pack",
   "persona": "codebase-steward",
@@ -20,6 +20,7 @@
     "gh-create-issue"
   ],
   "agents": ["explorer"],
+  "hooks": ["large-file-guard"],
   "tags": ["architecture", "deep-modules", "entropy", "refactoring", "glossary", "adr"],
   "authors": [
     {

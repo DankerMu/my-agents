@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-07-06
+
+- **Verification matrix becomes a standing project asset** (eng-init alignment): the project profile grows from six to eight fields — Phase 0.0 bootstrap now also records the repo's real command entry points (package scripts / Makefile / justfile / CI steps) and a verification matrix (`surface -> command -> evidence`). Phase 2 executes the matrix rows for the touched surfaces plus the default build+test row instead of improvising a pipeline each run (falling back to discovery only when a row is missing, then writing it back via Phase 0.5 profile-gap maintenance), and the Phase 8 completion self-audit treats a touched-surface matrix row never executed on the final head as an uncovered criterion. Templates in `project-profiles.md` (contributes-list, Generic, authoring block, size budget).
+- **Route control-plane bootstrap upstream**: new Supporting Skills entry pointing to `control-plane-auditor` (codebase-stewardship) for repos that lack instruction files, unified command entry points, or verification infrastructure; its bootstrap mode scaffolds what Phase 0.0 consumes.
+
 ## [0.10.0] - 2026-07-06
 
 - **Wire in the `worktree-guard` hook (optional)**: worktree-delegation mode is now bracketed by `.worktree-guard.json` at the project root — written on entry with `allowedRoots` covering the delegated worktrees plus orchestrator-owned `.workplans/` and `openspec/`, deleted after integration and `git worktree prune` — so out-of-root file writes are denied mechanically instead of by prompt discipline. Added the entry/exit/session-restart protocol and scope notes (file-edit tools only; `git apply` in the shell unaffected) to `references/parallel-worktree-delegation.md`, the bracket rule to the `SKILL.md` parallel-isolation Core Rule, and a stale-guard-file warning. Without the hook installed everything stays orchestrator-enforced.
