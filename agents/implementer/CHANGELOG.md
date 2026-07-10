@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.2] - 2026-07-10
+
+### Changed
+
+- Codex surface: upgrade model `gpt-5.5` -> `gpt-5.6-sol` and reasoning effort `xhigh` -> `high`.
+
 All notable changes to the **implementer** agent will be documented in this file.
 
 ## [1.3.1] - 2026-07-10

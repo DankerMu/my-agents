@@ -3,7 +3,7 @@
   "name": "triager",
   "displayName": "Triager",
   "description": "Issue triage agent that reads an issue, assesses actionability, decides routing (execute/split/plan/investigate/defer/reject/escalate), and writes an execution brief for workers.",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "maturity": "experimental",
   "categories": ["workflow"],
   "tags": ["triage", "issue", "routing", "brief", "issue-agent-os"],

@@ -3,7 +3,7 @@
   "name": "issue-scribe",
   "displayName": "Issue Scribe",
   "description": "Follow-up capture agent: takes a raw observation noticed during primary work, verifies it read-only, determines origin, boundary, and solution direction, dedups against existing issues, and files one structured GitHub issue for later delivery. Never fixes anything itself.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "maturity": "experimental",
   "categories": ["workflow", "productivity"],
   "tags": ["follow-up", "github-issues", "scope-discipline", "tech-debt"],

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.5] - 2026-07-10
+
+### Changed
+
+- Codex surface: upgrade model `gpt-5.5` -> `gpt-5.6-sol` and reasoning effort `xhigh` -> `high`.
+
 All notable changes to this agent will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 

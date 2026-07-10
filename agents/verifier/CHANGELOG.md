@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-07-10
+
+### Changed
+
+- Codex surface: upgrade model `gpt-5.5` -> `gpt-5.6-sol` and reasoning effort `xhigh` -> `high`.
+
 All notable changes to the **verifier** agent will be documented in this file.
 
 ## [0.1.3] - 2026-07-10

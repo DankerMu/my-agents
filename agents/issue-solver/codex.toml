@@ -1,7 +1,7 @@
 name = "issue-solver"
 description = "Solves a single GitHub issue end-to-end by orchestrating specialist agents through triage, implementation, review, and merge."
-model = "gpt-5.5"
-model_reasoning_effort = "xhigh"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 
 developer_instructions = """
