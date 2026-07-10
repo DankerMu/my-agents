@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "name": "research-question-framing",
+  "displayName": "Research Question Framing",
+  "description": "Turn a phenomenon, scientific uncertainty, capability gap, method idea, data problem, or operational decision into a bounded research contract with explicit objects, intended claims, alternatives, evidence needs, scope, risks, and downstream route. Use before study design when the research problem is not yet decision-ready; do not force every project into a hypothesis-only template.",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "categories": ["research", "design", "workflow"],
+  "tags": [
+    "research-question",
+    "capability-gap",
+    "hypothesis",
+    "claim-framing",
+    "scope",
+    "scientific-decision"
+  ],
+  "authors": [{ "name": "danker" }],
+  "entrypoints": {
+    "skillDoc": "SKILL.md",
+    "changelog": "CHANGELOG.md"
+  },
+  "requirements": {
+    "network": "optional"
+  },
+  "capabilities": {
+    "shell": true,
+    "network": true,
+    "filesystemRead": true,
+    "filesystemWrite": true
+  }
+}

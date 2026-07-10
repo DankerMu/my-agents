@@ -3,7 +3,7 @@
   "name": "product-manager",
   "displayName": "Product Manager Pack",
   "description": "Product strategy, requirements, and research workflow pack.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "maturity": "experimental",
   "packType": "role-pack",
   "persona": "product-manager",

@@ -43,6 +43,14 @@ npx my-agents install pack codebase-stewardship --platform codex --scope project
 - 审计发现不止步于报告：`improve-codebase-architecture` 与 `repo-entropy-audit` 在用户确认后主动提议 `gh-create-issue`（本包内）或 `stage-change-pipeline`（随 `agentic-issue-delivery` 安装）把目标变成交付工作项。
 - `improve-codebase-architecture` 会把 HTML 报告写到系统临时目录，不落进 repo；其 grilling loop 需要一个支持原生 subagent 的编排器（Claude Code Task subagents 或 Codex subagents）。
 
+## 搭配 `research-engineering`
+
+[`research-engineering`](../research-engineering/README.md) 决定科学对象、过程表示、研究协议、证据边界与人工科学结论；本包治理这些结论落入代码后产生的结构与语义熵。对于积雪模块、陆气耦合、数值方法或数据产品等研究驱动变更，`research-engineering-handoff` 里的科学不变量、单位/状态语义、证据 oracle 和未完成的验证义务是本包不可擅自改写的上游合同。
+
+治理可以改变模块边界、依赖方向、代码组织和测试性，但若重构会改变科学状态、方程、过程顺序、单位、守恒或有效域，必须回到新的 research decision，而不能以“代码更整洁”为由直接修改。`research/project-profile.md` 保存科学权威，`openspec/project-profile.md` 保存软件风险/验证面；熵治理主要读后者，但涉及科学语义时必须引用前者与 handoff。
+
+完整关系见 [Research Engineering flow](../../docs/architecture/research-engineering-flow.md)。
+
 ## 搭配 `agentic-issue-delivery`
 
 本包决定"改什么"并守住健康基线，[`agentic-issue-delivery`](../agentic-issue-delivery/README.md) 把改进落成 reviewed PR，两者构成闭环：交付产生的新代码再回到本包的下一轮体检。共用 `openspec/glossary.md` + `docs/adr/` 单一事实源、grill 决策底座，以及作为交付内守门的 `entropy-review`。

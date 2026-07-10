@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "name": "research-engineering",
+  "displayName": "Research Engineering Pack",
+  "description": "Research control-plane pack for turning phenomena, capability gaps, scientific ideas, model-process changes, data/method needs, and operational questions into governed research artifacts, reviewed evidence, human decisions, and optional engineering handoffs without constraining work to a closed task taxonomy.",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "packType": "role-pack",
+  "persona": "research-engineer",
+  "categories": ["research", "design", "workflow"],
+  "skills": [
+    "research-lifecycle",
+    "research-profile-bootstrap",
+    "research-question-framing",
+    "study-design",
+    "theory-to-code-traceability",
+    "scientific-evidence-synthesis",
+    "research-engineering-handoff",
+    "clarify",
+    "brainstorming",
+    "blind-spot-pass",
+    "deep-research",
+    "grill-me",
+    "grill-with-docs",
+    "future-aware-architecture",
+    "implementation-planning",
+    "meta-loop",
+    "project-documentation"
+  ],
+  "agents": ["explorer", "researcher", "docs-researcher", "monitor"],
+  "hooks": [],
+  "tags": [
+    "scientific-method",
+    "research-control-plane",
+    "model-development",
+    "study-design",
+    "evidence",
+    "engineering-handoff"
+  ],
+  "authors": [{ "name": "danker" }]
+}

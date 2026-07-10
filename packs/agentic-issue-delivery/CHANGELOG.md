@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-07-10
+
+- Document the upstream contract with the new `research-engineering` pack: only a human-approved `research-engineering-handoff` enters the design-to-issue pipeline, and its scientific invariants, oracle separation, later evaluation requirements, forbidden shortcuts, rollback and profile boundary must survive OpenSpec translation.
+
 ## [0.9.0] - 2026-07-06
 
 - 新增 `blind-spot-pass` skill：开工前对陌生区域的盲区侦察（源自 Thariq《A Field Guide to Fable: Finding Your Unknowns》）。从代码库考古出发（git 历史、相似实现、隐形约定、危险区、邻接面）挖 unknown unknowns，产出带证据的盲区清单 + 改写后的更好 prompt + reference 清单；决策点喂 `grill-me`（0.2.0 起互相引用），隐形约定沉淀走 `grill-with-docs`，范围外的雷交 `issue-scribe`。

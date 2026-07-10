@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "name": "research-profile-bootstrap",
+  "displayName": "Research Profile Bootstrap",
+  "description": "Create or update a lean project-local research profile at research/project-profile.md by scanning the repository, existing research artifacts, scientific data/model surfaces, evidence practices, and human decision gates. Use when adopting the research-engineering pack or when a project gains a recurring scientific surface; do not use for per-study plans or software-only risk profiles.",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "categories": ["research", "workflow", "documentation"],
+  "tags": [
+    "research-profile",
+    "bootstrap",
+    "earth-science",
+    "scientific-governance",
+    "project-scan",
+    "evidence-oracles"
+  ],
+  "authors": [{ "name": "danker" }],
+  "entrypoints": {
+    "skillDoc": "SKILL.md",
+    "changelog": "CHANGELOG.md"
+  },
+  "requirements": {
+    "network": "optional"
+  },
+  "capabilities": {
+    "shell": true,
+    "network": true,
+    "filesystemRead": true,
+    "filesystemWrite": true
+  }
+}

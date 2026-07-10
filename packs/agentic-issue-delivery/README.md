@@ -64,6 +64,14 @@ The pack membership is explicit: every member is routed to or referenced by the 
 
 The pack version tracks membership and pack-level docs only. Bundled skills evolve independently on their own changelogs (see `skills/<name>/CHANGELOG.md`, e.g. `stage-change-pipeline`, `subagent-workflow`); a member-skill release does not bump this pack.
 
+## Pairs With: `research-engineering`
+
+[`research-engineering`](../research-engineering/README.md) is the scientific upstream when a change originates in a research question, model-process capability, numerical method, data product, evidence-backed operational decision, or another scientific workflow. It owns the research profile, scientific invariants, study protocol, evidence synthesis and human research decision. Once `research-engineering-handoff` reaches `ENGINEERING_HANDOFF_READY`, this pack turns that contract into OpenSpec, implementation-ready issues and reviewed PRs.
+
+The handoff is an oracle, not backlog prose: `stage-change-pipeline` must carry its scientific invariants, verification obligations, later scientific-evaluation requirements, forbidden shortcuts and rollback boundary into the OpenSpec fixture. Unresolved scientific choices must return upstream rather than being delegated to implementers. The two-profile boundary is preserved: `research/project-profile.md` governs scientific objects and evidence, while `openspec/project-profile.md` governs recurring software risk surfaces, commands and verification.
+
+See [Research Engineering flow](../../docs/architecture/research-engineering-flow.md).
+
 ## Pairs With: `codebase-stewardship`
 
 This pack and [`codebase-stewardship`](../codebase-stewardship/README.md) form a loop: stewardship decides _what to improve_ and holds the code-health baseline; this pack turns those decisions into reviewed PRs, and the new code it produces flows back into the next stewardship pass. They share `openspec/glossary.md` + `docs/adr/` as the single source of truth, the grill skills as a common decision base, and `entropy-review` as the in-delivery health gate.

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "name": "research-lifecycle",
+  "displayName": "Research Lifecycle",
+  "description": "Route research and research-driven development from an initial phenomenon, capability gap, method idea, or decision need through framing, evidence grounding, study design, execution, synthesis, human decision, and optional engineering handoff. Use for substantive scientific work across domains; do not use for quick factual lookups, one-off plotting, ordinary coding, or autonomous scientific conclusions.",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "categories": ["research", "workflow", "design"],
+  "tags": [
+    "research-lifecycle",
+    "scientific-method",
+    "study-routing",
+    "evidence",
+    "human-gate",
+    "engineering-handoff"
+  ],
+  "authors": [{ "name": "danker" }],
+  "entrypoints": {
+    "skillDoc": "SKILL.md",
+    "changelog": "CHANGELOG.md"
+  },
+  "requirements": {
+    "network": "optional"
+  },
+  "capabilities": {
+    "shell": true,
+    "network": true,
+    "filesystemRead": true,
+    "filesystemWrite": true
+  }
+}

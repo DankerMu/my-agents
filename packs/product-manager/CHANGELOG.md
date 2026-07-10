@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-10
+
+- Document coupling with `research-engineering`: approved scientific evidence may become a bounded product/operational input, while the PM workflow owns PRD, user outcomes, prioritization and backlog without broadening the scientific claim beyond its recorded scope.
+
 ## [0.3.0] - 2026-07-02
 
 - Add `prd-authoring` (new skill, 0.1.0): the requirements-authoring capability the persona was missing — no PRD skill existed anywhere in the repo. It bridges the discovery skills (`clarify`/`brainstorming`/`deep-research`/`business-plan`) and `gh-create-issue`.

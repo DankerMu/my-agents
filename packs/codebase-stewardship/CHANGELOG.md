@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-07-10
+
+- Document coupling with `research-engineering`: code-health and architecture work may restructure implementation, but scientific invariants, units/state semantics, evidence authorities and unresolved research obligations from the approved handoff remain upstream contracts. Scientific-semantic changes route back to a new research decision rather than being hidden inside refactoring.
+
 ## [0.4.0] - 2026-07-06
 
 - 新增 `blind-spot-pass` skill：动手改陌生模块前的盲区侦察——代码库考古（历史/范式/隐形约定/危险区/邻接面）挖 unknown unknowns，产出带证据的盲区清单与更好的任务 prompt。与审计套件互补：`repo-entropy-audit` 面向全仓体检，本 skill 面向单任务开工前；发现的决策点喂 `grill-me`，值得沉淀的约定走 `grill-with-docs`。

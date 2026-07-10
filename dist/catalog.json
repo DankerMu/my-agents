@@ -588,6 +588,90 @@
       ]
     },
     {
+      "name": "research-engineering-handoff",
+      "path": "skills/research-engineering-handoff",
+      "displayName": "Research Engineering Handoff",
+      "description": "Convert an approved research decision into a bounded engineering handoff that preserves scientific intent, invariants, evidence oracles, verification obligations, scientific evaluation needs, non-goals, rollback, and human decision authority. Use before stage-change-pipeline when research requires software/model/data-system changes; not for unapproved hypotheses, ordinary implementation plans, or direct issue creation.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "research",
+        "workflow",
+        "coding"
+      ],
+      "tags": [
+        "research-handoff",
+        "engineering-contract",
+        "scientific-invariants",
+        "openspec",
+        "delivery-coupling",
+        "human-approval"
+      ]
+    },
+    {
+      "name": "research-lifecycle",
+      "path": "skills/research-lifecycle",
+      "displayName": "Research Lifecycle",
+      "description": "Route research and research-driven development from an initial phenomenon, capability gap, method idea, or decision need through framing, evidence grounding, study design, execution, synthesis, human decision, and optional engineering handoff. Use for substantive scientific work across domains; do not use for quick factual lookups, one-off plotting, ordinary coding, or autonomous scientific conclusions.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "research",
+        "workflow",
+        "design"
+      ],
+      "tags": [
+        "research-lifecycle",
+        "scientific-method",
+        "study-routing",
+        "evidence",
+        "human-gate",
+        "engineering-handoff"
+      ]
+    },
+    {
+      "name": "research-profile-bootstrap",
+      "path": "skills/research-profile-bootstrap",
+      "displayName": "Research Profile Bootstrap",
+      "description": "Create or update a lean project-local research profile at research/project-profile.md by scanning the repository, existing research artifacts, scientific data/model surfaces, evidence practices, and human decision gates. Use when adopting the research-engineering pack or when a project gains a recurring scientific surface; do not use for per-study plans or software-only risk profiles.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "research",
+        "workflow",
+        "documentation"
+      ],
+      "tags": [
+        "research-profile",
+        "bootstrap",
+        "earth-science",
+        "scientific-governance",
+        "project-scan",
+        "evidence-oracles"
+      ]
+    },
+    {
+      "name": "research-question-framing",
+      "path": "skills/research-question-framing",
+      "displayName": "Research Question Framing",
+      "description": "Turn a phenomenon, scientific uncertainty, capability gap, method idea, data problem, or operational decision into a bounded research contract with explicit objects, intended claims, alternatives, evidence needs, scope, risks, and downstream route. Use before study design when the research problem is not yet decision-ready; do not force every project into a hypothesis-only template.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "research",
+        "design",
+        "workflow"
+      ],
+      "tags": [
+        "research-question",
+        "capability-gap",
+        "hypothesis",
+        "claim-framing",
+        "scope",
+        "scientific-decision"
+      ]
+    },
+    {
       "name": "review",
       "path": "skills/review",
       "displayName": "Review",
@@ -627,6 +711,27 @@
         "cross-review",
         "openspec",
         "pr-review"
+      ]
+    },
+    {
+      "name": "scientific-evidence-synthesis",
+      "path": "skills/scientific-evidence-synthesis",
+      "displayName": "Scientific Evidence Synthesis",
+      "description": "Synthesize completed scientific study evidence into a claim-evidence matrix that separates support, counter-evidence, uncertainty, applicability, protocol deviations, and unsupported conclusions. Use after study execution or when reviewing an evidence package; do not replace domain-expert judgment, perform implementation review, or turn calibration gains into mechanistic validation.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "research",
+        "review",
+        "workflow"
+      ],
+      "tags": [
+        "evidence-synthesis",
+        "claim-evidence",
+        "uncertainty",
+        "scientific-review",
+        "negative-results",
+        "human-decision"
       ]
     },
     {
@@ -690,6 +795,27 @@
       ]
     },
     {
+      "name": "study-design",
+      "path": "skills/study-design",
+      "displayName": "Study Design",
+      "description": "Design a reviewable scientific study protocol for observational, experimental, modeling, method, data-product, field/lab, forecast, capability-development, or mixed research. Defines units, baselines, controls, interventions, observables, uncertainty, evidence oracles, stop/branch gates, execution budget, protocol freeze, and amendments. Use after framing; not for implementation planning or result interpretation.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "research",
+        "design",
+        "workflow"
+      ],
+      "tags": [
+        "study-design",
+        "experiment-protocol",
+        "controls",
+        "uncertainty",
+        "go-no-go",
+        "protocol-freeze"
+      ]
+    },
+    {
       "name": "subagent-workflow",
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
@@ -707,6 +833,27 @@
         "openspec",
         "risk-review",
         "ci"
+      ]
+    },
+    {
+      "name": "theory-to-code-traceability",
+      "path": "skills/theory-to-code-traceability",
+      "displayName": "Theory to Code Traceability",
+      "description": "Build and review a traceability contract from scientific assumptions, equations, process representations, units, invariants, and numerical choices to code surfaces and verification cases. Use for new or changed scientific model capabilities such as adding a snow module, changing a parameterization, coupling processes, or altering numerical methods; not for ordinary feature implementation or scientific validation by itself.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "research",
+        "design",
+        "coding"
+      ],
+      "tags": [
+        "theory-to-code",
+        "scientific-software",
+        "equations",
+        "units",
+        "invariants",
+        "verification"
       ]
     }
   ],
@@ -1037,7 +1184,7 @@
       "path": "packs/agentic-issue-delivery",
       "displayName": "Agentic Issue Delivery Pack",
       "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through subagent-driven review and delivery gates, with whole-repo entropy governance.",
-      "version": "0.9.0",
+      "version": "0.9.1",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "agentic-developer",
@@ -1087,7 +1234,7 @@
       "path": "packs/codebase-stewardship",
       "displayName": "Codebase Stewardship Pack",
       "description": "周期性/按需的代码健康治理：深化模块、治乱删冗、定架构方向，共用 grill 对抗式对话与 openspec/glossary.md + docs/adr/ 领域沉淀。区别于 agentic-issue-delivery 的一次性 issue 交付流水线。",
-      "version": "0.4.0",
+      "version": "0.4.1",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "codebase-steward",
@@ -1128,7 +1275,7 @@
       "path": "packs/product-manager",
       "displayName": "Product Manager Pack",
       "description": "Product strategy, requirements, and research workflow pack.",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "product-manager",
@@ -1158,7 +1305,56 @@
         "researcher"
       ],
       "hooks": []
+    },
+    {
+      "name": "research-engineering",
+      "path": "packs/research-engineering",
+      "displayName": "Research Engineering Pack",
+      "description": "Research control-plane pack for turning phenomena, capability gaps, scientific ideas, model-process changes, data/method needs, and operational questions into governed research artifacts, reviewed evidence, human decisions, and optional engineering handoffs without constraining work to a closed task taxonomy.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "packType": "role-pack",
+      "persona": "research-engineer",
+      "categories": [
+        "research",
+        "design",
+        "workflow"
+      ],
+      "tags": [
+        "scientific-method",
+        "research-control-plane",
+        "model-development",
+        "study-design",
+        "evidence",
+        "engineering-handoff"
+      ],
+      "skills": [
+        "research-lifecycle",
+        "research-profile-bootstrap",
+        "research-question-framing",
+        "study-design",
+        "theory-to-code-traceability",
+        "scientific-evidence-synthesis",
+        "research-engineering-handoff",
+        "clarify",
+        "brainstorming",
+        "blind-spot-pass",
+        "deep-research",
+        "grill-me",
+        "grill-with-docs",
+        "future-aware-architecture",
+        "implementation-planning",
+        "meta-loop",
+        "project-documentation"
+      ],
+      "agents": [
+        "explorer",
+        "researcher",
+        "docs-researcher",
+        "monitor"
+      ],
+      "hooks": []
     }
   ],
-  "generatedAt": "2026-07-10T07:47:47.153Z"
+  "generatedAt": "2026-07-10T11:11:37.723Z"
 }
