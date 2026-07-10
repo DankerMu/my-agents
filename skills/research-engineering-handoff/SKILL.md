@@ -9,7 +9,7 @@ description: >
   for unapproved hypotheses, ordinary implementation plans, or direct issue
   creation.
 invocation_posture: manual-first
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Research Engineering Handoff
@@ -158,7 +158,14 @@ qualification gate passes.
 
 ### 7. Pressure-Test the Handoff
 
-Run `grill-me` or `grill-with-docs` unless the change is demonstrably narrow.
+Record one explicit gate decision on the handoff: `grill-me` when terminology
+is stable, `grill-with-docs` when terms, process boundaries or durable
+decisions must persist to `openspec/glossary.md` / `docs/adr/`, or
+`skipped:<reason>` — only for genuinely narrow, low-impact work. A delegated
+grill stays interactive (one question at a time) and must not be simulated.
+The canonical gate contract lives in `research-lifecycle`
+(`references/pressure-test-contract.md`).
+
 Challenge:
 
 - whether requirements are scientifically unambiguous
@@ -187,8 +194,19 @@ whole research profile into OpenSpec.
 
 ### 9. Handoff to Delivery
 
-Pass the handoff and source artifacts to `stage-change-pipeline`. The resulting
-OpenSpec change must:
+Pass the handoff and source artifacts to `stage-change-pipeline`. Delivery
+packs install independently and know nothing about research artifacts, so this
+skill owns the gate at the boundary:
+
+- before invoking the pipeline, verify the handoff status is
+  `ENGINEERING_HANDOFF_READY` and the named human approval is recorded; a
+  `DRAFT`, `REVIEWED` or `REJECTED` handoff must not enter delivery
+- the handoff's pressure-test record covers the scientific contract only; it
+  does not satisfy the pipeline's own Stage-1 grill gate (`grillGate`). Decide
+  that gate on the engineering design package in its own right — run it, or
+  skip with a recorded reason.
+
+The resulting OpenSpec change must:
 
 - cite the handoff and decision
 - reproduce the scientific invariants without weakening them

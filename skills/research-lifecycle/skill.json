@@ -3,7 +3,7 @@
   "name": "research-lifecycle",
   "displayName": "Research Lifecycle",
   "description": "Route research and research-driven development from an initial phenomenon, capability gap, method idea, or decision need through framing, evidence grounding, study design, execution, synthesis, human decision, and optional engineering handoff. Use for substantive scientific work across domains; do not use for quick factual lookups, one-off plotting, ordinary coding, or autonomous scientific conclusions.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "maturity": "experimental",
   "categories": ["research", "workflow", "design"],
   "tags": [

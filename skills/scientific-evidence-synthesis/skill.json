@@ -3,7 +3,7 @@
   "name": "scientific-evidence-synthesis",
   "displayName": "Scientific Evidence Synthesis",
   "description": "Synthesize completed scientific study evidence into a claim-evidence matrix that separates support, counter-evidence, uncertainty, applicability, protocol deviations, and unsupported conclusions. Use after study execution or when reviewing an evidence package; do not replace domain-expert judgment, perform implementation review, or turn calibration gains into mechanistic validation.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "maturity": "experimental",
   "categories": ["research", "review", "workflow"],
   "tags": [

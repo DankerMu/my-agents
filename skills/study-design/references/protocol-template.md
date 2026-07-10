@@ -62,9 +62,9 @@ Decision owner:
 - Failure/missing handling:
 
 ## 10. Pressure Test
-- grill decision/result:
-- resolved decisions:
-- residual open items:
+- Mode: grill-me | grill-with-docs | skipped:<reason>
+- Closed decisions:
+- Open questions:
 
 ## 11. Freeze and Amendments
 - Protocol digest:

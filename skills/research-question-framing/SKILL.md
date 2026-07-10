@@ -8,7 +8,7 @@ description: >
   decision-ready. Do not force every scientific project into a hypothesis-only
   template or use this for ordinary implementation requirements.
 invocation_posture: hybrid
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Research Question Framing
@@ -141,15 +141,13 @@ choices.
 
 ### 8. Pressure-Test the Draft
 
-Use:
-
-- `grill-me` when the research contract needs adversarial clarification but the
-  terminology is stable
-- `grill-with-docs` when scientific terms, process boundaries or long-lived
-  project decisions must be aligned for later OpenSpec/code work
-
-Each delegated grill remains interactive and asks one question at a time. Do not
-pretend the pressure test completed if its dialogue was skipped.
+Record one explicit gate decision on the draft contract: `grill-me` when
+terminology is stable, `grill-with-docs` when terms, process boundaries or
+durable decisions must persist to `openspec/glossary.md` / `docs/adr/`, or
+`skipped:<reason>` — only for genuinely narrow, low-impact work. A delegated
+grill stays interactive (one question at a time) and must not be simulated.
+The canonical gate contract lives in `research-lifecycle`
+(`references/pressure-test-contract.md`).
 
 ## Output: Research Contract
 

@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-10
+
+- Guarantee bootstrap always persists `research/project-profile.md`, stamped Generic when the scan finds nothing project-specific, so downstream workflows never branch on a missing profile.
+- Reference the canonical pressure-test contract owned by `research-lifecycle` from Step 5.
+- Replace the `earth-science` tag with `domain-adaptive` to match the cross-domain contract.
+
 ## [0.1.0] - 2026-07-10
 
 - Initial project-local research profile bootstrap and maintenance workflow.

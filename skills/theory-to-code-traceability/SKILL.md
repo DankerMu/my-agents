@@ -8,7 +8,7 @@ description: >
   coupling processes, or altering numerical methods. Do not use for ordinary
   feature implementation or scientific validation by itself.
 invocation_posture: manual-first
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Theory to Code Traceability
@@ -204,12 +204,13 @@ formula-level verification case.
 
 ### 7. Pressure-Test the Contract
 
-Before approval, record one of:
-
-- `grill-me`: used when terms and project decisions are already stable
-- `grill-with-docs`: used when terminology, process boundaries, or durable
-  decisions need persistence
-- `skipped:<reason>`: only for a genuinely narrow, low-impact semantic change
+Before approval, record one explicit gate decision: `grill-me` when
+terminology is stable, `grill-with-docs` when terms, process boundaries or
+durable decisions must persist to `openspec/glossary.md` / `docs/adr/`, or
+`skipped:<reason>` — only for genuinely narrow, low-impact work. A delegated
+grill stays interactive (one question at a time) and must not be simulated.
+The canonical gate contract lives in `research-lifecycle`
+(`references/pressure-test-contract.md`).
 
 Challenge at least:
 

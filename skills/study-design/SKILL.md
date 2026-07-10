@@ -8,7 +8,7 @@ description: >
   execution budget, protocol freeze and amendments. Use after research framing;
   do not use for implementation planning or result interpretation.
 invocation_posture: manual-first
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Study Design
@@ -168,12 +168,13 @@ scientific scope.
 
 ### Phase 8: Pressure-Test the Protocol
 
-Record one of:
-
-- `grill-me: passed` — plan stressed without persistent terminology changes
-- `grill-with-docs: passed` — terms/process boundaries/durable implementation
-  decisions aligned and persisted
-- `skipped: <reason>` — only for genuinely small, low-impact studies
+Record one explicit gate decision on the protocol: `grill-me` when terminology
+is stable, `grill-with-docs` when terms, process boundaries or durable
+decisions must persist to `openspec/glossary.md` / `docs/adr/`, or
+`skipped:<reason>` — only for genuinely narrow, low-impact work. A delegated
+grill stays interactive (one question at a time) and must not be simulated.
+The canonical gate contract lives in `research-lifecycle`
+(`references/pressure-test-contract.md`).
 
 Focus questions on decisions that could change the scientific conclusion:
 selection bias, hidden confounders, baseline fairness, non-identifiability,

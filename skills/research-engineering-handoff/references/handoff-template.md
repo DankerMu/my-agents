@@ -31,7 +31,7 @@
 ## Data and Model Authorities
 - Input datasets / forcing / observations:
 - Versions, lineage and checksums:
-- Units, calendars, CRS / grids / vertical coordinates:
+- Units, calendars, coordinate/grid/vertical references (if applicable):
 - State, parameter and output schema authorities:
 
 ## Scope Map

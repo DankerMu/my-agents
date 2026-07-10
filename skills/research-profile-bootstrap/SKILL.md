@@ -9,7 +9,7 @@ description: >
   Do not use for per-study protocols or the software-risk profile at
   openspec/project-profile.md.
 invocation_posture: hybrid
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Research Profile Bootstrap
@@ -117,14 +117,19 @@ marked `human-confirmed`, `inferred`, or `unknown`.
 
 ### Step 5: Resolve Material Ambiguity
 
-Use `grill-me` when the draft has an unresolved decision but no terminology needs
-persistence. Use `grill-with-docs` when a term, process boundary or durable
+Apply the shared gate rule (canonical in `research-lifecycle`,
+`references/pressure-test-contract.md`): `grill-me` when no terminology needs
+persistence, `grill-with-docs` when a term, process boundary or durable
 project decision will govern later OpenSpec and code work. Ask one material
 question at a time and provide a recommended answer.
 
 ### Step 6: Write and Validate
 
-Write `research/project-profile.md` using the template. Keep it lean:
+Write `research/project-profile.md` using the template. Bootstrap always
+persists a file: when the scan yields nothing project-specific, still write the
+profile stamped as **Generic** with a one-line note that no project-specific
+scientific surface was found, so downstream workflows never branch on a missing
+profile. Keep it lean:
 
 - simple/single-system project: target under about 50 lines
 - broad multi-model or multi-observation system: target under about 100 lines

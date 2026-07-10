@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-10
+
+- Converge Phase 8 on the canonical pressure-test contract owned by `research-lifecycle`.
+- Standardize the protocol template's pressure-test record fields (Mode / Closed decisions / Open questions).
+
 ## [0.1.0] - 2026-07-10
 
 - Initial study protocol workflow for open-ended scientific research and capability development.

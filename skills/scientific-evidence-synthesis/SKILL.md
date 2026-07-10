@@ -8,7 +8,7 @@ description: >
   perform implementation review, or turn calibration gains into mechanistic
   validation.
 invocation_posture: manual-first
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Scientific Evidence Synthesis
@@ -82,8 +82,9 @@ human authority records a verdict.
   producer/checker independence, stopping rules, or evaluator reliability are in
   doubt.
 - Use `reviewer` only as an independent read-only evidence reviewer when the
-  orchestration environment supports it; reviewer findings remain candidates for
-  the human decision owner.
+  orchestration environment supports it; the `reviewer` agent ships with the
+  `agentic-issue-delivery` pack, not this one. Reviewer findings remain
+  candidates for the human decision owner.
 
 ## Workflow
 

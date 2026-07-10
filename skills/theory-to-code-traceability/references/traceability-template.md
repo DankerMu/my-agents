@@ -9,7 +9,7 @@ and derivations as detailed as necessary, but keep the mapping tables explicit.
 ## Identity
 - Study ID:
 - Scientific owner:
-- Status: draft | reviewed | approved | rejected
+- Status: DRAFT | REVIEWED | APPROVED | REJECTED
 - Source profile: `research/project-profile.md`
 
 ## Scientific Intent

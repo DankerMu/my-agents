@@ -9,7 +9,7 @@ description: >
   snow module. Do not use for quick facts, one-off plots, ordinary coding, or
   autonomous scientific conclusions.
 invocation_posture: manual-first
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Research Lifecycle
@@ -116,6 +116,8 @@ required confirmations and artifacts remain binding.
   contradicts or leaves unresolved.
 - `research-engineering-handoff` — convert an approved scientific decision into
   an implementation-ready upstream contract.
+- `project-documentation` — realign durable repository documentation when a
+  closed or handed-off study changes it.
 
 ## Lifecycle
 
@@ -187,12 +189,10 @@ freezing the protocol.
 
 ### Phase 5: Pressure-Test and Freeze
 
-Every medium/high-impact study records one explicit pressure-test decision:
-
-- use `grill-me` for a plan whose terminology is already stable
-- use `grill-with-docs` when terms, process boundaries or durable project
-  decisions must be persisted for later OpenSpec and code work
-- record a reason when the pressure test is skipped for a genuinely small study
+Apply the shared gate in
+[pressure-test-contract.md](references/pressure-test-contract.md): record one
+explicit decision — `grill-me`, `grill-with-docs`, or `skipped:<reason>` (only
+for genuinely narrow, low-impact work) — before freezing.
 
 Freeze the approved protocol before result-aware execution. Later changes become
 protocol amendments with what/why/when/claim impact; never silently rewrite the
@@ -240,6 +240,9 @@ Choose one explicit outcome:
 - hand an approved product/operational requirement to `product-manager`
 - invoke `research-engineering-handoff`, then pass the result to
   `stage-change-pipeline` from `agentic-issue-delivery`
+
+When the chosen outcome changes durable repository documentation (READMEs,
+docs indexes, examples), delegate the realignment to `project-documentation`.
 
 After implementation, use the delivery pack for reviewed PRs and
 `codebase-stewardship` for long-term entropy and architecture governance. The

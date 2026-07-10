@@ -592,7 +592,7 @@
       "path": "skills/research-engineering-handoff",
       "displayName": "Research Engineering Handoff",
       "description": "Convert an approved research decision into a bounded engineering handoff that preserves scientific intent, invariants, evidence oracles, verification obligations, scientific evaluation needs, non-goals, rollback, and human decision authority. Use before stage-change-pipeline when research requires software/model/data-system changes; not for unapproved hypotheses, ordinary implementation plans, or direct issue creation.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -613,7 +613,7 @@
       "path": "skills/research-lifecycle",
       "displayName": "Research Lifecycle",
       "description": "Route research and research-driven development from an initial phenomenon, capability gap, method idea, or decision need through framing, evidence grounding, study design, execution, synthesis, human decision, and optional engineering handoff. Use for substantive scientific work across domains; do not use for quick factual lookups, one-off plotting, ordinary coding, or autonomous scientific conclusions.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -634,7 +634,7 @@
       "path": "skills/research-profile-bootstrap",
       "displayName": "Research Profile Bootstrap",
       "description": "Create or update a lean project-local research profile at research/project-profile.md by scanning the repository, existing research artifacts, scientific data/model surfaces, evidence practices, and human decision gates. Use when adopting the research-engineering pack or when a project gains a recurring scientific surface; do not use for per-study plans or software-only risk profiles.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -644,7 +644,7 @@
       "tags": [
         "research-profile",
         "bootstrap",
-        "earth-science",
+        "domain-adaptive",
         "scientific-governance",
         "project-scan",
         "evidence-oracles"
@@ -655,7 +655,7 @@
       "path": "skills/research-question-framing",
       "displayName": "Research Question Framing",
       "description": "Turn a phenomenon, scientific uncertainty, capability gap, method idea, data problem, or operational decision into a bounded research contract with explicit objects, intended claims, alternatives, evidence needs, scope, risks, and downstream route. Use before study design when the research problem is not yet decision-ready; do not force every project into a hypothesis-only template.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -718,7 +718,7 @@
       "path": "skills/scientific-evidence-synthesis",
       "displayName": "Scientific Evidence Synthesis",
       "description": "Synthesize completed scientific study evidence into a claim-evidence matrix that separates support, counter-evidence, uncertainty, applicability, protocol deviations, and unsupported conclusions. Use after study execution or when reviewing an evidence package; do not replace domain-expert judgment, perform implementation review, or turn calibration gains into mechanistic validation.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -799,7 +799,7 @@
       "path": "skills/study-design",
       "displayName": "Study Design",
       "description": "Design a reviewable scientific study protocol for observational, experimental, modeling, method, data-product, field/lab, forecast, capability-development, or mixed research. Defines units, baselines, controls, interventions, observables, uncertainty, evidence oracles, stop/branch gates, execution budget, protocol freeze, and amendments. Use after framing; not for implementation planning or result interpretation.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -840,7 +840,7 @@
       "path": "skills/theory-to-code-traceability",
       "displayName": "Theory to Code Traceability",
       "description": "Build and review a traceability contract from scientific assumptions, equations, process representations, units, invariants, and numerical choices to code surfaces and verification cases. Use for new or changed scientific model capabilities such as adding a snow module, changing a parameterization, coupling processes, or altering numerical methods; not for ordinary feature implementation or scientific validation by itself.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -1356,5 +1356,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-10T11:11:37.723Z"
+  "generatedAt": "2026-07-10T15:31:20.432Z"
 }

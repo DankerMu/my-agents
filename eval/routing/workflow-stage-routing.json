@@ -11,7 +11,14 @@
     "grill-with-docs",
     "future-aware-architecture",
     "implementation-planning",
-    "stage-change-pipeline"
+    "stage-change-pipeline",
+    "research-lifecycle",
+    "research-profile-bootstrap",
+    "research-question-framing",
+    "study-design",
+    "theory-to-code-traceability",
+    "scientific-evidence-synthesis",
+    "research-engineering-handoff"
   ],
   "cases": [
     {
@@ -204,6 +211,180 @@
       "allowed_followups": [],
       "expected_depth": "none",
       "rationale": "This is a direct transformation task with no ambiguity, design decision, plan, or staged delivery requirement."
+    },
+    {
+      "id": "research-route-open-scientific-uncertainty",
+      "name": "Route an open scientific uncertainty",
+      "prompt": "Our regional hydrologic model systematically underestimates spring streamflow in cold catchments and we do not yet know whether the cause is missing snow physics, forcing bias, or calibration compensation. Take this from open scientific uncertainty through governed framing, evidence, and a named human decision; code changes are only one possible outcome.",
+      "expected_route": "research-lifecycle",
+      "forbidden_routes": [
+        "clarify",
+        "brainstorming",
+        "research-profile-bootstrap",
+        "implementation-planning"
+      ],
+      "allowed_followups": ["research-question-framing", "study-design"],
+      "expected_depth": "heavy",
+      "rationale": "An end-to-end scientific uncertainty selects the governed research router; updating the project profile or jumping to ideation and planning would skip the evidence process."
+    },
+    {
+      "id": "research-route-capability-gap-to-decision",
+      "name": "Orchestrate a capability gap to a decision",
+      "prompt": "The land-surface model lacks any snow process and stakeholders want a defensible go or no-go on adding one. Orchestrate the whole path: bound the question, design the evidence, run the studies, and route the approved outcome to product or engineering as appropriate.",
+      "expected_route": "research-lifecycle",
+      "forbidden_routes": ["research-question-framing", "study-design", "implementation-planning"],
+      "allowed_followups": [
+        "research-question-framing",
+        "theory-to-code-traceability",
+        "study-design",
+        "research-engineering-handoff"
+      ],
+      "expected_depth": "heavy",
+      "rationale": "A multi-phase orchestration request selects the top-level research router rather than any single phase skill."
+    },
+    {
+      "id": "profile-bootstrap-new-repo",
+      "name": "Bootstrap a scientific project profile",
+      "prompt": "This model repository has no research profile yet. Scan the repository evidence — process code, variable registries, data manifests, benchmarks, CI and HPC entrypoints — and write the lean project-local scientific profile with authorities, invariants, evidence oracles, and human gates. Do not start a study.",
+      "expected_route": "research-profile-bootstrap",
+      "forbidden_routes": ["research-lifecycle", "blind-spot-pass", "study-design"],
+      "allowed_followups": ["research-lifecycle"],
+      "expected_depth": "standard",
+      "rationale": "The deliverable is the living scientific profile generated from repository evidence, not a study or a general reconnaissance pass."
+    },
+    {
+      "id": "profile-update-recurring-surface",
+      "name": "Update a stale scientific profile",
+      "prompt": "After adopting a second observation network and a new reanalysis forcing product, our project-level scientific profile is stale. Update it with the new recurring surfaces, authority order, and evidence oracles, keeping study-specific results out.",
+      "expected_route": "research-profile-bootstrap",
+      "forbidden_routes": ["study-design", "scientific-evidence-synthesis", "grill-with-docs"],
+      "allowed_followups": [],
+      "expected_depth": "light",
+      "rationale": "Recurring project-surface maintenance belongs to the profile workflow, not to any single study or synthesis artifact."
+    },
+    {
+      "id": "framing-anomaly-to-research-contract",
+      "name": "Frame an anomaly as a research contract",
+      "prompt": "Nighttime sensor readings drift upward at three of our twelve stations and nobody agrees on what the researchable question is. Turn this anomaly into a bounded research contract with explicit objects, intended claims, alternatives, discriminating evidence, scope, and non-goals; stop before designing the study.",
+      "expected_route": "research-question-framing",
+      "forbidden_routes": ["clarify", "brainstorming", "study-design"],
+      "allowed_followups": ["study-design"],
+      "expected_depth": "standard",
+      "rationale": "The deliverable is a bounded research contract that precedes any protocol; open ideation or direct protocol design would skip the framing decision."
+    },
+    {
+      "id": "framing-capability-gap-contract",
+      "name": "Frame a missing model capability",
+      "prompt": "Our model cannot represent snowpack accumulation or melt. Before anyone selects equations or writes a protocol, establish where the missing process actually matters, which claims we intend to make, what simpler status-quo alternatives exist, and what evidence would justify the added complexity.",
+      "expected_route": "research-question-framing",
+      "forbidden_routes": [
+        "theory-to-code-traceability",
+        "study-design",
+        "implementation-planning"
+      ],
+      "allowed_followups": ["theory-to-code-traceability", "study-design"],
+      "expected_depth": "standard",
+      "rationale": "Capability-gap framing must precede representation choice, traceability, and protocol design."
+    },
+    {
+      "id": "study-protocol-model-comparison",
+      "name": "Design a model-comparison protocol",
+      "prompt": "The research contract comparing two snowmelt representations is approved. Produce the reviewable protocol: study units and regimes, baselines and unchanged controls, observables with units and uncertainty, evidence oracles per claim, stop and no-go gates, and a freeze-and-amendment discipline. Do not interpret any results yet.",
+      "expected_route": "study-design",
+      "forbidden_routes": [
+        "research-question-framing",
+        "scientific-evidence-synthesis",
+        "implementation-planning"
+      ],
+      "allowed_followups": ["scientific-evidence-synthesis"],
+      "expected_depth": "heavy",
+      "rationale": "An approved research contract needs a protocol; more framing or result interpretation would be the wrong stage."
+    },
+    {
+      "id": "study-protocol-forecast-evaluation",
+      "name": "Design a forecast evaluation protocol",
+      "prompt": "Design the evaluation protocol for our seasonal forecast system upgrade: independent hindcast periods, an operational baseline comparison, skill metrics with uncertainty, predeclared go and no-go thresholds, and a compute budget cap. The scientific question and intended claims are already fixed.",
+      "expected_route": "study-design",
+      "forbidden_routes": [
+        "research-lifecycle",
+        "research-question-framing",
+        "future-aware-architecture"
+      ],
+      "allowed_followups": ["scientific-evidence-synthesis"],
+      "expected_depth": "heavy",
+      "rationale": "Fixed claims plus required protocol elements select protocol design over routing, framing, or architecture choice."
+    },
+    {
+      "id": "traceability-snow-module-contract",
+      "name": "Map a snow representation to code",
+      "prompt": "The snowpack representation is chosen. Map the approved assumptions, equations, states, units, sign conventions, conservation invariants, update order, and coupling into concrete code surfaces with a verification ladder, so a domain expert and an implementer point at the same contract. No implementation sequencing.",
+      "expected_route": "theory-to-code-traceability",
+      "forbidden_routes": [
+        "implementation-planning",
+        "study-design",
+        "research-engineering-handoff"
+      ],
+      "allowed_followups": ["study-design", "research-engineering-handoff"],
+      "expected_depth": "heavy",
+      "rationale": "Equations-to-code mapping with formula-level verification cases is the traceability deliverable, not planning or handoff."
+    },
+    {
+      "id": "traceability-parameterization-change",
+      "name": "Trace a parameterization replacement",
+      "prompt": "We are replacing the evapotranspiration closure with a different parameterization. Before any protocol or issue exists, document what scientific meaning changes: symbols and units, admissible bounds, numerical coupling, affected producers and consumers, and the formula-level verification cases each change requires.",
+      "expected_route": "theory-to-code-traceability",
+      "forbidden_routes": [
+        "research-question-framing",
+        "implementation-planning",
+        "stage-change-pipeline"
+      ],
+      "allowed_followups": ["study-design"],
+      "expected_depth": "heavy",
+      "rationale": "A semantic model change needs the traceability contract before studies or delivery work exist."
+    },
+    {
+      "id": "evidence-synthesis-claim-matrix",
+      "name": "Synthesize completed study evidence",
+      "prompt": "All approved runs for the snow study are complete. Assess protocol conformance, then build the claim-evidence matrix: support, counter-evidence, uncertainty, applicability limits, and what the evidence does not show. Draft the decision package but leave the verdict to the named scientific owner.",
+      "expected_route": "scientific-evidence-synthesis",
+      "forbidden_routes": ["study-design", "research-engineering-handoff", "grill-me"],
+      "allowed_followups": ["research-engineering-handoff"],
+      "expected_depth": "heavy",
+      "rationale": "Completed-study evidence assessment bounded by a human verdict is synthesis work, not design or handoff."
+    },
+    {
+      "id": "evidence-synthesis-negative-result",
+      "name": "Close a predeclared no-go branch",
+      "prompt": "Our method comparison hit its predeclared no-go gate. Close the branch honestly: document the gate values, preserve failed and excluded cases, state the reopen condition, and keep the negative result reusable. Do not spin up implementation work to show progress.",
+      "expected_route": "scientific-evidence-synthesis",
+      "forbidden_routes": [
+        "implementation-planning",
+        "stage-change-pipeline",
+        "research-engineering-handoff"
+      ],
+      "allowed_followups": [],
+      "expected_depth": "standard",
+      "rationale": "A predeclared negative outcome is closed through evidence synthesis; creating delivery work would manufacture progress."
+    },
+    {
+      "id": "handoff-approved-decision-to-delivery",
+      "name": "Convert an approved decision into a delivery contract",
+      "prompt": "The scientific owner approved adding the snowpack capability, with recorded evidence and limits. Convert that decision into the bounded engineering contract: preserved invariants and oracles, engineering verification versus later scientific evaluation, affected surfaces, rollback, and forbidden shortcuts — ready for the delivery pipeline.",
+      "expected_route": "research-engineering-handoff",
+      "forbidden_routes": ["implementation-planning", "stage-change-pipeline", "study-design"],
+      "allowed_followups": ["stage-change-pipeline"],
+      "expected_depth": "heavy",
+      "rationale": "An approved research decision crossing into software needs the handoff contract before OpenSpec or issues exist."
+    },
+    {
+      "id": "handoff-data-product-schema-contract",
+      "name": "Hand off an approved schema change",
+      "prompt": "Our approved data-product decision changes the output schema consumed by downstream tools. Write the upstream contract that delivery must honor: schema authorities, lineage and checksum rules, compatibility and rollback boundaries, and the post-merge scientific evaluation obligations.",
+      "expected_route": "research-engineering-handoff",
+      "forbidden_routes": ["stage-change-pipeline", "implementation-planning", "grill-with-docs"],
+      "allowed_followups": ["stage-change-pipeline"],
+      "expected_depth": "heavy",
+      "rationale": "Translating an approved scientific decision into a bounded upstream contract is the handoff deliverable, not pipeline execution."
     }
   ]
 }
