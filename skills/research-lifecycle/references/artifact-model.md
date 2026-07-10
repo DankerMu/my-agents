@@ -100,3 +100,24 @@ Approved by:
 
 Never overwrite the frozen protocol without retaining the original and the
 amendment trail.
+
+## Provenance tooling
+
+`scripts/provenance.py` (stdlib-only Python) makes the invariants above
+mechanical instead of narrated:
+
+- `freeze <study-dir> --approver <name>` — writes `protocol.lock.json` with the
+  protocol sha256, UTC timestamp, approver and git identity; refuses to
+  re-freeze an already frozen study.
+- `run <study-dir> [--id <run-id>] -- <command…>` — creates
+  `runs/<run-id>/` with `command.txt`, `logs/` and `run.json` (exit code,
+  timestamps, git identity, frozen digest binding); refuses to execute when
+  the protocol differs from the lock and no amendment file exists.
+- `index <study-dir> --run <run-id> <paths…>` — checksums output files into
+  `outputs.index.json`.
+- `verify <study-dir>` — recomputes the protocol digest against the lock
+  (failing on modification without an amendment trail), checks every run has
+  its records, and re-verifies indexed output checksums. Non-zero exit means
+  the evidence chain is broken.
+
+Run it before evidence synthesis and before any engineering handoff.

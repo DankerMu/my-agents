@@ -9,7 +9,7 @@ description: >
   snow module. Do not use for quick facts, one-off plots, ordinary coding, or
   autonomous scientific conclusions.
 invocation_posture: manual-first
-version: 0.2.0
+version: 0.3.0
 ---
 
 # Research Lifecycle
@@ -194,7 +194,9 @@ Apply the shared gate in
 explicit decision — `grill-me`, `grill-with-docs`, or `skipped:<reason>` (only
 for genuinely narrow, low-impact work) — before freezing.
 
-Freeze the approved protocol before result-aware execution. Later changes become
+Freeze the approved protocol before result-aware execution. Freeze
+mechanically — `scripts/provenance.py freeze <study-dir> --approver <name>`
+computes the lock digest and refuses re-freezing. Later changes become
 protocol amendments with what/why/when/claim impact; never silently rewrite the
 original plan after seeing results.
 
@@ -207,10 +209,19 @@ Execute only the approved protocol. Preserve:
 - failures, retries and excluded runs
 - every deviation from the protocol
 
+Record runs mechanically where possible:
+`scripts/provenance.py run <study-dir> --id <run-id> -- <command…>` captures
+the command, logs, exit code and frozen-protocol binding, and refuses to run
+against a silently modified protocol; `index` checksums the outputs
+(see [artifact-model.md](references/artifact-model.md)).
+
 Use `monitor` for harness-external long jobs such as Slurm runs. Monitoring does
 not authorize changing the experiment or interpreting results.
 
 ### Phase 7: Analyze and Synthesize
+
+Run `scripts/provenance.py verify <study-dir>` first so protocol-digest and
+output-checksum conformance is machine-checked rather than narrated.
 
 Separate predeclared analysis from result-driven exploration. Invoke
 `scientific-evidence-synthesis` to produce:

@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-07-10
+
+- Point the Phase 9 freeze at the mechanical provenance tooling shipped by `research-lifecycle` instead of hand-authoring the lock record.
+
 ## [0.1.1] - 2026-07-10
 
 - Converge Phase 8 on the canonical pressure-test contract owned by `research-lifecycle`.

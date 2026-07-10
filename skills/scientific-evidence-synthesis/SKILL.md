@@ -8,7 +8,7 @@ description: >
   perform implementation review, or turn calibration gains into mechanistic
   validation.
 invocation_posture: manual-first
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Scientific Evidence Synthesis
@@ -89,6 +89,10 @@ human authority records a verdict.
 ## Workflow
 
 ### 1. Establish Protocol Conformance
+
+When the study used the `research-lifecycle` provenance tooling, run its
+`verify` subcommand first: protocol-digest and output-checksum conformance is
+then machine-established, and this step judges only what remains.
 
 Before interpreting results, compare execution against the frozen protocol:
 

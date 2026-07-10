@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-10
+
+- Add `scripts/provenance.py`: mechanical freeze/run/index/verify for study provenance — protocol lock digests, run records with exit codes and git identity, output checksums, and a verify gate that fails on silent protocol drift or evidence tampering.
+- Wire Phase 5/6/7 to the provenance tooling and document the CLI in `references/artifact-model.md`.
+- Add canonical-only `tests/` (excluded from projection) wired into the shared `npm test` validation path; declare the python>=3.9 runtime requirement.
+
 ## [0.2.0] - 2026-07-10
 
 - Add `references/pressure-test-contract.md` as the canonical pressure-test gate shared by all research skills; Phase 5 now references it.

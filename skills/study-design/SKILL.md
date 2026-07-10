@@ -8,7 +8,7 @@ description: >
   execution budget, protocol freeze and amendments. Use after research framing;
   do not use for implementation planning or result interpretation.
 invocation_posture: manual-first
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Study Design
@@ -193,6 +193,10 @@ records:
 - code/data/config identities
 - approved claim list and primary metrics
 - date and approver
+
+Do not hand-author the lock when avoidable: the `research-lifecycle` skill
+ships mechanical provenance tooling that computes the digest, refuses
+re-freezing, and later verifies runs and outputs against it.
 
 Changes after freeze use an amendment. Label analyses added after seeing results
 as exploratory unless an independent confirmatory run is performed.
