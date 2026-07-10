@@ -14,6 +14,8 @@ If you need to self-validate this skill package itself, also set `SLM_CANONICAL_
 If you want to use the reusable fixtures in this folder, also set `SLM_EVAL_FILE` to a canonical/local path such as `skills/skill-lifecycle-manager/eval/eval-cases.json`. For the posture suite, use `SLM_TRIGGER_EVAL_FILE`, for example `skills/skill-lifecycle-manager/eval/trigger-posture-cases.json`. Projected runtime surfaces intentionally exclude `eval/`, so projected copies need an external fixture path or inline `--eval` prompts.
 Projected runtime surfaces also exclude `tests/`, and Claude Code projections exclude `skill.json` plus `CHANGELOG.md`, so self-validation of this skill package is canonical-only even though projected copies still ship reusable helper scripts.
 
+Cross-skill competition suites are repository-level assets rather than fixtures for one package. The canonical adjacent-workflow suite is `eval/routing/workflow-stage-routing.json`; it uses the same validator, seeder, and surface runner, while its baseline hides every listed candidate projection and its results include parsed routing verdicts.
+
 ## What This Suite Tests
 
 The suite checks whether the skill can:

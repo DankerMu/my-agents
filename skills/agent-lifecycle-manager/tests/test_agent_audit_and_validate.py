@@ -37,6 +37,7 @@ def agent_json(
           "categories": ["workflow"],
           "skills": {json.dumps(skills)},
           "agents": {json.dumps(agents)},
+          "entrypoints": {{"contract": "AGENT.md"}},
           "capabilities": {{
             "filesystemWrite": false,
             "network": false
@@ -46,8 +47,39 @@ def agent_json(
     )
 
 
-def claude_code_markdown(*, name: str, description: str) -> str:
+def agent_contract(name: str) -> str:
     return textwrap.dedent(
+        f"""\
+        # {name} Contract
+
+        - Handle only the assigned read-only evidence-gathering role.
+        - Inspect repository facts before drawing conclusions.
+        - Cite concrete files and distinguish facts from hypotheses.
+        - Return a concise evidence map, risks, and open questions.
+        - Never edit files or claim evidence that was not inspected.
+        - For exact templates, read {{{{agent_references}}}}/operating-guide.md.
+        """
+    )
+
+
+def operating_guide() -> str:
+    return textwrap.dedent(
+        """\
+        # Demo Operating Guide
+
+        This guide contains extended workflow detail for the test agent. It is
+        deliberately loaded only when the concise core contract is insufficient.
+
+        ## Workflow
+
+        Inspect the assigned files, trace relevant relationships, cite concrete
+        evidence, and return a bounded report without modifying the repository.
+        """
+    ) + ("Extra guide detail to clear the minimum length. " * 5)
+
+
+def claude_code_markdown(*, name: str, description: str) -> str:
+    frontmatter = textwrap.dedent(
         f"""\
         ---
         name: {name}
@@ -55,31 +87,21 @@ def claude_code_markdown(*, name: str, description: str) -> str:
           {description}
         tools: Bash
         ---
-
-        # {name}
-
-        This fixture exists only for tests. It explains the agent contract, keeps
-        the document long enough for structural validation, and stays aligned with
-        the package metadata so the validator sees one coherent role across
-        surfaces. The body is intentionally plain and read-only.
-
-        ## When Not To Use
-
-        Do not use this agent for write-heavy implementation work.
         """
-    ) + ("Extra filler to clear the minimum length. " * 8)
+    )
+    return f"{frontmatter}\n{agent_contract(name)}"
 
 
 def codex_toml(*, name: str, description: str) -> str:
-    return textwrap.dedent(
-        f"""\
-        name = "{name}"
-        description = "{description}"
-        developer_instructions = "Stay read-only, gather evidence, and report concrete findings."
-        sandbox_mode = "read-only"
-        model_reasoning_effort = "medium"
-        web_search = "off"
-        """
+    return (
+        f'name = "{name}"\n'
+        f'description = "{description}"\n'
+        'developer_instructions = """\n'
+        f"{agent_contract(name).strip()}\n"
+        '"""\n'
+        'sandbox_mode = "read-only"\n'
+        'model_reasoning_effort = "medium"\n'
+        'web_search = "off"\n'
     )
 
 
@@ -97,6 +119,8 @@ class AgentAuditAndValidateTests(unittest.TestCase):
                     description="Use this agent when you need read-only evidence gathering for an agent request.",
                 ),
             )
+            write_text(agent_dir / "AGENT.md", agent_contract("demo-agent"))
+            write_text(agent_dir / "references" / "operating-guide.md", operating_guide())
             write_text(
                 agent_dir / "claude-code.md",
                 claude_code_markdown(
@@ -145,6 +169,8 @@ class AgentAuditAndValidateTests(unittest.TestCase):
                     skills=["missing-skill"],
                 ),
             )
+            write_text(agent_dir / "AGENT.md", agent_contract("demo-agent"))
+            write_text(agent_dir / "references" / "operating-guide.md", operating_guide())
             write_text(
                 agent_dir / "claude-code.md",
                 claude_code_markdown(

@@ -23,8 +23,10 @@ const {
   validateProjectManifestReferences,
   detectAgentCycles,
   getPlatformAgentRefs,
-  collectNestedPlatformAgentWarnings
+  collectNestedPlatformAgentWarnings,
+  validateEmbeddedSkillVersion
 } = require("./lib/validate-utils");
+const { validateAllAgentContracts } = require("./lib/agent-contract");
 
 const MIN_DOC_LENGTH = 200;
 const DEFAULT_PROJECT_MANIFEST_PATH = "my-agents.project.json";
@@ -84,6 +86,7 @@ async function validateSkills(repoRoot, validateSkill, allowedCategories, errors
     const skillJsonPath = path.join(baseDir, "skill.json");
 
     if (!(await fileExists(skillJsonPath))) {
+      errors.push(`Missing skill metadata: skills/${dirName}/skill.json`);
       continue;
     }
 
@@ -125,7 +128,14 @@ async function validateSkills(repoRoot, validateSkill, allowedCategories, errors
     const skillDoc = skill.entrypoints?.skillDoc ?? "SKILL.md";
     const changelog = skill.entrypoints?.changelog ?? "CHANGELOG.md";
 
-    await checkDocLength(path.join(baseDir, skillDoc), `skills/${dirName}/${skillDoc}`, errors);
+    const skillDocPath = path.join(baseDir, skillDoc);
+    await checkDocLength(skillDocPath, `skills/${dirName}/${skillDoc}`, errors);
+    if (await fileExists(skillDocPath)) {
+      const skillDocContent = await fs.readFile(skillDocPath, "utf8");
+      for (const message of validateEmbeddedSkillVersion(skillDocContent, skill.version)) {
+        errors.push(`skills/${dirName}/${skillDoc}: ${message}`);
+      }
+    }
 
     const changelogPath = path.join(baseDir, changelog);
     if (!(await fileExists(changelogPath))) {
@@ -153,6 +163,7 @@ async function validateAgents(
     const agentJsonPath = path.join(baseDir, "agent.json");
 
     if (!(await fileExists(agentJsonPath))) {
+      errors.push(`Missing agent metadata: agents/${dirName}/agent.json`);
       continue;
     }
 
@@ -281,6 +292,7 @@ async function validateHooks(repoRoot, validateHook, allowedCategories, errors, 
     const hookJsonPath = path.join(baseDir, "hook.json");
 
     if (!(await fileExists(hookJsonPath))) {
+      errors.push(`Missing hook metadata: hooks/${dirName}/hook.json`);
       continue;
     }
 
@@ -392,6 +404,7 @@ async function validatePacks(
     const packJsonPath = path.join(baseDir, "pack.json");
 
     if (!(await fileExists(packJsonPath))) {
+      errors.push(`Missing pack metadata: packs/${dirName}/pack.json`);
       continue;
     }
 
@@ -676,6 +689,7 @@ async function main() {
     agentNames,
     agentMetadata
   );
+  errors.push(...(await validateAllAgentContracts(repoRoot)));
 
   await validateHooks(repoRoot, validators.validateHook, allowedCategories, errors, hookNames);
 

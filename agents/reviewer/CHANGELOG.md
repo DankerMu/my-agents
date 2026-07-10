@@ -2,6 +2,16 @@
 
 All notable changes to the **reviewer** agent will be documented in this file.
 
+## [2.1.1] - 2026-07-10
+
+### Changed
+
+- Replaced duplicated platform behavior manuals with one concise canonical `AGENT.md` contract and generated Claude Code/Codex behavior projections.
+
+### Added
+
+- Preserved the extended workflow and output templates in an on-demand, installable `references/operating-guide.md`.
+
 ## [2.1.0] - 2026-07-06
 
 ### Changed

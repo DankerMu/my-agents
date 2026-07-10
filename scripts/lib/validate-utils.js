@@ -4,6 +4,83 @@ const {
   getLocalProjectManifestEntries,
   getExternalProjectManifestEntries
 } = require("./project-manifest-entries");
+const yaml = require("js-yaml");
+
+function parseSkillFrontmatter(content) {
+  if (!content.startsWith("---")) {
+    throw new Error("SKILL.md must start with YAML frontmatter");
+  }
+
+  const match = content.match(/^---\s*\r?\n([\s\S]*?)\r?\n---(?:\s*\r?\n|$)/);
+  if (!match) {
+    throw new Error("SKILL.md frontmatter is not closed");
+  }
+
+  let payload;
+  try {
+    payload = yaml.load(match[1]);
+  } catch (err) {
+    throw new Error(`SKILL.md frontmatter is invalid YAML: ${err.message}`);
+  }
+
+  if (payload == null) return {};
+  if (typeof payload !== "object" || Array.isArray(payload)) {
+    throw new Error("SKILL.md frontmatter must parse to a top-level mapping");
+  }
+  return payload;
+}
+
+function getEmbeddedSkillVersions(content) {
+  const frontmatter = parseSkillFrontmatter(content);
+  const versions = [];
+
+  if (frontmatter.version != null && String(frontmatter.version).trim()) {
+    versions.push({ field: "version", value: String(frontmatter.version).trim() });
+  }
+
+  const metadata = frontmatter.metadata;
+  if (
+    metadata &&
+    typeof metadata === "object" &&
+    !Array.isArray(metadata) &&
+    metadata.version != null &&
+    String(metadata.version).trim()
+  ) {
+    versions.push({ field: "metadata.version", value: String(metadata.version).trim() });
+  }
+
+  return versions;
+}
+
+function validateEmbeddedSkillVersion(content, expectedVersion) {
+  let versions;
+  try {
+    versions = getEmbeddedSkillVersions(content);
+  } catch (err) {
+    return [err.message];
+  }
+
+  if (versions.length === 0) {
+    return ["SKILL.md frontmatter must declare version or metadata.version"];
+  }
+
+  if (versions.length > 1) {
+    return [
+      `SKILL.md frontmatter declares multiple versions (${versions
+        .map(({ field, value }) => `${field}=${value}`)
+        .join(", ")}); keep one canonical embedded version`
+    ];
+  }
+
+  const [{ field, value }] = versions;
+  if (value !== expectedVersion) {
+    return [
+      `SKILL.md frontmatter ${field}=${value} does not match skill.json version=${expectedVersion}`
+    ];
+  }
+
+  return [];
+}
 
 function formatAjvErrors(errors) {
   return (errors ?? [])
@@ -186,5 +263,8 @@ module.exports = {
   validateProjectManifestReferences,
   detectAgentCycles,
   getPlatformAgentRefs,
-  collectNestedPlatformAgentWarnings
+  collectNestedPlatformAgentWarnings,
+  parseSkillFrontmatter,
+  getEmbeddedSkillVersions,
+  validateEmbeddedSkillVersion
 };

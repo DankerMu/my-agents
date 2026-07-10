@@ -29,6 +29,9 @@ from quick_validate import changelog_has_version, find_repo_root, load_categorie
 # ---------------------------------------------------------------------------
 
 MIN_DOC_LENGTH = 200
+MIN_CONTRACT_BULLETS = 5
+MAX_CONTRACT_BULLETS = 8
+REFERENCE_PLACEHOLDER = "{{agent_references}}"
 
 VALID_ARCHETYPES = {"explorer", "reviewer", "implementer", "planner", "debugger", "custom"}
 
@@ -120,6 +123,21 @@ def _parse_tools_field(tools_str: str) -> tuple[set[str], list[str]]:
     return plain, agent_refs
 
 
+def _normalize_contract(text: str) -> str:
+    return text.strip() + "\n"
+
+
+def _contract_bullets(text: str) -> list[str]:
+    return [line for line in text.splitlines() if re.match(r"^-\s+\S", line)]
+
+
+def _claude_body(text: str) -> str:
+    match = re.match(r"^---\s*\n.*?\n---\s*\n([\s\S]*)$", text, re.DOTALL)
+    if not match:
+        raise ValueError("claude-code.md must start with closed YAML frontmatter")
+    return _normalize_contract(match.group(1))
+
+
 def _description_overlap(a: str, b: str) -> float:
     """Compute a simple keyword overlap ratio between two descriptions."""
     if not a or not b:
@@ -181,6 +199,42 @@ def validate_agent(agent_dir: Path) -> tuple[list[str], list[str]]:
     fs_write = capabilities.get("filesystemWrite", False)
     network = capabilities.get("network", False)
 
+    contract_name = str(agent_json.get("entrypoints", {}).get("contract", "AGENT.md"))
+    contract_path = agent_dir / contract_name
+    contract_text = ""
+    if not contract_path.exists():
+        errors.append(f"missing required canonical contract: {contract_name}")
+    else:
+        contract_text = _normalize_contract(contract_path.read_text(encoding="utf8"))
+        bullet_count = len(_contract_bullets(contract_text))
+        if len(contract_text.strip()) < MIN_DOC_LENGTH:
+            errors.append(
+                f"{contract_name} too short: {len(contract_text.strip())} chars "
+                f"(minimum {MIN_DOC_LENGTH})"
+            )
+        if not MIN_CONTRACT_BULLETS <= bullet_count <= MAX_CONTRACT_BULLETS:
+            errors.append(
+                f"{contract_name} must contain {MIN_CONTRACT_BULLETS}-{MAX_CONTRACT_BULLETS} "
+                f"behavior bullets (found {bullet_count})"
+            )
+        if "TODO" in contract_text:
+            errors.append(f"{contract_name} must not contain TODO placeholders")
+
+        guide_path = agent_dir / "references" / "operating-guide.md"
+        has_placeholder = REFERENCE_PLACEHOLDER in contract_text
+        if has_placeholder and not guide_path.exists():
+            errors.append(
+                f"{contract_name} references {REFERENCE_PLACEHOLDER} but "
+                "references/operating-guide.md is missing"
+            )
+        if guide_path.exists() and not has_placeholder:
+            errors.append(
+                f"references/operating-guide.md exists but {contract_name} does not reference "
+                f"{REFERENCE_PLACEHOLDER}"
+            )
+        if guide_path.exists() and len(guide_path.read_text(encoding="utf8").strip()) < MIN_DOC_LENGTH:
+            errors.append("references/operating-guide.md is too short")
+
     if json_name != dirname:
         errors.append(f"agent.json name mismatch: expected '{dirname}', got '{json_name}'")
     if not json_desc:
@@ -224,6 +278,12 @@ def validate_agent(agent_dir: Path) -> tuple[list[str], list[str]]:
             errors.append(f"claude-code.md name '{cc_name}' does not match agent.json name '{json_name}'")
         if not cc_desc:
             warnings.append("claude-code.md frontmatter description is empty")
+        if contract_text:
+            try:
+                if _claude_body(cc_text) != contract_text:
+                    errors.append("claude-code.md contract projection differs from AGENT.md")
+            except ValueError as exc:
+                errors.append(str(exc))
 
     # ── 4. codex.toml parse ──────────────────────────────────────────────
     codex_data: dict = {}
@@ -246,6 +306,8 @@ def validate_agent(agent_dir: Path) -> tuple[list[str], list[str]]:
                 warnings.append("codex.toml description is empty")
             if not codex_instructions:
                 errors.append("codex.toml developer_instructions is empty")
+            elif contract_text and _normalize_contract(codex_instructions) != contract_text:
+                errors.append("codex.toml contract projection differs from AGENT.md")
 
     # ── 5. Cross-surface description alignment ───────────────────────────
     if has_claude and cc_fm.get("description") and json_desc:

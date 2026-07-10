@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.3] - 2026-07-10
+
+### Changed
+
+- Replaced duplicated platform behavior manuals with one concise canonical `AGENT.md` contract and generated Claude Code/Codex behavior projections.
+
+### Added
+
+- Preserved the extended workflow and output templates in an on-demand, installable `references/operating-guide.md`.
+
 ## [0.1.2] - 2026-06-14
 
 ### Changed

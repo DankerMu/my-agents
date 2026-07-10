@@ -14,6 +14,7 @@ description: >-
   documentation work (use project-documentation), or reviewing a
   specific PR or diff (use review or entropy-review).
 invocation_posture: manual-first
+version: 0.3.0
 ---
 
 # Control Plane Auditor

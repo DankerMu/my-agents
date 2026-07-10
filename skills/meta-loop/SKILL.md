@@ -13,6 +13,7 @@ description: >-
   even if the word "loop" is never said. Do NOT use for executing an existing
   concrete loop (run that loop itself), one-shot scripts, or plain Q&A.
 invocation_posture: manual-first
+version: 0.1.0
 ---
 
 # Meta-Loop

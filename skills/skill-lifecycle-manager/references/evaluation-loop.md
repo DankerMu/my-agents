@@ -77,6 +77,8 @@ uv run python "$SLM_DIR/scripts/seed_eval_workspace.py" \
   --eval-file "$SLM_EVAL_FILE"
 ```
 
+When the real question is which of several adjacent skills should win, use a repository-level `cross-skill-routing` suite. Its user prompts must not name candidates; each case declares one expected route or `none`, forbidden competitors, allowed later followups, and expected depth. The surface runner appends a stable response contract, scores the parsed route in `result.json`, and hides every candidate projection during a baseline run.
+
 If you want to keep adding more surface runs to the latest iteration instead of creating a fresh one, pass `--reuse-latest` to the seeder or let the direct CLI runner reuse the newest iteration automatically.
 
 For direct surface validation, run the prompts through the installed CLIs instead of building a separate API harness:

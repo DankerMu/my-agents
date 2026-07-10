@@ -22,6 +22,39 @@ def _eval_spec(eval_id: str) -> dict[str, str]:
 
 
 class SeedEvalWorkspaceTests(unittest.TestCase):
+    def test_load_cross_skill_routing_suite_preserves_route_expectations(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            eval_path = Path(tmp) / "routing.json"
+            eval_path.write_text(
+                json.dumps(
+                    {
+                        "type": "cross-skill-routing",
+                        "suite": "demo-routing",
+                        "skills": ["clarify", "brainstorming"],
+                        "cases": [
+                            {
+                                "id": "route-clarify",
+                                "name": "Route ambiguity",
+                                "prompt": "Resolve contradictory delivery constraints before implementation.",
+                                "expected_route": "clarify",
+                                "forbidden_routes": ["brainstorming"],
+                                "allowed_followups": [],
+                                "expected_depth": "light",
+                                "rationale": "Contradictory constraints need clarification.",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf8",
+            )
+
+            evals = seed_eval_workspace.load_eval_file(eval_path)
+
+            self.assertEqual(evals[0]["expectedRoute"], "clarify")
+            self.assertEqual(evals[0]["forbiddenRoutes"], ["brainstorming"])
+            self.assertIn("Route: <skill-name-or-none>", evals[0]["prompt"])
+            self.assertIn("Depth: <none|light|standard|heavy>", evals[0]["prompt"])
+
     def test_seed_workspace_retries_when_candidate_iteration_already_exists(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             workspace_root = Path(tmp) / "workspaces"

@@ -3,6 +3,17 @@
 All notable changes to this skill will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-07-10
+
+### Added
+
+- Added canonical `AGENT.md` contract validation, a 5-8 behavior-bullet budget, generated Claude Code/Codex projection checks, and installable on-demand operating-guide validation.
+
+### Changed
+
+- Replaced the three-hand-authored-view model with one concise canonical contract plus platform metadata and generated behavior regions.
+- Updated creation, validation, installation, evaluation, and audit guidance for progressive disclosure through `references/operating-guide.md`.
+
 ## [0.5.0] - 2026-03-31
 
 ### Changed

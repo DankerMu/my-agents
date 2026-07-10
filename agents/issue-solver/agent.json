@@ -3,7 +3,7 @@
   "name": "issue-solver",
   "displayName": "Issue Solver",
   "description": "Solves a single GitHub issue end-to-end by orchestrating specialist agents through triage, implementation, review, and merge.",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "maturity": "experimental",
   "categories": ["workflow", "coding"],
   "tags": ["issue", "orchestration", "github", "codex", "issue-agent-os"],
@@ -19,5 +19,8 @@
     "network": true,
     "filesystemRead": true,
     "filesystemWrite": true
+  },
+  "entrypoints": {
+    "contract": "AGENT.md"
   }
 }

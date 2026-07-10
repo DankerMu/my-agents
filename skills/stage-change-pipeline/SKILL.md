@@ -11,7 +11,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.9.0"
+  version: "0.10.1"
 ---
 
 # Stage Change Pipeline

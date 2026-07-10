@@ -2,7 +2,7 @@
 
 ## Instruction Source Of Truth
 
-The root `AGENTS.md` and `CLAUDE.md` files are generated outputs. Edit `instructions/root/shared.md` plus the relevant platform fragment (`instructions/root/codex.md` or `instructions/root/claude.md`) instead of hand-editing the generated files. Run `npm run sync-instructions` after changing those source files. The repo's versioned `pre-commit` hook auto-syncs and stages the generated files, and `npm test` plus CI fail if they drift.
+The root `AGENTS.md` and `CLAUDE.md` files are generated outputs. Edit `instructions/root/shared.md` plus the relevant platform fragment (`instructions/root/codex.md` or `instructions/root/claude.md`) instead of hand-editing the generated files. Run `npm run sync-instructions` after changing those source files. Agent behavior regions are likewise generated from `agents/*/AGENT.md`; run `npm run sync-agents` instead of hand-editing those regions. The repo's versioned `pre-commit` hook auto-syncs and stages both generated surfaces, and `npm test` plus CI fail if they drift.
 
 ## Reference
 
@@ -16,22 +16,22 @@ Match the existing style in surrounding files. JavaScript in `scripts/` uses Com
 ## Quality & Validation Rules
 
 - Categories must come from `categories.json`; add a new category there before using it in package metadata.
-- Skill docs, agent platform docs, hook docs (`HOOK.md`), and pack READMEs must be substantive and not placeholders.
+- Skill docs, canonical agent contracts and operating guides, hook docs (`HOOK.md`), and pack READMEs must be substantive and not placeholders.
 - When a version changes in `skill.json`, `agent.json`, `hook.json`, or `pack.json`, add a matching `## [x.y.z]` entry to the package `CHANGELOG.md`.
 - Follow SemVer: MAJOR for breaking changes, MINOR for new capabilities, PATCH for fixes.
 - Run `npm run sync-instructions`, `npm run build`, and `npm test` before opening a PR after changing canonical packages, metadata, generated outputs, or contributor instructions.
 - The versioned `pre-commit` hook keeps local commits fast: it syncs root instructions, formats staged files, auto-fixes staged JavaScript where possible, and re-stages the results.
-- Validation checks schema compliance, directory conventions, changelog/version alignment, category whitelists, pack and project-manifest reference integrity, generated catalog freshness, generated instruction freshness, and packaged Python unit tests that participate in the shared validation path.
+- Validation checks schema compliance, directory conventions, changelog/version alignment, category whitelists, pack and project-manifest reference integrity, canonical agent-contract budgets and projection freshness, generated catalog/instruction freshness, and packaged Python unit tests that participate in the shared validation path.
 
 ## GitHub & Contribution Workflow
 
-Use Conventional Commits such as `feat(skills): add skill lifecycle manager workflow` or `chore(catalog): refresh generated metadata`. Keep PRs focused, explain whether the change affects canonical packages, generated outputs, install flows, or local-only behavior, and link any relevant issue or research note. GitHub Actions runs `npm test` on every push and PR via `.github/workflows/validate.yml`. Tagging `v*` triggers `.github/workflows/release.yml`, which assembles GitHub Release notes from per-skill, per-agent, and per-pack changelogs.
+Use Conventional Commits such as `feat(skills): add skill lifecycle manager workflow` or `chore(catalog): refresh generated metadata`. Keep PRs focused, explain whether the change affects canonical packages, generated outputs, install flows, or local-only behavior, and link any relevant issue or research note. GitHub Actions runs `npm test` on every push and PR via `.github/workflows/validate.yml`. Tagging `v*` triggers `.github/workflows/release.yml`, which assembles GitHub Release notes from skill, agent, hook, and pack changelogs.
 
 ## Common Gotchas
 
 - `dist/catalog.json` contains a volatile `generatedAt` timestamp; freshness checks compare the durable catalog fields, not that timestamp.
 - Schema `$id` values under `schemas/` point at GitHub raw URLs; update them if the repo is renamed or transferred.
-- Keep root guidance concise and push package-specific operating details into the relevant `SKILL.md`, `claude-code.md`, `codex.toml`, pack `README.md`, or changelog.
+- Keep root guidance concise and push package-specific operating details into the relevant `SKILL.md`, agent `AGENT.md` / `references/`, hook `HOOK.md`, pack `README.md`, or changelog.
 
 ## Observable Completion
 

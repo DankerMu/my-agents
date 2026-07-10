@@ -2,5 +2,7 @@
 set -e
 
 npm run sync-instructions
+npm run sync-agents
 git add AGENTS.md CLAUDE.md
+git add -- 'agents/*/claude-code.md' 'agents/*/codex.toml'
 npm run check:staged

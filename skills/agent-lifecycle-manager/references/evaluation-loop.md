@@ -39,7 +39,8 @@ For each run, look beyond basic correctness:
 
 - Did the agent route the right lifecycle stage?
 - Did it choose a sensible archetype, tool budget, and dependency graph?
-- Did it keep `agent.json`, `claude-code.md`, and `codex.toml` aligned in intent?
+- Did it keep `AGENT.md` concise, regenerate both platform behavior regions, and preserve intentional platform metadata?
+- Did installed `{{agent_references}}` paths resolve to the copied operating guide?
 - Did Codex runtime defaults such as `sandbox_mode`, `model_reasoning_effort`, and `web_search` reinforce the intended contract?
 - Did it avoid unnecessary lifecycle stages?
 - If this is a revision, is the new version materially better?
@@ -109,7 +110,8 @@ If the run makes an unintended edit, revert it before scoring the benchmark and 
 6. Classify failures:
    - trigger failure
    - contract design failure
-   - surface alignment failure
+   - canonical contract or generated projection failure
+   - progressive-disclosure install failure
    - runtime-control design failure
    - dependency-graph failure
    - validation or install gap
@@ -136,7 +138,7 @@ For `agent-lifecycle-manager` itself, a good first benchmark pair is:
 Compare `with-skill` versus `baseline` on:
 
 - route selection quality
-- whether the response preserves one agent contract across `agent.json`, `claude-code.md`, and `codex.toml`
+- whether the response preserves one canonical `AGENT.md` contract across generated Claude Code and Codex behavior regions
 - whether the response notices runtime-control drift when relevant
 - duration from `startedAt` to `finishedAt`
 - response usefulness and next-step clarity

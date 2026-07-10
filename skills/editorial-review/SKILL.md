@@ -1,6 +1,7 @@
 ---
 name: editorial-review
 description: "Comprehensive editorial review for Chinese content before publication. Use when the user asks to 'review my article', 'proofread this', 'check for errors', 'editorial review', 'pre-publish check', 'compliance review', or any Chinese text that needs proofreading, grammar checking, fact verification, political sensitivity screening, or advertising law compliance before release. Also activate when the user says '审校', '校对', '审核', '检查错误', '发布前检查', '合规审查', or submits Chinese content asking for quality review. Covers articles, news, blog posts, press releases, marketing copy, social media posts, and any public-facing Chinese text. Even if the user only asks for 'a quick check' or 'look this over', use this skill to ensure thorough coverage."
+version: 0.1.0
 ---
 
 # Editorial Review

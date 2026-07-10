@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import subprocess
 import tempfile
@@ -161,6 +162,42 @@ class ProjectionBaselineGuard:
         return False
 
 
+class MultiProjectionBaselineGuard:
+    """Temporarily hide every project-local skill projection in a routing suite."""
+
+    def __init__(self, surface: str, project_root: Path, skill_names: list[str]) -> None:
+        self.guards = [
+            ProjectionBaselineGuard(surface, project_root, skill_name)
+            for skill_name in dict.fromkeys(skill_names)
+        ]
+        self.entered: list[ProjectionBaselineGuard] = []
+
+    def __enter__(self) -> dict[str, Any]:
+        details = []
+        try:
+            for guard in self.guards:
+                details.append({"skill": guard.skill_name, **guard.__enter__()})
+                self.entered.append(guard)
+        except Exception:
+            for guard in reversed(self.entered):
+                guard.__exit__(None, None, None)
+            raise
+
+        disabled = sum(item["mode"] == "project-projection-disabled" for item in details)
+        return {
+            "mode": (
+                "project-projections-disabled" if disabled else "no-project-projections-found"
+            ),
+            "disabledCount": disabled,
+            "skills": details,
+        }
+
+    def __exit__(self, exc_type, exc, exc_tb) -> bool:
+        for guard in reversed(self.entered):
+            guard.__exit__(exc_type, exc, exc_tb)
+        return False
+
+
 def _write_result(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=True) + "\n", encoding="utf8")
 
@@ -172,6 +209,57 @@ def _ensure_response_file(surface: str, response_path: Path, stdout_text: str) -
         response_path.write_text("", encoding="utf8")
 
 
+def _routing_outcome(eval_entry: dict, response_text: str, stage: str) -> dict[str, Any] | None:
+    expected = str(eval_entry.get("expectedRoute", "")).strip()
+    if not expected:
+        return None
+
+    route_match = re.search(r"^Route:\s*([a-z0-9-]+|none)\s*$", response_text, re.MULTILINE | re.I)
+    actual = route_match.group(1).lower() if route_match else None
+    followup_match = re.search(r"^Followups:\s*(.*?)\s*$", response_text, re.MULTILINE | re.I)
+    followups_parsed = followup_match is not None
+    followups_raw = followup_match.group(1).strip() if followup_match else ""
+    actual_followups = (
+        []
+        if not followups_raw or followups_raw.lower() == "none"
+        else [item.strip().lower() for item in followups_raw.split(",") if item.strip()]
+    )
+    forbidden = [str(item).lower() for item in eval_entry.get("forbiddenRoutes", [])]
+    allowed_followups = [str(item).lower() for item in eval_entry.get("allowedFollowups", [])]
+    expected_depth = str(eval_entry.get("expectedDepth", "")).lower()
+    depth_match = re.search(
+        r"^Depth:\s*(none|light|standard|heavy)\s*$", response_text, re.MULTILINE | re.I
+    )
+    actual_depth = depth_match.group(1).lower() if depth_match else None
+    forbidden_hit = actual in forbidden if actual else False
+    unexpected_followups = [item for item in actual_followups if item not in allowed_followups]
+    scored = stage != "baseline"
+
+    return {
+        "scored": scored,
+        "expectedRoute": expected,
+        "actualRoute": actual,
+        "routeParsed": actual is not None,
+        "forbiddenHit": forbidden_hit,
+        "allowedFollowups": allowed_followups,
+        "actualFollowups": actual_followups,
+        "followupsParsed": followups_parsed,
+        "unexpectedFollowups": unexpected_followups,
+        "expectedDepth": expected_depth,
+        "actualDepth": actual_depth,
+        "depthParsed": actual_depth is not None,
+        "passed": (
+            actual == expected
+            and not forbidden_hit
+            and followups_parsed
+            and not unexpected_followups
+            and (not expected_depth or actual_depth == expected_depth)
+            if scored
+            else None
+        ),
+    }
+
+
 def run_case(
     surface: str,
     workdir: Path,
@@ -181,6 +269,7 @@ def run_case(
     stage_dir: Path,
     effort: str | None,
     timeout_sec: int,
+    baseline_skill_names: list[str] | None = None,
 ) -> int:
     stage_dir.mkdir(parents=True, exist_ok=True)
     response_path = stage_dir / "response.md"
@@ -193,11 +282,15 @@ def run_case(
     started_at = now_iso()
     project_root = _surface_project_root(surface, workdir)
 
-    guard = (
-        ProjectionBaselineGuard(surface, project_root, skill_name)
-        if stage == "baseline"
-        else nullcontext(None)
-    )
+    if stage == "baseline":
+        baseline_names = baseline_skill_names or [skill_name]
+        guard = (
+            ProjectionBaselineGuard(surface, project_root, baseline_names[0])
+            if len(baseline_names) == 1
+            else MultiProjectionBaselineGuard(surface, project_root, baseline_names)
+        )
+    else:
+        guard = nullcontext(None)
     baseline_info: dict[str, Any] | None = None
 
     try:
@@ -249,6 +342,7 @@ def run_case(
     stdout_path.write_text(completed.stdout, encoding="utf8")
     stderr_path.write_text(completed.stderr, encoding="utf8")
     _ensure_response_file(surface, response_path, completed.stdout)
+    response_text = response_path.read_text(encoding="utf8")
 
     _write_result(
         result_path,
@@ -270,6 +364,7 @@ def run_case(
             "stderrPath": str(stderr_path),
             "exitCode": completed.returncode,
             "baseline": baseline_info,
+            "routing": _routing_outcome(eval_entry, response_text, stage),
         },
     )
     return completed.returncode
@@ -318,6 +413,12 @@ def main() -> int:
     )
     manifest = read_manifest(iteration_dir)
     workdir = Path(args.workdir).expanduser().resolve()
+    eval_payload = json.loads(Path(args.eval_file).expanduser().resolve().read_text(encoding="utf8"))
+    baseline_skill_names = (
+        [str(item) for item in eval_payload.get("skills", [])]
+        if eval_payload.get("type") == "cross-skill-routing"
+        else [args.skill_name]
+    )
 
     exit_code = 0
     for eval_entry in selected_evals(manifest, case_filters=set(args.cases) if args.cases else None):
@@ -331,6 +432,7 @@ def main() -> int:
             stage_dir=case_dir,
             effort=args.effort,
             timeout_sec=args.timeout_sec,
+            baseline_skill_names=baseline_skill_names,
         )
         print(f"{args.surface} {eval_entry['id']} [{args.stage}]: exit {case_exit}")
         if case_exit != 0:

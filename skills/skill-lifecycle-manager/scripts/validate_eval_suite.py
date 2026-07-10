@@ -5,7 +5,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
+
+
+ROUTING_DEPTHS = {"none", "light", "standard", "heavy"}
 
 
 def _require_string(errors: list[str], value: object, label: str) -> None:
@@ -111,10 +115,106 @@ def validate_eval_cases_format(payload: dict) -> tuple[list[str], list[str]]:
     return errors, warnings
 
 
+def validate_cross_skill_routing_format(payload: dict) -> tuple[list[str], list[str]]:
+    errors: list[str] = []
+    warnings: list[str] = []
+
+    _require_string(errors, payload.get("suite"), "suite")
+    skills = payload.get("skills")
+    if not isinstance(skills, list) or len(skills) < 2:
+        errors.append("skills must be an array containing at least two skill names")
+        return errors, warnings
+    if any(not isinstance(skill, str) or not skill.strip() for skill in skills):
+        errors.append("skills entries must be non-empty strings")
+        return errors, warnings
+    if len(skills) != len(set(skills)):
+        errors.append("skills must not contain duplicates")
+    skill_set = set(skills)
+
+    cases = payload.get("cases")
+    if not isinstance(cases, list) or not cases:
+        errors.append("cases must be a non-empty array")
+        return errors, warnings
+
+    seen_ids: set[str] = set()
+    positive_counts = {skill: 0 for skill in skills}
+    forbidden_counts = {skill: 0 for skill in skills}
+    none_count = 0
+
+    for index, case in enumerate(cases, start=1):
+        label = f"cases[{index}]"
+        if not isinstance(case, dict):
+            errors.append(f"{label} must be an object")
+            continue
+        for field in ("id", "name", "prompt", "rationale"):
+            _require_string(errors, case.get(field), f"{label}.{field}")
+
+        case_id = case.get("id")
+        if isinstance(case_id, str):
+            if case_id in seen_ids:
+                errors.append(f'{label}.id duplicates "{case_id}"')
+            seen_ids.add(case_id)
+
+        expected_route = case.get("expected_route")
+        if expected_route == "none":
+            none_count += 1
+        elif expected_route not in skill_set:
+            errors.append(f"{label}.expected_route must be one of skills or 'none'")
+        else:
+            positive_counts[expected_route] += 1
+
+        forbidden = case.get("forbidden_routes")
+        if not isinstance(forbidden, list) or not forbidden:
+            errors.append(f"{label}.forbidden_routes must be a non-empty array")
+            forbidden = []
+        for route in forbidden:
+            if route not in skill_set:
+                errors.append(f'{label}.forbidden_routes contains unknown skill "{route}"')
+            else:
+                forbidden_counts[route] += 1
+        if expected_route in forbidden:
+            errors.append(f"{label}.expected_route cannot also be forbidden")
+
+        followups = case.get("allowed_followups", [])
+        if not isinstance(followups, list):
+            errors.append(f"{label}.allowed_followups must be an array when present")
+        else:
+            for route in followups:
+                if route not in skill_set:
+                    errors.append(f'{label}.allowed_followups contains unknown skill "{route}"')
+
+        depth = case.get("expected_depth")
+        if depth not in ROUTING_DEPTHS:
+            errors.append(
+                f"{label}.expected_depth must be one of: {', '.join(sorted(ROUTING_DEPTHS))}"
+            )
+
+        prompt = case.get("prompt")
+        if isinstance(prompt, str):
+            for skill in skills:
+                if re.search(rf"(?<![a-z0-9-]){re.escape(skill)}(?![a-z0-9-])", prompt, re.I):
+                    errors.append(
+                        f'{label}.prompt names target candidate "{skill}"; cross-skill prompts must stay unlabeled'
+                    )
+
+    for skill, count in positive_counts.items():
+        if count < 2:
+            errors.append(f'skill "{skill}" needs at least two positive routing cases (found {count})')
+    for skill, count in forbidden_counts.items():
+        if count < 1:
+            errors.append(f'skill "{skill}" must appear in forbidden_routes at least once')
+    if none_count < 2:
+        errors.append(f"suite needs at least two expected_route='none' controls (found {none_count})")
+
+    return errors, warnings
+
+
 def validate_eval_suite(eval_path: Path) -> tuple[list[str], list[str]]:
     payload = json.loads(eval_path.read_text(encoding="utf8"))
     if not isinstance(payload, dict):
         return ["top-level JSON value must be an object"], []
+    if payload.get("type") == "cross-skill-routing":
+        return validate_cross_skill_routing_format(payload)
     if "cases" in payload:
         return validate_eval_cases_format(payload)
     if "evals" in payload:

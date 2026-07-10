@@ -26,7 +26,7 @@
       "path": "skills/agent-lifecycle-manager",
       "displayName": "Agent Lifecycle Manager",
       "description": "Manage the lifecycle of sub-agents: create or update agent packages, validate cross-surface agent contracts, evaluate routing behavior, tighten invocation boundaries, tune Codex runtime defaults, install or publish agents, or audit an agent library. Use only when the request is explicitly about agents or agent libraries, not for ordinary coding, implementation, or general project planning.",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -371,6 +371,24 @@
       ]
     },
     {
+      "name": "hook-development",
+      "path": "skills/hook-development",
+      "displayName": "Hook Development",
+      "description": "Cross-platform guidance for designing, configuring, debugging, and validating Claude Code and Codex hooks. Use for agent hook events, configuration, scripts, matchers, exit codes, and dual-platform setups; not for React hooks, webhooks, or GitHub Actions.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "coding",
+        "workflow"
+      ],
+      "tags": [
+        "hooks",
+        "claude-code",
+        "codex",
+        "automation"
+      ]
+    },
+    {
       "name": "implementation-planning",
       "path": "skills/implementation-planning",
       "displayName": "Implementation Planning",
@@ -616,7 +634,7 @@
       "path": "skills/skill-lifecycle-manager",
       "displayName": "Skill Lifecycle Manager",
       "description": "Manage the lifecycle of agent skills: discover patterns, create or update a skill, validate it, evaluate it, project or install it, or audit a skill library. Use only when the request is explicitly about skills or skill libraries, not for general code tasks or agent management.",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -698,7 +716,7 @@
       "path": "agents/debugger",
       "displayName": "Debugger",
       "description": "Systematic debugging agent that diagnoses bugs, test failures, and unexpected behavior through hypothesis-driven investigation.",
-      "version": "1.0.4",
+      "version": "1.0.5",
       "maturity": "experimental",
       "categories": [
         "debugging",
@@ -727,7 +745,7 @@
       "path": "agents/docs-researcher",
       "displayName": "Docs Researcher",
       "description": "Documentation-backed research agent for verifying APIs, SDKs, frameworks, and libraries against official sources.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "maturity": "experimental",
       "categories": [
         "documentation",
@@ -754,7 +772,7 @@
       "path": "agents/explorer",
       "displayName": "Explorer",
       "description": "Use when a task needs fast read-only codebase mapping, evidence gathering, impact analysis, or file and symbol discovery before implementation or review.",
-      "version": "1.3.0",
+      "version": "1.3.1",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -778,7 +796,7 @@
       "path": "agents/implementer",
       "displayName": "Implementer",
       "description": "Code implementation agent that writes, modifies, and refactors code based on plans, specs, or direct instructions.",
-      "version": "1.3.0",
+      "version": "1.3.1",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -805,7 +823,7 @@
       "path": "agents/issue-scribe",
       "displayName": "Issue Scribe",
       "description": "Follow-up capture agent: takes a raw observation noticed during primary work, verifies it read-only, determines origin, boundary, and solution direction, dedups against existing issues, and files one structured GitHub issue for later delivery. Never fixes anything itself.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -830,7 +848,7 @@
       "path": "agents/monitor",
       "displayName": "Monitor",
       "description": "Cheap-model watchdog for harness-external long-running jobs (slurm, remote PID over ssh, CI runs). ID-based completion detection, one blocking poll loop per check, quiet waits, final-state report with evidence. Read-only; never does side work.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "maturity": "experimental",
       "categories": [
         "devops",
@@ -856,7 +874,7 @@
       "path": "agents/planner",
       "displayName": "Planner",
       "description": "Architecture and implementation planning agent that designs step-by-step plans with trade-off analysis and escalates to implementation-planning for complex technical execution plans.",
-      "version": "1.2.3",
+      "version": "1.2.4",
       "maturity": "experimental",
       "categories": [
         "design",
@@ -888,7 +906,7 @@
       "path": "agents/researcher",
       "displayName": "Researcher",
       "description": "Web research agent for deep investigation, multi-source verification, and structured report generation.",
-      "version": "1.1.4",
+      "version": "1.1.5",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -914,7 +932,7 @@
       "path": "agents/reviewer",
       "displayName": "Reviewer",
       "description": "Code review agent that performs structured, severity-graded reviews on PRs, diffs, and code changes.",
-      "version": "2.1.0",
+      "version": "2.1.1",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -940,7 +958,7 @@
       "path": "agents/verifier",
       "displayName": "Verifier",
       "description": "Independent finding-verification agent. Adjudicates a single candidate review finding as CONFIRMED, PLAUSIBLE, or REFUTED using only diff/spec/code/test evidence. Read-only; never the reviewer that produced the candidate.",
-      "version": "0.1.2",
+      "version": "0.1.3",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1142,5 +1160,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-06T13:39:33.500Z"
+  "generatedAt": "2026-07-10T07:47:47.153Z"
 }

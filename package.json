@@ -1,7 +1,7 @@
 {
-  "name": "@liqiongyu/my-agents",
+  "name": "@dankermu/my-agents",
   "version": "0.1.0",
-  "description": "A monorepo for creating, managing, and publishing reusable Agent skills and sub-agent definitions.",
+  "description": "A monorepo for authoring, validating, installing, and publishing reusable skills, agents, hooks, and packs.",
   "type": "commonjs",
   "engines": {
     "node": ">=18"
@@ -18,9 +18,10 @@
     "test:agent-lifecycle-manager": "uv run python skills/agent-lifecycle-manager/scripts/run_unit_tests.py",
     "check:staged": "node scripts/run-staged-checks.js",
     "prepare": "node scripts/setup-git-hooks.js",
+    "sync-agents": "node scripts/sync-agent-contracts.js",
     "sync-instructions": "node scripts/sync-instructions.js",
     "sync-references": "node scripts/cli.js references",
-    "validate": "npm run lint && npm run format:check && node scripts/sync-instructions.js --check && node scripts/validate.js && npm run test:node && npm run test:skill-lifecycle-manager && npm run test:agent-lifecycle-manager",
+    "validate": "npm run lint && npm run format:check && node scripts/sync-instructions.js --check && node scripts/sync-agent-contracts.js --check && node scripts/validate.js && npm run test:node && npm run test:skill-lifecycle-manager && npm run test:agent-lifecycle-manager",
     "install-skill": "node scripts/cli.js install skill",
     "install-agent": "node scripts/cli.js install agent",
     "install-hook": "node scripts/cli.js install hook",
@@ -38,11 +39,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/liqiongyu/my-agents.git"
+    "url": "https://github.com/DankerMu/my-agents.git"
   },
   "keywords": [
     "agent-skills",
     "agents",
+    "hooks",
+    "packs",
     "sub-agents",
     "claude-code",
     "codex",

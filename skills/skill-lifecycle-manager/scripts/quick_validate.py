@@ -24,7 +24,7 @@ NEGATIVE_BOUNDARY_HEADINGS = (
 )
 
 
-def parse_frontmatter(text: str) -> dict[str, str]:
+def parse_frontmatter(text: str) -> dict[str, object]:
     """Parse the top-level SKILL.md frontmatter.
 
     Prefer PyYAML when available so valid block scalars, comments, and quoted
@@ -49,7 +49,7 @@ def parse_frontmatter(text: str) -> dict[str, str]:
             return {}
         if not isinstance(loaded, dict):
             raise ValueError("SKILL.md frontmatter must parse to a top-level mapping")
-        values: dict[str, str] = {}
+        values: dict[str, object] = {}
         for key, value in loaded.items():
             normalized_key = str(key).strip()
             if not normalized_key:
@@ -59,10 +59,10 @@ def parse_frontmatter(text: str) -> dict[str, str]:
             elif isinstance(value, str):
                 values[normalized_key] = value.strip()
             else:
-                values[normalized_key] = str(value).strip()
+                values[normalized_key] = value
         return values
 
-    values: dict[str, str] = {}
+    values: dict[str, object] = {}
     current_key: str | None = None
     for raw_line in block.splitlines():
         line = raw_line.rstrip()
@@ -70,13 +70,43 @@ def parse_frontmatter(text: str) -> dict[str, str]:
             continue
         if line.lstrip().startswith("#"):
             continue
-        if re.match(r"^[A-Za-z0-9_-]+:\s*", line):
+        indentation = len(line) - len(line.lstrip())
+        if indentation == 0 and re.match(r"^[A-Za-z0-9_-]+:\s*", line):
             key, value = line.split(":", 1)
             current_key = key.strip()
-            values[current_key] = value.strip().strip('"').strip("'")
-        elif current_key is not None:
-            values[current_key] = (values[current_key] + " " + line.strip()).strip()
+            normalized_value = value.strip().strip('"').strip("'")
+            values[current_key] = {} if not normalized_value else normalized_value
+        elif (
+            indentation > 0
+            and current_key is not None
+            and isinstance(values.get(current_key), dict)
+            and re.match(r"^[A-Za-z0-9_-]+:\s*", line.lstrip())
+        ):
+            key, value = line.lstrip().split(":", 1)
+            values[current_key][key.strip()] = value.strip().strip('"').strip("'")
+        elif current_key is not None and isinstance(values.get(current_key), str):
+            values[current_key] = f"{values[current_key]} {line.strip()}".strip()
     return values
+
+
+def frontmatter_text(frontmatter: dict[str, object], key: str) -> str:
+    value = frontmatter.get(key, "")
+    return value.strip() if isinstance(value, str) else ""
+
+
+def embedded_skill_versions(frontmatter: dict[str, object]) -> list[tuple[str, str]]:
+    versions: list[tuple[str, str]] = []
+    top_level = frontmatter_text(frontmatter, "version")
+    if top_level:
+        versions.append(("version", top_level))
+
+    metadata = frontmatter.get("metadata")
+    if isinstance(metadata, dict):
+        nested = metadata.get("version")
+        if nested is not None and str(nested).strip():
+            versions.append(("metadata.version", str(nested).strip()))
+
+    return versions
 
 
 def find_repo_root(start: Path) -> Path | None:
@@ -140,9 +170,9 @@ def validate_skill(skill_dir: Path) -> tuple[list[str], list[str]]:
 
     dirname = skill_dir.name
     json_name = skill_json.get("name", "")
-    fm_name = frontmatter.get("name", "")
+    fm_name = frontmatter_text(frontmatter, "name")
     json_description = str(skill_json.get("description", "")).strip()
-    fm_description = frontmatter.get("description", "").strip()
+    fm_description = frontmatter_text(frontmatter, "description")
     version = str(skill_json.get("version", "")).strip()
 
     if json_name != dirname:
@@ -155,6 +185,22 @@ def validate_skill(skill_dir: Path) -> tuple[list[str], list[str]]:
         errors.append("skill.json description is empty")
     if not fm_description:
         errors.append("SKILL.md frontmatter description is empty")
+    embedded_versions = embedded_skill_versions(frontmatter)
+    if not embedded_versions:
+        errors.append("SKILL.md frontmatter must declare version or metadata.version")
+    elif len(embedded_versions) > 1:
+        rendered = ", ".join(f"{field}={value}" for field, value in embedded_versions)
+        errors.append(
+            f"SKILL.md frontmatter declares multiple versions ({rendered}); "
+            "keep one canonical embedded version"
+        )
+    else:
+        field, embedded_version = embedded_versions[0]
+        if embedded_version != version:
+            errors.append(
+                f"SKILL.md frontmatter {field}={embedded_version} "
+                f"does not match skill.json version={version}"
+            )
     if version and not changelog_has_version(changelog, version):
         errors.append(f"CHANGELOG.md is missing a '## [{version}]' section")
 

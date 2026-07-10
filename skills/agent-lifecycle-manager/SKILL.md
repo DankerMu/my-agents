@@ -7,12 +7,12 @@ description: >
   an agent library. Use only when the request is explicitly about agents or
   agent libraries, not for ordinary coding, implementation, or general project
   planning.
-version: 0.5.0
+version: 0.6.0
 ---
 
 # Agent Lifecycle Manager
 
-Manage agent packages (`agent.json`, `claude-code.md`, `codex.toml`, `CHANGELOG.md`) as a lifecycle, not isolated file edits. This skill routes the request to the right stage, runs it, and closes the loop.
+Manage agent packages (`agent.json`, canonical `AGENT.md`, optional `references/`, generated `claude-code.md` / `codex.toml`, and `CHANGELOG.md`) as a lifecycle, not isolated file edits. This skill routes the request to the right stage, runs it, and closes the loop.
 
 ## Route First
 
@@ -43,13 +43,13 @@ If the agent passes the gate, proceed to Create / Update.
 
 ## Create / Update
 
-Agent instructions should be **narrow and opinionated** — 5-8 lines of behavioral contract, not a teaching manual. The model already knows how to search, review, plan, and debug. Only specify:
+Agent instructions should be **narrow and opinionated** — 5-8 behavior bullets in canonical `AGENT.md`, not a teaching manual. The model already knows how to search, review, plan, and debug. Only specify:
 
 - Role boundary (read-only? write? what scope?)
 - Output contract (what to return, in what shape)
 - Safety rails (what to never do)
 
-Use `npm run new -- --agent <name>` for a fresh scaffold. Keep semantics aligned across `agent.json`, `claude-code.md`, and `codex.toml` — one routing boundary, one role, same instructions.
+Move detailed procedures, edge cases, and exact templates to `references/operating-guide.md`, then point to it through `{{agent_references}}` only when progressive disclosure is useful. Use `npm run new -- --agent <name>` for a fresh scaffold and `npm run sync-agents` after editing `AGENT.md`. Treat `claude-code.md` and the `developer_instructions` block in `codex.toml` as generated contract regions; edit only their platform metadata directly.
 
 For Codex agents, set `sandbox_mode`, `model`, and `model_reasoning_effort` explicitly rather than inheriting from the parent session.
 
@@ -88,7 +88,7 @@ Only when triggering is wrong. Draft `should-trigger` / `should-not-trigger` pro
 npm run install-agent -- <name> --platform claude|codex|all --scope project
 ```
 
-Validate before installing. Confirm installed copies exist under `.claude/agents/` and/or `.codex/agents/`.
+Validate before installing. Confirm installed definitions exist under `.claude/agents/` and/or `.codex/agents/`; when the contract references `{{agent_references}}`, also confirm the platform-specific support directory contains `references/operating-guide.md` and the installed definition has a resolved path.
 
 ## Audit
 

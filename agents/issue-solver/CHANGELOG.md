@@ -3,6 +3,18 @@
 All notable changes to this agent will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [0.2.4] - 2026-07-10
+
+### Changed
+
+- Replaced duplicated platform behavior manuals with one concise canonical `AGENT.md` contract and generated Claude Code/Codex behavior projections.
+
+### Added
+
+- Preserved the extended workflow and output templates in an on-demand, installable `references/operating-guide.md`.
+
 ## [0.2.3] - 2026-07-06
 
 ### Changed
@@ -14,8 +26,6 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ### Changed
 
 - Codex definition: model `gpt-5.4` -> `gpt-5.5` and reasoning effort `high` -> `xhigh`.
-
-## [Unreleased]
 
 ## [0.2.1] - 2026-03-31
 

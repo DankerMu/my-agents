@@ -17,14 +17,14 @@ Use this rubric when auditing one agent or an entire agent library. The goal is 
 | --- | --- | --- |
 | Trigger quality | Short descriptions say what the agent does and when to use it | vague description, no negative boundary, over-triggering |
 | Contract clarity | Mission, non-goals, archetype, and tool budget make sense together | "planner" behavior with implementer write tools, unclear ownership |
-| Surface alignment | `agent.json`, `claude-code.md`, and `codex.toml` describe the same agent | Claude and Codex surfaces drift into different roles |
+| Contract/projection alignment | `AGENT.md` is concise and both generated behavior regions match it | hand-edited platform body, stale projection, oversized core contract |
 | Runtime-default discipline | Codex defaults match the intended permission and reasoning budget | read-only agent inherits `workspace-write`, reusable agent silently inherits reasoning effort |
 | Package integrity | Required files and metadata line up | missing `agent.json`, name mismatch, changelog mismatch |
 | Dependency graph health | Skill references and sub-agent graph are sensible | unknown skill, deep nested sub-agent chains, self-reference |
 | Permission discipline | Tool and permission budget matches the job | broad write/network access for a read-only review agent, `web_search` enabled without a real research need |
 | Validation readiness | The package can be checked before use | no obvious validation path, stale generated indexes |
 | Evaluation readiness | The agent can be tested on realistic work | no realistic prompts, no durable evidence plan |
-| Install readiness | Runtime target story is credible | unclear install surface, mismatched filenames |
+| Install readiness | Runtime definition and on-demand references remain self-contained | unresolved `{{agent_references}}`, missing copied guide, unclear install surface |
 | Library fit | The agent adds value to the overall inventory | duplicate intent, stale overlap with existing agent or skill |
 
 ## Recommended Audit Flow
@@ -38,9 +38,10 @@ Use this rubric when auditing one agent or an entire agent library. The goal is 
    - could the agent be selected from realistic user language?
    - does the archetype fit the actual behavior?
    - is the permission budget proportional?
-3. **Inspect surface parity**
-   - do the authored files still describe the same agent?
-   - do installed surfaces or generated catalogs drift from source?
+3. **Inspect canonical contract and projections**
+   - does `AGENT.md` stay within the 5-8 behavior-bullet budget?
+   - do generated platform behavior regions exactly match it?
+   - do installed reference paths resolve to the copied operating guide?
 4. **Inspect library fit**
    - does another local agent or skill already cover this intent?
    - would tightening or consolidation improve the library?

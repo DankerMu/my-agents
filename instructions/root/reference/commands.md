@@ -9,6 +9,7 @@ Use Node.js 18+ and install `uv` when running Python-backed skill checks.
 - `npm run format:check` verifies formatting without modifying files.
 - `npm run sync-instructions` regenerates root `AGENTS.md` and `CLAUDE.md`.
 - `npm run sync-instructions -- --check` verifies the generated root instruction files are current.
+- `npm run sync-agents` regenerates the behavioral regions in all Claude Code and Codex agent definitions from canonical `agents/*/AGENT.md` contracts.
 - `npm run new -- my-skill`, `npm run new -- --agent my-agent`, `npm run new -- --hook my-hook`, and `npm run new -- --pack my-pack` scaffold canonical packages.
 - `npm run build` regenerates `dist/catalog.json`, `docs/catalog/skills.md`, `docs/catalog/agents.md`, `docs/catalog/hooks.md`, and `docs/catalog/packs.md`.
 - `npm test` (alias for `npm run validate`) runs the full validation pipeline: lint, format check, instruction sync check, schema/convention validation, Node.js unit tests (`test:node`), and Python unit tests for `skill-lifecycle-manager` and `agent-lifecycle-manager` via `uv`.

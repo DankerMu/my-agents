@@ -12,6 +12,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
+ROUTING_RESPONSE_INSTRUCTION = (
+    "\n\nRouting-eval response contract: start the response with exactly "
+    "`Route: <skill-name-or-none>`. On the second line write "
+    "`Followups: <comma-separated-skill-names-or-none>`. On the third line write "
+    "`Depth: <none|light|standard|heavy>`. Then give one short reason."
+)
+
+
 def slugify(value: str) -> str:
     slug = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
     return slug or "eval"
@@ -49,6 +57,7 @@ def _truncate_success_criteria(value: str, limit: int = 220) -> str:
 def load_eval_file(eval_path: Path, case_filters: set[str] | None = None) -> list[dict[str, str]]:
     payload = json.loads(eval_path.read_text(encoding="utf8"))
     evals: list[dict[str, str]] = []
+    is_routing_suite = payload.get("type") == "cross-skill-routing"
 
     if isinstance(payload.get("cases"), list):
         for case in payload["cases"]:
@@ -63,14 +72,33 @@ def load_eval_file(eval_path: Path, case_filters: set[str] | None = None) -> lis
                 success = (
                     f"{success} Assertions to review: " + ", ".join(assertion_keys)
                 ).strip()
-            evals.append(
-                {
-                    "id": slugify(case_id or case_name),
-                    "label": case_name,
-                    "prompt": str(case.get("prompt", "")).strip(),
-                    "successCriteria": _truncate_success_criteria(success),
-                }
-            )
+            prompt = str(case.get("prompt", "")).strip()
+            entry: dict[str, object] = {
+                "id": slugify(case_id or case_name),
+                "label": case_name,
+                "prompt": prompt,
+                "successCriteria": _truncate_success_criteria(success),
+            }
+            if is_routing_suite:
+                expected_route = str(case.get("expected_route", "")).strip()
+                forbidden_routes = [str(item) for item in case.get("forbidden_routes", [])]
+                allowed_followups = [str(item) for item in case.get("allowed_followups", [])]
+                expected_depth = str(case.get("expected_depth", "")).strip()
+                entry.update(
+                    {
+                        "prompt": f"{prompt}{ROUTING_RESPONSE_INSTRUCTION}",
+                        "expectedRoute": expected_route,
+                        "forbiddenRoutes": forbidden_routes,
+                        "allowedFollowups": allowed_followups,
+                        "expectedDepth": expected_depth,
+                        "successCriteria": _truncate_success_criteria(
+                            f"Route to {expected_route}; forbid {', '.join(forbidden_routes)}; "
+                            f"allowed followups {', '.join(allowed_followups) or 'none'}; "
+                            f"expected depth {expected_depth}. {case.get('rationale', '')}"
+                        ),
+                    }
+                )
+            evals.append(entry)  # type: ignore[arg-type]
     elif isinstance(payload.get("evals"), list):
         for index, case in enumerate(payload["evals"], start=1):
             case_id = str(case.get("id") or f"eval-{index}").strip()

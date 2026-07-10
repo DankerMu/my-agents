@@ -3,7 +3,7 @@
   "name": "monitor",
   "displayName": "Monitor",
   "description": "Cheap-model watchdog for harness-external long-running jobs (slurm, remote PID over ssh, CI runs). ID-based completion detection, one blocking poll loop per check, quiet waits, final-state report with evidence. Read-only; never does side work.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "maturity": "experimental",
   "categories": ["devops", "workflow"],
   "tags": ["monitoring", "long-running", "slurm", "ci", "keepalive"],
@@ -22,5 +22,8 @@
   "requirements": {
     "tools": ["bash"],
     "network": "optional"
+  },
+  "entrypoints": {
+    "contract": "AGENT.md"
   }
 }

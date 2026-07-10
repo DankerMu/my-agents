@@ -1,0 +1,209 @@
+{
+  "version": "1.0.0",
+  "type": "cross-skill-routing",
+  "suite": "workflow-stage-routing",
+  "description": "Competition-focused routing suite for adjacent workflow stages. Prompts never name candidate skills; each case declares one winning route, prohibited competitors, allowed later followups, and the expected workflow depth.",
+  "skills": [
+    "clarify",
+    "brainstorming",
+    "blind-spot-pass",
+    "grill-me",
+    "grill-with-docs",
+    "future-aware-architecture",
+    "implementation-planning",
+    "stage-change-pipeline"
+  ],
+  "cases": [
+    {
+      "id": "clarify-contradictory-api-constraints",
+      "name": "Contradictory API constraints",
+      "prompt": "Before implementation, resolve this request: remove every legacy API field immediately, preserve full backward compatibility for all current clients, and add no compatibility layer. The supported client set is unknown.",
+      "expected_route": "clarify",
+      "forbidden_routes": ["brainstorming", "implementation-planning", "stage-change-pipeline"],
+      "allowed_followups": ["implementation-planning"],
+      "expected_depth": "light",
+      "rationale": "A direct contradiction blocks implementation; only the material compatibility decision should be resolved first."
+    },
+    {
+      "id": "clarify-material-acceptance-gap",
+      "name": "Material acceptance gap",
+      "prompt": "Add organization-level data export. The request does not say which roles may export, whether deleted records are included, or whether the output contains regulated personal data. Lock the implementation scope before writing code.",
+      "expected_route": "clarify",
+      "forbidden_routes": ["brainstorming", "blind-spot-pass", "implementation-planning"],
+      "allowed_followups": ["implementation-planning"],
+      "expected_depth": "light",
+      "rationale": "Missing acceptance and permission decisions materially change the build, while the product direction itself is already chosen."
+    },
+    {
+      "id": "brainstorm-product-directions",
+      "name": "Explore competing product directions",
+      "prompt": "We have a useful internal support tool and are undecided whether to commercialize it, keep it internal, or turn it into a services offering. Explore the options and help us choose a direction before any requirements or implementation planning.",
+      "expected_route": "brainstorming",
+      "forbidden_routes": ["clarify", "future-aware-architecture", "implementation-planning"],
+      "allowed_followups": ["future-aware-architecture"],
+      "expected_depth": "standard",
+      "rationale": "The user is choosing what to pursue, so divergent option exploration must precede requirements or architecture."
+    },
+    {
+      "id": "brainstorm-problem-framing-options",
+      "name": "Explore problem framings",
+      "prompt": "The team only knows that onboarding is slow. Compare several possible problem framings and intervention directions; do not choose a system design or produce an execution plan yet.",
+      "expected_route": "brainstorming",
+      "forbidden_routes": ["clarify", "future-aware-architecture", "stage-change-pipeline"],
+      "allowed_followups": ["future-aware-architecture"],
+      "expected_depth": "standard",
+      "rationale": "The problem and direction are still open, making architecture and delivery workflows premature."
+    },
+    {
+      "id": "blind-spot-unfamiliar-payments-area",
+      "name": "Scout an unfamiliar payments area",
+      "prompt": "Before a long payments change, inspect the unfamiliar subsystem for hidden conventions, similar historical changes, dangerous boundaries, and questions we do not yet know to ask. Return evidence and a better implementation prompt, not a plan.",
+      "expected_route": "blind-spot-pass",
+      "forbidden_routes": ["clarify", "implementation-planning", "stage-change-pipeline"],
+      "allowed_followups": ["clarify", "implementation-planning"],
+      "expected_depth": "standard",
+      "rationale": "The explicit goal is unknown-unknown discovery through repository archaeology before requirements or planning."
+    },
+    {
+      "id": "blind-spot-migration-archaeology",
+      "name": "Migration archaeology before planning",
+      "prompt": "We expect to replace the job scheduler but the area is old and poorly understood. First trace past migrations, implicit operational rules, ownership boundaries, and likely blast radius so the eventual planning request is grounded.",
+      "expected_route": "blind-spot-pass",
+      "forbidden_routes": ["brainstorming", "future-aware-architecture", "implementation-planning"],
+      "allowed_followups": ["clarify", "future-aware-architecture", "implementation-planning"],
+      "expected_depth": "standard",
+      "rationale": "Repository-specific blind spots must be surfaced before choosing or planning the replacement."
+    },
+    {
+      "id": "grill-existing-rollout-plan",
+      "name": "Pressure-test an existing rollout plan",
+      "prompt": "We already have a rollout plan for the new billing engine. Challenge it one decision branch at a time, recommend an answer with each question, verify anything discoverable from the repository, and stop when the plan is mutually understood. Do not write glossary or decision-record files.",
+      "expected_route": "grill-me",
+      "forbidden_routes": ["clarify", "grill-with-docs", "implementation-planning"],
+      "allowed_followups": ["implementation-planning"],
+      "expected_depth": "standard",
+      "rationale": "A concrete plan exists and needs adversarial questioning, without domain-document persistence."
+    },
+    {
+      "id": "grill-security-design-branches",
+      "name": "Interrogate security design branches",
+      "prompt": "Interrogate our completed session-security design. Ask one high-impact branch question at a time, offer a recommended answer, and use code evidence instead of asking us for facts the repository already contains. Keep the result conversational rather than producing a new design document.",
+      "expected_route": "grill-me",
+      "forbidden_routes": ["brainstorming", "grill-with-docs", "future-aware-architecture"],
+      "allowed_followups": ["implementation-planning"],
+      "expected_depth": "standard",
+      "rationale": "The direction is already documented; the task is adversarial branch-by-branch understanding, not ideation or architecture selection."
+    },
+    {
+      "id": "grill-docs-domain-terminology",
+      "name": "Pressure-test domain terminology and persist it",
+      "prompt": "Challenge our marketplace settlement plan against real domain scenarios and repository behavior. As terms stabilize, update the project glossary inline; record only durable architectural decisions in ADRs.",
+      "expected_route": "grill-with-docs",
+      "forbidden_routes": ["clarify", "grill-me", "implementation-planning"],
+      "allowed_followups": ["implementation-planning", "stage-change-pipeline"],
+      "expected_depth": "heavy",
+      "rationale": "The request combines adversarial plan testing with explicit glossary and ADR persistence."
+    },
+    {
+      "id": "grill-docs-scenario-boundaries",
+      "name": "Persist scenario-tested language",
+      "prompt": "Use concrete insurance claim scenarios to probe the boundaries of our existing design, align ambiguous project terminology as we go, and persist accepted terms plus qualifying long-lived decisions in the repository documentation.",
+      "expected_route": "grill-with-docs",
+      "forbidden_routes": ["brainstorming", "grill-me", "future-aware-architecture"],
+      "allowed_followups": ["implementation-planning", "stage-change-pipeline"],
+      "expected_depth": "heavy",
+      "rationale": "Scenario pressure-testing and inline domain-document persistence are both required."
+    },
+    {
+      "id": "future-architecture-platform-choice",
+      "name": "Choose a platform architecture",
+      "prompt": "Choose the architecture and core technology direction for a new workflow platform. Start from problem constraints, compare credible baselines, account for reversibility and team fit, and use current evidence where ecosystem maturity matters. Do not write migration steps yet.",
+      "expected_route": "future-aware-architecture",
+      "forbidden_routes": ["brainstorming", "implementation-planning", "stage-change-pipeline"],
+      "allowed_followups": ["implementation-planning"],
+      "expected_depth": "heavy",
+      "rationale": "The user needs a governed architecture decision with future-aware trade-offs before execution planning."
+    },
+    {
+      "id": "future-buy-build-defer-decision",
+      "name": "Make a reversible buy-build-defer decision",
+      "prompt": "Decide whether our eight-person team should buy an orchestration platform, extend the current monolith, or defer the capability. Evaluate uncertainty, lock-in, social-technical fit, and a bounded pilot; produce the decision rationale, not an implementation plan.",
+      "expected_route": "future-aware-architecture",
+      "forbidden_routes": ["clarify", "brainstorming", "implementation-planning"],
+      "allowed_followups": ["implementation-planning"],
+      "expected_depth": "heavy",
+      "rationale": "Alternatives are known and the main deliverable is an architecture/technology decision under uncertainty."
+    },
+    {
+      "id": "implementation-chosen-schema-migration",
+      "name": "Plan a chosen schema migration",
+      "prompt": "The target PostgreSQL schema and compatibility policy are already approved. Produce a deep executable migration plan covering phases, backfill, dual-read/write transitions, rollback, observability, files, dependencies, and verification. Do not reopen the architecture decision.",
+      "expected_route": "implementation-planning",
+      "forbidden_routes": ["brainstorming", "future-aware-architecture", "stage-change-pipeline"],
+      "allowed_followups": ["stage-change-pipeline"],
+      "expected_depth": "heavy",
+      "rationale": "Direction and constraints are chosen; the task is dependency-rich technical execution planning."
+    },
+    {
+      "id": "implementation-cross-cutting-refactor",
+      "name": "Plan a cross-cutting refactor",
+      "prompt": "Plan the approved service-boundary refactor across the web app, API, workers, data migration, feature flags, dashboards, and rollback controls. Give independently verifiable phases and exact affected areas before any code changes.",
+      "expected_route": "implementation-planning",
+      "forbidden_routes": ["clarify", "blind-spot-pass", "future-aware-architecture"],
+      "allowed_followups": ["stage-change-pipeline"],
+      "expected_depth": "heavy",
+      "rationale": "A chosen cross-cutting change requires a detailed execution plan rather than more direction finding."
+    },
+    {
+      "id": "stage-design-package-to-issues",
+      "name": "Convert a design package into reviewed issues",
+      "prompt": "Take the approved development-stage design package, create the corresponding OpenSpec change, run parallel specialist review and fixes, then create fine-grained GitHub issues with clear module boundaries and small-PR scope.",
+      "expected_route": "stage-change-pipeline",
+      "forbidden_routes": ["brainstorming", "future-aware-architecture", "implementation-planning"],
+      "allowed_followups": [],
+      "expected_depth": "heavy",
+      "rationale": "The explicit deliverable is the full design-to-reviewed-change-to-issues pipeline."
+    },
+    {
+      "id": "stage-resume-reviewed-change",
+      "name": "Resume an existing reviewed change",
+      "prompt": "The OpenSpec change and review findings already exist. Apply the accepted fixes, verify alignment with the stage design, and create the remaining implementation-ready GitHub issues without repeating completed upstream stages.",
+      "expected_route": "stage-change-pipeline",
+      "forbidden_routes": ["clarify", "grill-me", "implementation-planning"],
+      "allowed_followups": [],
+      "expected_depth": "heavy",
+      "rationale": "This is a resumable later stage of the delivery pipeline, not a new clarification or planning request."
+    },
+    {
+      "id": "none-specific-null-check",
+      "name": "Specific null-check implementation",
+      "prompt": "Add a null check in auth.ts so login no longer crashes when displayName is missing, then update the one focused regression test.",
+      "expected_route": "none",
+      "forbidden_routes": [
+        "clarify",
+        "brainstorming",
+        "blind-spot-pass",
+        "implementation-planning",
+        "stage-change-pipeline"
+      ],
+      "allowed_followups": [],
+      "expected_depth": "none",
+      "rationale": "The request is already small and actionable; invoking a workflow would add ceremony without reducing risk."
+    },
+    {
+      "id": "none-summarize-test-output",
+      "name": "Summarize completed test output",
+      "prompt": "Summarize the supplied test output in three sentences and identify the single failing suite. Do not inspect the repository or propose a delivery workflow.",
+      "expected_route": "none",
+      "forbidden_routes": [
+        "brainstorming",
+        "grill-me",
+        "grill-with-docs",
+        "future-aware-architecture"
+      ],
+      "allowed_followups": [],
+      "expected_depth": "none",
+      "rationale": "This is a direct transformation task with no ambiguity, design decision, plan, or staged delivery requirement."
+    }
+  ]
+}

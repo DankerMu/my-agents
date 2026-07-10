@@ -2,15 +2,15 @@
 
 语言：简体中文 | [English](README.md)
 
-[![Validate](https://github.com/liqiongyu/my-agents/actions/workflows/validate.yml/badge.svg)](https://github.com/liqiongyu/my-agents/actions/workflows/validate.yml)
+[![Validate](https://github.com/DankerMu/my-agents/actions/workflows/validate.yml/badge.svg)](https://github.com/DankerMu/my-agents/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-这是一个用于编写、校验和发布可复用 skills、agents 和 installable packs 的 monorepo，面向 Claude Code、Codex 以及类似的 AI 编程代理工作流。
+这是一个用于编写、校验和发布可复用 skills、agents、hooks 和 installable packs 的 monorepo，面向 Claude Code、Codex 以及类似的 AI 编程代理工作流。
 
-仓库把 `skills/`、`agents/` 和 `packs/` 作为唯一的源码入口，再基于这些源文件生成目录索引、执行结构校验，并把内容投影到不同运行时需要的安装位置。
+仓库把 `skills/`、`agents/`、`hooks/` 和 `packs/` 作为唯一的源码入口，再基于这些源文件生成目录索引、执行结构校验，并把内容投影到不同运行时需要的安装位置。
 
 > [!NOTE]
-> 日常维护请直接修改 `skills/`、`agents/`、`packs/` 和 `instructions/root/` 下的源码。生成索引、根目录说明文件和项目级运行时副本都应视为派生产物。
+> 日常维护请直接修改 `skills/`、`agents/`、`hooks/`、`packs/` 和 `instructions/root/` 下的源码。生成索引、根目录说明文件和项目级运行时副本都应视为派生产物。
 > 根目录 `AGENTS.md` 与 `CLAUDE.md` 是生成文件，不要直接手改。
 
 ## 快速开始
@@ -24,6 +24,7 @@
 npm install
 npm run new -- my-skill
 npm run new -- --agent my-agent
+npm run new -- --hook my-hook
 npm run new -- --pack my-pack
 npm run lint
 npm run build
@@ -34,14 +35,15 @@ npm test
 
 - [docs/catalog/skills.md](docs/catalog/skills.md) 是自动生成的技能索引，适合人工浏览。
 - [docs/catalog/agents.md](docs/catalog/agents.md) 是自动生成的代理索引，适合人工浏览。
+- [docs/catalog/hooks.md](docs/catalog/hooks.md) 是自动生成的 Hook 索引，适合人工浏览。
 - [docs/catalog/packs.md](docs/catalog/packs.md) 是自动生成的 pack 索引，适合人工浏览。
 - `dist/catalog.json` 是供脚本和工具消费的机器可读索引。
 
-如果想快速理解包创作工作流，可以先看 skills 索引中的 `skill-lifecycle-manager`、`agent-lifecycle-manager`，以及 `docs/catalog/` 下的生成目录。
+如果想快速理解包创作工作流，可以先看 skills 索引中的 `skill-lifecycle-manager`、`agent-lifecycle-manager`、`hook-development`，以及 `docs/catalog/` 下的生成目录。
 
 ## 元数据约定
 
-- [schemas/skill.schema.json](schemas/skill.schema.json)、[schemas/agent.schema.json](schemas/agent.schema.json)、[schemas/pack.schema.json](schemas/pack.schema.json)、[schemas/project-manifest.schema.json](schemas/project-manifest.schema.json) 和 [schemas/catalog.schema.json](schemas/catalog.schema.json) 定义了机器可读的元数据契约。
+- [schemas/skill.schema.json](schemas/skill.schema.json)、[schemas/agent.schema.json](schemas/agent.schema.json)、[schemas/hook.schema.json](schemas/hook.schema.json)、[schemas/pack.schema.json](schemas/pack.schema.json)、[schemas/project-manifest.schema.json](schemas/project-manifest.schema.json) 和 [schemas/catalog.schema.json](schemas/catalog.schema.json) 定义了机器可读的元数据契约。
 - [docs/metadata/skill-metadata-policy.md](docs/metadata/skill-metadata-policy.md) 说明了如何一致地使用 `requirements`、`capabilities` 和 `maturity` 等字段。
 - 可安装的 skill 和 agent 在安装后应保持自包含。不要依赖其他包的私有运行时脚本路径；如果还没有正式的共享运行时分发机制，优先使用包内副本。
 - 在 `agent.json` 中，`agents` 表示 canonical 的跨平台 agent 依赖图；如果某个平台的运行时投影需要更扁平的直接子 agent 面，请使用 `platformDependencies["claude-code"].agents`，而不是把 canonical 图改扁。
@@ -56,23 +58,25 @@ npm test
 
 ## 仓库结构
 
-| 路径                       | 用途                                                                                   |
-| -------------------------- | -------------------------------------------------------------------------------------- |
-| `docs/architecture/`       | 面向维护者的说明文档，解释工具边界、投影流程和仓库架构                                 |
-| `docs/catalog/`            | 自动生成的技能、代理与 pack 目录索引                                                   |
-| `docs/cli/`                | 面向操作方的命令参考，覆盖 runtime、sync 与维护工作流                                  |
-| `docs/metadata/`           | 仓库级元数据策略与编写约定                                                             |
-| `skills/<name>/`           | Skills 的标准源码包，包含 `skill.json`、`SKILL.md`、`CHANGELOG.md`                     |
-| `agents/<name>/`           | Agents 的标准源码包，包含 `agent.json`、`claude-code.md`、`codex.toml`、`CHANGELOG.md` |
-| `packs/<name>/`            | Pack 的标准源码包，包含 `pack.json`、`README.md`、`CHANGELOG.md`                       |
-| `my-agents.project.json`   | 可选的项目引导清单，供 `npx my-agents project sync` 使用                               |
-| `instructions/root/`       | 用来生成根目录 `AGENTS.md` 与 `CLAUDE.md` 的标准源文件                                 |
-| `scripts/`                 | 脚手架、安装、目录构建与校验脚本                                                       |
-| `schemas/`                 | Skill、Agent、Catalog 元数据对应的 JSON Schema                                         |
-| `research/`                | 调研笔记、资料整理和较长的背景文档                                                     |
-| `workspaces/<skill-name>/` | Skill 开发时的评估沙箱与临时工作区                                                     |
-| `.my-agents/`              | 本地忽略的状态目录，例如 project sync state 与可选的 `reference-repos.json` 清单       |
-| `.claude/` 和 `.agents/`   | 本地执行项目级安装时产生的运行时投影目录                                               |
+| 路径                       | 用途                                                                                     |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| `docs/architecture/`       | 面向维护者的说明文档，解释工具边界、投影流程和仓库架构                                   |
+| `docs/catalog/`            | 自动生成的技能、代理、Hook 与 pack 目录索引                                              |
+| `docs/cli/`                | 面向操作方的命令参考，覆盖 runtime、sync 与维护工作流                                    |
+| `docs/metadata/`           | 仓库级元数据策略与编写约定                                                               |
+| `eval/routing/`            | 跨 Skill 竞争式路由评估集，覆盖不点名 prompt、预期胜者、禁止路由与流程深度               |
+| `skills/<name>/`           | Skills 的标准源码包，包含 `skill.json`、`SKILL.md`、`CHANGELOG.md`                       |
+| `agents/<name>/`           | Agent 标准包，包含 canonical `AGENT.md`、可选 `references/`、平台元数据/投影与 changelog |
+| `hooks/<name>/`            | Hook 的标准源码包，包含 `hook.json`、`HOOK.md`、平台片段、脚本与 `CHANGELOG.md`          |
+| `packs/<name>/`            | Pack 的标准源码包，可组合 skills、agents 与 hooks                                        |
+| `my-agents.project.json`   | 可选的项目引导清单，供 `npx my-agents project sync` 使用                                 |
+| `instructions/root/`       | 用来生成根目录 `AGENTS.md` 与 `CLAUDE.md` 的标准源文件                                   |
+| `scripts/`                 | 脚手架、安装、目录构建与校验脚本                                                         |
+| `schemas/`                 | Skill、Agent、Hook、Pack、项目清单与 Catalog 对应的 JSON Schema                          |
+| `research/`                | 调研笔记、资料整理和较长的背景文档                                                       |
+| `workspaces/<skill-name>/` | Skill 开发时的评估沙箱与临时工作区                                                       |
+| `.my-agents/`              | 本地忽略的状态目录，例如 project sync state 与可选的 `reference-repos.json` 清单         |
+| `.claude/` 和 `.agents/`   | 本地执行项目级安装时产生的运行时投影目录                                                 |
 
 ## 常用工作流
 
@@ -94,7 +98,17 @@ npm run build
 npm test
 ```
 
-这会生成 `agents/my-agent/`，其中包含 `agent.json`、`claude-code.md`、`codex.toml` 和 `CHANGELOG.md`。
+这会生成 `agents/my-agent/`，其中包含 `agent.json`、canonical `AGENT.md`、带生成行为区域的 `claude-code.md` / `codex.toml` 和 `CHANGELOG.md`。
+
+### 创建一个 hook
+
+```bash
+npm run new -- --hook my-hook
+npm run build
+npm test
+```
+
+这会生成 `hooks/my-hook/`，其中包含 `hook.json`、`HOOK.md`、平台配置片段、共享脚本和 `CHANGELOG.md`。
 
 ### 创建一个 pack
 
@@ -112,6 +126,7 @@ npm test
 npx my-agents --help
 npx my-agents add https://github.com/affaan-m/everything-claude-code/tree/main/skills/agentic-engineering
 npx my-agents install skill clarify
+npx my-agents install hook worktree-guard
 npx my-agents project sync --prune
 npm run sync-instructions
 npx my-agents references sync
@@ -133,38 +148,40 @@ npm run format
 npm run format:check
 ```
 
-ESLint 负责仓库里的 JavaScript 工具脚本，Prettier 负责 Markdown、JSON、YAML、TOML 等支持的源码文件。版本化的 `pre-commit` hook 会执行一轮快速的 staged-file 检查：同步根说明文件、格式化已暂存文件、尽可能自动修复已暂存的 JavaScript，再把结果重新暂存。
+ESLint 负责仓库里的 JavaScript 工具脚本，Prettier 负责 Markdown、JSON、YAML、TOML 等支持的源码文件。版本化的 `pre-commit` hook 会执行一轮快速的 staged-file 检查：同步根说明文件和 Agent 行为投影、格式化已暂存文件、尽可能自动修复已暂存的 JavaScript，再把结果重新暂存。
 
 ## 安装目标
 
-| 包类型 | Claude Code 目标路径                                       | Codex 目标路径                                               |
-| ------ | ---------------------------------------------------------- | ------------------------------------------------------------ |
-| Skill  | `~/.claude/skills/<name>/` 或 `.claude/skills/<name>/`     | `~/.agents/skills/<name>/` 或 `.agents/skills/<name>/`       |
-| Agent  | `~/.claude/agents/<name>.md` 或 `.claude/agents/<name>.md` | `~/.codex/agents/<name>.toml` 或 `.codex/agents/<name>.toml` |
-| Pack   | 会把它引用的 skills 与 agents 安装到上面的目标路径         | 会把它引用的 skills 与 agents 安装到上面的目标路径           |
+| 包类型 | Claude Code 目标路径                                                                                         | Codex 目标路径                                                                                    |
+| ------ | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Skill  | `~/.claude/skills/<name>/` 或 `.claude/skills/<name>/`                                                       | `~/.agents/skills/<name>/` 或 `.agents/skills/<name>/`                                            |
+| Agent  | 定义位于 `.claude/agents/<name>.md`，按需指南位于 `.claude/agents/<name>/references/`（或用户级路径）        | 定义位于 `.codex/agents/<name>.toml`，按需指南位于 `.codex/agents/<name>/references/`             |
+| Hook   | 把脚本复制到 `.claude/hooks/<name>/`，并把 `claude-code.json` 合并进 `.claude/settings.json`（或用户级路径） | 把脚本复制到 `.codex/hooks/<name>/`，并把 `codex.json` 合并进 `.codex/hooks.json`（或用户级路径） |
+| Pack   | 会把它引用的 skills、agents 与 hooks 安装到上面的目标路径                                                    | 会把它引用的 skills、agents 与 hooks 安装到上面的目标路径                                         |
 
 ## 生成文件
 
-- `npm run build` 会重新生成 `dist/catalog.json`、`docs/catalog/skills.md`、`docs/catalog/agents.md` 和 `docs/catalog/packs.md`。
+- `npm run build` 会同步 Agent 合同生成区域，并重新生成 `dist/catalog.json`、`docs/catalog/skills.md`、`docs/catalog/agents.md`、`docs/catalog/hooks.md` 和 `docs/catalog/packs.md`。
+- `npm run sync-agents` 会根据 canonical `agents/*/AGENT.md` 重新生成每个平台 Agent 定义中的行为区域。
 - `npm run sync-instructions` 会根据 `instructions/root/` 重新生成根目录的 `AGENTS.md` 与 `CLAUDE.md`。
-- 这些索引文件不建议手动编辑，应该回到对应的源码包中修改。
+- 不要手改生成索引或平台 Agent 的行为区域；应回到对应源码包或 `AGENT.md` 修改。
 - `docs/metadata/` 下的策略文档和 `instructions/root/` 下的说明源文件都不是生成文件；仓库约定变化时应直接修改这些源文件。
 - 工具层的结构说明见 [docs/architecture/tooling-layout.md](docs/architecture/tooling-layout.md)。
 
 ## 校验与发布
 
 - `npm test` 实际执行的是 `npm run validate`。
-- 校验内容包括 ESLint、Prettier、schema、目录约定、CHANGELOG 与版本号一致性、pack 与项目清单引用完整性、生成索引是否最新、根目录说明文件是否已同步、文档最小质量要求，以及通过 `uv` 执行的打包 Python 单元测试。
+- 校验内容包括 ESLint、Prettier、四类包的 schema 与目录约定、SKILL 内嵌版本及 CHANGELOG 一致性、pack 与项目清单引用完整性（包括 Hook）、Agent 合同与目录生成物新鲜度、根目录说明文件同步、文档质量，以及通过 `uv` 执行的打包 Python 单元测试。
 - 如果调整了元数据语义或仓库策略，应该先更新标准源码包、相关策略文档或 `instructions/root/`，再执行 `npm run build`、`npm run sync-instructions` 和 `npm test`。
 - GitHub Actions 会在每次 push 和 pull request 时运行 `.github/workflows/validate.yml`。
 - Dependabot 会通过 `.github/dependabot.yml` 定期更新 npm 与 GitHub Actions 依赖。
-- 打上 `v*` 标签后会触发 `.github/workflows/release.yml`，当前会从各个 skill 和 agent 的 changelog 中汇总 GitHub Release 说明。
+- 打上 `v*` 标签后会触发 `.github/workflows/release.yml`，并从 skill、agent、hook 与 pack 的 changelog 中汇总 GitHub Release 说明。
 
 ## 贡献
 
 贡献规范和发布注意事项见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
-如果需要新增分类，请先更新 [categories.json](categories.json)，再在 `skill.json`、`agent.json` 或 `pack.json` 中引用。
+如果需要新增分类，请先更新 [categories.json](categories.json)，再在 `skill.json`、`agent.json`、`hook.json` 或 `pack.json` 中引用。
 
 ## License
 

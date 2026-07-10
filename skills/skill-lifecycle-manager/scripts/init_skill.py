@@ -18,6 +18,7 @@ SKILL_TEMPLATE = """---
 name: {name}
 description: >
   {description}
+version: "{version}"
 ---
 
 # {display_name}
@@ -178,7 +179,12 @@ def main() -> int:
     ensure_new_dir(skill_dir)
 
     (skill_dir / "SKILL.md").write_text(
-        SKILL_TEMPLATE.format(name=name, description=args.description, display_name=display_name),
+        SKILL_TEMPLATE.format(
+            name=name,
+            description=args.description,
+            version=args.version,
+            display_name=display_name,
+        ),
         encoding="utf8",
     )
     (skill_dir / "CHANGELOG.md").write_text(

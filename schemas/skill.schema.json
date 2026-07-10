@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/liqiongyu/my-agents/main/schemas/skill.schema.json",
+  "$id": "https://raw.githubusercontent.com/DankerMu/my-agents/main/schemas/skill.schema.json",
   "title": "Skill Metadata",
   "type": "object",
   "additionalProperties": false,

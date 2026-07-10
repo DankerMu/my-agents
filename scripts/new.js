@@ -77,6 +77,12 @@ async function scaffoldSkill(repoRoot, name) {
   await fs.writeFile(
     path.join(skillDir, "SKILL.md"),
     [
+      "---",
+      `name: ${name}`,
+      "description: TODO: describe what this skill does and when to use it",
+      'version: "0.1.0"',
+      "---",
+      "",
       `# ${name}`,
       "",
       "## Trigger",
@@ -158,15 +164,28 @@ async function scaffoldAgent(repoRoot, name) {
     archetype: "custom",
     skills: [],
     entrypoints: {
+      contract: "AGENT.md",
       changelog: "CHANGELOG.md"
     }
   };
+  const contractLines = [
+    `# ${name} Contract`,
+    "",
+    `- Handle only work that belongs to the narrowly defined ${name} role.`,
+    "- Inspect relevant evidence before drawing conclusions or taking action.",
+    "- Follow repository instructions and preserve unrelated user changes.",
+    "- Return a concise result with evidence, verification status, and unresolved limits.",
+    "- Do not expand scope, weaken safety boundaries, or claim unverified completion.",
+    ""
+  ];
 
   await fs.writeFile(
     path.join(agentDir, "agent.json"),
     `${JSON.stringify(agentJson, null, 2)}\n`,
     "utf8"
   );
+
+  await fs.writeFile(path.join(agentDir, "AGENT.md"), contractLines.join("\n"), "utf8");
 
   await fs.writeFile(
     path.join(agentDir, "claude-code.md"),
@@ -177,32 +196,7 @@ async function scaffoldAgent(repoRoot, name) {
       "tools: Read, Grep, Glob",
       "---",
       "",
-      `# ${name}`,
-      "",
-      "## Identity",
-      "",
-      "<!-- Define who this agent is: role, expertise, domain. -->",
-      "",
-      "TODO",
-      "",
-      "## Instructions",
-      "",
-      "<!-- Core behavioral instructions for the agent. -->",
-      "",
-      "TODO",
-      "",
-      "## Workflow",
-      "",
-      "<!-- Step-by-step workflow the agent follows. -->",
-      "",
-      "TODO",
-      "",
-      "## Constraints",
-      "",
-      "<!-- Boundaries, things the agent must NOT do. -->",
-      "",
-      "TODO",
-      ""
+      ...contractLines
     ].join("\n"),
     "utf8"
   );
@@ -216,7 +210,7 @@ async function scaffoldAgent(repoRoot, name) {
       `description = "TODO: describe when to use this agent"`,
       "",
       `developer_instructions = """`,
-      "TODO: Agent instructions for Codex.",
+      ...contractLines.slice(0, -1),
       `"""`,
       ""
     ].join("\n"),
@@ -502,7 +496,18 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exitCode = 1;
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error(err);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = {
+  isValidName,
+  parseArgs,
+  scaffoldAgent,
+  scaffoldHook,
+  scaffoldPack,
+  scaffoldSkill
+};

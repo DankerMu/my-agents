@@ -44,6 +44,7 @@ class SkillAuditAndValidateTests(unittest.TestCase):
                     name: demo-skill
                     description: >
                       Use this skill when you need demo lifecycle guidance for a skill request.
+                    version: 1.0.0
                     ---
 
                     # Demo Skill
@@ -82,6 +83,82 @@ class SkillAuditAndValidateTests(unittest.TestCase):
             self.assertEqual(errors, [])
             self.assertEqual(warnings, [])
 
+    def test_validate_skill_accepts_nested_metadata_version(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = Path(tmp) / "repo"
+            skill_dir = repo_root / "skills" / "nested-version"
+            write_text(repo_root / "categories.json", '{"categories": ["workflow"]}\n')
+            write_text(
+                skill_dir / "skill.json",
+                '{"name":"nested-version","description":"Use for nested version checks.",'
+                '"version":"1.2.3","categories":["workflow"]}\n',
+            )
+            write_text(
+                skill_dir / "SKILL.md",
+                textwrap.dedent(
+                    """\
+                    ---
+                    name: nested-version
+                    description: Use for nested version checks.
+                    metadata:
+                      version: "1.2.3"
+                    ---
+
+                    # Nested Version
+
+                    This fixture verifies nested metadata versions without duplicating the
+                    canonical version field. It remains substantive enough for validation.
+
+                    ## When Not To Use
+
+                    Do not use this fixture for unrelated work.
+                    """
+                )
+                + ("Extra filler to clear the minimum length. " * 8),
+            )
+            write_text(skill_dir / "CHANGELOG.md", "# Changelog\n\n## [1.2.3] - 2026-07-10\n")
+
+            errors, _ = quick_validate.validate_skill(skill_dir)
+
+            self.assertEqual(errors, [])
+
+    def test_validate_skill_rejects_stale_embedded_version(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = Path(tmp) / "repo"
+            skill_dir = repo_root / "skills" / "stale-version"
+            write_text(repo_root / "categories.json", '{"categories": ["workflow"]}\n')
+            write_text(
+                skill_dir / "skill.json",
+                '{"name":"stale-version","description":"Use for stale version checks.",'
+                '"version":"2.0.0","categories":["workflow"]}\n',
+            )
+            write_text(
+                skill_dir / "SKILL.md",
+                textwrap.dedent(
+                    """\
+                    ---
+                    name: stale-version
+                    description: Use for stale version checks.
+                    version: 1.9.0
+                    ---
+
+                    # Stale Version
+
+                    This fixture verifies that a stale embedded version fails validation.
+
+                    ## When Not To Use
+
+                    Do not use this fixture for unrelated work.
+                    """
+                )
+                + ("Extra filler to clear the minimum length. " * 8),
+            )
+            write_text(skill_dir / "CHANGELOG.md", "# Changelog\n\n## [2.0.0] - 2026-07-10\n")
+
+            errors, _ = quick_validate.validate_skill(skill_dir)
+
+            self.assertTrue(any("does not match skill.json version=2.0.0" in error for error in errors))
+
     def test_validate_skill_accepts_yaml_comments_and_block_scalars(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             repo_root = Path(tmp) / "repo"
@@ -110,6 +187,7 @@ class SkillAuditAndValidateTests(unittest.TestCase):
                     description: >
                       Use this skill when you need lifecycle guidance for a
                       commented-skill request.
+                    version: 1.0.0
                     ---
 
                     # Commented Skill
@@ -169,6 +247,7 @@ class SkillAuditAndValidateTests(unittest.TestCase):
                     name: activate-skill
                     description: >
                       Use this skill when you need activation-boundary guidance for a workflow request.
+                    version: 1.0.0
                     ---
 
                     # Activate Skill
@@ -232,6 +311,7 @@ class SkillAuditAndValidateTests(unittest.TestCase):
                     ---
                     name: demo-skill
                     description: Demo helper for skills.
+                    version: 1.0.0
                     ---
 
                     # Demo Skill
@@ -296,6 +376,7 @@ class SkillAuditAndValidateTests(unittest.TestCase):
                     ---
                     name: activate-skill
                     description: Use this skill when you need activation-boundary guidance for a workflow request.
+                    version: 1.0.0
                     ---
 
                     # Activate Skill

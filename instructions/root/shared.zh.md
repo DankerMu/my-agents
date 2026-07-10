@@ -2,7 +2,7 @@
 
 ## 指令来源
 
-根目录的 `AGENTS.md` 和 `CLAUDE.md` 是生成产物。请编辑 `instructions/root/shared.md` 及对应平台片段（`instructions/root/codex.md` 或 `instructions/root/claude.md`），不要直接修改生成文件。修改后运行 `npm run sync-instructions`。仓库的版本化 `pre-commit` 钩子会自动同步并暂存生成文件，`npm test` 和 CI 在文件不一致时会失败。
+根目录的 `AGENTS.md` 和 `CLAUDE.md` 是生成产物。请编辑 `instructions/root/shared.md` 及对应平台片段（`instructions/root/codex.md` 或 `instructions/root/claude.md`），不要直接修改生成文件。修改后运行 `npm run sync-instructions`。Agent 行为区域同样由 `agents/*/AGENT.md` 生成；请运行 `npm run sync-agents`，不要手改这些区域。仓库的版本化 `pre-commit` 钩子会自动同步并暂存两类生成文件，`npm test` 和 CI 在文件不一致时会失败。
 
 ## 参考
 
@@ -16,22 +16,22 @@
 ## 质量与验证规则
 
 - 分类必须来自 `categories.json`；在包元数据中使用新分类前，先在该文件中添加。
-- 技能文档、代理平台文档、钩子文档（`HOOK.md`）和 Pack README 必须有实质内容，不得为占位符。
+- Skill 文档、Agent canonical 合同与操作指南、Hook 文档（`HOOK.md`）和 Pack README 必须有实质内容，不得为占位符。
 - 当 `skill.json`、`agent.json`、`hook.json` 或 `pack.json` 中的版本号发生变化时，需要在包的 `CHANGELOG.md` 中添加对应的 `## [x.y.z]` 条目。
 - 遵循语义化版本：MAJOR 用于破坏性变更，MINOR 用于新功能，PATCH 用于修复。
 - 在修改规范包、元数据、生成产物或贡献者指南后开 PR 之前，运行 `npm run sync-instructions`、`npm run build` 和 `npm test`。
 - 版本化 `pre-commit` 钩子保持本地提交快速：它同步根指令、格式化暂存文件、尽可能自动修复暂存的 JavaScript，并重新暂存结果。
-- 验证检查包括 schema 合规性、目录约定、changelog/版本对齐、分类白名单、pack 和项目清单引用完整性、生成的目录新鲜度、生成的指令新鲜度，以及参与共享验证路径的 Python 打包单元测试。
+- 验证检查包括 schema 合规性、目录约定、changelog/版本对齐、分类白名单、pack 和项目清单引用完整性、Agent 核心合同预算与投影新鲜度、生成目录/指令新鲜度，以及参与共享验证路径的 Python 打包单元测试。
 
 ## GitHub 与贡献工作流
 
-使用约定式提交，如 `feat(skills): add skill lifecycle manager workflow` 或 `chore(catalog): refresh generated metadata`。保持 PR 聚焦，说明变更是否影响规范包、生成产物、安装流程或仅限本地行为，并链接相关 issue 或研究笔记。GitHub Actions 通过 `.github/workflows/validate.yml` 在每次 push 和 PR 时运行 `npm test`。标记 `v*` 会触发 `.github/workflows/release.yml`，从每个技能、代理和 pack 的 changelog 中汇总 GitHub Release 说明。
+使用约定式提交，如 `feat(skills): add skill lifecycle manager workflow` 或 `chore(catalog): refresh generated metadata`。保持 PR 聚焦，说明变更是否影响规范包、生成产物、安装流程或仅限本地行为，并链接相关 issue 或研究笔记。GitHub Actions 通过 `.github/workflows/validate.yml` 在每次 push 和 PR 时运行 `npm test`。标记 `v*` 会触发 `.github/workflows/release.yml`，从 skill、agent、hook 和 pack 的 changelog 中汇总 GitHub Release 说明。
 
 ## 常见陷阱
 
 - `dist/catalog.json` 包含一个易变的 `generatedAt` 时间戳；新鲜度检查比较的是持久化目录字段，而非该时间戳。
 - `schemas/` 下的 Schema `$id` 值指向 GitHub raw URL；如果仓库被重命名或转移，需要更新它们。
-- 保持根级指南简洁，将包特定的操作细节推入相关的 `SKILL.md`、`claude-code.md`、`codex.toml`、pack `README.md` 或 changelog。
+- 保持根级指南简洁，将包特定的操作细节放入相关 `SKILL.md`、Agent `AGENT.md` / `references/`、Hook `HOOK.md`、Pack `README.md` 或 changelog。
 
 ## 可观测的完成
 

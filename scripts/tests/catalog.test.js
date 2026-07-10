@@ -1,9 +1,12 @@
+const fs = require("node:fs/promises");
+const os = require("node:os");
+const path = require("node:path");
 const test = require("node:test");
 const assert = require("node:assert/strict");
 
-const { renderAgentsMarkdown } = require("../lib/catalog");
+const { generateCatalogSnapshot, renderAgentsMarkdown } = require("../lib/catalog");
 
-test("renderAgentsMarkdown prefers Claude docs when the agent supports claude-code", () => {
+test("renderAgentsMarkdown links to the canonical agent contract", () => {
   const markdown = renderAgentsMarkdown([
     {
       name: "demo-agent",
@@ -17,10 +20,10 @@ test("renderAgentsMarkdown prefers Claude docs when the agent supports claude-co
     }
   ]);
 
-  assert.match(markdown, /\[demo-agent\]\(\.\.\/\.\.\/agents\/demo-agent\/claude-code\.md\)/);
+  assert.match(markdown, /\[demo-agent\]\(\.\.\/\.\.\/agents\/demo-agent\/AGENT\.md\)/);
 });
 
-test("renderAgentsMarkdown falls back to codex.toml when the agent is codex-only", () => {
+test("renderAgentsMarkdown uses the canonical contract for a Codex-only agent", () => {
   const markdown = renderAgentsMarkdown([
     {
       name: "codex-only-agent",
@@ -34,8 +37,23 @@ test("renderAgentsMarkdown falls back to codex.toml when the agent is codex-only
     }
   ]);
 
-  assert.match(
-    markdown,
-    /\[codex-only-agent\]\(\.\.\/\.\.\/agents\/codex-only-agent\/codex\.toml\)/
-  );
+  assert.match(markdown, /\[codex-only-agent\]\(\.\.\/\.\.\/agents\/codex-only-agent\/AGENT\.md\)/);
+});
+
+test("catalog generation rejects canonical package directories without metadata", async () => {
+  const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "catalog-metadata-test-"));
+
+  try {
+    for (const root of ["skills", "agents", "hooks", "packs"]) {
+      await fs.mkdir(path.join(tmp, root), { recursive: true });
+    }
+    await fs.mkdir(path.join(tmp, "skills", "metadata-less"), { recursive: true });
+
+    await assert.rejects(
+      generateCatalogSnapshot(tmp),
+      /Missing skill metadata: skills\/metadata-less\/skill\.json/
+    );
+  } finally {
+    await fs.rm(tmp, { recursive: true, force: true });
+  }
 });

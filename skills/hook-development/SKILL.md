@@ -1,6 +1,7 @@
 ---
 name: hook-development
-description: REQUIRED for Claude Code or Codex CLI hook queries — has accurate cross-platform reference. Triggers on PreToolUse, PostToolUse, Stop, SessionStart hooks, .claude/settings.json or .codex/hooks.json config, prompt vs command hook types, hooks not firing, exit codes, stdin JSON, matchers, path blocking, or dual-platform hook setups. Skip for React hooks, webhooks, GitHub Actions.
+description: Cross-platform guidance for designing, configuring, debugging, and validating Claude Code and Codex hooks. Use for agent hook events, configuration, scripts, matchers, exit codes, and dual-platform setups; not for React hooks, webhooks, or GitHub Actions.
+version: 0.1.0
 ---
 
 # Cross-Platform Hook Development

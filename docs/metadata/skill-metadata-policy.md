@@ -178,7 +178,8 @@ When shipping metadata or behavior changes:
 - keep in-progress notes under `## [Unreleased]`
 - when the work is actually released, move those notes into a versioned changelog section
 - update `skill.json.version` in the same change
-- if `SKILL.md` has its own frontmatter `version`, update that too
+- keep exactly one embedded version in `SKILL.md` frontmatter (`version` or
+  `metadata.version`) and update it with `skill.json.version`
 
 For `0.x` skills in this repository, use version bumps to signal contract changes clearly even before `1.0.0`.
 

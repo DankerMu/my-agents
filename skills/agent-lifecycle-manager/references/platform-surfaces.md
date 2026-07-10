@@ -13,31 +13,34 @@ agents/<name>/
 That package includes:
 
 - `agent.json` for metadata and indexing
-- `claude-code.md` for the Claude Code definition
-- `codex.toml` for the Codex definition
+- `AGENT.md` for the single canonical 5-8 bullet behavior contract
+- optional `references/operating-guide.md` for on-demand workflow detail and templates
+- `claude-code.md` for Claude Code metadata plus the generated contract body
+- `codex.toml` for Codex runtime metadata plus generated `developer_instructions`
 - `CHANGELOG.md`
 
-Unlike skills, agents do not have one shared `SKILL.md` plus generated projections. The authored package itself is already multi-surface.
+Run `npm run sync-agents` after changing `AGENT.md`. Do not hand-edit the generated behavior body in either platform file.
 
 ## Where Surfaces Differ
 
 | Dimension | `agent.json` | Claude Code | Codex | Lifecycle implication |
 | --- | --- | --- | --- | --- |
-| Role | canonical metadata | platform prompt surface | platform prompt surface | keep one semantic contract across all three |
+| Role | canonical metadata | generated from `AGENT.md` | generated from `AGENT.md` | edit behavior once and validate projection freshness |
 | Discovery | catalog generation, schema validation | `claude-code.md` in repo, installed as `.claude/agents/<name>.md` | `codex.toml` in repo, installed as `.codex/agents/<name>.toml` | authoring and install are different stages |
-| Schema expectations | JSON schema + repo validation | frontmatter + rich markdown instructions | TOML metadata + developer instructions | parity checks must look beyond syntax |
+| Schema expectations | JSON schema + repo validation | frontmatter + generated concise contract | TOML metadata + generated concise contract | extended guidance belongs in installable references |
 | Trigger boundary | short description in metadata | frontmatter `description` | top-level `description` | keep the short boundary aligned |
 | Runtime controls | none directly | tool list and Claude-specific fields | `sandbox_mode`, `model`, `model_reasoning_effort`, `web_search`, and other Codex-specific fields | platform details may differ, but not the agent's mission or permission budget |
 
 ## Practical Rule
 
-Treat the agent package as one contract with three authored views:
+Treat the agent package as one contract with platform-specific wrappers:
 
-- `agent.json` says what the agent is in repository terms
-- `claude-code.md` says how Claude Code should load and run it
-- `codex.toml` says how Codex should load and run it
+- `agent.json` says what the agent is in repository terms.
+- `AGENT.md` is the only authored behavior contract.
+- `claude-code.md` and `codex.toml` keep platform metadata while their behavior regions are generated.
+- `references/operating-guide.md` preserves detailed procedures without paying their context cost on every invocation.
 
-Do not let the three files drift into different personalities.
+The installer copies references beside each installed platform definition and replaces `{{agent_references}}` with that concrete support path.
 
 ## Codex Runtime Defaults
 

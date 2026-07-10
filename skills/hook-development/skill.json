@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "name": "hook-development",
+  "displayName": "Hook Development",
+  "description": "Cross-platform guidance for designing, configuring, debugging, and validating Claude Code and Codex hooks. Use for agent hook events, configuration, scripts, matchers, exit codes, and dual-platform setups; not for React hooks, webhooks, or GitHub Actions.",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "categories": ["coding", "workflow"],
+  "tags": ["hooks", "claude-code", "codex", "automation"],
+  "authors": [{ "name": "Qiongyu Li" }],
+  "entrypoints": {
+    "skillDoc": "SKILL.md",
+    "changelog": "CHANGELOG.md"
+  },
+  "requirements": {
+    "network": "none"
+  },
+  "capabilities": {
+    "shell": true,
+    "network": false,
+    "filesystemRead": true,
+    "filesystemWrite": true
+  }
+}

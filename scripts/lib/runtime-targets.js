@@ -37,7 +37,9 @@ function getAgentTargets(name, platforms, scope) {
       platform: "Claude Code",
       srcFile: "claude-code.md",
       destDir: path.join(base, ".claude", "agents"),
-      destPath: path.join(base, ".claude", "agents", `${name}.md`)
+      destPath: path.join(base, ".claude", "agents", `${name}.md`),
+      supportDestDir: path.join(base, ".claude", "agents", name),
+      referencesDestDir: path.join(base, ".claude", "agents", name, "references")
     });
   }
 
@@ -46,7 +48,9 @@ function getAgentTargets(name, platforms, scope) {
       platform: "Codex",
       srcFile: "codex.toml",
       destDir: path.join(base, ".codex", "agents"),
-      destPath: path.join(base, ".codex", "agents", `${name}.toml`)
+      destPath: path.join(base, ".codex", "agents", `${name}.toml`),
+      supportDestDir: path.join(base, ".codex", "agents", name),
+      referencesDestDir: path.join(base, ".codex", "agents", name, "references")
     });
   }
 

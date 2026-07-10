@@ -3,7 +3,7 @@
   "name": "planner",
   "displayName": "Planner",
   "description": "Architecture and implementation planning agent that designs step-by-step plans with trade-off analysis and escalates to implementation-planning for complex technical execution plans.",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "maturity": "experimental",
   "categories": ["design", "coding", "productivity"],
   "tags": ["architecture", "planning", "design"],
@@ -20,5 +20,8 @@
     "network": true,
     "filesystemRead": true,
     "filesystemWrite": false
+  },
+  "entrypoints": {
+    "contract": "AGENT.md"
   }
 }

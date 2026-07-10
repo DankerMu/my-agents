@@ -7,6 +7,7 @@ description: >
   for gaps, overlap, or bloat. Use when setting up, overhauling, or auditing
   a project's AI tooling as a whole, not for individual agent edits or skill
   management.
+version: 0.1.0
 ---
 
 # Agent Architect

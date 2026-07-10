@@ -11,6 +11,7 @@ const {
   getExternalAssetTarget
 } = require("./runtime-targets");
 const { mergeHooksConfig, removeHooksConfig } = require("./settings-merge");
+const { REFERENCE_PLACEHOLDER } = require("./agent-contract");
 const {
   readPackMetadata,
   readProjectManifest,
@@ -90,14 +91,37 @@ async function installAgent(repoRoot, name, platforms, scope) {
   }
 
   const targets = getAgentTargets(name, platforms, scope);
+  const referencesDir = path.join(agentDir, "references");
+  const hasReferences = await fileExists(referencesDir);
   let installed = 0;
 
   for (const target of targets) {
     const srcPath = path.join(agentDir, target.srcFile);
     if (await fileExists(srcPath)) {
       await fs.mkdir(target.destDir, { recursive: true });
-      await fs.copyFile(srcPath, target.destPath);
+      const source = await fs.readFile(srcPath, "utf8");
+      if (source.includes(REFERENCE_PLACEHOLDER) && !hasReferences) {
+        console.error(
+          `agents/${name}/${target.srcFile}: references ${REFERENCE_PLACEHOLDER} but agents/${name}/references is missing`
+        );
+        return false;
+      }
+
+      if (hasReferences) {
+        await copyPath(referencesDir, target.referencesDestDir);
+      } else {
+        await removeDirRecursive(target.supportDestDir);
+      }
+
+      const portableReferencesPath = target.referencesDestDir.split(path.sep).join("/");
+      const installedSource = source.replaceAll(REFERENCE_PLACEHOLDER, portableReferencesPath);
+      await fs.writeFile(target.destPath, installedSource, "utf8");
       console.log(`Installed (${target.platform}, ${scope}): ${target.destPath}`);
+      if (hasReferences) {
+        console.log(
+          `Installed (${target.platform}, ${scope}): agent references -> ${target.referencesDestDir}/`
+        );
+      }
       installed += 1;
     }
   }
@@ -206,6 +230,9 @@ async function uninstallAgent(name, platforms, scope) {
       console.log(`Uninstalled (${target.platform}, ${scope}): ${target.destPath}`);
     } else {
       console.log(`Not installed (${target.platform}, ${scope}): ${target.destPath}`);
+    }
+    if (await removeDirRecursive(target.supportDestDir)) {
+      console.log(`Removed (${target.platform}, ${scope}): ${target.supportDestDir}/`);
     }
   }
   return true;

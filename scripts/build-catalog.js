@@ -9,11 +9,13 @@ const {
   MACHINE_CATALOG_PATH,
   generateCatalogSnapshot
 } = require("./lib/catalog");
+const { syncAllAgentContracts } = require("./lib/agent-contract");
 
 async function main() {
   const repoRoot = path.resolve(__dirname, "..");
   await fs.mkdir(path.join(repoRoot, "docs", "catalog"), { recursive: true });
   await fs.mkdir(path.join(repoRoot, "dist"), { recursive: true });
+  await syncAllAgentContracts(repoRoot);
 
   const snapshot = await generateCatalogSnapshot(repoRoot);
   const catalog = {

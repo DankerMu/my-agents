@@ -75,7 +75,8 @@ If a benchmark run makes an unintended repo edit, revert it before scoring the r
 These two cases are the clearest places to compare `with-skill` against `baseline` because they test the exact behaviors this skill is meant to impose:
 
 - route only the needed lifecycle stages
-- preserve one contract across `agent.json`, `claude-code.md`, and `codex.toml`
+- preserve one concise `AGENT.md` contract across generated Claude Code and Codex behavior regions
+- keep the on-demand operating guide installable and its runtime path resolvable
 - notice runtime-control drift when it matters
 - end with a clear next step
 
@@ -89,7 +90,7 @@ These two cases are the clearest places to compare `with-skill` against `baselin
 
 Use this as a quick map between the workflow risks in `SKILL.md` and the assertions or cases that guard them:
 
-- Surface drift across `agent.json`, `claude-code.md`, and `codex.toml`: `surface_alignment_explicit` in `eval-1`, `eval-3`, and `eval-4`
+- Canonical-contract, projection, or reference-install drift: `surface_alignment_explicit` in `eval-1`, `eval-3`, and `eval-4`
 - Choosing archetypes, tools, or sub-agents by vibes: `stage_routing_correct`, `runtime_controls_explicit`, and `research_handoff_explicit`, especially in `eval-1`, `eval-4`, and `eval-5`
 - Letting Codex runtime defaults drift by inheritance: `runtime_controls_explicit` in `eval-1`, `eval-3`, and `eval-4`
 - Merging trigger tuning and body edits into one rewrite: `trigger_work_separated` in `eval-2`

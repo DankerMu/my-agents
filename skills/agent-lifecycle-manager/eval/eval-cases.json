@@ -1,5 +1,5 @@
 {
-  "version": "0.4.0",
+  "version": "0.5.0",
   "skill": "agent-lifecycle-manager",
   "description": "Evaluation suite for the agent-lifecycle-manager skill. The suite tests whether the skill can route agent lifecycle work correctly, preserve a coherent multi-surface agent contract, manage Codex runtime defaults explicitly when needed, keep delegated Discover research separate from authoring, separate trigger tuning from body edits, and end with a clear next step.",
   "assertions": [
@@ -16,12 +16,12 @@
   ],
   "assertion_definitions": {
     "stage_routing_correct": "The response chooses the smallest appropriate lifecycle route for the request instead of forcing every stage.",
-    "agent_contract_preserved": "The result creates or preserves the canonical agent package with `agent.json`, `claude-code.md`, `codex.toml`, and `CHANGELOG.md` when authoring is in scope, or preserves that package when the task is audit or trigger focused.",
-    "surface_alignment_explicit": "The response keeps `agent.json`, `claude-code.md`, and `codex.toml` visible as one contract across multiple surfaces instead of treating them as unrelated files.",
+    "agent_contract_preserved": "The result creates or preserves the canonical agent package with `agent.json`, concise `AGENT.md`, optional installable `references/`, generated `claude-code.md` / `codex.toml` behavior regions, and `CHANGELOG.md`.",
+    "surface_alignment_explicit": "The response treats `AGENT.md` as the single behavior source, keeps platform metadata intentional, and regenerates rather than independently hand-editing Claude Code and Codex behavior regions.",
     "runtime_controls_explicit": "When Codex runtime behavior matters, the response treats `sandbox_mode`, `model_reasoning_effort`, `model`, or `web_search` as deliberate contract choices instead of silent inheritance.",
     "validation_executed": "The response runs or names concrete validation commands appropriate to the repo, such as `npm run build`, `npm test`, or repo-local skill validation commands.",
     "research_handoff_explicit": "When Discover delegates to `explorer`, `docs-researcher`, or `researcher`, the response keeps that research as a separate handoff artifact and makes the agent-specific contract implications explicit before authoring.",
-    "no_authoring_before_handoff_complete": "For Discover-only research requests, the response does not begin drafting `agent.json`, `claude-code.md`, `codex.toml`, or `CHANGELOG.md` as though `Create / Update` had already started.",
+    "no_authoring_before_handoff_complete": "For Discover-only research requests, the response does not begin drafting `agent.json`, `AGENT.md`, platform projections, references, or `CHANGELOG.md` as though `Create / Update` had already started.",
     "trigger_work_separated": "When the task includes trigger optimization, the response treats description tuning as a distinct pass and does not rewrite the whole package unnecessarily.",
     "next_step_explicit": "The response closes with a concrete next lifecycle step, especially when realistic evaluation or install work remains.",
     "automated_tooling_used": "The response uses the repo's automated agent validation or audit scripts (`quick_validate_agent.py`, `audit_agent_inventory.py`) rather than relying only on manual inspection."
@@ -30,8 +30,8 @@
     {
       "id": "eval-1",
       "name": "Create a new dual-surface agent from a repeated workflow",
-      "description": "Tests whether the skill can author a new cross-surface agent package without collapsing the three authored views into separate personalities.",
-      "prompt": "Turn our repeated repository audit workflow into a reusable agent. It should ship as `agent.json`, `claude-code.md`, and `codex.toml`, validate cleanly in this repo, and stay consistent across Claude Code and Codex.",
+      "description": "Tests whether the skill can author one concise canonical contract and generate aligned cross-surface projections with installable progressive disclosure.",
+      "prompt": "Turn our repeated repository audit workflow into a reusable agent. It should ship with `agent.json`, a concise canonical `AGENT.md`, an on-demand operating guide for detailed workflow, and generated Claude Code/Codex behavior regions. Validate that the installed references resolve on both surfaces.",
       "mode": "standard",
       "expected_stages": [
         "Create/Update",
@@ -42,10 +42,10 @@
           "check": "The route should focus on authoring and validation. Discover is optional, but the response should not default to a full audit or install pass unless the prompt calls for it."
         },
         "agent_contract_preserved": {
-          "check": "Creates a canonical agent package with `agent.json`, `claude-code.md`, `codex.toml`, and `CHANGELOG.md`."
+          "check": "Creates a canonical package with `agent.json`, `AGENT.md`, optional `references/operating-guide.md`, generated platform behavior regions, and `CHANGELOG.md`."
         },
         "surface_alignment_explicit": {
-          "check": "Makes the multi-surface contract explicit instead of treating each file as an independent deliverable."
+          "check": "Uses `AGENT.md` as the single behavior source and runs the projection sync instead of hand-authoring two behavior manuals."
         },
         "runtime_controls_explicit": {
           "check": "Makes the Codex surface defaults explicit or intentionally justified instead of leaving the runtime posture accidental."
@@ -102,7 +102,7 @@
           "check": "The route should lead with audit/governance and structural checks rather than authoring a new agent."
         },
         "surface_alignment_explicit": {
-          "check": "Evaluates readiness in terms of one contract across `agent.json`, `claude-code.md`, and `codex.toml`."
+          "check": "Evaluates canonical contract quality, projection freshness, reference installability, and platform metadata alignment."
         },
         "runtime_controls_explicit": {
           "check": "Treats runtime-control drift as part of the audit when Codex behavior is relevant."
@@ -148,7 +148,7 @@
       "id": "eval-5",
       "name": "Stop at a delegated Discover handoff before agent authoring",
       "description": "Tests delegated research behavior for unfamiliar agent design work. The skill should stay in Discover, make the research handoff explicit, and avoid drafting package files before the contract is grounded.",
-      "prompt": "Before drafting a reusable browser-automation agent, compare official Codex and Claude guidance plus a few representative community agent examples. I want a research handoff that tells me what archetype, tool budget, runtime defaults, and sub-agent graph patterns are credible. Stop before you draft `agent.json`, `claude-code.md`, or `codex.toml`.",
+      "prompt": "Before drafting a reusable browser-automation agent, compare official Codex and Claude guidance plus a few representative community agent examples. I want a research handoff that tells me what archetype, tool budget, runtime defaults, and sub-agent graph patterns are credible. Stop before you draft `agent.json`, `AGENT.md`, references, or platform projections.",
       "mode": "standard",
       "expected_stages": [
         "Discover"
@@ -161,7 +161,7 @@
           "check": "Keeps the delegated research artifact separate and makes the contract implications explicit before any package editing begins."
         },
         "no_authoring_before_handoff_complete": {
-          "check": "Does not start drafting `agent.json`, `claude-code.md`, `codex.toml`, or `CHANGELOG.md` during this Discover-only pass."
+          "check": "Does not start drafting `agent.json`, `AGENT.md`, references, platform projections, or `CHANGELOG.md` during this Discover-only pass."
         },
         "next_step_explicit": {
           "check": "Ends with the concrete next step of confirming or using the research handoff before `Create / Update`."
@@ -172,7 +172,7 @@
       "id": "eval-6",
       "name": "Validate a single agent for cross-surface contract alignment",
       "description": "Tests whether the skill uses automated agent validation tooling to check cross-surface alignment rather than relying on manual file inspection.",
-      "prompt": "Validate our `reviewer` agent. Check that `agent.json`, `claude-code.md`, and `codex.toml` are aligned, that the archetype matches the capabilities, and that Codex runtime defaults are consistent with the contract. Use the repo's validation scripts.",
+      "prompt": "Validate our `reviewer` agent. Check the canonical `AGENT.md` budget, generated Claude/Codex behavior parity, operating-guide installability, archetype/capability alignment, and Codex runtime defaults. Use the repo's validation scripts.",
       "mode": "standard",
       "expected_stages": [
         "Validate"

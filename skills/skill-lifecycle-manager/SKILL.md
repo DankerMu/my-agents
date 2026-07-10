@@ -5,6 +5,7 @@ description: >
   skill, validate it, evaluate it, project or install it, or audit a skill
   library. Use only when the request is explicitly about skills or skill
   libraries, not for general code tasks or agent management.
+version: 0.8.0
 ---
 
 # Skill Lifecycle Manager
@@ -256,6 +257,8 @@ Use Anthropic's evaluation discipline here. The core loop is:
 
 For direct CLI runs, `run_surface_eval.py --stage baseline` now automates the project-local baseline path by temporarily hiding the active surface projection when it exists. Use that stage only when the comparison is meaningful and you want the baseline artifact to sit next to the corresponding `with-skill` run in the same iteration.
 Those direct surface evals require the relevant platform CLI for the surface you are exercising, but that is not a prerequisite for basic structure validation or the packaged Python unit tests.
+
+When several adjacent skills plausibly compete, use a repo-level `cross-skill-routing` suite instead of asking each skill to grade itself. Keep prompts unlabeled, declare one expected winner or `none`, forbid plausible wrong winners, and record allowed later followups plus expected depth. The canonical workflow-stage suite lives at `eval/routing/workflow-stage-routing.json`; its baseline mode hides every listed project-local projection before restoring them.
 
 Use qualitative review by default for ambiguous or creative skills. Use quantitative assertions for transformations, extraction, formatting, deterministic workflows, or code-generation patterns with objective expectations.
 

@@ -1,6 +1,7 @@
 ---
 name: business-plan
 description: "Use this skill for substantial business planning work: drafting or revising a business plan, investor-ready financial analysis, market sizing, pitch deck narrative, strategic review, or business valuation. It is especially useful when the user needs structured commercial thinking, investor-grade outputs, China fundraising context, or AI/agent business analysis. Prefer this skill when the main deliverable is a business analysis or plan, not open-ended idea exploration, general current-events research, or final file production in slides, docs, or spreadsheets."
+version: 1.1.0
 ---
 
 # Business Plan

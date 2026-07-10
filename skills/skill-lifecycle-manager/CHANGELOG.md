@@ -5,6 +5,18 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-07-10
+
+### Added
+
+- Added a validated cross-skill routing suite format with positive/negative coverage requirements, unlabeled prompt enforcement, explicit winner/followup/depth contracts, and no-skill controls.
+- Added multi-projection baseline isolation and deterministic `Route:` / `Followups:` / `Depth:` result scoring to the surface eval runner.
+
+### Changed
+
+- Made embedded `SKILL.md` versions mandatory and aligned the package-local validator with the repository validator for top-level `version` and nested `metadata.version`.
+- Updated both skill scaffolds to emit versioned frontmatter so new packages satisfy the version invariant by construction.
+
 ### Fixed
 - Clarified that `run_unit_tests.py` is canonical-only for `skill-lifecycle-manager` and updated the packaged test runner to fail with an explicit self-validation message when projected runtime copies omit `tests/`.
 - Rewrote `eval-10` to describe a generic cross-package private-runtime dependency defect instead of hardcoding a repo state that could quickly go stale.

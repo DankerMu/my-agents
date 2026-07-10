@@ -69,7 +69,7 @@
 
 - 长版研究和来源保留在 `research/`
 - 稳定规则保留在 `docs/architecture/`
-- 具体 package 约束继续放在各自的 `SKILL.md`、`claude-code.md`、`codex.toml`、`README.md` 和 `CHANGELOG.md`
+- 具体 package 约束继续放在各自的 `SKILL.md`、Agent `AGENT.md` / `references/`、Hook `HOOK.md`、Pack `README.md` 和 `CHANGELOG.md`；平台 Agent 文件只保留元数据与生成的核心合同
 - 如果未来需要更细的 vendor 专题页，优先在 `docs/architecture/` 下补专页，而不是把根说明文件继续做大
 
 ## 使用方式

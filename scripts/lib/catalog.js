@@ -133,10 +133,7 @@ function renderAgentsMarkdown(items) {
   ];
 
   const rows = items.map((item) => {
-    const docName = (item.platforms ?? []).includes("claude-code")
-      ? "claude-code.md"
-      : "codex.toml";
-    const link = `[${item.name}](../../${item.path}/${docName})`;
+    const link = `[${item.name}](../../${item.path}/AGENT.md)`;
     const platforms = (item.platforms ?? []).join(", ");
     const categories = (item.categories ?? []).join(", ");
     const desc = (item.description ?? "").replace(/\r?\n/g, " ");
@@ -195,7 +192,9 @@ async function collectSkillItems(repoRoot) {
 
   for (const dirName of skillDirs) {
     const skillJsonPath = path.join(repoRoot, "skills", dirName, "skill.json");
-    if (!(await fileExists(skillJsonPath))) continue;
+    if (!(await fileExists(skillJsonPath))) {
+      throw new Error(`Missing skill metadata: skills/${dirName}/skill.json`);
+    }
     const skill = await readJson(skillJsonPath);
     if (!isCatalogVisible(dirName, skill)) continue;
     skillItems.push(toSkillCatalogItem(skill, dirName));
@@ -210,7 +209,9 @@ async function collectAgentItems(repoRoot) {
 
   for (const dirName of agentDirs) {
     const agentJsonPath = path.join(repoRoot, "agents", dirName, "agent.json");
-    if (!(await fileExists(agentJsonPath))) continue;
+    if (!(await fileExists(agentJsonPath))) {
+      throw new Error(`Missing agent metadata: agents/${dirName}/agent.json`);
+    }
     const agent = await readJson(agentJsonPath);
     if (!isCatalogVisible(dirName, agent)) continue;
     const platforms = await detectPlatforms(path.join(repoRoot, "agents", dirName));
@@ -226,7 +227,9 @@ async function collectHookItems(repoRoot) {
 
   for (const dirName of hookDirs) {
     const hookJsonPath = path.join(repoRoot, "hooks", dirName, "hook.json");
-    if (!(await fileExists(hookJsonPath))) continue;
+    if (!(await fileExists(hookJsonPath))) {
+      throw new Error(`Missing hook metadata: hooks/${dirName}/hook.json`);
+    }
     const hook = await readJson(hookJsonPath);
     if (!isCatalogVisible(dirName, hook)) continue;
     const platforms = await detectHookPlatforms(path.join(repoRoot, "hooks", dirName));
@@ -242,7 +245,9 @@ async function collectPackItems(repoRoot) {
 
   for (const dirName of packDirs) {
     const packJsonPath = path.join(repoRoot, "packs", dirName, "pack.json");
-    if (!(await fileExists(packJsonPath))) continue;
+    if (!(await fileExists(packJsonPath))) {
+      throw new Error(`Missing pack metadata: packs/${dirName}/pack.json`);
+    }
     const pack = await readJson(packJsonPath);
     packItems.push(toPackCatalogItem(pack, dirName));
   }
