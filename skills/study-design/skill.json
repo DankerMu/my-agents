@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "name": "study-design",
   "displayName": "Study Design",
-  "description": "Design a reviewable scientific study protocol for observational, experimental, modeling, method, data-product, field/lab, forecast, capability-development, or mixed research. Defines units, baselines, controls, interventions, observables, uncertainty, evidence oracles, stop/branch gates, execution budget, protocol freeze, and amendments. Use after framing; not for implementation planning or result interpretation.",
-  "version": "0.1.2",
+  "description": "Design a reviewable scientific study protocol: units, baselines, controls, observables, uncertainty, evidence oracles, stop gates, and protocol freeze. Invoked by research-lifecycle after framing, or explicitly by the user.",
+  "version": "0.1.3",
   "maturity": "experimental",
   "categories": ["research", "design", "workflow"],
   "tags": [
@@ -14,7 +14,11 @@
     "go-no-go",
     "protocol-freeze"
   ],
-  "authors": [{ "name": "danker" }],
+  "authors": [
+    {
+      "name": "danker"
+    }
+  ],
   "entrypoints": {
     "skillDoc": "SKILL.md",
     "changelog": "CHANGELOG.md"

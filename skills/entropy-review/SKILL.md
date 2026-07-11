@@ -1,17 +1,9 @@
 ---
 name: entropy-review
-description: >-
-  Review code changes for entropy introduction: naming drift,
-  error-model splits, dependency violations, doc staleness, and
-  pattern duplication. Activate when the user asks for "entropy review",
-  "consistency check", "drift check on this PR", "check if this change
-  introduces new patterns", or wants a review focused on naming,
-  error handling, or structural consistency rather than correctness.
-  Do NOT activate for general code review (use review), full repo audit
-  (use repo-entropy-audit), control-plane audit (use control-plane-auditor),
-  brainstorming, or implementation tasks.
+description: >
+  Review a change set for entropy: naming drift, pattern duplication and contagion, error-model and state-model splits, doc staleness. Consistency and drift only, not correctness. Invoke explicitly or via routing from review.
 invocation_posture: manual-first
-version: 0.2.0
+version: 0.2.1
 ---
 
 # Entropy Review

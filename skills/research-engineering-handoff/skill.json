@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "name": "research-engineering-handoff",
   "displayName": "Research Engineering Handoff",
-  "description": "Convert an approved research decision into a bounded engineering handoff that preserves scientific intent, invariants, evidence oracles, verification obligations, scientific evaluation needs, non-goals, rollback, and human decision authority. Use before stage-change-pipeline when research requires software/model/data-system changes; not for unapproved hypotheses, ordinary implementation plans, or direct issue creation.",
-  "version": "0.2.0",
+  "description": "Convert an approved research decision into a bounded engineering handoff preserving scientific intent, invariants, evidence oracles, and human decision authority. Invoke explicitly, typically from research-lifecycle before stage-change-pipeline.",
+  "version": "0.2.1",
   "maturity": "experimental",
   "categories": ["research", "workflow", "coding"],
   "tags": [
@@ -14,7 +14,11 @@
     "delivery-coupling",
     "human-approval"
   ],
-  "authors": [{ "name": "danker" }],
+  "authors": [
+    {
+      "name": "danker"
+    }
+  ],
   "entrypoints": {
     "skillDoc": "SKILL.md",
     "changelog": "CHANGELOG.md"

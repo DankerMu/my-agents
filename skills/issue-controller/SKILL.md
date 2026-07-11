@@ -1,14 +1,9 @@
 ---
 name: issue-controller
 description: >
-  Issue Agent OS controller loop. Pulls issues from a GitHub issue queue (priority +
-  dependency resolved), fans out triage to parallel triager agents, dispatches coder /
-  reviewer / splitter / planner / debugger workers based on verdicts, drives review loops,
-  merges approved PRs, and repeats until the queue is empty. Use when the user asks to
-  "process issues", "run the issue controller", "work through the queue", or similar.
-  Do NOT use for single-issue ad-hoc work — this is the full automated loop.
+  Issue Agent OS controller loop: pulls a GitHub issue queue, fans out triage, dispatches workers by verdict, drives review loops, and merges until the queue is empty. Invoke explicitly to run the loop.
 invocation_posture: manual
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Issue Controller

@@ -1,14 +1,9 @@
 ---
 name: scientific-evidence-synthesis
 description: >
-  Synthesize completed scientific study evidence into a claim-evidence matrix
-  that separates support, counter-evidence, uncertainty, applicability,
-  protocol deviations, and unsupported conclusions. Use after study execution
-  or when reviewing an evidence package. Do not replace domain-expert judgment,
-  perform implementation review, or turn calibration gains into mechanistic
-  validation.
+  Synthesize completed study evidence into a claim-evidence matrix separating support, counter-evidence, uncertainty, and unsupported conclusions. Invoked by research-lifecycle after study execution, or explicitly by the user.
 invocation_posture: manual-first
-version: 0.1.2
+version: 0.1.3
 ---
 
 # Scientific Evidence Synthesis

@@ -1,15 +1,9 @@
 ---
 name: research-engineering-handoff
 description: >
-  Convert an approved research decision into a bounded engineering handoff that
-  preserves scientific intent, invariants, evidence oracles, verification
-  obligations, scientific evaluation needs, non-goals, rollback, and human
-  decision authority. Use before stage-change-pipeline when research requires
-  software, model, numerical, data-pipeline, or operational changes. Do not use
-  for unapproved hypotheses, ordinary implementation plans, or direct issue
-  creation.
+  Convert an approved research decision into a bounded engineering handoff preserving scientific intent, invariants, evidence oracles, and human decision authority. Invoke explicitly, typically from research-lifecycle before stage-change-pipeline.
 invocation_posture: manual-first
-version: 0.2.0
+version: 0.2.1
 ---
 
 # Research Engineering Handoff

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "name": "theory-to-code-traceability",
   "displayName": "Theory to Code Traceability",
-  "description": "Build and review a traceability contract from scientific assumptions, equations, process representations, units, invariants, and numerical choices to code surfaces and verification cases. Use for new or changed scientific model capabilities such as adding a snow module, changing a parameterization, coupling processes, or altering numerical methods; not for ordinary feature implementation or scientific validation by itself.",
-  "version": "0.1.1",
+  "description": "Build or review a traceability contract from scientific assumptions, equations, units, and invariants to code surfaces and verification cases. Invoke explicitly, typically from research-lifecycle for scientific model changes.",
+  "version": "0.1.2",
   "maturity": "experimental",
   "categories": ["research", "design", "coding"],
   "tags": [
@@ -14,7 +14,11 @@
     "invariants",
     "verification"
   ],
-  "authors": [{ "name": "danker" }],
+  "authors": [
+    {
+      "name": "danker"
+    }
+  ],
   "entrypoints": {
     "skillDoc": "SKILL.md",
     "changelog": "CHANGELOG.md"

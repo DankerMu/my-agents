@@ -1,8 +1,9 @@
 ---
 name: brainstorming
-description: "Manual-first brainstorming workflow for turning ambiguous ideas or competing directions into an approved decision before planning or implementation. Activate when the user explicitly asks to brainstorm, explore options, compare approaches, or pressure-test a direction. Do not activate for clarification, review, detailed planning, or straightforward execution once a direction is already chosen."
+description: >
+  Turn ambiguous ideas or competing directions into one approved decision before planning or implementation. Invoke explicitly, or via routing from other skills when direction is still unchosen.
 invocation_posture: manual-first
-version: 0.2.4
+version: 0.2.5
 ---
 
 # Brainstorming

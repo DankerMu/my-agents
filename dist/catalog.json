@@ -110,8 +110,8 @@
       "name": "brainstorming",
       "path": "skills/brainstorming",
       "displayName": "Brainstorming",
-      "description": "Manual-first brainstorming workflow for turning ambiguous ideas or competing directions into an approved decision before planning or implementation. Use when the user explicitly wants to brainstorm, explore options, compare approaches, or pressure-test a direction.",
-      "version": "0.2.4",
+      "description": "Turn ambiguous ideas or competing directions into one approved decision before planning or implementation. Invoke explicitly, or via routing from other skills when direction is still unchosen.",
+      "version": "0.2.5",
       "maturity": "experimental",
       "categories": [
         "design",
@@ -262,8 +262,8 @@
       "name": "entropy-review",
       "path": "skills/entropy-review",
       "displayName": "Entropy Review",
-      "description": "Review code changes for entropy introduction across eight dimensions: naming drift, error-model fragmentation, dependency-direction violations, doc staleness, state-model splits, pattern duplication, pattern contagion, and agent verifiability. Produces harm-graded findings focused on consistency and drift rather than correctness.",
-      "version": "0.2.0",
+      "description": "Review a change set for entropy: naming drift, pattern duplication and contagion, error-model and state-model splits, doc staleness. Consistency and drift only, not correctness. Invoke explicitly or via routing from review.",
+      "version": "0.2.1",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -411,8 +411,8 @@
       "name": "implementation-planning",
       "path": "skills/implementation-planning",
       "displayName": "Implementation Planning",
-      "description": "Manual-first heavy planning protocol for complex technical implementation work. Use when the user or the planner agent explicitly needs a deep executable plan for a feature, refactor, migration, or architecture change after the direction is already chosen. Do not use for brainstorming, choosing between competing directions, requirements clarification, business planning, generic project management, or code execution.",
-      "version": "0.2.0",
+      "description": "Deep executable planning for complex implementation work — phases, dependencies, verification, rollback — after the direction is chosen. Invoke explicitly: by the user, the planner agent, or stage-change-pipeline.",
+      "version": "0.2.1",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -455,8 +455,8 @@
       "name": "meta-loop",
       "path": "skills/meta-loop",
       "displayName": "Meta-Loop",
-      "description": "Judge whether any produce → check → fix → re-check loop (verification, review, maker/checker, evaluator-optimizer, agent self-review) is well-designed against a 10-dimension rubric, or design a new one in 9 steps. Grounded in TDD, Reflexion, LLM-as-judge, process-supervision, and agentic-workflow research.",
-      "version": "0.1.0",
+      "description": "Judge or design any produce → check → fix → re-check loop against a 10-dimension rubric (verification, review, evaluator-optimizer, agent self-review). Invoke explicitly, or when another skill names it for a loop audit.",
+      "version": "0.1.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -499,8 +499,8 @@
       "name": "project-documentation",
       "path": "skills/project-documentation",
       "displayName": "Docs Governance",
-      "description": "Govern a repository's docs/ directory or docs site by reorganizing structure, consolidating overlapping pages, refreshing stale docs after code changes, and auditing documentation for drift, dead links, duplication, and missing source-of-truth boundaries. Use when the user explicitly wants to clean up, restructure, maintain, or verify a docs set rather than write a README or review a PR. Do not use it for README-only requests, one-off root-level docs outside the docs set, deep external research, or generic PR/diff review.",
-      "version": "0.1.0",
+      "description": "Govern a repository's docs/: restructure, consolidate overlapping pages, refresh stale docs after code changes, audit drift and dead links. Invoke explicitly — by the user or stage-change-pipeline. Not for READMEs or PR review.",
+      "version": "0.1.1",
       "maturity": "experimental",
       "categories": [
         "documentation",
@@ -610,8 +610,8 @@
       "name": "research-engineering-handoff",
       "path": "skills/research-engineering-handoff",
       "displayName": "Research Engineering Handoff",
-      "description": "Convert an approved research decision into a bounded engineering handoff that preserves scientific intent, invariants, evidence oracles, verification obligations, scientific evaluation needs, non-goals, rollback, and human decision authority. Use before stage-change-pipeline when research requires software/model/data-system changes; not for unapproved hypotheses, ordinary implementation plans, or direct issue creation.",
-      "version": "0.2.0",
+      "description": "Convert an approved research decision into a bounded engineering handoff preserving scientific intent, invariants, evidence oracles, and human decision authority. Invoke explicitly, typically from research-lifecycle before stage-change-pipeline.",
+      "version": "0.2.1",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -631,8 +631,8 @@
       "name": "research-lifecycle",
       "path": "skills/research-lifecycle",
       "displayName": "Research Lifecycle",
-      "description": "Route research and research-driven development from an initial phenomenon, capability gap, method idea, or decision need through framing, evidence grounding, study design, execution, synthesis, human decision, and optional engineering handoff. Use for substantive scientific work across domains; do not use for quick factual lookups, one-off plotting, ordinary coding, or autonomous scientific conclusions.",
-      "version": "0.3.0",
+      "description": "Research control-plane router: frames a phenomenon, capability gap, or decision need, then orchestrates question framing, study design, evidence synthesis, traceability, and engineering handoff. Invoke explicitly for substantive scientific work.",
+      "version": "0.3.1",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -736,8 +736,8 @@
       "name": "scientific-evidence-synthesis",
       "path": "skills/scientific-evidence-synthesis",
       "displayName": "Scientific Evidence Synthesis",
-      "description": "Synthesize completed scientific study evidence into a claim-evidence matrix that separates support, counter-evidence, uncertainty, applicability, protocol deviations, and unsupported conclusions. Use after study execution or when reviewing an evidence package; do not replace domain-expert judgment, perform implementation review, or turn calibration gains into mechanistic validation.",
-      "version": "0.1.2",
+      "description": "Synthesize completed study evidence into a claim-evidence matrix separating support, counter-evidence, uncertainty, and unsupported conclusions. Invoked by research-lifecycle after study execution, or explicitly by the user.",
+      "version": "0.1.3",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -817,8 +817,8 @@
       "name": "study-design",
       "path": "skills/study-design",
       "displayName": "Study Design",
-      "description": "Design a reviewable scientific study protocol for observational, experimental, modeling, method, data-product, field/lab, forecast, capability-development, or mixed research. Defines units, baselines, controls, interventions, observables, uncertainty, evidence oracles, stop/branch gates, execution budget, protocol freeze, and amendments. Use after framing; not for implementation planning or result interpretation.",
-      "version": "0.1.2",
+      "description": "Design a reviewable scientific study protocol: units, baselines, controls, observables, uncertainty, evidence oracles, stop gates, and protocol freeze. Invoked by research-lifecycle after framing, or explicitly by the user.",
+      "version": "0.1.3",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -858,8 +858,8 @@
       "name": "theory-to-code-traceability",
       "path": "skills/theory-to-code-traceability",
       "displayName": "Theory to Code Traceability",
-      "description": "Build and review a traceability contract from scientific assumptions, equations, process representations, units, invariants, and numerical choices to code surfaces and verification cases. Use for new or changed scientific model capabilities such as adding a snow module, changing a parameterization, coupling processes, or altering numerical methods; not for ordinary feature implementation or scientific validation by itself.",
-      "version": "0.1.1",
+      "description": "Build or review a traceability contract from scientific assumptions, equations, units, and invariants to code surfaces and verification cases. Invoke explicitly, typically from research-lifecycle for scientific model changes.",
+      "version": "0.1.2",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -1375,5 +1375,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-11T11:40:08.904Z"
+  "generatedAt": "2026-07-11T13:08:52.018Z"
 }

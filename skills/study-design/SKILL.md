@@ -1,14 +1,9 @@
 ---
 name: study-design
 description: >
-  Design a reviewable scientific study protocol for observational,
-  experimental, modeling, method, data-product, field/lab, forecast,
-  capability-development, or mixed research. Define units, baselines, controls,
-  interventions, observables, uncertainty, evidence oracles, stop/branch gates,
-  execution budget, protocol freeze and amendments. Use after research framing;
-  do not use for implementation planning or result interpretation.
+  Design a reviewable scientific study protocol: units, baselines, controls, observables, uncertainty, evidence oracles, stop gates, and protocol freeze. Invoked by research-lifecycle after framing, or explicitly by the user.
 invocation_posture: manual-first
-version: 0.1.2
+version: 0.1.3
 ---
 
 # Study Design

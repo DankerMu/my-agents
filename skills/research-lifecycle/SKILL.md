@@ -1,15 +1,9 @@
 ---
 name: research-lifecycle
 description: >
-  Route substantive research and research-driven development from a phenomenon,
-  scientific question, capability gap, method idea, data need, or operational
-  decision through framing, grounding, study design, execution, evidence
-  synthesis, human decision, and optional engineering handoff. Use across
-  scientific domains, including new model-process capabilities such as adding a
-  snow module. Do not use for quick facts, one-off plots, ordinary coding, or
-  autonomous scientific conclusions.
+  Research control-plane router: frames a phenomenon, capability gap, or decision need, then orchestrates question framing, study design, evidence synthesis, traceability, and engineering handoff. Invoke explicitly for substantive scientific work.
 invocation_posture: manual-first
-version: 0.3.0
+version: 0.3.1
 ---
 
 # Research Lifecycle

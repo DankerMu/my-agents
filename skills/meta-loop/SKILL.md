@@ -1,19 +1,9 @@
 ---
 name: meta-loop
-description: >-
-  Judge whether any iterative loop is well-designed — a verification loop,
-  review loop, maker/checker loop, evaluator-optimizer, or agent
-  self-improvement loop — or design a new one from scratch. Provides a
-  10-dimension quality rubric (Mode A) and a 9-step build guide (Mode B)
-  grounded in TDD, Reflexion, LLM-as-judge, process-supervision, and
-  agentic-workflow research. Use when asked "is this loop good enough",
-  "review/critique this loop", "design a loop to catch X", "what should a
-  verification loop cover", or whenever you are designing, modifying, or
-  evaluating the mechanics of a produce → check → fix → re-check cycle —
-  even if the word "loop" is never said. Do NOT use for executing an existing
-  concrete loop (run that loop itself), one-shot scripts, or plain Q&A.
+description: >
+  Judge or design any produce → check → fix → re-check loop against a 10-dimension rubric (verification, review, evaluator-optimizer, agent self-review). Invoke explicitly, or when another skill names it for a loop audit.
 invocation_posture: manual-first
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Meta-Loop

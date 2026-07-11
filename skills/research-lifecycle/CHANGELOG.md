@@ -5,6 +5,9 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-11
+- Tighten the description to a lean identity + explicit-invocation clause (slimming batch 2): this skill is reached by name — by the user or an orchestrating skill — so trigger vocabulary and negative boundary lists move out of standing context into the body/router. Body and behavior unchanged.
+
 ## [0.3.0] - 2026-07-10
 
 - Add `scripts/provenance.py`: mechanical freeze/run/index/verify for study provenance — protocol lock digests, run records with exit codes and git identity, output checksums, and a verify gate that fails on silent protocol drift or evidence tampering.

@@ -5,6 +5,9 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-07-11
+- Tighten the description to a lean identity + explicit-invocation clause (slimming batch 2): this skill is reached by name — by the user or an orchestrating skill — so trigger vocabulary and negative boundary lists move out of standing context into the body/router. Body and behavior unchanged.
+
 ## [0.2.0] - 2026-07-10
 
 - Own the delivery boundary gate one-way: verify `ENGINEERING_HANDOFF_READY` plus recorded human approval before invoking the pipeline, and state that the handoff pressure-test does not satisfy the delivery pipeline's own Stage-1 grill gate.

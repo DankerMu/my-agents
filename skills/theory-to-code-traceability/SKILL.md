@@ -1,14 +1,9 @@
 ---
 name: theory-to-code-traceability
 description: >
-  Build and review a traceability contract from scientific assumptions,
-  equations, process representations, units, invariants, and numerical choices
-  to code surfaces and verification cases. Use for new or changed scientific
-  model capabilities such as adding a snow module, changing a parameterization,
-  coupling processes, or altering numerical methods. Do not use for ordinary
-  feature implementation or scientific validation by itself.
+  Build or review a traceability contract from scientific assumptions, equations, units, and invariants to code surfaces and verification cases. Invoke explicitly, typically from research-lifecycle for scientific model changes.
 invocation_posture: manual-first
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Theory to Code Traceability

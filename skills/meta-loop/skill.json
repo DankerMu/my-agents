@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "name": "meta-loop",
   "displayName": "Meta-Loop",
-  "description": "Judge whether any produce → check → fix → re-check loop (verification, review, maker/checker, evaluator-optimizer, agent self-review) is well-designed against a 10-dimension rubric, or design a new one in 9 steps. Grounded in TDD, Reflexion, LLM-as-judge, process-supervision, and agentic-workflow research.",
-  "version": "0.1.0",
+  "description": "Judge or design any produce → check → fix → re-check loop against a 10-dimension rubric (verification, review, evaluator-optimizer, agent self-review). Invoke explicitly, or when another skill names it for a loop audit.",
+  "version": "0.1.1",
   "maturity": "experimental",
   "categories": ["workflow", "review", "ai"],
   "tags": [
