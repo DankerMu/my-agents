@@ -1,19 +1,12 @@
 ---
 name: business-plan
 description: "Use this skill for substantial business planning work: drafting or revising a business plan, investor-ready financial analysis, market sizing, pitch deck narrative, strategic review, or business valuation. It is especially useful when the user needs structured commercial thinking, investor-grade outputs, China fundraising context, or AI/agent business analysis. Prefer this skill when the main deliverable is a business analysis or plan, not open-ended idea exploration, general current-events research, or final file production in slides, docs, or spreadsheets."
-version: 1.1.0
+version: 1.1.1
 ---
 
 # Business Plan
 
 A comprehensive business strategy skill that adapts to your stage, scale, and specific need — whether that is a full business plan, financial deep-dive, market sizing, pitch deck, strategic review, or valuation.
-
-## Invocation Posture
-
-This skill is `hybrid`.
-
-- Trigger confidently for explicit business-planning requests and high-confidence asks for structured business analysis.
-- Stay out of scope when the user is still deciding what business to pursue, primarily needs fresh cited research, or mainly wants a `.pptx`, `.docx`, or `.xlsx` file produced.
 
 ## When Not To Use
 
@@ -60,8 +53,6 @@ These references layer on top of any workflow when the context applies. Read the
 ## Interaction Model
 
 Use the platform's standard interactive question mechanism when follow-up input is needed. Keep the canonical skill platform-neutral; projections can map this behavior to the surface-specific question tool.
-
-**Language**: Respond in the same language the user uses. All user-facing output follows the user's language. Skill internals are English.
 
 ## Evidence And Freshness
 

@@ -8,7 +8,7 @@ description: >
   technique lookup or for general LLM-powered coding tasks.
 disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.3.0
+version: 0.3.1
 ---
 
 # Prompt Engineering
@@ -20,9 +20,6 @@ model and operating environment.
 This skill is intentionally workflow-first. It is for prompt jobs with real
 tradeoffs, failure modes, or rollout concerns. It is not meant to be a general
 prompt encyclopedia.
-
-**Invocation posture:** `manual-first`. This skill is broad and relatively
-heavy, so false positives are more harmful than occasional misses.
 
 ## When Not To Use
 

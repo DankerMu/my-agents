@@ -11,7 +11,7 @@ description: >
   Do NOT activate for brainstorming, open-ended design feedback, governance/library
   audits, or general conversations about whether an approach seems good.
 invocation_posture: hybrid
-version: 0.6.0
+version: 0.6.1
 ---
 
 # Review
@@ -19,8 +19,6 @@ version: 0.6.0
 Unified review skill for agent-performed reviews. Auto-detects content types in a change set, applies the appropriate review dimensions, and delivers severity-graded findings with actionable fixes.
 
 ## When to Activate
-
-**Invocation posture: hybrid** — auto-trigger only on unmistakable, artifact-scoped review requests. For ambiguous requests, explicit invocation is preferred.
 
 Activate when the user:
 - Asks to review a PR, diff, branch, commit, staged changes, or specific files
@@ -328,15 +326,6 @@ Flag for senior review instead of resolving yourself:
 - New external dependencies (security-sensitive)
 - Infrastructure changes affecting production
 - Architecture decisions with long-term consequences
-
-## Validation And Evaluation
-
-Authoring note for maintainers of the canonical skill package:
-
-- Validate structural changes with local authoring tooling before release.
-- Evaluate trigger boundaries with the canonical `eval/trigger-posture-cases.json` suite.
-- Evaluate realistic review behavior with the canonical `eval/eval-cases.json` suite.
-- Keep authoring-only assets such as `eval/` out of runtime projections.
 
 ## Caveats
 

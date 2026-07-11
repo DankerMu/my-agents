@@ -7,14 +7,12 @@ description: >
   "这块有什么我不知道的坑"，或长任务即将进入不熟悉的模块/子系统、动手前想先摊开问题空间。
   不用于压测已有计划（grill-me）、需求澄清（clarify）或仓库健康度审计（repo-entropy-audit）。
 invocation_posture: hybrid
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Blind Spot Pass
 
 Prompt、skill、context 是 map；真实代码库、真实约束、真实运行环境是 territory。两者的差距就是 unknowns——长程 agent 遇到没写清的空白不会停下来等你，它会替你补全世界。本 skill 在动手前把这个差距摊开：**不是从计划出发问问题（那是 `grill-me`），而是从代码库考古出发，找出你根本没意识到要问的问题**。
-
-**Invocation posture:** `hybrid`。优先显式调用；自动触发仅限"任务进入陌生区域且用户明确想先摸底"的意图，不用于常规实现请求。
 
 ## 四类 unknowns（诊断词汇）
 

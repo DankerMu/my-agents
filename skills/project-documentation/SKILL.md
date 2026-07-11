@@ -3,7 +3,7 @@ name: project-documentation
 description: >
   Govern a repository's docs/: restructure, consolidate overlapping pages, refresh stale docs after code changes, audit drift and dead links. Invoke explicitly — by the user or stage-change-pipeline. Not for READMEs or PR review.
 invocation_posture: manual-first
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Docs Governance
@@ -18,16 +18,6 @@ Govern a repository's `docs/` directory or equivalent docs set from repository r
 - Targeted refreshes to pages inside `docs/` after code or workflow changes
 - Verification reports covering drift, dead links, stale commands, and docs-to-repo mismatches
 - Short assumptions logs when the repository does not fully answer an important documentation claim
-
-## Invocation Posture
-
-Treat this skill as `manual-first`.
-
-Why:
-
-- It overlaps with narrower skills such as `readme-craftsman` and `review`
-- Governance work can expand quickly across many files
-- The user usually knows when they want `docs/` maintenance rather than a single-file artifact
 
 ## When Not To Use
 
@@ -158,12 +148,3 @@ Before finalizing any structural or content change:
 - `Structure` and `Refresh`: return the applied edits or proposed docs-set changes plus the key assumptions and what was verified.
 - `Verify`: return findings first, ordered by severity, then open questions or fix direction.
 - If the docs set needs both audit and repair, report the findings and then move into targeted fixes.
-
-## Example Prompts
-
-- Clean up the `docs/` directory and give it a clearer structure.
-- Consolidate the overlapping setup and troubleshooting pages under `docs/`.
-- Refresh the docs site after we renamed commands and moved config files.
-- Audit `docs/` for stale commands, dead links, and duplicate sources of truth.
-- Add a better start-here page for the docs folder without rewriting everything else.
-- Check whether the runbook and onboarding pages under `docs/` still match the current repository.

@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-07-11
+
+- Remove the `## Language Handling` section; following the user's language is default behavior.
+
 ## [0.4.1] - 2026-03-28
 
 ### Changed

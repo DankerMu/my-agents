@@ -10,7 +10,7 @@ description: >
   disambiguation (clarify), fresh cited research (deep-research), business-model work
   (business-plan), or technical execution planning (implementation-planning).
 invocation_posture: hybrid
-version: 0.1.0
+version: 0.1.1
 ---
 
 # PRD Authoring
@@ -19,15 +19,6 @@ Produce a Product Requirements Document that an engineer can build from and a re
 verify against. The PRD is the bridge between product discovery and delivery: upstream skills
 converge on *what problem and which direction*; this skill pins down *what exactly to build
 and how to know it works*; downstream skills turn the result into tracked work items.
-
-## Invocation Posture
-
-This skill is `hybrid`.
-
-- Trigger confidently when the user explicitly asks for a PRD, product spec, or requirements
-  document for a chosen direction.
-- Stay out of scope while the direction is still being explored or the request is really
-  research, business analysis, or engineering planning.
 
 ## When Not To Use
 

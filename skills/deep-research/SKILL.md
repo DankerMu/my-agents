@@ -1,7 +1,7 @@
 ---
 name: deep-research
 description: Use when the user explicitly asks for comprehensive, citation-backed research such as a deep dive, due diligence, market analysis, or a multi-source comparison/report. Do not activate for quick factual lookups, ordinary coding tasks, or routine content generation unless the user first asks for research or source verification.
-version: 0.4.1
+version: 0.4.2
 ---
 
 # Deep Research
@@ -203,10 +203,6 @@ After merging agent results, **new dimensions discovered**:
 **Phase 4 — Synthesize**: structure findings into: Executive Summary → Approaches & Milestones → Key Players → Technical Challenges → Investment & Timeline → Consensus → Debate → Sources. Apply citation protocol. Add decision aids if the user needs to evaluate fusion investment.
 
 **Phase 5 — Deliver**: post executive summary + key takeaways inline; save full report to `Nuclear_Fusion_Research_20260317.md`.
-
-## Language Handling
-
-Respond in the same language the user used for the request. When the user writes in Chinese, produce the full report (including section headers, analysis, and takeaways) in Chinese, while keeping source titles and URLs in their original language. Citation format and report structure remain the same regardless of language.
 
 ## Common Mistakes to Avoid
 

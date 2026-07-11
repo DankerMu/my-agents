@@ -7,7 +7,7 @@ description: >
   for gaps, overlap, or bloat. Use when setting up, overhauling, or auditing
   a project's AI tooling as a whole, not for individual agent edits or skill
   management.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Agent Architect
@@ -159,12 +159,3 @@ Report findings with severity (critical / warning / suggestion) and recommended 
 6. **Delegate granular work.** This skill designs the architecture; `agent-lifecycle-manager` handles individual agent lifecycle.
 7. **Interactive at boundaries.** Pause after Scan and after Design before generating.
 8. **Right-size instructions.** CLAUDE.md under 200 lines. Agent prompts under 8 lines. Move detail to references.
-
-## Example Prompts
-
-- Analyze this project and recommend what agents and skills we need.
-- Set up the AI development environment for this repo.
-- Audit our current agent setup — are there gaps or overlap?
-- We're starting a new Next.js + FastAPI project. What agents should we create?
-- Redesign our CLAUDE.md and agent architecture — it's gotten messy.
-- What MCP servers should we add for this project?

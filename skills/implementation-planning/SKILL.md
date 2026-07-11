@@ -3,7 +3,7 @@ name: implementation-planning
 description: >
   Deep executable planning for complex implementation work — phases, dependencies, verification, rollback — after the direction is chosen. Invoke explicitly: by the user, the planner agent, or stage-change-pipeline.
 invocation_posture: manual-first
-version: 0.2.1
+version: 0.2.2
 ---
 
 # Implementation Planning
@@ -74,9 +74,6 @@ Use the platform's native user-input mechanism when one is available and appropr
 current environment. If the surface does not expose a structured question tool, ask concise
 questions directly in chat and wait for the user's reply. Do not make the workflow depend on one
 specific tool name.
-
-**Language**: Respond in the same language the user uses. User-facing output should match the
-user's language even if internal workflow labels stay in English.
 
 ## Core Principles
 
@@ -233,11 +230,3 @@ At minimum, every plan produced by this skill should include:
 - Risks
 - Rollback or containment
 - Next step
-
-## Example Prompts
-
-- Use implementation-planning for this auth migration. The direction is chosen; now make the deep execution plan.
-- Draft a deep implementation plan for this cross-cutting refactor before we touch code.
-- Turn this architecture change into phased implementation work with verification and rollback.
-- The planner already gathered context. Now write the heavy plan, not code.
-- Should this route to implementation-planning, or do we still need brainstorming first?

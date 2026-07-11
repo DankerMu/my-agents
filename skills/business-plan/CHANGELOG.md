@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-07-11
+
+- Remove the `## Invocation Posture` section; posture lives in frontmatter/description and the scope boundary stays in When Not To Use.
+- Remove the language-following no-op line; matching the user's language is default behavior.
+
 ## [1.1.0] - 2026-03-28
 
 ### Changed

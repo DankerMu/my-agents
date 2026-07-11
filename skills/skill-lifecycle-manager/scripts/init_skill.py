@@ -39,10 +39,6 @@ Replace this draft with the real skill instructions.
 2. Decide which reusable files belong in `references/`, `scripts/`, or `assets/`.
 3. Write or revise the skill package.
 4. Validate before broader evaluation.
-
-## Example Prompts
-
-- Add realistic trigger examples here.
 """
 
 

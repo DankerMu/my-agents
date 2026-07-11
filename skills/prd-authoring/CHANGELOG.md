@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-11
+
+- Remove the `## Invocation Posture` section; posture lives in frontmatter/description and the scope boundary stays in When Not To Use.
+
 ## [0.1.0] - 2026-07-02
 - Initial release: PRD authoring for already-chosen directions. Intake gate (chosen direction, named user + problem evidence, success sketch) routes incomplete discovery upstream to `brainstorming`/`clarify`/`deep-research` instead of drafting on air.
 - Lean (~1-2 pages) and Full (~3-6 pages) document depths; nine-section template with MoSCoW-prioritized requirements and Given/When/Then acceptance criteria.

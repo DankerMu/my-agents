@@ -7,14 +7,12 @@ description: >
   或用户希望在动手前把计划/设计的每个决策点逼到清晰。
   不用于开放式头脑风暴、方向选型，或已经明确、无歧义的任务。
 invocation_posture: hybrid
-version: 0.3.0
+version: 0.3.1
 ---
 
 # Grill Me
 
 在动手之前，把一个 plan/design 的每个决策点逐一逼到清晰。这是**对抗式压测**，不是温和澄清：你扮演挑刺者，沿决策树深挖，直到未言明的假设、隐藏依赖和模糊边界全部暴露并解决。
-
-**Invocation posture:** `hybrid`。优先显式调用；自动触发仅限明确的"压测计划/设计"意图，不用于一般想法探索。
 
 ## 核心铁律（Non-negotiables）
 

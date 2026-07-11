@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-07-11
+
+- Remove the body invocation-posture restatement; posture lives in frontmatter/description.
+- Remove Core Principle 8 (follow the user's language) — default behavior; principles 1-7 unchanged.
+
 ## [1.2.1] - 2026-03-28
 
 ### Changed

@@ -3,7 +3,7 @@ name: entropy-review
 description: >
   Review a change set for entropy: naming drift, pattern duplication and contagion, error-model and state-model splits, doc staleness. Consistency and drift only, not correctness. Invoke explicitly or via routing from review.
 invocation_posture: manual-first
-version: 0.2.1
+version: 0.2.2
 ---
 
 # Entropy Review
@@ -224,14 +224,6 @@ For E2 and E3 findings:
 Do not offer to apply fixes automatically — this skill is read-only. If the user wants fixes applied, they can use the normal implementation workflow.
 
 ---
-
-## Example Prompts
-
-- "Run an entropy review on my staged changes"
-- "Check this PR for consistency issues"
-- "Does this diff introduce any naming drift?"
-- "Entropy review the last commit"
-- "Check if this change is consistent with our error model"
 
 ## Caveats
 

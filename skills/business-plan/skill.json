@@ -3,7 +3,7 @@
   "name": "business-plan",
   "displayName": "Business Plan",
   "description": "Structured business planning and business-analysis workflow for business plans, investor-ready financial analysis, market sizing, pitch deck narrative, strategic review, and valuation. Best for substantive commercial deliverables rather than open-ended ideation, pure research, or final file production.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "maturity": "stable",
   "categories": ["business", "productivity", "workflow"],
   "tags": [

@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-07-11
+
+- Remove the body `## Example Prompts` section — dead weight once the skill is already invoked; git history keeps the prompts as trigger-eval candidates.
+- Drop the `## Example Prompts` block from the `init_skill.py` scaffold template so new skills stop reintroducing it.
+
 ## [0.10.0] - 2026-07-11
 - Projection tooling learns the user-invoked semantic: a skill whose SKILL.md frontmatter sets `disable-model-invocation: true` (honored natively by Claude Code) now projects its Codex copy to `.agents/skills-manual/<name>/` — outside the scanned `.agents/skills/` directory — so user-invoked skills pay zero standing description load on both platforms. Implemented in `projection_support.py` (`is_user_invoked`, `skill_doc_path`, codex base-dir routing) with unit tests; `validate_projection.py` follows automatically via `projection_dir`.
 

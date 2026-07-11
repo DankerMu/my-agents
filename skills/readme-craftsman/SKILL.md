@@ -1,7 +1,7 @@
 ---
 name: readme-craftsman
 description: "Create, update, or review a repository README when the user explicitly asks for README work. Use it to draft a new README, refresh an existing README after project changes, or audit a README against the current repository. Do not use it for general documentation, API docs, architecture docs, or documentation tasks that do not specifically target a README file."
-version: 1.1.4
+version: 1.1.5
 ---
 
 # README Craftsman
@@ -13,8 +13,6 @@ Create, update, or review README files by analyzing the actual repository and ta
 ```
 Detect Mode → Analyze Project → Classify Type → [Interview if Creating] → Generate/Update/Review → Quality Check → Deliver
 ```
-
-**Invocation posture:** `manual-first`
 
 ---
 

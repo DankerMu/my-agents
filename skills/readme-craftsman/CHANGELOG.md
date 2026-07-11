@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.5] - 2026-07-11
+
+- Remove the body invocation-posture restatement; posture lives in frontmatter/description.
+
 ## [1.1.4] - 2026-03-28
 
 ### Added

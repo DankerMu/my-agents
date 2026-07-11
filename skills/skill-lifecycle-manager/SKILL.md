@@ -5,7 +5,7 @@ description: >
   skill, validate it, evaluate it, project or install it, or audit a skill
   library. Use only when the request is explicitly about skills or skill
   libraries, not for general code tasks or agent management.
-version: 0.10.0
+version: 0.10.1
 ---
 
 # Skill Lifecycle Manager
@@ -371,13 +371,3 @@ If the request paused inside Discover because a delegated workflow hit a require
 - Treating another skill package's private script path as an acceptable runtime dependency for an installable skill
 - Publishing or installing before the skill is structurally valid
 - Auditing only for broken files while missing duplicates, drift, or context waste
-
-## Example Prompts
-
-- Research the best official and community patterns for this new skill idea, then draft it.
-- We need a project-generic, domain-generic documentation skill. Research outside skills first, give me the candidate inventory, wait for confirmation, then compare and fuse before any drafting.
-- Turn this repeated workflow into a new skill, validate it, and tell me the next lifecycle step.
-- Update our existing `skill-researcher` skill, then run a proper evaluation loop.
-- Tighten the trigger wording for this skill without rewriting the whole body.
-- Audit our `skills/` directory for duplicates, stale changelogs, and context bloat.
-- Install this repo skill into the right local agent surface after validation passes.

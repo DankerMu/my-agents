@@ -12,7 +12,7 @@ description: >-
   or control-plane audit (use control-plane-auditor).
 disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.4.0
+version: 0.4.1
 ---
 
 # Repo Entropy Audit
@@ -205,14 +205,6 @@ Proceed only with user confirmation.
 - [Baseline Format](references/baseline-format.md) — snapshot JSON schema and trend comparison
 - [Six Entropy Axes](../control-plane-auditor/references/methodology/six-entropy-axes.md) — theoretical framework
 - [Metric Definitions](../control-plane-auditor/references/methodology/metric-definitions.md) — proxy metrics
-
-## Example Prompts
-
-- "Run an entropy audit on this repo"
-- "Generate an entropy heatmap"
-- "Where should we focus cleanup effort?"
-- "Compare entropy against last month's baseline"
-- "Scan packages/api for entropy"
 
 ## Caveats
 

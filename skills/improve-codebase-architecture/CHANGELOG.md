@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-11
+
+- Remove the body invocation-posture restatement; posture lives in frontmatter/description.
+
 ## [0.3.0] - 2026-07-02
 
 ### Changed

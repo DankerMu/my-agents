@@ -3,7 +3,7 @@
   "name": "brainstorming",
   "displayName": "Brainstorming",
   "description": "Turn ambiguous ideas or competing directions into one approved decision before planning or implementation. Invoke explicitly, or via routing from other skills when direction is still unchosen.",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "maturity": "experimental",
   "categories": ["design", "workflow", "productivity"],
   "tags": [

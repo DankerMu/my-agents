@@ -9,7 +9,7 @@ description: >
   advanced-Git sessions where worktrees are only incidental.
 disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.2.0
+version: 0.2.1
 ---
 
 # Git Worktree Workflows
@@ -19,7 +19,6 @@ Turn `git worktree` usage into a small set of safe workflows instead of one-off 
 The design bias is:
 
 - Use **official Git semantics** as the source of truth
-- Use **manual-first posture** so the skill activates only on clear worktree signals
 - Use **repo conventions as overlays**, not as universal defaults
 
 ## Outputs
@@ -296,11 +295,3 @@ Before finishing:
 - show the exact commands or explain why a worktree is unnecessary
 - call out any destructive risk or repo-convention assumption
 - end with the next obvious step, such as `cd` into the new worktree, run `git worktree list`, or clean up stale metadata
-
-## Example Prompts
-
-- Show me the safest way to create a worktree for a hotfix while my feature branch has uncommitted changes.
-- I got "branch is already checked out at ..." when trying to add a worktree. What should I do?
-- Help me compare two branches side by side with worktrees and selectively keep only one file.
-- I manually deleted a worktree folder. How do I clean up Git's metadata correctly?
-- Should I use a worktree here, or is a normal branch switch enough?

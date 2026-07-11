@@ -3,7 +3,7 @@
   "name": "project-documentation",
   "displayName": "Docs Governance",
   "description": "Govern a repository's docs/: restructure, consolidate overlapping pages, refresh stale docs after code changes, audit drift and dead links. Invoke explicitly — by the user or stage-change-pipeline. Not for READMEs or PR review.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "maturity": "experimental",
   "categories": ["documentation", "workflow", "review"],
   "tags": [

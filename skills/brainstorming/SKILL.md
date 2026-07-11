@@ -3,7 +3,7 @@ name: brainstorming
 description: >
   Turn ambiguous ideas or competing directions into one approved decision before planning or implementation. Invoke explicitly, or via routing from other skills when direction is still unchosen.
 invocation_posture: manual-first
-version: 0.2.5
+version: 0.2.6
 ---
 
 # Brainstorming
@@ -43,8 +43,6 @@ If scope is unclear, ask one targeted question to disambiguate. When in doubt, s
 ## Question Handling
 
 Use the platform's native user-input mechanism when one is available and appropriate for the current environment. If the surface does not expose a structured question tool, ask concise questions directly in chat and wait for the user's reply. Do not make the workflow depend on one specific tool name.
-
-**Language**: Respond in the same language the user uses. All user-facing output (questions, summaries, decision records) follows the user's language. Skill internals are English.
 
 ---
 

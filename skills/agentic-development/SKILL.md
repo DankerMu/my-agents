@@ -8,7 +8,7 @@ description: >
   implementation planning.
 disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.2.0
+version: 0.2.1
 ---
 
 # Agentic Development
@@ -20,9 +20,6 @@ This skill helps decide whether a problem should use agency at all, choose the
 smallest useful level of agency, shape the system architecture, select an
 appropriate framework, define evaluation and safety gates, and hand off
 honestly to deeper specialist workflows.
-
-**Invocation posture:** `manual-first`. This is a heavy, cross-cutting system
-design workflow. False positives are expensive.
 
 ## When To Activate
 
@@ -249,14 +246,3 @@ skill.
 | Ignoring state and memory boundaries | Drift, replay bugs, and bad recovery | Separate short-term context, artifacts, persistent memory, and telemetry |
 | Shipping without evals and traces | Failures surface only in production | Define evals, budgets, and observability before rollout |
 | Using many agents to hide unclear ownership | Coordination tax and failure ambiguity | Simplify roles or collapse to a smaller pattern |
-
-## Example Prompts
-
-- Design the architecture and framework choice for a customer-support agent
-  that uses tools and human approval for risky actions.
-- Decide whether this product should use a workflow, a single agent, or a
-  multi-agent system, then explain why.
-- We are choosing between LangGraph, OpenAI Agents SDK, and Pydantic AI for a
-  Python agent platform. Use a real decision workflow, not framework fandom.
-- Turn this rough agent idea into a system blueprint with tools, memory,
-  evals, and rollout gates.

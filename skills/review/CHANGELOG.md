@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-07-11
+
+- Remove the body invocation-posture restatement; posture lives in frontmatter/description.
+- Remove the maintainer-facing `## Validation And Evaluation` note from the runtime body; eval suites remain canonical under `eval/`.
+
 ## [0.6.0] - 2026-07-11
 
 ### Added

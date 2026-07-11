@@ -9,6 +9,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - Added "audit" coverage to description for Audit mode trigger accuracy.
 - Changed "from scratch" to "as a whole" in description to cover overhaul + audit cases.
 
+## [0.1.1] - 2026-07-11
+
+- Remove the body `## Example Prompts` section — dead weight once the skill is already invoked; git history keeps the prompts as trigger-eval candidates.
+
 ## [0.1.0] - 2026-03-31
 
 ### Added

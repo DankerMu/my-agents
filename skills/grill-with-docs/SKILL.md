@@ -7,14 +7,12 @@ description: >
   或用户希望在压测计划的同时统一项目语言、沉淀长期决策。
   不用于不需要术语/决策沉淀的轻量压测（用 grill-me），也不用于纯需求澄清（用 clarify）。
 invocation_posture: hybrid
-version: 0.2.0
+version: 0.2.1
 ---
 
 # Grill With Docs
 
 `grill-me` 的领域增强变体：在压测一个 plan/design 的同时，**统一项目语言、沉淀长期资产**。当领域概念多、边界模糊、术语易漂、或决策需要跨变更长期追溯时用本 skill；只想快速逼清一次性计划、无沉淀需求时用 `grill-me`。
-
-**Invocation posture:** `hybrid`。优先显式调用；自动触发仅限明确的"对着领域模型压测 / 对齐术语"意图。
 
 ## 核心铁律（Non-negotiables）
 

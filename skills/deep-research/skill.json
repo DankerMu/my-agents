@@ -3,7 +3,7 @@
   "name": "deep-research",
   "displayName": "Deep Research",
   "description": "Explicit, citation-backed web research for deep dives, due diligence, market analysis, and comprehensive comparisons; not for quick factual lookups or routine coding/content tasks.",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "maturity": "experimental",
   "categories": ["research", "productivity"],
   "tags": ["research", "analysis", "web-search", "citations", "report"],

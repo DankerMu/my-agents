@@ -9,7 +9,7 @@ description: >
   不用于 my-agents 仓库自身的根指令（那是 instructions/root 生成的）。
 disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.2.0
+version: 0.2.1
 ---
 
 # Project Instruction Bootstrap
@@ -17,8 +17,6 @@ version: 0.2.0
 安装 pack 只是把能力投影进目标项目的 `.claude/` 或 `.agents/`、`.codex/`。但**目标项目自己的根指令**——`CLAUDE.md`（Claude Code 读）和 `AGENTS.md`（Codex 读）——还没人写。本 skill 在装完 pack 后补这一课。
 
 `CLAUDE.md` 与 `AGENTS.md` 之间存在**大量逐字一致的共享内容**（项目速览、已装能力、本地适配、Observable Completion 等），只有末尾平台差异段不同。共享内容若分别手写进两个文件，必然漂移——这正是 my-agents 用 `instructions/root/shared.md` 消除的问题。所以本 skill 的首选做法是**给目标项目也建立 shared 源，并由 skill 自己充当生成器**。
-
-**Invocation posture:** `manual-first`。装后显式引导调用，不自动触发（写根指令有副作用，必须人在环）。
 
 ## 两种模式
 
