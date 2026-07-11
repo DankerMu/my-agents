@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [1.2.3] - 2026-07-11
+
+- Tighten the hybrid trigger description from 555 to 462 characters (slimming batch 6), eval-gated by the new cross-skill routing suite (`skill-lifecycle-manager/eval/cross-skill-routing-cases.json`): three A/B runs, zero per-case routing regressions, candidate 27/27 on the final run (deepseek-v4-pro-guan judge via dmxapi). All negative redirects preserved.
+
 ## [1.2.2] - 2026-07-11
 
 - Remove the body invocation-posture restatement; posture lives in frontmatter/description.

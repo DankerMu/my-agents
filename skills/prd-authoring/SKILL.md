@@ -1,16 +1,14 @@
 ---
 name: prd-authoring
 description: >
-  Turn validated discovery output (clarified requirements, a chosen direction, research
-  findings) into a structured, review-ready Product Requirements Document with prioritized
-  requirements, testable acceptance criteria, and measurable success metrics. Use when the
-  user asks to write a PRD, product spec, or requirements document for a direction that is
-  already chosen. 触发词："写PRD"、"需求文档"、"产品规格"、"write a PRD"、"product spec"、
-  "requirements doc". Do not use for open-ended ideation (brainstorming), requirement
-  disambiguation (clarify), fresh cited research (deep-research), business-model work
-  (business-plan), or technical execution planning (implementation-planning).
+  Write a review-ready PRD — prioritized requirements, testable acceptance criteria, success
+  metrics — from validated discovery output once a direction is already chosen. Triggers: "write
+  a PRD", "product spec", "requirements doc", "写PRD", "需求文档", "产品规格". Not for open-ended
+  ideation (brainstorming), requirement disambiguation (clarify), fresh cited research
+  (deep-research), business-model work (business-plan), or execution planning
+  (implementation-planning).
 invocation_posture: hybrid
-version: 0.1.2
+version: 0.1.3
 ---
 
 # PRD Authoring

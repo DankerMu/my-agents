@@ -1,17 +1,14 @@
 ---
 name: review
 description: >
-  Structured review skill for PRs, diffs, commits, staged changes, code,
-  documentation, API specs, database migrations, infrastructure config, and design
-  documents. Activate for explicit, artifact-scoped review requests such as reviewing
-  a PR, diff, commit, branch, staged changes, or named files, or phrases like
-  "code review", "review my changes", "find bugs in", or "security review".
-  Produces severity-graded findings with content-aware analysis, behavioral-change
-  and spec-conformance checks, and actionable fix directions.
-  Do NOT activate for brainstorming, open-ended design feedback, governance/library
-  audits, or general conversations about whether an approach seems good.
+  Structured review of concrete artifacts: PRs, diffs, commits, branches, staged changes, named
+  files, docs, API specs, database migrations, or infrastructure config. Activate on explicit,
+  artifact-scoped review requests — "code review", "review my changes", "find bugs in",
+  "security review". Produces severity-graded findings with fix directions. Do NOT activate for
+  brainstorming, open-ended design feedback, governance/library audits, or
+  whether-an-approach-seems-good conversations.
 invocation_posture: hybrid
-version: 0.6.2
+version: 0.6.3
 ---
 
 # Review

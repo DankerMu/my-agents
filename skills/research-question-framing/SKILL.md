@@ -1,14 +1,13 @@
 ---
 name: research-question-framing
 description: >
-  Turn a phenomenon, scientific uncertainty, capability gap, method idea, data
-  problem, or operational decision into a bounded research contract with
-  explicit objects, intended claims, alternatives, evidence needs, scope, risks
-  and downstream route. Use before study design when the problem is not yet
-  decision-ready. Do not force every scientific project into a hypothesis-only
-  template or use this for ordinary implementation requirements.
+  Turn a phenomenon, scientific uncertainty, capability gap, method idea, data problem, or
+  operational decision into a bounded research contract — objects, intended claims,
+  alternatives, evidence needs, scope, risks, downstream route. Use before study design when the
+  problem is not yet decision-ready. Not for hypothesis-only templating or ordinary
+  implementation requirements.
 invocation_posture: hybrid
-version: 0.1.2
+version: 0.1.3
 ---
 
 # Research Question Framing

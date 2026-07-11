@@ -1,14 +1,14 @@
 ---
 name: clarify
 description: >
-  Hybrid workflow for turning ambiguous implementation requests into actionable scope before
-  execution. Use explicitly when the user asks to clarify requirements, disambiguate a request,
-  or spec a change before building it. Activate automatically only when an implementation-oriented
-  request contains direct contradictions, missing acceptance criteria that would materially change
-  the build, or an explicit request to proceed with documented assumptions. Do not activate for
-  open-ended direction-finding, brainstorming, or already-specific actionable tasks.
+  Turn ambiguous implementation requests into actionable scope before execution. Use when asked
+  to clarify requirements, disambiguate a request, or spec a change before building.
+  Auto-activate only when an implementation request contains direct contradictions, is missing
+  acceptance criteria that would materially change the build, or asks to proceed on documented
+  assumptions. Not for direction-finding or brainstorming, nor for already-specific actionable
+  tasks.
 invocation_posture: hybrid
-version: 1.2.2
+version: 1.2.3
 ---
 
 # Clarify

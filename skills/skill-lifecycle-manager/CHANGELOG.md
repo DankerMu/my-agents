@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.10.2] - 2026-07-11
+
+- Add the first cross-skill routing suite (`eval/cross-skill-routing-cases.json`): 12 skills, 27 unlabeled prompts with expected routes, forbidden routes, and none-controls. Serves as the A/B gate for hybrid description tightening; validates with `scripts/validate_eval_suite.py`.
+
 ## [0.10.1] - 2026-07-11
 
 - Remove the body `## Example Prompts` section — dead weight once the skill is already invoked; git history keeps the prompts as trigger-eval candidates.

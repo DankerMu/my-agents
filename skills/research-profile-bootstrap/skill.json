@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "name": "research-profile-bootstrap",
   "displayName": "Research Profile Bootstrap",
-  "description": "Create or update a lean project-local research profile at research/project-profile.md by scanning the repository, existing research artifacts, scientific data/model surfaces, evidence practices, and human decision gates. Use when adopting the research-engineering pack or when a project gains a recurring scientific surface; do not use for per-study plans or software-only risk profiles.",
-  "version": "0.2.0",
+  "description": "Create or update the lean project-local research profile at research/project-profile.md by scanning repository evidence: scientific objects, data/model surfaces, invariants, study practices, human gates. Use when installing research-engineering or when a project gains a recurring scientific surface. Not for per-study protocols or the software-risk profile at openspec/project-profile.md.",
+  "version": "0.2.1",
   "maturity": "experimental",
   "categories": ["research", "workflow", "documentation"],
   "tags": [

@@ -157,8 +157,8 @@
       "name": "clarify",
       "path": "skills/clarify",
       "displayName": "Clarify",
-      "description": "Hybrid workflow for turning ambiguous implementation requests into actionable scope before execution. Use explicitly for clarification/spec requests, or automatically for direct contradictions or missing acceptance criteria that would materially change the build. Not for open-ended brainstorming or already-specific tasks.",
-      "version": "1.2.2",
+      "description": "Turn ambiguous implementation requests into actionable scope before execution. Use when asked to clarify requirements, disambiguate a request, or spec a change before building. Auto-activate only when an implementation request contains direct contradictions, is missing acceptance criteria that would materially change the build, or asks to proceed on documented assumptions. Not for direction-finding or brainstorming, nor for already-specific actionable tasks.",
+      "version": "1.2.3",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -479,8 +479,8 @@
       "name": "prd-authoring",
       "path": "skills/prd-authoring",
       "displayName": "PRD Authoring",
-      "description": "Turn validated discovery output (clarified requirements, a chosen direction, research findings) into a structured, review-ready Product Requirements Document with prioritized requirements, testable acceptance criteria, and measurable success metrics. Use when the user asks to write a PRD, product spec, or requirements document for an already-chosen direction — not for open-ended ideation, requirement disambiguation, fresh cited research, business-model work, or technical execution planning.",
-      "version": "0.1.2",
+      "description": "Write a review-ready PRD — prioritized requirements, testable acceptance criteria, success metrics — from validated discovery output once a direction is already chosen. Triggers: \"write a PRD\", \"product spec\", \"requirements doc\", \"写PRD\", \"需求文档\", \"产品规格\". Not for open-ended ideation (brainstorming), requirement disambiguation (clarify), fresh cited research (deep-research), business-model work (business-plan), or execution planning (implementation-planning).",
+      "version": "0.1.3",
       "maturity": "experimental",
       "categories": [
         "business",
@@ -652,8 +652,8 @@
       "name": "research-profile-bootstrap",
       "path": "skills/research-profile-bootstrap",
       "displayName": "Research Profile Bootstrap",
-      "description": "Create or update a lean project-local research profile at research/project-profile.md by scanning the repository, existing research artifacts, scientific data/model surfaces, evidence practices, and human decision gates. Use when adopting the research-engineering pack or when a project gains a recurring scientific surface; do not use for per-study plans or software-only risk profiles.",
-      "version": "0.2.0",
+      "description": "Create or update the lean project-local research profile at research/project-profile.md by scanning repository evidence: scientific objects, data/model surfaces, invariants, study practices, human gates. Use when installing research-engineering or when a project gains a recurring scientific surface. Not for per-study protocols or the software-risk profile at openspec/project-profile.md.",
+      "version": "0.2.1",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -673,8 +673,8 @@
       "name": "research-question-framing",
       "path": "skills/research-question-framing",
       "displayName": "Research Question Framing",
-      "description": "Turn a phenomenon, scientific uncertainty, capability gap, method idea, data problem, or operational decision into a bounded research contract with explicit objects, intended claims, alternatives, evidence needs, scope, risks, and downstream route. Use before study design when the research problem is not yet decision-ready; do not force every project into a hypothesis-only template.",
-      "version": "0.1.2",
+      "description": "Turn a phenomenon, scientific uncertainty, capability gap, method idea, data problem, or operational decision into a bounded research contract — objects, intended claims, alternatives, evidence needs, scope, risks, downstream route. Use before study design when the problem is not yet decision-ready. Not for hypothesis-only templating or ordinary implementation requirements.",
+      "version": "0.1.3",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -694,8 +694,8 @@
       "name": "review",
       "path": "skills/review",
       "displayName": "Review",
-      "description": "Perform structured, agent-oriented reviews of PRs, diffs, commits, code, tests, frontend, docs, API specs, design docs, migrations, and infrastructure/config changes with severity-graded findings, behavioral-change checks, and actionable fix directions.",
-      "version": "0.6.2",
+      "description": "Structured review of concrete artifacts: PRs, diffs, commits, branches, staged changes, named files, docs, API specs, database migrations, or infrastructure config. Activate on explicit, artifact-scoped review requests — \"code review\", \"review my changes\", \"find bugs in\", \"security review\". Produces severity-graded findings with fix directions. Do NOT activate for brainstorming, open-ended design feedback, governance/library audits, or whether-an-approach-seems-good conversations.",
+      "version": "0.6.3",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -716,8 +716,8 @@
       "name": "risk-adaptive-cross-review",
       "path": "skills/risk-adaptive-cross-review",
       "displayName": "Risk-Adaptive Cross Review",
-      "description": "Run multi-perspective risk-adaptive reviews for PRs, diffs, branches, OpenSpec changes, or stage-change artifacts, scaling reviewer packs by risk and synthesizing actionable findings by failure class.",
-      "version": "0.4.0",
+      "description": "Multi-perspective, risk-adaptive review for PRs, diffs, branches, OpenSpec changes, or stage artifacts — reviewers split across correctness, integration, security/performance, test evidence, spec compliance, or invariant/state-machine compatibility. Use on explicit asks for risk-adaptive, multi-perspective, parallel, cross-review, or high-risk PR review. Not for ordinary quick review.",
+      "version": "0.4.1",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -758,7 +758,7 @@
       "path": "skills/skill-lifecycle-manager",
       "displayName": "Skill Lifecycle Manager",
       "description": "Manage the lifecycle of agent skills: discover patterns, create or update a skill, validate it, evaluate it, project or install it, or audit a skill library. Use only when the request is explicitly about skills or skill libraries, not for general code tasks or agent management.",
-      "version": "0.10.1",
+      "version": "0.10.2",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1375,5 +1375,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-11T13:52:32.730Z"
+  "generatedAt": "2026-07-11T14:15:44.865Z"
 }

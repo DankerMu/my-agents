@@ -1,15 +1,13 @@
 ---
 name: research-profile-bootstrap
 description: >
-  Create or update a lean project-local research profile at
-  research/project-profile.md by scanning repository evidence, scientific
-  objects, data/model surfaces, authority sources, invariants, study practices,
-  execution environments and human gates. Use when installing
-  research-engineering or when a project gains a recurring scientific surface.
-  Do not use for per-study protocols or the software-risk profile at
+  Create or update the lean project-local research profile at research/project-profile.md by
+  scanning repository evidence: scientific objects, data/model surfaces, invariants, study
+  practices, human gates. Use when installing research-engineering or when a project gains a
+  recurring scientific surface. Not for per-study protocols or the software-risk profile at
   openspec/project-profile.md.
 invocation_posture: hybrid
-version: 0.2.0
+version: 0.2.1
 ---
 
 # Research Profile Bootstrap
