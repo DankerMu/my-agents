@@ -5,7 +5,7 @@ description: >
   skill, validate it, evaluate it, project or install it, or audit a skill
   library. Use only when the request is explicitly about skills or skill
   libraries, not for general code tasks or agent management.
-version: 0.8.0
+version: 0.10.0
 ---
 
 # Skill Lifecycle Manager
@@ -197,6 +197,10 @@ When authoring or revising the skill, use OpenAI's structure discipline as the b
    - concise
    - explicit about when to delegate
    - explicit about when not to use the skill
+8. Run the writing-quality bar in [authoring-craft.md](references/authoring-craft.md) before
+   handing off to Phase 4: checkable completion criteria, per-sentence no-op test, leading-word
+   collapse opportunities, and the failure-mode sweep (duplication, sediment, sprawl, negation,
+   negative space).
 
 If the skill is meant to be installable outside the canonical repo, keep the runtime helpers it needs inside that package or inside an explicitly shipped distribution unit. It may reference another skill conceptually, but it must not assume another skill package's private script path exists on the target surface.
 
@@ -335,7 +339,7 @@ Audit dimensions include:
 - stale versions or mismatched changelogs
 - trigger under-specification or overreach
 - missing validation/evaluation evidence
-- context waste from bloated bodies
+- context waste from bloated bodies — diagnose with the failure-mode vocabulary in [authoring-craft.md](references/authoring-craft.md) (duplication, sediment, sprawl, no-op, negation, negative space)
 - risky or undeclared script behavior
 - install/publish readiness gaps
 - cross-package private runtime dependencies that break portability after install

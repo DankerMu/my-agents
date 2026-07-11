@@ -5,6 +5,9 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-11
+- Mark the skill user-invoked: SKILL.md frontmatter now sets `disable-model-invocation: true`, enforcing the manual-first posture at the platform level. Claude Code drops the description from standing context and only explicit `/prompt-engineering` invocation reaches it; the Codex projection/install target moves to `.agents/skills-manual/` (skill-lifecycle-manager 0.10.0 tooling). Discoverability lives in the `ask-danker` router.
+
 ## [0.2.1] - 2026-03-28
 
 ### Changed

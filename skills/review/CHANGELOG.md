@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-07-11
+
+### Added
+- Spec-conformance as a second review axis, adapted from `mattpocock/skills` v1.1.0 `code-review`: Phase 1e locates the originating spec (linked issue/PRD → user-passed path → `docs/`/`specs/`/`openspec/` match; skip the axis honestly when none exists), Phase 2 checks missing/partial, unrequested (scope creep), and implemented-but-wrong against the quoted spec line, and Phase 3 enforces "two axes, no masking" — spec findings report under their own group with a worst-finding-per-axis summary, never merged or reranked against standards findings.
+- Testing checklist (`references/code-checklist.md`): tautological-test anti-pattern (assertion recomputes the expected value the way the code does — expected values must come from an independent source of truth) and seam discipline (tests belong at public boundaries, not internals or side channels), adapted from the upstream `tdd` skill.
+
 ## [0.5.1] - 2026-07-02
 
 ### Added

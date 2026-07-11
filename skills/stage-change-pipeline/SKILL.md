@@ -11,7 +11,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.10.1"
+  version: "0.11.0"
 ---
 
 # Stage Change Pipeline
@@ -254,6 +254,7 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
 - 每个子 issue 只覆盖一个模块、包、服务、目录边界或 ownership 边界。禁止一个实现 issue 同时修改数据库、后端 API、前端 UI、CI、文档生成等多个模块。
 - 按"可独立实现和验证的模块内交付物"分组。一个子 issue 应包含 1-3 个紧密相关的 tasks；如果 tasks 会形成大 PR，继续拆分。
 - 跨模块能力必须拆成多个子 issue，用 `Dependencies` 串联：先创建共享契约或接口准备 issue，再分别创建各模块实现 issue，最后创建必要的集成验证 issue。
+- **宽改造（wide refactor）例外**：单一机械改动（改列名、改共享类型）爆炸半径横跨全库、任何模块内切片都无法独立保绿时，不按模块硬切，改用 **expand–contract** 三段拆分——先建"新旧并存"的 expand issue；再按爆炸半径（按包/目录）分批迁移调用点，每批一个 issue 且 `Depends on` expand issue，旧形态仍在故 CI 逐批保绿；最后一个 contract issue 在无调用者后删除旧形态，`Depends on` 全部迁移批次。批次也无法独立保绿时，各批共享集成分支，绿灯只在最终 integrate-and-verify issue 承诺。
 - 只有当多个 task 位于同一模块、同一 owner、同一验证路径，且拆开会制造无意义阻塞时，才允许合并。
 - 不以 capability 名称机械合并 issue；同一 capability 可以拆成多个模块 issue，不同 capability 也只有在同一模块内强耦合时才可合并。
 - 依赖允许的前提下，issue 排序按决策密度前置：数据模型、接口契约、用户可见流程的 issue 排在 DAG 前面，机械重构殿后——让人工 review 注意力落在最可能被调整的部分（与 `implementation-planning` 0.2 的 phase 排序原则一致）。

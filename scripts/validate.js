@@ -24,7 +24,8 @@ const {
   detectAgentCycles,
   getPlatformAgentRefs,
   collectNestedPlatformAgentWarnings,
-  validateEmbeddedSkillVersion
+  validateEmbeddedSkillVersion,
+  parseSkillFrontmatter
 } = require("./lib/validate-utils");
 const { validateAllAgentContracts } = require("./lib/agent-contract");
 
@@ -78,8 +79,11 @@ async function loadValidators(repoRoot) {
   };
 }
 
+const ROUTER_SKILL_NAME = "ask-danker";
+
 async function validateSkills(repoRoot, validateSkill, allowedCategories, errors, skillNames) {
   const skillDirs = await listDirs(path.join(repoRoot, "skills"));
+  const userInvokedSkills = [];
 
   for (const dirName of skillDirs) {
     const baseDir = path.join(repoRoot, "skills", dirName);
@@ -135,6 +139,14 @@ async function validateSkills(repoRoot, validateSkill, allowedCategories, errors
       for (const message of validateEmbeddedSkillVersion(skillDocContent, skill.version)) {
         errors.push(`skills/${dirName}/${skillDoc}: ${message}`);
       }
+      try {
+        const frontmatter = parseSkillFrontmatter(skillDocContent);
+        if (frontmatter["disable-model-invocation"] === true) {
+          userInvokedSkills.push(dirName);
+        }
+      } catch {
+        // Frontmatter problems are reported by the checks above.
+      }
     }
 
     const changelogPath = path.join(baseDir, changelog);
@@ -142,6 +154,26 @@ async function validateSkills(repoRoot, validateSkill, allowedCategories, errors
       errors.push(`Missing changelog: skills/${dirName}/${changelog}`);
     } else if (!(await checkChangelogHasVersion(fs, changelogPath, skill.version))) {
       errors.push(`skills/${dirName}/${changelog}: must contain a '## [${skill.version}]' section`);
+    }
+  }
+
+  // User-invoked skills are stripped from the model's standing context, so the
+  // router map is their only discovery surface — a router that misses one lies.
+  if (userInvokedSkills.length > 0) {
+    const routerDocPath = path.join(repoRoot, "skills", ROUTER_SKILL_NAME, "SKILL.md");
+    if (!(await fileExists(routerDocPath))) {
+      errors.push(
+        `skills/${ROUTER_SKILL_NAME}/SKILL.md is required while user-invoked skills exist: ${userInvokedSkills.join(", ")}`
+      );
+    } else {
+      const routerContent = await fs.readFile(routerDocPath, "utf8");
+      for (const name of userInvokedSkills) {
+        if (!routerContent.includes(name)) {
+          errors.push(
+            `skills/${ROUTER_SKILL_NAME}/SKILL.md: user-invoked skill '${name}' is missing from the router map`
+          );
+        }
+      }
     }
   }
 }

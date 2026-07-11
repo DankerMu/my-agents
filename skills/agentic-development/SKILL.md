@@ -6,8 +6,9 @@ description: >
   orchestration, agent runtimes or platforms, multi-agent systems, framework
   selection, evals, or guardrails; do not use for prompt-only work or ordinary
   implementation planning.
+disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.1.2
+version: 0.2.0
 ---
 
 # Agentic Development

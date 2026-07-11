@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-11
+- Backport the upstream `mattpocock/skills` v1.1.0 `grilling` hardening. Non-negotiable #3 now splits **facts** (look them up in the codebase/docs) from **decisions** (put each one to the user and wait — never answer them yourself), closing the failure mode where grill-me running inside another workflow (e.g. `stage-change-pipeline`) treated "能查就别问" as license to decide autonomously.
+- New non-negotiable #7: an explicit confirmation stop-gate — the plan is not enacted until the user confirms shared understanding has been reached. The convergence summary is a proposal, not a release; the Output section names this gate for downstream stages.
+- Frontmatter description updated to carry the facts-vs-decisions split.
+
 ## [0.2.0] - 2026-07-06
 - New non-negotiable #6 "说不清就要 reference": when the user can't articulate a preference on a branch (unknown knowns), switch to asking for a reference (doc / screenshot / source directory — source code is best) or suggest a disposable fake-data prototype, instead of asking a third time. Adapted from Thariq's "A Field Guide to Fable: Finding Your Unknowns".
 - Branch-ordering criterion added to the decision-tree step: branches whose answer would change architecture, interfaces, data models, or user-visible flows are grilled first; pure implementation-detail branches go last or are skipped.

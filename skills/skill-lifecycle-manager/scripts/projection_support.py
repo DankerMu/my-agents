@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import tempfile
 from pathlib import Path
@@ -20,6 +21,14 @@ PLATFORM_EXCLUDED_ROOTS = {
     "codex": set(),
     "claude-code": {"skill.json", "CHANGELOG.md", "agents"},
 }
+# Skills whose SKILL.md frontmatter sets `disable-model-invocation: true` are
+# user-invoked only. Claude Code honors the key natively; Codex has no such key,
+# so their Codex projection lands outside the scanned skills directory.
+USER_INVOKED_FRONTMATTER_PATTERN = re.compile(
+    r"^disable-model-invocation:\s*true\s*$", re.MULTILINE
+)
+CODEX_SKILLS_DIRNAME = "skills"
+CODEX_MANUAL_SKILLS_DIRNAME = "skills-manual"
 
 
 def load_skill_name(skill_dir: Path) -> str:
@@ -30,6 +39,38 @@ def load_skill_name(skill_dir: Path) -> str:
         if name:
             return name
     return skill_dir.name
+
+
+def skill_doc_path(skill_dir: Path) -> Path:
+    skill_json_path = skill_dir / "skill.json"
+    if skill_json_path.exists():
+        try:
+            data = json.loads(skill_json_path.read_text(encoding="utf8"))
+        except (OSError, json.JSONDecodeError):
+            data = {}
+        entrypoints = data.get("entrypoints") if isinstance(data, dict) else None
+        if isinstance(entrypoints, dict):
+            doc = entrypoints.get("skillDoc")
+            if isinstance(doc, str) and doc.strip():
+                return skill_dir / doc.strip().lstrip("./")
+    return skill_dir / "SKILL.md"
+
+
+def is_user_invoked(skill_dir: Path) -> bool:
+    doc_path = skill_doc_path(skill_dir)
+    if not doc_path.exists():
+        return False
+    try:
+        text = doc_path.read_text(encoding="utf8")
+    except OSError:
+        return False
+    if not text.startswith("---"):
+        return False
+    closing = text.find("\n---", 3)
+    if closing == -1:
+        return False
+    frontmatter = text[:closing]
+    return bool(USER_INVOKED_FRONTMATTER_PATTERN.search(frontmatter))
 
 
 def find_ancestor_with_markers(start: Path, markers: Iterable[str]) -> Path | None:
@@ -72,7 +113,8 @@ def projection_base_dir(platform: str, scope: str, output_root: Path | None, ski
         base_root = output_root.resolve() if output_root else infer_project_root(skill_dir)
 
     if platform == "codex":
-        return base_root / ".agents" / "skills"
+        dirname = CODEX_MANUAL_SKILLS_DIRNAME if is_user_invoked(skill_dir) else CODEX_SKILLS_DIRNAME
+        return base_root / ".agents" / dirname
     if platform == "claude-code":
         return base_root / ".claude" / "skills"
     raise ValueError(f"unsupported platform: {platform}")

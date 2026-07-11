@@ -13,8 +13,9 @@ description: >-
   full-repo code/entropy scan (use repo-entropy-audit), general
   documentation work (use project-documentation), or reviewing a
   specific PR or diff (use review or entropy-review).
+disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.3.0
+version: 0.4.0
 ---
 
 # Control Plane Auditor

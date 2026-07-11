@@ -5,9 +5,13 @@ function getScopeBase(scope) {
   return scope === "user" ? os.homedir() : process.cwd();
 }
 
-function getSkillTargets(name, platforms, scope) {
+// Skills flagged `disable-model-invocation: true` are user-invoked only. Codex
+// has no such frontmatter key, so their Codex copy lands in `.agents/skills-manual/`
+// (outside the scanned skills directory) instead of `.agents/skills/`.
+function getSkillTargets(name, platforms, scope, options = {}) {
   const targets = [];
   const base = getScopeBase(scope);
+  const codexDirName = options.userInvoked ? "skills-manual" : "skills";
 
   if (platforms.includes("claude")) {
     targets.push({
@@ -21,7 +25,7 @@ function getSkillTargets(name, platforms, scope) {
     targets.push({
       platformKey: "codex",
       platform: "Codex",
-      destDir: path.join(base, ".agents", "skills", name)
+      destDir: path.join(base, ".agents", codexDirName, name)
     });
   }
 

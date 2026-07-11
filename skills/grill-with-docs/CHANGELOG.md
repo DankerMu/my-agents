@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-11
+- Backport the upstream `mattpocock/skills` v1.1.0 `grilling` hardening, matching `grill-me` 0.3.0. Inherited rule #3 now splits facts (look them up) from decisions (put to the user, wait for the answer — never self-answer, even when running inside `stage-change-pipeline` Stage 2).
+- New inherited rule #6: confirmation stop-gate — no enacting the plan, and no `design.md`/`specs/` finalization in the convergence step, until the user confirms shared understanding has been reached. Persistence-discipline rules renumbered 6-8 → 7-9.
+
 ## [0.1.1] - 2026-07-02
 - Fix a circular claim in the convergence step: this skill runs **inside** `stage-change-pipeline` Stage 2, so its round summary cannot be "Stage 2 的输入". Rephrased to say the summary feeds Stage 2 `design.md`/`specs/` finalization and Stage 3 review.
 

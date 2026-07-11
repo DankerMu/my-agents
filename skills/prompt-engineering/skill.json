@@ -3,7 +3,7 @@
   "name": "prompt-engineering",
   "displayName": "Prompt Engineering",
   "description": "Manual-first workflow for redesigning, debugging, hardening, and productionizing LLM prompts or system prompts across models. Use when the job needs end-to-end prompt work, not quick technique lookup.",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "maturity": "experimental",
   "categories": ["ai", "productivity"],
   "tags": [

@@ -12,6 +12,7 @@ const {
 } = require("./runtime-targets");
 const { mergeHooksConfig, removeHooksConfig } = require("./settings-merge");
 const { REFERENCE_PLACEHOLDER } = require("./agent-contract");
+const { parseSkillFrontmatter } = require("./validate-utils");
 const {
   readPackMetadata,
   readProjectManifest,
@@ -44,6 +45,16 @@ async function removeDirRecursive(dir) {
   return false;
 }
 
+async function isUserInvokedSkillDoc(skillDocPath) {
+  try {
+    const content = await fs.readFile(skillDocPath, "utf8");
+    const frontmatter = parseSkillFrontmatter(content);
+    return frontmatter["disable-model-invocation"] === true;
+  } catch {
+    return false;
+  }
+}
+
 async function installSkill(repoRoot, name, platforms, scope) {
   const skillDir = path.join(repoRoot, "skills", name);
   if (!(await fileExists(skillDir))) {
@@ -64,7 +75,9 @@ async function installSkill(repoRoot, name, platforms, scope) {
     return false;
   }
 
-  const targets = getSkillTargets(name, platforms, scope);
+  const userInvoked = await isUserInvokedSkillDoc(srcPath);
+  const targets = getSkillTargets(name, platforms, scope, { userInvoked });
+  const staleTargets = getSkillTargets(name, platforms, scope, { userInvoked: !userInvoked });
   const projectionConfig = await loadProjectionConfig(skillDir);
   let installed = 0;
 
@@ -73,6 +86,15 @@ async function installSkill(repoRoot, name, platforms, scope) {
     await copySkillDirAtomic(skillDir, target.destDir, excludedRoots);
     console.log(`Installed (${target.platform}, ${scope}): ${target.destDir}/`);
     installed += 1;
+
+    // A flag flip moves the codex location; drop the copy left at the old one
+    // so the scanned and manual directories never hold the same skill twice.
+    const stale = staleTargets.find(
+      (entry) => entry.platformKey === target.platformKey && entry.destDir !== target.destDir
+    );
+    if (stale && (await removeDirRecursive(stale.destDir))) {
+      console.log(`Removed stale copy (${stale.platform}, ${scope}): ${stale.destDir}/`);
+    }
   }
 
   if (installed === 0) {
@@ -211,11 +233,27 @@ async function uninstallHook(repoRoot, name, platforms, scope) {
 }
 
 async function uninstallSkill(name, platforms, scope) {
-  const targets = getSkillTargets(name, platforms, scope);
+  // Cover both codex locations so a copy installed before/after a
+  // disable-model-invocation flag change is still removed.
+  const targets = [
+    ...getSkillTargets(name, platforms, scope),
+    ...getSkillTargets(name, platforms, scope, { userInvoked: true })
+  ];
+  const removedByPlatform = new Map();
+  const seen = new Set();
   for (const target of targets) {
+    if (seen.has(target.destDir)) continue;
+    seen.add(target.destDir);
     if (await removeDirRecursive(target.destDir)) {
+      removedByPlatform.set(target.platformKey, true);
       console.log(`Uninstalled (${target.platform}, ${scope}): ${target.destDir}/`);
-    } else {
+    } else if (!removedByPlatform.has(target.platformKey)) {
+      removedByPlatform.set(target.platformKey, false);
+    }
+  }
+  for (const target of targets) {
+    if (removedByPlatform.get(target.platformKey) === false) {
+      removedByPlatform.set(target.platformKey, true);
       console.log(`Not installed (${target.platform}, ${scope}): ${target.destDir}/`);
     }
   }

@@ -6,8 +6,9 @@ description: >
   end-to-end prompt work such as stabilizing behavior, migrating across
   models, or preparing a prompt for production. Do not use for quick
   technique lookup or for general LLM-powered coding tasks.
+disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.2.1
+version: 0.3.0
 ---
 
 # Prompt Engineering

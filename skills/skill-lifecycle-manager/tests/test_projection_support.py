@@ -203,6 +203,46 @@ class ProjectionSupportTests(unittest.TestCase):
             self.assertEqual(errors, [])
             self.assertEqual(warnings, [])
 
+    def test_user_invoked_skill_routes_codex_projection_to_manual_dir(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = Path(tmp) / "repo"
+            skill_dir = repo_root / "skills" / "demo-skill"
+            skill_dir.mkdir(parents=True)
+            (repo_root / "categories.json").write_text('{"categories": ["workflow"]}\n', encoding="utf8")
+            (skill_dir / "SKILL.md").write_text(
+                "---\nname: demo-skill\ndescription: demo\ndisable-model-invocation: true\nversion: 0.1.0\n---\n\n# Demo\n",
+                encoding="utf8",
+            )
+
+            self.assertTrue(projection_support.is_user_invoked(skill_dir))
+
+            codex_dir = projection_support.projection_dir(skill_dir, "codex", "project")
+            claude_dir = projection_support.projection_dir(skill_dir, "claude-code", "project")
+
+            self.assertEqual(
+                codex_dir.resolve(), (repo_root / ".agents" / "skills-manual" / "demo-skill").resolve()
+            )
+            self.assertEqual(
+                claude_dir.resolve(), (repo_root / ".claude" / "skills" / "demo-skill").resolve()
+            )
+
+    def test_model_invoked_skill_keeps_codex_projection_in_skills_dir(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = Path(tmp) / "repo"
+            skill_dir = repo_root / "skills" / "demo-skill"
+            skill_dir.mkdir(parents=True)
+            (repo_root / "categories.json").write_text('{"categories": ["workflow"]}\n', encoding="utf8")
+            (skill_dir / "SKILL.md").write_text(
+                "---\nname: demo-skill\ndescription: demo\nversion: 0.1.0\n---\n\n# Demo\n",
+                encoding="utf8",
+            )
+
+            self.assertFalse(projection_support.is_user_invoked(skill_dir))
+            codex_dir = projection_support.projection_dir(skill_dir, "codex", "project")
+            self.assertEqual(
+                codex_dir.resolve(), (repo_root / ".agents" / "skills" / "demo-skill").resolve()
+            )
+
     def test_skill_lifecycle_manager_projection_keeps_runtime_docs_honest(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             source_dir = Path(__file__).resolve().parents[1]

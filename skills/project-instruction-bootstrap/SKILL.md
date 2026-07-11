@@ -7,8 +7,9 @@ description: >
   内容含项目自身约定、已装 pack/skill/agent 用法、可移植编排骨架。增量、绝不覆盖、写前出 diff。
   触发词："补全项目指令"、"装完 pack 初始化 CLAUDE.md/AGENTS.md"、"bootstrap project instructions"。
   不用于 my-agents 仓库自身的根指令（那是 instructions/root 生成的）。
+disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.1.1
+version: 0.2.0
 ---
 
 # Project Instruction Bootstrap

@@ -5,6 +5,9 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-11
+- Mark the skill user-invoked: SKILL.md frontmatter now sets `disable-model-invocation: true`, enforcing the manual-first posture at the platform level. Claude Code drops the description from standing context and only explicit `/project-instruction-bootstrap` invocation reaches it; the Codex projection/install target moves to `.agents/skills-manual/` (skill-lifecycle-manager 0.10.0 tooling). Discoverability lives in the `ask-danker` router.
+
 ## [0.1.1] - 2026-06-16
 - The portable skeleton carries a defensive Python->`uv` convention (no bare `python`/`python3`/`pip`, to avoid polluting the system/Homebrew Python on macOS) unconditionally — written even when the project currently has no Python — while other language toolchain conventions are added per detected stack.
 - Templates and process steer execution orchestration to the installed `subagent-workflow` + native subagents (implementer/reviewer/verifier) and explicitly warn against defaulting to `codeagent` or the old `codex-codeagent-workflow` name.

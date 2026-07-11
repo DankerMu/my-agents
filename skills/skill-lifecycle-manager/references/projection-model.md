@@ -26,6 +26,12 @@ Default target:
 .agents/skills/<name>/
 ```
 
+User-invoked skills (SKILL.md frontmatter `disable-model-invocation: true`) target
+`.agents/skills-manual/<name>/` instead — outside the scanned skills directory — because
+Codex has no equivalent frontmatter key. Claude Code honors the key natively, so the
+Claude target never moves. Invoke these on Codex by naming the skill; the agent reads
+`.agents/skills-manual/<name>/SKILL.md` on demand.
+
 Keep the skill package largely intact:
 
 - `SKILL.md`

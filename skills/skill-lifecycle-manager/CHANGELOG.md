@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-07-11
+- Projection tooling learns the user-invoked semantic: a skill whose SKILL.md frontmatter sets `disable-model-invocation: true` (honored natively by Claude Code) now projects its Codex copy to `.agents/skills-manual/<name>/` — outside the scanned `.agents/skills/` directory — so user-invoked skills pay zero standing description load on both platforms. Implemented in `projection_support.py` (`is_user_invoked`, `skill_doc_path`, codex base-dir routing) with unit tests; `validate_projection.py` follows automatically via `projection_dir`.
+
+## [0.9.0] - 2026-07-11
+- New reference `references/authoring-craft.md`: the predictability vocabulary condensed from `mattpocock/skills` v1.1.0 `writing-great-skills` + `GLOSSARY.md` — the two loads (context vs cognitive), the information hierarchy with progressive disclosure and co-location, leading words, the pruning discipline (single source of truth, relevance, per-sentence no-op test), and seven failure modes including the new Negation and Negative Space.
+- Phase 3 gains step 8, a writing-quality exit sweep against that reference before Phase 4 validation; the Phase 8 "context waste" audit dimension now names the failure-mode vocabulary as its diagnostic language.
+
 ## [0.8.0] - 2026-07-10
 
 ### Added

@@ -2,7 +2,7 @@
 name: gh-create-issue
 description: Create GitHub issues from PRDs, requirements, or feature descriptions, choosing between a single issue and an epic plus sub-issues using gh CLI labels and dependencies.
 invocation_posture: hybrid
-version: 0.2.0
+version: 0.3.0
 ---
 
 # GitHub Issue Creation
@@ -62,6 +62,16 @@ Call gh-create-issue skill with:
 - any cross-issue dependency exists.
 
 Otherwise create a **single issue**. When the signals are borderline or the split is unclear, ask the user rather than guessing.
+
+## Wide Refactor Slicing
+
+A **wide refactor** is one mechanical change — renaming a column, retyping a shared symbol — whose blast radius fans across the whole codebase, so no single-module issue can land green on its own. Don't force it into the standard epic decomposition; sequence it as **expand–contract**:
+
+1. **Expand**: one issue adds the new form beside the old, so nothing breaks.
+2. **Migrate**: move call sites over in batches sized by blast radius (per package / per directory), each batch its own issue with `Depends on #<expand>`. CI stays green batch to batch because the old form still exists.
+3. **Contract**: one final issue deletes the old form once no caller remains, with a `Depends on` line for every migrate batch.
+
+When even the batches can't stay green alone, keep the same issue sequence but state in each issue that the batches share an integration branch, all feeding a final integrate-and-verify issue — green is promised only there.
 
 ## Return Format
 

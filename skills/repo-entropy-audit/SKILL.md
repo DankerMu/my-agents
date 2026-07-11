@@ -10,8 +10,9 @@ description: >-
   "entropy audit", "repo health scan", "heatmap", "tech debt scan", or
   "full entropy report". Do NOT use for PR-level review (use entropy-review)
   or control-plane audit (use control-plane-auditor).
+disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.3.0
+version: 0.4.0
 ---
 
 # Repo Entropy Audit
