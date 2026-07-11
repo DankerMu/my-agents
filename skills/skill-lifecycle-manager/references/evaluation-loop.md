@@ -162,6 +162,26 @@ When the main body is acceptable but routing is weak:
 Do not mix a broad rewrite with a trigger-only experiment unless you have no better option.
 Do not optimize for recall blindly; optimize for the chosen invocation posture.
 
+## Cross-Skill Routing A/B Gate
+
+Description changes to hybrid or auto-posture skills are gated by the routing suite at
+`eval/cross-skill-routing-cases.json`: unlabeled user messages with expected routes,
+forbidden routes, and none-controls across the confusable skill set.
+
+Run `scripts/run_routing_ab.py` against an OpenAI-compatible judge endpoint:
+
+```bash
+DMXAPI_KEY=... uv run python skills/skill-lifecycle-manager/scripts/run_routing_ab.py \
+  --model <judge-model> --overrides candidate-descriptions.json
+```
+
+The runner shows the judge the full standing skill list (baseline vs candidate
+descriptions), routes every case under both variants, and exits non-zero when any case
+that passed on the baseline fails on the candidate. Judge verdicts are a relative
+discrimination check between two description sets, not a prediction of any specific
+agent's real trigger behavior. Run it at least twice; acceptance is zero per-case
+regressions on every run.
+
 ## Exit Criteria
 
 An evaluation pass is good enough to close when:

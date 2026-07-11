@@ -567,8 +567,8 @@
       "name": "readme-craftsman",
       "path": "skills/readme-craftsman",
       "displayName": "README Craftsman",
-      "description": "Create, update, or review a repository README when the user explicitly asks for README work. Use it to draft a new README, refresh an existing README after project changes, or audit a README against the current repository. Do not use it for general documentation, API docs, architecture docs, or documentation tasks that do not specifically target a README file.",
-      "version": "1.1.7",
+      "description": "Create, update, or review a repository README when the user explicitly asks for README work. Use it to draft a new README, refresh an existing README after project changes, or audit a README against the current repository. Do not use it for general documentation, API docs, architecture docs, or documentation tasks that do not specifically target a README file. Not for trivial single-line README edits such as fixing a typo — just make the edit directly.",
+      "version": "1.1.8",
       "maturity": "stable",
       "categories": [
         "documentation",
@@ -758,7 +758,7 @@
       "path": "skills/skill-lifecycle-manager",
       "displayName": "Skill Lifecycle Manager",
       "description": "Manage the lifecycle of agent skills: discover patterns, create or update a skill, validate it, evaluate it, project or install it, or audit a skill library. Use only when the request is explicitly about skills or skill libraries, not for general code tasks or agent management.",
-      "version": "0.10.2",
+      "version": "0.11.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1375,5 +1375,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-11T14:15:44.865Z"
+  "generatedAt": "2026-07-11T14:25:45.724Z"
 }

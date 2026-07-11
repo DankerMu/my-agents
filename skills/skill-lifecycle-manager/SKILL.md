@@ -5,7 +5,7 @@ description: >
   skill, validate it, evaluate it, project or install it, or audit a skill
   library. Use only when the request is explicitly about skills or skill
   libraries, not for general code tasks or agent management.
-version: 0.10.2
+version: 0.11.0
 ---
 
 # Skill Lifecycle Manager

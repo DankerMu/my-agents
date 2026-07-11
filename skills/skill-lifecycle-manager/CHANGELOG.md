@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-07-11
+
+- Add `scripts/run_routing_ab.py`: a cross-skill routing A/B runner that gates description changes against `eval/cross-skill-routing-cases.json` via an OpenAI-compatible judge endpoint (baseline vs candidate skill lists, reasoning-model-safe answer parsing, non-zero exit on per-case regressions). Ships with unit tests in the shared validation path and a Cross-Skill Routing A/B Gate section in `references/evaluation-loop.md`.
+
 ## [0.10.2] - 2026-07-11
 
 - Add the first cross-skill routing suite (`eval/cross-skill-routing-cases.json`): 12 skills, 27 unlabeled prompts with expected routes, forbidden routes, and none-controls. Serves as the A/B gate for hybrid description tightening; validates with `scripts/validate_eval_suite.py`.

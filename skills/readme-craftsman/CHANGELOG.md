@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.8] - 2026-07-11
+
+- Add a trivial-edit exclusion to the trigger description: typo-fix and other one-line README edits must not route here. Boundary gap surfaced by the cross-skill routing suite's none-control (the baseline description stole the typo case in one gate run); gated by `skill-lifecycle-manager/scripts/run_routing_ab.py` with zero per-case regressions and candidate 27/27 across two runs.
+
 ## [1.1.7] - 2026-07-11
 
 - Move the five worked examples to `references/examples.md` (slimming batch 5).
