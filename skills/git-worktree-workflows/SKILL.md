@@ -9,7 +9,7 @@ description: >
   advanced-Git sessions where worktrees are only incidental.
 disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.2.1
+version: 0.2.2
 ---
 
 # Git Worktree Workflows
@@ -32,13 +32,11 @@ Depending on the request, produce one or more of:
 
 ## When Not To Use
 
-Do not use this skill when:
-
-- The task is ordinary branch switching, rebasing, or PR work and no extra checkout is needed
-- The request is really about repo bootstrap, such as copying `.env*`, linking `.venv`, installing dependencies, or trusting local tool configs, unless the repository already documents those as project conventions
-- The user only needs general Git advice and has not asked about worktrees or parallel checkouts
-- Worktree use would add more overhead than value, such as a tiny one-file change on a clean branch with no context-switching pressure
-- Worktrees are a minor part of a broader advanced Git session that also involves rebasing, bisect, or reflog; in that case treat the request as broader advanced Git guidance unless worktree operations become the primary concern
+- Ordinary branch switching, rebasing, or PR work with no extra checkout needed
+- Repo bootstrap (copying `.env*`, linking `.venv`, installing dependencies) — unless the repository documents those as worktree conventions
+- General Git advice with no worktree or parallel-checkout angle
+- Overhead exceeds value — e.g. a tiny one-file change on a clean branch with no context-switching pressure
+- Worktrees are a minor part of a broader advanced Git session (rebase, bisect, reflog) — answer as general Git guidance unless worktrees become the primary concern
 
 ## Route First
 

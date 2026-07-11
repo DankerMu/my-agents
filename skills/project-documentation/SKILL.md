@@ -3,7 +3,7 @@ name: project-documentation
 description: >
   Govern a repository's docs/: restructure, consolidate overlapping pages, refresh stale docs after code changes, audit drift and dead links. Invoke explicitly — by the user or stage-change-pipeline. Not for READMEs or PR review.
 invocation_posture: manual-first
-version: 0.1.2
+version: 0.1.3
 ---
 
 # Docs Governance
@@ -21,13 +21,13 @@ Govern a repository's `docs/` directory or equivalent docs set from repository r
 
 ## When Not To Use
 
-- Explicit `README.md` creation, update, or audit. Use `readme-craftsman`.
-- Broad project-document authoring outside the managed docs set, such as a one-off root-level architecture memo or ad hoc guide that does not belong to `docs/`.
-- Review of a PR, diff, commit, or named file set where the user wants severity-graded review findings on changed artifacts. Use `review`.
-- Deep, citation-heavy external research where the main deliverable is the research itself. Use `deep-research`.
-- Chinese pre-publish editorial or compliance review. Use `editorial-review`.
-- Format conversion such as DOCX, PDF, or PPTX to Markdown. Use a document-conversion workflow instead.
-- High-impact ambiguity about whether the task is really docs governance or a different documentation artifact. Use `clarify` if that ambiguity would materially change the deliverable.
+- Explicit `README.md` creation, update, or audit → `readme-craftsman`
+- One-off documents outside the managed `docs/` set (root-level memo, ad hoc guide)
+- Severity-graded review of a PR, diff, commit, or named file set → `review`
+- Deep, citation-heavy external research as the main deliverable → `deep-research`
+- Chinese pre-publish editorial or compliance review → `editorial-review`
+- DOCX/PDF/PPTX-to-Markdown conversion → a document-conversion workflow
+- Ambiguity about whether the task is really docs governance, if it would change the deliverable → `clarify`
 
 ## Supported Work
 

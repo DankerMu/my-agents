@@ -3,7 +3,7 @@ name: brainstorming
 description: >
   Turn ambiguous ideas or competing directions into one approved decision before planning or implementation. Invoke explicitly, or via routing from other skills when direction is still unchosen.
 invocation_posture: manual-first
-version: 0.2.6
+version: 0.2.7
 ---
 
 # Brainstorming
@@ -18,13 +18,11 @@ Do NOT write code, scaffold files, create deliverables, or take any action towar
 
 ## When Not To Use
 
-Do NOT use this skill when the user is asking for:
-
-- **Clarification only** — missing facts, contradictions, or acceptance criteria that must be pinned down before action. Use `clarify`.
-- **Review of existing work** — code review, document critique, diff analysis, or bug-finding in something already written. Use `review`.
-- **Detailed execution planning** — implementation breakdowns, task sequencing, or delivery plans after the direction is already decided. Use `implementation-planning` when the work is complex enough to justify a deep technical plan, or proceed with a lighter planning/execution flow.
-- **Straightforward execution** — the user already knows what they want built, changed, or written and just wants to start.
-- **Architecture direction, technology selection, or reversibility decisions** — choosing a system architecture, picking a framework/technology, or weighing hard-to-reverse structural bets. Use `future-aware-architecture` (it cedes open-ended ideation back to this skill, so use it for the architecture call and this skill for the wider exploration).
+- Clarification only (missing facts, contradictions, acceptance criteria) → `clarify`
+- Review of existing work (code, documents, diffs) → `review`
+- Detailed execution planning after the direction is decided → `implementation-planning` for complex work, or a lighter planning flow
+- Straightforward execution — the user knows what they want and just wants to start
+- Architecture direction, technology selection, or hard-to-reverse structural bets → `future-aware-architecture` (it cedes open-ended ideation back to this skill)
 
 If the request begins with ambiguity but quickly resolves into a concrete chosen direction, finish the brainstorm cleanly and hand off instead of dragging the user through more ideation.
 

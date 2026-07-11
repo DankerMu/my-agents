@@ -8,7 +8,7 @@ description: >
   implementation planning.
 disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.2.1
+version: 0.2.2
 ---
 
 # Agentic Development
@@ -34,23 +34,13 @@ honestly to deeper specialist workflows.
 
 ## When Not To Use
 
-Do not use this skill when:
-
-- The task is prompt-only or system-prompt-only work. Use `prompt-engineering`.
-- The task is general architecture or technology selection without a real
-  agentic component. Use `future-aware-architecture`.
-- The task mainly needs latest facts or citation-backed vendor comparison
-  without an agent-system workflow. Use `deep-research`.
-- The direction is already chosen and the job is a phased implementation or
-  rollout plan. Use `implementation-planning`.
-- The task is mainly about day-to-day agentic coding execution habits such as
-  eval-first implementation loops, task slicing, model-tier routing, or
-  session discipline rather than designing an agentic system. Use a narrower
-  execution-focused workflow that already fits the active environment.
-- The user wants a review of an existing diff, design doc, or implementation.
-  Use `review`.
-- A deterministic script, rule engine, or ordinary software workflow is enough
-  and no agentic loop is warranted.
+- Prompt-only or system-prompt-only work → `prompt-engineering`
+- General architecture or technology selection with no real agentic component → `future-aware-architecture`
+- Latest facts or citation-backed vendor comparison, no agent-system workflow → `deep-research`
+- Direction already chosen, needs a phased implementation/rollout plan → `implementation-planning`
+- Day-to-day agentic coding execution habits (eval-first loops, task slicing, model-tier routing, session discipline) → a narrower execution-focused workflow
+- Review of an existing diff, design doc, or implementation → `review`
+- A deterministic script, rule engine, or ordinary software workflow is enough — no agentic loop warranted
 
 ## Outputs
 

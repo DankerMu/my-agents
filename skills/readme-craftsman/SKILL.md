@@ -1,7 +1,7 @@
 ---
 name: readme-craftsman
 description: "Create, update, or review a repository README when the user explicitly asks for README work. Use it to draft a new README, refresh an existing README after project changes, or audit a README against the current repository. Do not use it for general documentation, API docs, architecture docs, or documentation tasks that do not specifically target a README file."
-version: 1.1.5
+version: 1.1.6
 ---
 
 # README Craftsman
@@ -18,13 +18,9 @@ Detect Mode → Analyze Project → Classify Type → [Interview if Creating] �
 
 ## When Not To Use
 
-Do not use this skill for:
-
-- General documentation work that does not specifically target a `README.md`
-- API references, architecture docs, runbooks, docs-site pages, or standalone user guides
-- Generic writing requests where the user has not asked for README creation, README updates, or README review
-
-If the repository needs broader documentation work, use a documentation or writing workflow that matches that artifact instead of stretching this skill beyond README scope.
+- General documentation work not targeting a `README.md` — `docs/` governance belongs to `project-documentation`
+- API references, architecture docs, runbooks, docs-site pages, standalone user guides
+- Generic writing requests with no explicit README ask
 
 ---
 

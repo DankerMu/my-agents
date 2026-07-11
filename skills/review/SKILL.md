@@ -11,7 +11,7 @@ description: >
   Do NOT activate for brainstorming, open-ended design feedback, governance/library
   audits, or general conversations about whether an approach seems good.
 invocation_posture: hybrid
-version: 0.6.1
+version: 0.6.2
 ---
 
 # Review
@@ -29,15 +29,13 @@ Activate when the user:
 ## When Not To Activate
 
 Do not activate for:
-- Open-ended design or architecture discussions ("what do you think about this approach?")
-- Brainstorming, option comparison, or solution ideation
-- Governance or library-audit requests about skills, agents, or repository hygiene
-- Requests to teach review culture, reviewer communication, or mentoring practices
-- General quality feedback without a concrete artifact or change set to inspect
-- Multi-perspective, high-risk, or risk-adaptive-depth reviews (parallel reviewer packs, invariant/state-machine focus) → use `risk-adaptive-cross-review`
-- Consistency, drift, or pattern-duplication-only concerns (naming drift, error-model splits) → use `entropy-review`
 
-Use `brainstorming`, `skill-lifecycle-manager`, or a general design discussion instead when the user wants exploration rather than a structured review protocol.
+- Open-ended design/architecture discussion, brainstorming, option comparison, or ideation → `brainstorming` or plain discussion
+- Governance or library-audit requests about skills, agents, or repository hygiene → `skill-lifecycle-manager`
+- Teaching review culture, reviewer communication, or mentoring practices
+- General quality feedback without a concrete artifact or change set to inspect
+- Multi-perspective, high-risk, or risk-adaptive-depth reviews (parallel reviewer packs, invariant/state-machine focus) → `risk-adaptive-cross-review`
+- Consistency, drift, or pattern-duplication-only concerns (naming drift, error-model splits) → `entropy-review`
 
 ## Review Modes
 

@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-07-11
+
+- Compress When Not To Activate into arrow form (slimming batch 4); all boundaries and redirect targets preserved, including the redirect targets that previously sat in the trailing paragraph.
+
 ## [0.6.1] - 2026-07-11
 
 - Remove the body invocation-posture restatement; posture lives in frontmatter/description.

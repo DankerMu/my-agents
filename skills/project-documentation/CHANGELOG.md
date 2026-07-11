@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-07-11
+
+- Compress When Not To Use into one-line arrows (slimming batch 4); all boundaries and redirect targets preserved.
+
 ## [0.1.2] - 2026-07-11
 
 - Remove the body `## Example Prompts` section — dead weight once the skill is already invoked; git history keeps the prompts as trigger-eval candidates.

@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.7] - 2026-07-11
+
+- Compress When Not To Use into one-line arrows (slimming batch 4); all boundaries and redirect targets preserved. The ambiguity-resolves-quickly hand-off rule is unchanged.
+
 ## [0.2.6] - 2026-07-11
 
 - Remove the language-following no-op line; matching the user's language is default behavior.
