@@ -1,7 +1,7 @@
 ---
 name: codeagent
 description: Execute codeagent-wrapper for multi-backend AI code tasks. Supports Codex, Claude, and Gemini backends with file references (@syntax) and structured output.
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Codeagent Wrapper Integration
@@ -52,29 +52,7 @@ codeagent-wrapper --backend gemini "simple task"
 | claude | `--backend claude` | Anthropic Claude | Simple tasks, documentation, prompts |
 | gemini | `--backend gemini` | Google Gemini | UI/UX prototyping |
 
-### Backend Selection Guide
-
-**Codex** (default):
-- Deep code understanding and complex logic implementation
-- Large-scale refactoring with precise dependency tracking
-- Algorithm optimization and performance tuning
-- Example: "Analyze the call graph of @src/core and refactor the module dependency structure"
-
-**Claude**:
-- Quick feature implementation with clear requirements
-- Technical documentation, API specs, README generation
-- Professional prompt engineering (e.g., product requirements, design specs)
-- Example: "Generate a comprehensive README for @package.json with installation, usage, and API docs"
-
-**Gemini**:
-- UI component scaffolding and layout prototyping
-- Design system implementation with style consistency
-- Interactive element generation with accessibility support
-- Example: "Create a responsive dashboard layout with sidebar navigation and data visualization cards"
-
-**Backend Switching**:
-- Start with Codex for analysis, switch to Claude for documentation, then Gemini for UI implementation
-- Use per-task backend selection in parallel mode to optimize for each task's strengths
+Per-backend guidance, examples, and switching strategy: [references/advanced-usage.md](references/advanced-usage.md).
 
 ## Parameters
 
@@ -101,76 +79,9 @@ Agent response text here...
 SESSION_ID: 019a7247-ac9d-71f3-89e2-a823dbd8fd14
 ```
 
-## Resume Session
+## Advanced Usage
 
-```bash
-# Resume with codex backend
-codeagent-wrapper --backend codex resume <session_id> - <<'EOF'
-<follow-up task>
-EOF
-
-# Resume with specific backend
-codeagent-wrapper --backend claude resume <session_id> - <<'EOF'
-<follow-up task>
-EOF
-```
-
-## Parallel Execution
-
-**Default (summary mode - context-efficient):**
-```bash
-codeagent-wrapper --parallel <<'EOF'
----TASK---
-id: task1
-backend: codex
-workdir: /path/to/dir
----CONTENT---
-task content
----TASK---
-id: task2
-dependencies: task1
----CONTENT---
-dependent task
-EOF
-```
-
-**Full output mode (for debugging):**
-```bash
-codeagent-wrapper --parallel --full-output <<'EOF'
-...
-EOF
-```
-
-**Output Modes:**
-- **Summary (default)**: Structured report with changes, output, verification, and review summary.
-- **Full (`--full-output`)**: Complete task messages. Use only when debugging specific failures.
-
-**With per-task backend**:
-```bash
-codeagent-wrapper --parallel <<'EOF'
----TASK---
-id: task1
-backend: codex
-workdir: /path/to/dir
----CONTENT---
-analyze code structure
----TASK---
-id: task2
-backend: claude
-dependencies: task1
----CONTENT---
-design architecture based on analysis
----TASK---
-id: task3
-backend: gemini
-dependencies: task2
----CONTENT---
-generate implementation code
-EOF
-```
-
-**Concurrency Control**:
-Set `CODEAGENT_MAX_PARALLEL_WORKERS` to limit concurrent tasks (default: unlimited).
+Session resume, parallel execution (task DSL, summary vs full output, per-task backends, concurrency control), and the detailed backend selection guide live in [references/advanced-usage.md](references/advanced-usage.md). Read it before resuming a session or running parallel tasks.
 
 ## Environment Variables
 
@@ -192,24 +103,6 @@ Bash tool parameters:
 - description: <brief description>
 
 Note: --backend is required (codex/claude/gemini)
-```
-
-**Parallel Tasks**:
-```
-Bash tool parameters:
-- command: codeagent-wrapper --parallel --backend <backend> <<'EOF'
-  ---TASK---
-  id: task_id
-  backend: <backend>  # Optional, overrides global
-  workdir: /path
-  dependencies: dep1, dep2
-  ---CONTENT---
-  task content
-  EOF
-- timeout: <timeout_ms>  # simple: 1800000, medium: 3600000, complex: 7200000
-- description: <brief description>
-
-Note: Global --backend is required; per-task backend is optional
 ```
 
 ## Critical Rules
@@ -244,9 +137,3 @@ Note: Global --backend is required; per-task backend is optional
   - To skip checks: set `CODEAGENT_SKIP_PERMISSIONS=true` or pass `--skip-permissions`
 - **Concurrency Limits**: Set `CODEAGENT_MAX_PARALLEL_WORKERS` in production to prevent resource exhaustion
 - **Automation Context**: This wrapper is designed for AI-driven automation where permission prompts would block execution
-
-## Recent Updates
-
-- Multi-backend support for all modes (workdir, resume, parallel)
-- Security controls with configurable permission checks
-- Concurrency limits with worker pool and fail-fast cancellation

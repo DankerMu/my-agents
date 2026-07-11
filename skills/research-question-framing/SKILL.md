@@ -8,7 +8,7 @@ description: >
   decision-ready. Do not force every scientific project into a hypothesis-only
   template or use this for ordinary implementation requirements.
 invocation_posture: hybrid
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Research Question Framing
@@ -151,23 +151,7 @@ The canonical gate contract lives in `research-lifecycle`
 
 ## Output: Research Contract
 
-```markdown
-# Research Contract: <title>
-
-## Trigger and Decision Need
-## Research Objects
-## Intended Interaction or Change
-## Intended Claims and Scope
-## Current Knowledge and Evidence
-## Alternatives / Hypotheses / Representations
-## Discriminating Predictions or Qualification Criteria
-## Scientific Invariants and Forbidden Overclaims
-## Data, Model, Observation and Code Anchors
-## Non-Goals
-## Risks and Human Decision Owner
-## Open Questions
-## Recommended Downstream Route
-```
+Write the contract using the exact section template in [references/research-contract.md](references/research-contract.md) (includes a worked snow-module example).
 
 The downstream route is one of:
 
@@ -176,18 +160,3 @@ The downstream route is one of:
 - `theory-to-code-traceability` followed by `study-design`
 - product discovery
 - stop/defer because the question is not currently testable
-
-## Snow-Module Example
-
-A valid frame for a SHUD snow module would cover:
-
-- target climates, elevations, temporal resolution and application claims
-- missing states/fluxes such as SWE, snowfall/rainfall partition, melt,
-  refreeze and sublimation
-- candidate representations such as temperature-index versus energy-balance
-- water/energy and non-negativity invariants
-- coupling to infiltration, ET, runoff, restart and output contracts
-- observations and idealized cases needed to distinguish/qualify alternatives
-- status quo and no-go conditions when snow has negligible decision value
-- explicit separation between implementation verification, hydrologic validation
-  and later calibration

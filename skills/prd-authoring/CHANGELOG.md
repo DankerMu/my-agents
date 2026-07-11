@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-07-11
+
+- Move the PRD template to `references/prd-template.md` (slimming batch 5). The Lean-PRD section rule, quality bar, and self-review checklist stay in the body.
+
 ## [0.1.1] - 2026-07-11
 
 - Remove the `## Invocation Posture` section; posture lives in frontmatter/description and the scope boundary stays in When Not To Use.

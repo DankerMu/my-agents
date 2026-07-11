@@ -178,7 +178,7 @@
       "path": "skills/codeagent",
       "displayName": "Codeagent",
       "description": "Execute codeagent-wrapper for multi-backend AI code tasks with Codex, Claude, and Gemini backends, file references, structured output, and parallel task execution.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -312,7 +312,7 @@
       "path": "skills/gh-create-issue",
       "displayName": "GitHub Issue Creation",
       "description": "Create GitHub issues from PRDs, requirements, or feature descriptions, choosing between a single issue and an epic plus sub-issues using gh CLI labels and dependencies.",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -394,7 +394,7 @@
       "path": "skills/hook-development",
       "displayName": "Hook Development",
       "description": "Cross-platform guidance for designing, configuring, debugging, and validating Claude Code and Codex hooks. Use for agent hook events, configuration, scripts, matchers, exit codes, and dual-platform setups; not for React hooks, webhooks, or GitHub Actions.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -480,7 +480,7 @@
       "path": "skills/prd-authoring",
       "displayName": "PRD Authoring",
       "description": "Turn validated discovery output (clarified requirements, a chosen direction, research findings) into a structured, review-ready Product Requirements Document with prioritized requirements, testable acceptance criteria, and measurable success metrics. Use when the user asks to write a PRD, product spec, or requirements document for an already-chosen direction — not for open-ended ideation, requirement disambiguation, fresh cited research, business-model work, or technical execution planning.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "maturity": "experimental",
       "categories": [
         "business",
@@ -568,7 +568,7 @@
       "path": "skills/readme-craftsman",
       "displayName": "README Craftsman",
       "description": "Create, update, or review a repository README when the user explicitly asks for README work. Use it to draft a new README, refresh an existing README after project changes, or audit a README against the current repository. Do not use it for general documentation, API docs, architecture docs, or documentation tasks that do not specifically target a README file.",
-      "version": "1.1.6",
+      "version": "1.1.7",
       "maturity": "stable",
       "categories": [
         "documentation",
@@ -674,7 +674,7 @@
       "path": "skills/research-question-framing",
       "displayName": "Research Question Framing",
       "description": "Turn a phenomenon, scientific uncertainty, capability gap, method idea, data problem, or operational decision into a bounded research contract with explicit objects, intended claims, alternatives, evidence needs, scope, risks, and downstream route. Use before study design when the research problem is not yet decision-ready; do not force every project into a hypothesis-only template.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -798,7 +798,7 @@
       "path": "skills/stage-change-pipeline",
       "displayName": "Stage Change Pipeline",
       "description": "Turn a development-stage design package into a reviewed OpenSpec change and fine-grained GitHub issues with clear module boundaries and small-PR execution scope.",
-      "version": "0.11.0",
+      "version": "0.11.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1375,5 +1375,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-11T13:36:21.280Z"
+  "generatedAt": "2026-07-11T13:52:32.730Z"
 }

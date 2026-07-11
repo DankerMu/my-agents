@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.7] - 2026-07-11
+
+- Move the five worked examples to `references/examples.md` (slimming batch 5).
+
 ## [1.1.6] - 2026-07-11
 
 - Compress When Not To Use into one-line arrows (slimming batch 4); all boundaries and redirect targets preserved. The broader-docs redirect now points explicitly at `project-documentation`.

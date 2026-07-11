@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-07-11
+
+- Move the research-contract section template and the snow-module worked example to `references/research-contract.md` (slimming batch 5). Downstream routing stays in the body.
+
 ## [0.1.1] - 2026-07-10
 
 - Converge the pressure-test step on the canonical gate contract owned by `research-lifecycle` (single skip criterion, non-simulated interactive grills).

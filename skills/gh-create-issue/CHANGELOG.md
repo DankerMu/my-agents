@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-11
+
+- Move the Epic/Sub-issue body templates to `references/issue-templates.md` and the gh command recipes (including label bootstrap) to `references/command-reference.md` (slimming batch 5). The required-fields contract, dependency rules, and label table stay in the body.
+
 ## [0.3.0] - 2026-07-11
 - Add "Wide Refactor Slicing": when one mechanical change's blast radius spans the whole codebase and no single-module issue can land green, decompose as **expand–contract** — an expand issue (new form beside the old), migrate issues batched by blast radius each depending on the expand, and a contract issue depending on every batch; with an integration-branch fallback when batches can't stay green alone. Adapted from `mattpocock/skills` v1.1.0 `to-tickets`.
 

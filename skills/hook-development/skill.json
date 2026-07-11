@@ -3,7 +3,7 @@
   "name": "hook-development",
   "displayName": "Hook Development",
   "description": "Cross-platform guidance for designing, configuring, debugging, and validating Claude Code and Codex hooks. Use for agent hook events, configuration, scripts, matchers, exit codes, and dual-platform setups; not for React hooks, webhooks, or GitHub Actions.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "maturity": "experimental",
   "categories": ["coding", "workflow"],
   "tags": ["hooks", "claude-code", "codex", "automation"],

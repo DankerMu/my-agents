@@ -1,7 +1,7 @@
 ---
 name: hook-development
 description: Cross-platform guidance for designing, configuring, debugging, and validating Claude Code and Codex hooks. Use for agent hook events, configuration, scripts, matchers, exit codes, and dual-platform setups; not for React hooks, webhooks, or GitHub Actions.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Cross-Platform Hook Development
@@ -80,68 +80,9 @@ Not every event exists on both platforms. Design around the intersection, then a
 
 ## Configuration Formats
 
-### Claude Code — `.claude/settings.json`
+Claude Code wires hooks under a top-level `"hooks"` key in `.claude/settings.json`. Codex uses a hooks-only `.codex/hooks.json` (same structure, plus `statusMessage`) or `[[hooks]]` blocks in `.codex/config.toml`. Full formats, examples, the dual-platform template, and environment variables: [references/configuration.md](references/configuration.md).
 
-Hooks live inside a top-level `"hooks"` key:
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash tools/validate-bash.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-### Codex — `.codex/hooks.json`
-
-Same structure, but the file is hooks-only (no other settings mixed in). Codex also supports a `statusMessage` field:
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash tools/validate-bash.sh",
-            "statusMessage": "Checking bash command safety"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-### Codex Alternative — `.codex/config.toml`
-
-Codex also accepts hooks inline in TOML format. Less common but useful for simple setups.
-
-### Dual-Platform Template
-
-For projects using both, point both configs at the **same scripts**:
-
-```
-project/
-  .claude/settings.json    # Claude Code hooks config
-  .codex/hooks.json        # Codex hooks config
-  tools/hooks/             # Shared hook scripts (both configs reference these)
-    validate-bash.sh
-    validate-write.sh
-    load-context.sh
-```
+For dual-platform projects, point both configs at the same shared scripts (e.g. `tools/hooks/`) — configs differ, scripts don't.
 
 ## Matchers
 
@@ -166,82 +107,9 @@ For MCP tools, the naming pattern is `mcp__<server>__<tool>`:
 
 ## Hook Input/Output
 
-### Input (stdin JSON)
+All hooks receive a JSON object on stdin — `session_id`, `cwd`, `hook_event_name`, plus event-specific fields such as `tool_name`/`tool_input` or `user_prompt`. Claude Code also mirrors input into `$CLAUDE_TOOL_INPUT`; Codex is stdin-only. **Always read from stdin** (`input=$(cat)`) so scripts work on both platforms.
 
-All hooks receive a JSON object on stdin. Common fields:
-
-```json
-{
-  "session_id": "abc123",
-  "cwd": "/path/to/project",
-  "hook_event_name": "PreToolUse"
-}
-```
-
-**Event-specific fields:**
-
-| Event | Additional Fields |
-|-------|-------------------|
-| PreToolUse | `tool_name`, `tool_input` |
-| PostToolUse | `tool_name`, `tool_input`, `tool_result` / `tool_output` |
-| UserPromptSubmit | `user_prompt` |
-| Stop | `reason` |
-| SessionStart | `start_source` (Codex only) |
-
-**Platform input differences:**
-- Claude Code delivers input via `$CLAUDE_TOOL_INPUT` env var **and** stdin
-- Codex delivers input via stdin only (use `input=$(cat)` in scripts)
-- For cross-platform scripts, always read from stdin — it works on both
-
-### Output
-
-**Exit codes** (both platforms):
-- `0` — Success, stdout shown in transcript
-- `2` — Blocking error, stderr fed back to agent
-
-**JSON output** (optional, for richer control):
-```json
-{
-  "continue": true,
-  "systemMessage": "Message injected into agent context",
-  "suppressOutput": false
-}
-```
-
-**PreToolUse special output** (Claude Code):
-```json
-{
-  "hookSpecificOutput": {
-    "permissionDecision": "allow|deny|ask",
-    "updatedInput": {"field": "modified_value"}
-  }
-}
-```
-
-**Stop/SubagentStop decision output** (Claude Code):
-```json
-{
-  "decision": "approve|block",
-  "reason": "Explanation"
-}
-```
-
-**Codex output field support varies by event** — see `references/codex.md` for the full matrix.
-
-## Environment Variables
-
-| Variable | Claude Code | Codex | Purpose |
-|----------|:-----------:|:-----:|---------|
-| `$CLAUDE_PROJECT_DIR` | Yes | No | Project root |
-| `$CLAUDE_PLUGIN_ROOT` | Yes | Yes (compat alias) | Plugin directory |
-| `$CLAUDE_ENV_FILE` | Yes | No | SessionStart: persist env vars here |
-| `$PLUGIN_ROOT` | No | Yes | Plugin directory (native) |
-| `$PLUGIN_DATA` | No | Yes | Writable plugin data directory |
-
-**Cross-platform script pattern:**
-```bash
-PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
-```
+Exit codes (both platforms): `0` — success, stdout shown in transcript; `2` — blocking error, stderr fed back to the agent. Richer JSON output (`continue`/`systemMessage`, PreToolUse `permissionDecision`/`updatedInput`, Stop `decision`) is platform- and event-specific — see [references/claude-code.md](references/claude-code.md) and the output support matrix in [references/codex.md](references/codex.md).
 
 ## Common Patterns (Quick Reference)
 
@@ -327,41 +195,7 @@ The command hook won't catch as many edge cases as the prompt hook, but it cover
 
 ## Debugging
 
-### Claude Code
-
-```bash
-claude --debug    # Verbose hook execution logs
-```
-
-Use `/hooks` in-session to review loaded hooks. Changes to hooks require session restart.
-
-### Codex
-
-Check `.codex/hooks.json` syntax:
-```bash
-jq . .codex/hooks.json    # Validates JSON
-```
-
-Codex logs hook execution to its standard output. Invalid JSON causes load failure at startup.
-
-### Testing Hook Scripts Directly
-
-Test any hook script by piping sample JSON:
-```bash
-echo '{"tool_name": "Bash", "tool_input": {"command": "rm -rf /"}}' | \
-  bash tools/hooks/validate-bash.sh
-echo "Exit code: $?"
-```
-
-### Common Issues
-
-| Symptom | Cause | Fix |
-|---------|-------|-----|
-| Hook never fires | Wrong matcher (case-sensitive) | Check exact tool name |
-| Hook fires but no effect | Script exits 0 with no output | Use exit 2 + stderr for blocking |
-| "Invalid JSON" at startup | Syntax error in config | Run `jq .` on the config file |
-| Changes not taking effect | Hooks load at session start | Restart the session |
-| Codex prompt hook silently skipped | Codex doesn't execute prompt hooks | Use command hook instead |
+Platform debug commands (`claude --debug`, `jq` config checks), direct script testing with piped JSON, and the common-issues table: [references/debugging.md](references/debugging.md).
 
 ## Dual-Platform Workflow
 
@@ -393,3 +227,5 @@ For detailed platform-specific reference and extended patterns, consult:
 - **`references/codex.md`** — Complete Codex hook reference: all 6 events, config.toml format, output field support matrix, limitations
 - **`references/patterns.md`** — 10+ proven cross-platform patterns with dual-config examples
 - **`references/advanced.md`** — Advanced: multi-stage validation, cross-event state, caching, external integrations, rate limiting, testing
+- **`references/configuration.md`** — Config file formats for both platforms, dual-platform template, environment variables
+- **`references/debugging.md`** — Debug commands, direct script testing, common-issues table

@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-07-11
+
+- Push loop-accountability detail (logEntry schema, kill criteria, ratchet policy) to `references/loop-accountability.md` and the duration estimate + minimal command set to `references/quick-reference.md` (slimming batch 5). The four mandatory orchestrator log steps, dependency list, and skip strategy stay in the body.
+- Deduplicate the reliability disclaimer — stated once at Stage 4.5, referenced from Trigger Anchoring.
+
 ## [0.11.0] - 2026-07-11
 - Stage 5 grouping principles gain a wide-refactor exception: a single mechanical change whose blast radius spans the repo is sliced by **expand–contract** (expand issue → migrate batches sized by blast radius, each `Depends on` the expand → contract issue depending on all batches; integration-branch fallback when batches can't stay green alone) instead of forcing per-module slicing. Mirrors `gh-create-issue` 0.3.0; adapted from `mattpocock/skills` v1.1.0 `to-tickets`.
 

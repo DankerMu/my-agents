@@ -11,7 +11,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.11.0"
+  version: "0.11.1"
 ---
 
 # Stage Change Pipeline
@@ -346,7 +346,7 @@ Workflow({
 
 - 如果仓库有 CI 或 pre-PR hook 可挂载：在 PR 创建前检查 `docs/stage-pipeline-log.jsonl` 最新条目是否覆盖本 change（change name + 日期），缺失则阻塞 PR。这把触发从"编排器记得调"变成"不调就过不了 CI"。
 - 如果没有可挂载的硬动作：依赖 SKILL.md 指令 + 上述单次调用模式；定期审计 skip-rate（检查哪些 change 有 openspec 产物但 `stage-pipeline-log.jsonl` 无对应条目）。
-- **诚实声明**：本 skill 无法替消费仓库安装 hook。per-project skip-rate 是开放实测项，需在使用中审计，不可假设"写了就一定会跑"。
+- **诚实声明**：同 Stage 4.5 的可靠性限制——本 skill 无法替消费仓库安装 hook，per-project skip-rate 需在使用中实测审计。
 
 ---
 
@@ -365,61 +365,13 @@ Workflow({
 3. 把补全后的对象序列化为**一行** JSON，append 到 `docs/stage-pipeline-log.jsonl`。
 4. 连同本次 change 一起提交，保持文件 append-only。
 
-脚本返回的 `logEntry` schema（未含 date，编排器写入前补上）：
-
-```json
-{"change":"<name>","grill_gate":"passed|skipped:<reason>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
-```
-
-（`grill_gate` 仅 `full-pipeline` 返回；`review-loop` 独立运行时作用于已存在的 change，门禁决策在其上游，无此字段。）
-
-编排器补 date 后写入文件的完整一行：
-
-```json
-{"date":"<run-date>","change":"<name>","grill_gate":"passed|skipped:<reason>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
-```
-
-- `gate_net_catch`：**本节核心指标**——验证门独有的价值。统计"修复者声称已解决但独立验证者判为 unresolved 或 regressed 的数量——即没有这道门就会被漏过的量"。Stage 3 审核和 `openspec status` 已经抓到的不计入。
-- `p1.carried`：仅在触顶（`verdict=residual`）时出现；clean 时该字段省略。
-- `approx_subagent_calls`：脚本本次实际发起的 subagent 调用计数（review + fix/verify/完成自审 + issue 创建 + 对齐审核，逐次累加）。
-- 其余字段供横向看趋势（轮次、残留、回归、成本）。
-
-**2. kill 标准**
-
-验证门要持续证明自己值得那份成本。判定（最小样本 = 5 次运行，不足不下结论）：
-
-- 若连续 **≥5 次** 运行 `gate_net_catch` 都 ≈ 0（验证者从不推翻修复者、也不抓回归），说明它在橡皮图章 → **收窄**（改成只在修复触及实体名、表/ENUM 计数等全局扩散项时才跑）或**退役**。
-- 收窄/退役的决定连同日志证据记入 change 或 `docs/adr/`，不悄悄关掉。
-
-**3. ratchet（把复发问题棘轮成永久校验）**
-
-当同一 finding 类（如"表/ENUM 计数不一致"、"OpenAPI schema 缺字段"）跨 **≥2 次** 运行复发，就把它从"每次靠人审抓"提升为**永久自动校验**——加一条 openspec validation / lint / CI 检查。已解决的问题从此变成不变量，不再消耗回环预算，也顺带降低 dim 9 成本。
-
-**非目标**：不做 Reflexion 式跨 change 学习（不把历史 change 的 finding 模式注入新 change 的审核）。catch-rate 日志是**组织级问责**，不是循环内记忆。
+> logEntry 字段 schema、kill 标准（连续 ≥5 次运行零净捕获则收窄/退役）与 ratchet 规则（同类 finding 复发 ≥2 次升级为永久校验）见 [references/loop-accountability.md](references/loop-accountability.md)。
 
 ---
 
 ## 快速参考
 
-**完整流水线用时**：约 30-60 分钟（取决于 capability 数量和 subagent 审核耗时）
-
-**最小命令集**：
-```bash
-# Stage 2
-openspec new change "<name>"
-openspec status --change "<name>" --json
-openspec instructions <artifact> --change "<name>" --json
-
-# Stage 3：用编排器原生并行 subagent 同时 spawn 3 个 reviewer subagent
-#   review-design-consistency / review-spec-completeness / review-tasks-executability
-
-# Stage 4.5：spawn 独立 verifier 核销 P0/P1，未清且 < 3 轮则回 Stage 4
-#   verify-review-fixes
-
-# Stage 5
-gh label create ...
-gh issue create --title "..." --label "..." --body "..."
-```
+> 用时估算与最小命令集（openspec/gh 命令模板）见 [references/quick-reference.md](references/quick-reference.md)。
 
 **依赖**：
 - `full-pipeline.workflow.js` — **推荐入口**，Stage 3→5.5 全逻辑 inline（无 `workflow()` 嵌套，可安全作为顶层或子 workflow 调用），调用：`Workflow({ scriptPath: "<dir>/full-pipeline.workflow.js", args: { changeName: "<name>", designDocs: ["..."], stageLabel: "<optional>", grillGate: "passed" | "skipped:<理由>" } })`

@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-11
+
+- Slim the body into an overview + navigation layer (slimming batch 5): full config formats and environment variables move to `references/configuration.md`, the debugging guide to `references/debugging.md`; event-field tables and output schemas defer to the existing platform references.
+
 ## [0.1.0] - 2026-07-10
 
 ### Added

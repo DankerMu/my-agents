@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-07-11
+
+- Move session resume, parallel execution, and the backend selection guide to `references/advanced-usage.md` (slimming batch 5). Core usage, parameters, critical rules, and security notes stay in the body.
+- Drop the Recent Updates section — this changelog owns release history.
+
 ## [0.1.1] - 2026-06-15
 - Update stale cross-reference: `codex-codeagent-workflow` -> `subagent-workflow` (skill renamed).
 
