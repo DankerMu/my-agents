@@ -6,7 +6,6 @@ description: >
   or REFUTED — with cited evidence. Read-only. Must not be the reviewer that produced the
   candidate, and must not search for new findings.
 tools: Read, Glob, Grep, Bash(readonly)
-model: opus
 ---
 
 # verifier Contract

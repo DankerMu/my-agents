@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.6] - 2026-07-12
+
+### Changed
+
+- Drop the pinned Codex `model` and `model_reasoning_effort` so the agent inherits the parent session's model and reasoning effort.
+
 ## [0.2.5] - 2026-07-10
 
 ### Changed

@@ -1,7 +1,5 @@
 name = "issue-scribe"
 description = "Follow-up capture agent: verifies a raw observation read-only, determines origin/boundary/approach, dedups, and files one structured GitHub issue for later delivery. Never fixes anything itself."
-model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 
 developer_instructions = """

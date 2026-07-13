@@ -5,7 +5,6 @@ description: >
   Uses hypothesis-driven investigation: reproduce → hypothesize → verify → fix → confirm.
   Can spawn explorer for codebase investigation.
 tools: Read, Glob, Grep, Bash, Edit, Write, Agent(explorer)
-model: opus
 ---
 
 # debugger Contract

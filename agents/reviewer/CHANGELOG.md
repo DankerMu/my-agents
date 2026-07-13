@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.3] - 2026-07-12
+
+### Changed
+
+- Drop the pinned Claude Code `model` and Codex `model` / `model_reasoning_effort` so the agent inherits the parent session's model and reasoning effort on both platforms.
+
 ## [2.1.2] - 2026-07-10
 
 ### Changed

@@ -3,7 +3,7 @@
   "name": "verifier",
   "displayName": "Verifier",
   "description": "Independent finding-verification agent. Adjudicates a single candidate review finding as CONFIRMED, PLAUSIBLE, or REFUTED using only diff/spec/code/test evidence. Read-only; never the reviewer that produced the candidate.",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "maturity": "experimental",
   "categories": ["review", "coding"],
   "tags": ["verification", "code-review", "finding-gate"],

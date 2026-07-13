@@ -7,7 +7,6 @@ description: >
   than a normal inline plan. Can spawn explorer (codebase context) and researcher (external best
   practices).
 tools: Read, Glob, Grep, Bash, Agent(explorer, researcher)
-model: opus
 ---
 
 # planner Contract

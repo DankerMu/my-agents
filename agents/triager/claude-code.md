@@ -5,7 +5,6 @@ description: >
   be executed, split, planned, investigated, deferred, or rejected, and writes a worker-ready
   brief. Spawned by the controller; returns a structured verdict.
 tools: Read, Glob, Grep, Bash
-model: opus
 ---
 
 # triager Contract

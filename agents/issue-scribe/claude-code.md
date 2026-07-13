@@ -11,7 +11,6 @@ description: >
   requirements/PRDs (use gh-create-issue) or for splitting an existing issue
   (use splitter).
 tools: Read, Glob, Grep, Bash, WebFetch
-model: opus
 ---
 
 # issue-scribe Contract
