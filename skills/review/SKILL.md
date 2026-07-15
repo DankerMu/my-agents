@@ -8,7 +8,7 @@ description: >
   brainstorming, open-ended design feedback, governance/library audits, or
   whether-an-approach-seems-good conversations.
 invocation_posture: hybrid
-version: 0.6.3
+version: 0.7.0
 ---
 
 # Review

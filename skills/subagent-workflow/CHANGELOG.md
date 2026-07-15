@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-07-14
+
+### Added
+- Fixture 契约新增 **Seams under test** 字段（compact 与 expanded 模板各一处，`references/issue-risk-contract.md`）：测试将行使的公共边界，由上游（`stage-change-pipeline` Stage 2 design.md 或 issue 作者）**预先声明并附理由**——最少、最高、理想一个，无需人工确认，由 fixture review 检查。Core Rule "OpenSpec is the fixture" 同步列入：实现期只消费、不再谈判，需要但缺失的 seam 是一条须上报的 deviation。Adapted from `mattpocock/skills` v1.1.0 `tdd` 与 `to-spec`（先画缝再写 spec）；上游的用户确认环节有意改为上游自动声明 + 审核监督。
+
 ## [0.14.0] - 2026-07-14
 
 ### Added

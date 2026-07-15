@@ -716,7 +716,7 @@
       "path": "skills/review",
       "displayName": "Review",
       "description": "Structured review of concrete artifacts: PRs, diffs, commits, branches, staged changes, named files, docs, API specs, database migrations, or infrastructure config. Activate on explicit, artifact-scoped review requests — \"code review\", \"review my changes\", \"find bugs in\", \"security review\". Produces severity-graded findings with fix directions. Do NOT activate for brainstorming, open-ended design feedback, governance/library audits, or whether-an-approach-seems-good conversations.",
-      "version": "0.6.3",
+      "version": "0.7.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -819,7 +819,7 @@
       "path": "skills/stage-change-pipeline",
       "displayName": "Stage Change Pipeline",
       "description": "Turn a development-stage design package into a reviewed OpenSpec change and fine-grained GitHub issues with clear module boundaries and small-PR execution scope.",
-      "version": "0.11.2",
+      "version": "0.12.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -860,7 +860,7 @@
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
       "description": "End-to-end GitHub issue implementation workflow orchestrated by Claude Code or Codex, delegating implementation, cross-review, and finding verification to subagents (implementer, reviewer, verifier). Covers OpenSpec fixtures, risk-adaptive review, verification, PR evidence, CI, and human-gated merge.",
-      "version": "0.14.0",
+      "version": "0.15.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -983,7 +983,7 @@
       "path": "agents/implementer",
       "displayName": "Implementer",
       "description": "Code implementation agent that writes, modifies, and refactors code based on plans, specs, or direct instructions.",
-      "version": "1.3.3",
+      "version": "1.4.0",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -1397,5 +1397,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-15T03:42:52.163Z"
+  "generatedAt": "2026-07-15T03:54:47.295Z"
 }

@@ -11,7 +11,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.11.2"
+  version: "0.12.0"
 ---
 
 # Stage Change Pipeline
@@ -119,6 +119,7 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
    - 写技术决策（选型理由、备选方案）、风险和缓解
    - 如果技术决策还没有稳定依据，先用 `future-aware-architecture` 形成架构决策输入
    - 领域概念多、术语易漂时，用 `grill-with-docs` 对齐术语并 inline 沉淀到 `openspec/glossary.md`/`docs/adr/`，再定稿 design/specs
+   - **Sketch seams under test**（自动，不设交互停点）：写下测试将行使的公共边界——优先已有 seam、用最高的 seam、越少越好（理想一个），每个 seam 附一行选择理由，直接记入 design.md。监督走既有回路：Stage 3 三路审核与下游 fixture review 会检查该清单，无需专门向用户确认。清单随 fixture 流入 `subagent-workflow`（fixture 模板的 `Seams under test` 字段），实现期只消费、不再谈判——测试精力据此落在关键路径而非每个边角
 
    **specs/**（依赖 proposal，可与 design 并行）：
    - 获取指令：`openspec instructions specs --change "<name>" --json`

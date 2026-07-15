@@ -2,7 +2,7 @@
 name: subagent-workflow
 description: >
   GitHub issue → verified PR workflow: the orchestrator (Claude Code or Codex) delegates implementation, cross-review, and finding verification to the implementer/reviewer/verifier subagents, with mandatory OpenSpec fixtures, risk-adaptive review, CI, and human-gated merge. Use when the user wants to implement a GitHub issue or process the next DAG issue — triggers: "implement #XX", "do the next issue", "subagent workflow", "处理下一个issue", "开始实现", "下一个该做什么". Do NOT use for docs/spec-only work, emergency hotfixes that skip review, pure brainstorming, or when the user wants Codex to implement under Claude Code orchestration (use cc-cx-workflow instead).
-version: 0.14.0
+version: 0.15.0
 ---
 
 # Subagent Issue Workflow
@@ -40,7 +40,7 @@ This workflow assumes every input issue is already implementation-ready. When is
 ## Core Rules
 
 - **OpenSpec change is mandatory**: Every implemented issue must have `openspec/changes/<change>/{proposal.md,design.md,tasks.md}` plus required spec deltas. If missing, the orchestrator creates and fills it before implementation.
-- **OpenSpec is the fixture**: Risk triage, must-preserve behavior, selected/not-selected risk packs with reasons, evidence mapping, and non-goals belong in the OpenSpec change.
+- **OpenSpec is the fixture**: Risk triage, must-preserve behavior, seams under test (the upstream-declared public boundaries tests target, recorded with rationale and checked by fixture review — the implementer consumes them, never renegotiates them mid-build; a needed-but-missing seam is a reported deviation), selected/not-selected risk packs with reasons, evidence mapping, and non-goals belong in the OpenSpec change.
 - **Project profile is project-local and living**: The active risk profile lives at `openspec/project-profile.md`, not inside this skill. Phase 0.0 bootstraps it on first run by scanning the repo (Generic when nothing project-specific is found); Phase 0.5 updates it when an issue exposes a new risk surface. Beyond risk surfaces, the profile records the repo's command entry points and a verification matrix (surface -> command -> evidence); Phase 2 verification and the Phase 8 completion self-audit consume the matrix instead of re-deriving commands each run. The shared `references/project-profiles.md` holds only the Generic default and reusable example templates (SHUD/rSHUD/AutoSHUD). Never hand-fork project-specific surfaces into the shared skill.
 - **Fixture review is mandatory**: Every OpenSpec change must pass one focused read-only fixture review by a `reviewer` subagent before implementation, then `openspec validate <change> --strict --no-interactive`.
 - **Orchestrator may edit specs, not implementation**: The orchestrator may directly create/edit `openspec/changes/<change>/**`. Source, runtime tests, configs, and PR templates go through the `implementer` subagent unless the user explicitly overrides.

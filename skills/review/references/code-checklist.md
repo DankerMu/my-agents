@@ -109,6 +109,10 @@ Priority order — check the highest-impact items first:
 - Tautological tests: the assertion recomputes the expected value the same way the code does (`expect(add(a, b)).toBe(a + b)`, a hand-derived snapshot built by the same procedure) — passes by construction, zero confidence. Expected values must come from an independent source of truth: a known-good literal, a worked example, the spec.
 - Tests placed against internals instead of seams: tests belong at public boundaries (the interfaces the change's consumers actually use), not at private helpers or side channels (e.g. querying the database instead of going through the interface)
 - Tests depending on external services without mocks
+- Mocking discipline inverted: mock only at system boundaries (external APIs, time/randomness, sometimes DB/FS — prefer a test DB); mocking the project's own modules or internal collaborators couples the test to structure, not behavior. Asserting call counts/order on internals is the same smell.
+- Mockability designed away at boundaries: external clients constructed inside functions (`new StripeClient(env.KEY)` in the body) instead of injected; one generic `fetch(endpoint, options)` wrapper instead of SDK-style per-operation functions (`api.getUser`, `api.createOrder`) — the generic shape forces conditional logic inside mocks, hides which endpoints a test exercises, and loses per-endpoint type safety
+- Batch-first "shape" tests: a suite that asserts the shape of things (structure, field presence, imagined behavior) rather than user-facing behavior — the residue of writing all tests before any implementation; such tests go numb to real changes
+- More than one logical assertion per test; test names describing HOW instead of WHAT (and, where the project keeps a domain glossary such as `openspec/glossary.md`, names not using its vocabulary)
 - Tests depending on execution order
 - Bug fixes: is there a test that reproduces the original bug?
 - Test data: hardcoded test data that masks bugs

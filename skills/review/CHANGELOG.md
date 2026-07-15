@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-07-14
+
+### Added
+- Testing checklist（`references/code-checklist.md`）补齐 build 侧纪律的审查残影，adapted from `mattpocock/skills` v1.1.0 `tdd`（`mocking.md`/`tests.md`）：**mock 纪律倒置**（只在系统边界 mock，mock 自家模块/内部协作者=耦合结构而非行为；对内部断言调用次数/顺序同罪）；**边界可 mock 性被设计掉**（外部客户端函数内构造而非注入；泛型 fetcher 取代 SDK 式按操作具名函数——迫使 mock 内含条件逻辑、看不出测试行使的端点、丢失按端点类型安全）；**批量先行的"形状"测试**（横切反模式的审查残影：断言结构/想象行为而非用户可见行为，对真实变化麻木）；单测试多逻辑断言、测试名说 HOW 不说 WHAT、有领域术语表（`openspec/glossary.md`）时命名不用其词汇。
+
 ## [0.6.3] - 2026-07-11
 
 - Tighten the hybrid trigger description from 679 to 485 characters (slimming batch 6), eval-gated by the new cross-skill routing suite (`skill-lifecycle-manager/eval/cross-skill-routing-cases.json`): three A/B runs, zero per-case routing regressions, candidate 27/27 on the final run (deepseek-v4-pro-guan judge via dmxapi). All negative redirects preserved.

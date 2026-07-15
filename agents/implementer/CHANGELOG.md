@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0] - 2026-07-14
+
+### Added
+
+- Contract gains a test-discipline bullet: vertical slices at pre-agreed public seams, expected values from an independent source of truth, boundary-only mocking, refactoring deferred to the review stage.
+- Operating guide gains a **Test Discipline** section, adapted from `mattpocock/skills` v1.1.0 `tdd`: vertical slices / tracer bullet (never batch tests up front — they verify imagined behavior), consume pre-agreed seams (a missing seam is a finding, not license to test internals), independent expected values (tautology guard), boundary-only mocking with mockability design (inject clients; SDK-style per-operation functions over a generic fetcher), WHAT-naming in the project's glossary vocabulary (`openspec/glossary.md`), and red → green only while implementing.
+
 ## [1.3.3] - 2026-07-12
 
 ### Changed

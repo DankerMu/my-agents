@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-07-14
+
+- Stage 2 design.md 新增 **Sketch seams under test** 步骤（自动，不设交互停点——除 grill 门禁外流水线保持自动化）：写下测试将行使的公共边界（优先已有 seam、用最高的 seam、越少越好、理想一个），每个 seam 附一行选择理由记入 design.md；监督走既有回路（Stage 3 三路审核 + 下游 fixture review），随 fixture 流入 `subagent-workflow` 0.15.0 的 `Seams under test` 字段——测试预算据此落在关键路径。Adapted from `mattpocock/skills` v1.1.0 `to-spec`（seam 前置）与 `tdd`（seams 先定后测）；上游的"与用户确认"有意改为自动决策 + 审核留痕。
+
 ## [0.11.2] - 2026-07-14
 
 - Stage 5 子 issue 契约新增一条：行为描述遵循 `gh-create-issue` 0.4.0 的 **agent-brief 耐久性契约**（指针引用其 `references/agent-brief.md`，单一事实源，不镜像）——写接口/类型/行为契约与 `Current/Desired behavior`，不写文件路径与行号，因为 issue 在 DAG 中等待期间代码结构会被前置 issue 改变。
