@@ -11,7 +11,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.11.1"
+  version: "0.11.2"
 ---
 
 # Stage Change Pipeline
@@ -288,6 +288,7 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
    - 任务清单（从 tasks.md 提取，保留 checkbox 格式）
    - 必读文档表（从 IMPLEMENTATION_PLAN.md 或 Stage 1 收集的文档清单中提取，标注优先级和重点章节）
    - 验收标准
+   - 行为描述遵循 `gh-create-issue` 的 agent-brief 耐久性契约（其 `references/agent-brief.md`，单一事实源）：写接口/类型/行为契约与 `Current/Desired behavior`，不写文件路径与行号——issue 在 DAG 中等待期间，代码结构会被前置 issue 改变
    - `**Implementation Ready:** yes`，仅当上述契约全部满足时允许创建
 
 5. 回填 Epic 的子任务列表和依赖关系图，按模块分组展示，避免子 issue 数量增加后失去总览。
