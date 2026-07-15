@@ -3,11 +3,12 @@ name: diagnosing-bugs
 description: >
   因未知失败的诊断纪律：先建红色反馈回路，后假设。适用于难缠 bug 与性能回归——
   症状明确但原因不明、修了又复发、CI 挂但本地复现不了。核心闸门：没有一条已跑过、
-  能红的命令，禁止读代码编理论。触发词："diagnose"、"诊断这个 bug"、"为什么一直挂"、
-  "复现不了"、"性能回归"、"查根因"。不用于多代理调试编排（用 /debug 类编排工具）、
-  原因已确诊只差动手的修复（直接修），或"该做什么/怎么设计"的问题（用 grill/prototype 类）。
+  能红的命令，禁止读代码编理论。难缠 bug 可选多代理扇出模式（回路构建与假设生成并行化）。
+  触发词："diagnose"、"debug"、"诊断这个 bug"、"为什么一直挂"、"复现不了"、
+  "性能回归"、"查根因"。不用于原因已确诊只差动手的修复（直接修），
+  或"该做什么/怎么设计"的问题（用 grill/prototype 类）。
 invocation_posture: hybrid
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Diagnosing Bugs
@@ -71,9 +72,17 @@ version: 0.1.0
 - seam 缺失、暂缓项 → 按所在工作流的 deferral 路由落 issue（`subagent-workflow` 内即 issue-scribe / `gh-create-issue`）。
 - 在 `subagent-workflow` 内运行时，本 skill 是诊断词汇的 canonical：诊断任务的报告契约是**红命令+输出、最小复现、确诊假设+证据**——不含修复；修复属于其 Phase 5/6 的 fix brief。
 
+## 多代理模式（可选）
+
+编排器具备并行 subagent 能力且 bug 足够难缠（假设空间大、涉及面广）时，可以并行化两处——**红命令硬闸全局仍然有效**：
+
+- **Phase 1 回路构建**：对阶梯上的多个候选构建方式并行试探（一个 subagent 试一种），谁先产出能红的命令用谁。
+- **Phase 3 假设生成**：多视角并行生成候选假设——架构级失效点、外部先例与已知问题、代码路径分析、实验设计视角——汇总去重后仍收敛为 3-5 个排序可证伪假设，Phase 4 照旧单变量验证。
+
+有意不吸收的顺序：先出一堆假设再设计诊断去"验证"——假设先于回路正是 Phase 1 硬闸要防的失败。扇出加速的是闸门**之后**的宽度，不是绕过闸门。
+
 ## When Not To Use
 
-- 多代理调试编排 → `/debug` 类编排工具；本 skill 是单线方法论内核
 - 原因已确诊、只差动手 → 直接修，别付诊断税
 - "该做什么/怎么设计"的问题 → `grill-me` / `clarify` / prototype 类
 - 审查找缺陷 → `review` / `risk-adaptive-cross-review`；审查发现缺陷，本 skill 确诊原因
@@ -86,4 +95,4 @@ version: 0.1.0
 
 ---
 
-改编自 [`mattpocock/skills`](https://github.com/mattpocock/skills) v1.1.0 的 `diagnosing-bugs`。持久层本地化：上游的 `CONTEXT.md`/`docs/adr/` 改为本仓库的 `openspec/glossary.md` 与 `docs/adr/`。上游"把假设清单拿给用户看"的 HITL 检查点在管道（AFK）场景降级为证据记录；HITL 回路脚本保留用于独立场景。
+改编自 [`mattpocock/skills`](https://github.com/mattpocock/skills) v1.1.0 的 `diagnosing-bugs`。持久层本地化：上游的 `CONTEXT.md`/`docs/adr/` 改为本仓库的 `openspec/glossary.md` 与 `docs/adr/`。上游"把假设清单拿给用户看"的 HITL 检查点在管道（AFK）场景降级为证据记录；HITL 回路脚本保留用于独立场景。多代理模式吸收自环境侧 UltraThink Debug Orchestrator（原 `/debug` 命令，已由本 skill 取代）：保留其多视角扇出与用户确认点，丢弃其"假设先于回路"的顺序与固定四角色输出格式。
