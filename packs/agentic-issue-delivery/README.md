@@ -12,6 +12,7 @@ This pack bundles the repository's design-to-issue and issue-to-PR delivery work
 - `stage-change-pipeline`
 - `subagent-workflow`
 - `risk-adaptive-cross-review`
+- `diagnosing-bugs`
 - `gh-create-issue`
 - `clarify`
 - `blind-spot-pass`

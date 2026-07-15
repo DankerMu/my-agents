@@ -119,6 +119,8 @@ Then do a read-only audit against the OpenSpec fixture:
 
 If any issue is found, create a precise Phase 6 style fix prompt. Do not patch implementation files directly.
 
+A verification failure whose cause is not evident from the failing output is not yet a precise fix task: delegate a **diagnosis task** first (diagnosis brief in Phase 6). Guessing a fix from an undiagnosed failure is the exact anti-pattern the diagnosis gate exists to prevent.
+
 ## Phase 3: Commit and PR
 
 1. Review `git status` and `git diff`.
@@ -212,6 +214,7 @@ Rules:
 
 - `wontfix` must cite spec/design, issue text, OpenSpec non-goal, or explicit user instruction.
 - Test coverage gaps are never `wontfix`.
+- **Diagnosis gate (cause-unknown only)**: a finding or verification/CI failure whose cause is not established from the failing output enters the fix list only after a diagnosis task (Phase 6 diagnosis brief) has produced a **red-capable command already run at least once** (invocation + output pasted), a minimal repro, and a confirmed hypothesis with evidence. Ordinary findings with an exact file/line and evident cause skip this gate — no diagnosis tax on the first touch. A finding whose fix failed to close it in a prior round re-enters Phase 5 through this gate.
 - Do not produce one Phase 6 prompt per cited line when several findings share the same failure class. Merge them into one invariant or class-level closure task.
 - Determine whether a hard-gate escalation applies before writing a fix prompt:
   - `low`: no hard escalation unless a critical reusable pattern appears.
@@ -253,6 +256,7 @@ Rules:
   - Fix prompt too narrow: yes|no - <reason>
   - Reviewer finding contract vague/inconsistent: yes|no - <reason>
   - Missing regression evidence: yes|no - <reason>
+  - Cause never diagnosed (no red repro before fixes): yes|no - <reason>
   - PR too broad / should split: yes|no - <reason>
   Next corrective action:
   - <invariant closure retry | fixture update | PR split | user scope decision | reviewer downgrade with rationale>
@@ -272,6 +276,7 @@ Rules:
   - Fix prompt too narrow: yes|no - <reason>
   - Reviewer contract vague/inconsistent: yes|no - <reason>
   - Missing regression evidence: yes|no - <reason>
+  - Cause never diagnosed (no red repro before fixes): yes|no - <reason>
   - PR too broad / should split: yes|no - <reason>
 
   Gate-Level PR Strategy Review:
@@ -338,6 +343,39 @@ Report any deviation from this fix list (what/why/impact); state "no deviations"
 ```
 
 Append reported deviations to the PR description's `偏离记录` section before the next review round.
+
+For cause-unknown fixes that entered through the Phase 5 diagnosis gate, the fix entry's `Test:` field must name the diagnosis's red command: run it red before the fix, green after, and promote the minimal repro into a regression test at a correct seam — if no correct seam exists, that is itself a finding; record it and route it through deferral. Temporary instrumentation (from diagnosis or fixing) must carry a unique `[DEBUG-<tag>]` prefix and be removed before commit; `grep -r "DEBUG-"` must come back clean.
+
+Diagnosis brief template — delegated to an `implementer` subagent as a report-only task (no fix). Vocabulary is canonical in the `diagnosing-bugs` skill; the orchestrator inlines this distilled brief because leaf subagents do not invoke skills:
+
+```text
+<Required subagent boundary>
+
+# Diagnosis for PR #<N>: <failure summary>
+
+Symptom: <user-visible/CI-visible failure, quoted output>
+Scope: <files/surfaces plausibly involved; issue + OpenSpec fixture references>
+
+Discipline:
+1. Build a feedback loop FIRST: one command that goes red on this failure.
+   Prefer, in order: failing test at a reachable seam; curl/CLI + fixture diff;
+   replay of a captured trace; throwaway harness (single service, mocked deps);
+   bisect harness; differential run (old vs new / config A vs B). If you cannot
+   build a red command, report what you tried and stop — do NOT hypothesise.
+2. Minimise: cut inputs/callers/config/data one at a time until every remaining
+   element is load-bearing (removing any one turns the loop green).
+3. Hypothesise: 3-5 ranked, falsifiable hypotheses, each with a prediction
+   ("if X is the cause, changing Y makes it disappear / Z makes it worse").
+4. Instrument: one variable at a time, each probe mapped to one hypothesis;
+   debugger/REPL over logs; tag every debug log with [DEBUG-<tag>]. For
+   performance regressions: baseline measurement first, then bisect.
+
+Report (this task delivers a diagnosis, never a fix):
+- Red command: invocation + output, already run at least once
+- Minimal repro description
+- Ranked hypotheses, the confirmed one marked, with evidence
+- Instrumentation left in place ([DEBUG-<tag>] list) for the fix task to remove
+```
 
 For pattern escalation or high-risk classes, replace the narrow fix list with an invariant-closure prompt:
 
@@ -461,6 +499,8 @@ If CI fails, fetch the failing job logs once and classify the repair:
 - `semantic`: source behavior, public API/schema, production config, security/auth/path behavior, evidence meaning, or test assertion changes that alter product semantics. Return to Phase 5-6 and rerun the normal review gate after verification.
 
 Keep CI-only repair serial and minimal. If a CI failure appears to require parallel code-writing or broad multi-module edits, reclassify it as `semantic` or normal Phase 5/6 work instead of using the CI-only bypass.
+
+A CI failure that does not reproduce locally is not classified yet: run it through a diagnosis task first (Phase 6 diagnosis brief — typically a differential loop between the CI environment and local: dependency/tool versions, env vars, parallelism, timing, cache state), then classify `ci-only` vs `semantic` from the confirmed cause, not from the log's surface shape.
 
 Generate evidence locally before posting:
 

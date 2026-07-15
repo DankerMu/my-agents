@@ -5,6 +5,18 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-07-14
+
+### Added
+- **诊断闸门（cause-unknown 专用）五个绑定点**，消费新落地的 `diagnosing-bugs` 0.1.0（canonical 诊断词汇；consume-don't-fork，对齐 `risk-adaptive-cross-review` 先例）：
+  - Core Rule "Self-repair by delegation" 加限定：失败原因无法从输出确定时，先派**诊断任务**（报告契约 = 红命令+输出、最小复现、确诊假设+证据，不含修复），其报告才使 fix task 成为 "precise"。
+  - Phase 2：原因不明显的验证失败先走诊断 brief，禁止凭猜写修复任务。
+  - Phase 5：诊断闸门规则——因未知的 finding/失败需先有"已跑过一次、能红"的命令才进 fix list；有精确 file/line 且原因显然的普通 finding 不付诊断税；上一轮修复未关闭的 finding 重新过闸。
+  - Phase 6：新增**诊断 brief 模板**（implementer 子代理执行、report-only、orchestrator 内联蒸馏纪律——叶子子代理不触发技能）；因未知类修复的 `Test:` 字段硬化为"先红后绿"的红命令；插桩必须带 `[DEBUG-<tag>]`，提交前 `grep -r "DEBUG-"` 清零；seam 缺失本身就是 finding，走 deferral 路由。
+  - 两个 Retro（Review Failure / Deep Review Failure）各加归因行 "Cause never diagnosed (no red repro before fixes)"。
+  - Phase 8：本地不复现的 CI 失败先诊断（CI 环境 vs 本地的差分回路）再分类 `ci-only`/`semantic`，不按日志表面形状分类。
+- Supporting Skills 新增 `diagnosing-bugs` 条目（Phase 0-8 之外的交互式调试直接用独立技能）。
+
 ## [0.13.0] - 2026-07-06
 - New core rule "Deviations are recorded, not silent" (adapted from Thariq's implementation-notes practice): Phase 1 implementer briefs and Phase 6 fix briefs must report every departure from the plan (unexpected upstream/API behavior, non-reusable component, switched implementation path, mid-work constraint) as one line each — what/why/impact — with "no deviations" stated explicitly.
 - The PR description carries a running `偏离记录` section (seeded at Phase 3, appended by Phase 6 fix passes); Phase 4 reviewer briefs include it so review attention goes first to where the implementer chose in territory the plan did not cover; the Phase 8 Chinese work summary consumes it as a new `计划偏离` section.

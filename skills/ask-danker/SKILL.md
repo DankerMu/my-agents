@@ -3,7 +3,7 @@ name: ask-danker
 description: 本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。
 disable-model-invocation: true
 invocation_posture: manual
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Ask Danker
@@ -24,6 +24,7 @@ version: 0.1.0
 - **方向已定、要深执行计划**（跨子系统、迁移、回滚路径）→ `implementation-planning`。
 - **架构方向、技术选型、可逆性权衡** → `future-aware-architecture`。
 - **只是要把需求变成 GitHub issue** → `gh-create-issue`（含 Epic/子 issue 拆分与宽改造 expand–contract 切法）。
+- **出了毛病、原因不明**（难缠 bug、性能回归、修了又复发、CI 挂但本地复现不了）→ `diagnosing-bugs`：先建红色反馈回路后假设，确诊后修复回所在工作流；`subagent-workflow` 的修复环节内部也消费它。原因已确诊只差动手的修复不必进——直接修。
 - **多后端 AI 代码任务（Codex/Claude/Gemini 执行）** → `codeagent`。
 
 ## 仓库健康（多为手动调用）
