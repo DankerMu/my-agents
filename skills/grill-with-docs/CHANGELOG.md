@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-07-14
+
+### Changed
+- 继承铁律 #3 的事实来源措辞与 `grill-me` 0.3.2 对齐：从"codebase/文档"泛化为**环境**（codebase/文档/数据）。本 skill 的领域沉淀职责（glossary/ADR）保持仓库绑定不变。对应 `mattpocock/skills` 未发布 changeset `grilling-general-use` 对共享 grilling 基座的泛化。
+
 ## [0.2.1] - 2026-07-11
 
 - Remove the body invocation-posture restatement; posture lives in frontmatter/description.

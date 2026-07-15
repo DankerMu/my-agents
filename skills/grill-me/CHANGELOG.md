@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-07-14
+
+### Changed
+- 泛化适用范围：压测靶子从软件 plan/design 放宽到**任何计划、决策或想法**（description 与开篇明确"不限软件"）；事实来源措辞从 codebase 泛化为**环境**（codebase、文档、数据、其它已有产物），铁律 #3、锚定靶子、交叉核对步骤同步改写，审讯技法不变。Adapted from `mattpocock/skills` 未发布 changeset `grilling-general-use`（post-v1.1.0）。
+
 ## [0.3.1] - 2026-07-11
 
 - Remove the body invocation-posture restatement; posture lives in frontmatter/description.

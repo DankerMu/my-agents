@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-14
+
+### Added
+- Explore 步新增**编辑热度过滤（YAGNI scope）**：deletion test 之后、进报告之前，按 `git log --oneline --since="12 months ago" -- <路径>` 查每个 candidate 的编辑热度——近 12 个月零提交的休眠区域不进报告（用户明确点名要审的区域除外），仅 1-2 次提交的降级为 `Speculative` 并在 card 标注热度。理由：没人碰的代码里的 deepening opportunity 是永远不会兑现的 refactor，leverage 只在持续编辑的地方兑付；报告不整理仓库的休眠角落。Adapted from `mattpocock/skills` 未发布 changeset `yagni-scope-improve-architecture`（post-v1.1.0）。
+
 ## [0.3.1] - 2026-07-11
 
 - Remove the body invocation-posture restatement; posture lives in frontmatter/description.
