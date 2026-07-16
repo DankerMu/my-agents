@@ -3,7 +3,7 @@ name: ask-danker
 description: 本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。
 disable-model-invocation: true
 invocation_posture: manual
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Ask Danker
@@ -54,12 +54,12 @@ version: 0.1.1
 
 ## 跨会话
 
-上下文将满时：阶段间用原生 compact；要开新会话就先让当前会话产出一份简短交接摘要（已定决策、开放项、下一步），新会话从摘要接续。并行实现用 `git-worktree-workflows` 隔离工作区。
+上下文将满时：同一会话内的阶段过渡用原生 compact；**要开新会话/换 agent 续跑 → `/handoff`**——把会话独有状态（已定决策、工作流计数器、已排除路径、下一步）压成交接文档，issue 工作流中写到 `.workplans/` 证据束旁，新会话第一条消息加载接续。并行实现用 `git-worktree-workflows` 隔离工作区。
 
 ## User-invoked 清单
 
 以下 skill 设了 `disable-model-invocation: true`——只能由你 `/name` 调用，模型不会自动触发，也不占常驻上下文：
 
-`ask-danker`（本 skill）、`agentic-development`、`git-worktree-workflows`、`project-instruction-bootstrap`、`prompt-engineering`、`control-plane-auditor`、`repo-entropy-audit`。
+`ask-danker`（本 skill）、`agentic-development`、`git-worktree-workflows`、`handoff`、`project-instruction-bootstrap`、`prompt-engineering`、`control-plane-auditor`、`repo-entropy-audit`。
 
 > 维护约定：新增、改名、删除任何 skill，或改动上述任何流的走向时，必须回查本地图并更新——路由器撒谎比没有路由器更糟。校验器会检查每个 user-invoked skill 都出现在本地图中。

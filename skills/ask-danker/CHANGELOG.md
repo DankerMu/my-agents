@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-07-16
+
+### Changed
+
+- 登记新 skill `handoff` 0.1.0：跨会话一节由"手工产出交接摘要"改为指向 `/handoff`（交接文档含工作流计数器与已排除路径，issue 工作流中写到证据束旁）；user-invoked 清单加入 `handoff`。
+
 ## [0.1.1] - 2026-07-14
 
 - On-ramps 新增 `diagnosing-bugs` 路由（"出了毛病、原因不明"——难缠 bug、性能回归、CI 挂但本地复现不了），注明 `subagent-workflow` 修复环节内部消费它，以及"原因已确诊直接修、不付诊断税"的反路由。
