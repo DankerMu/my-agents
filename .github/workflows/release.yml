@@ -37,7 +37,7 @@ jobs:
             [ -f "$dir/CHANGELOG.md" ] || continue
             SKILL_NAME=$(basename "$dir")
             # Extract the latest version section
-            SECTION=$(awk '/^## \[/{if(found) exit; found=1} found' "$dir/CHANGELOG.md")
+            SECTION=$(awk '/^## \[[0-9]/{if(found) exit; found=1} found' "$dir/CHANGELOG.md")
             if [ -n "$SECTION" ]; then
               NOTES="${NOTES}### ${SKILL_NAME}\n${SECTION}\n\n"
             fi
@@ -46,7 +46,7 @@ jobs:
           for dir in agents/*/; do
             [ -f "$dir/CHANGELOG.md" ] || continue
             AGENT_NAME=$(basename "$dir")
-            SECTION=$(awk '/^## \[/{if(found) exit; found=1} found' "$dir/CHANGELOG.md")
+            SECTION=$(awk '/^## \[[0-9]/{if(found) exit; found=1} found' "$dir/CHANGELOG.md")
             if [ -n "$SECTION" ]; then
               NOTES="${NOTES}### ${AGENT_NAME} (agent)\n${SECTION}\n\n"
             fi
@@ -55,7 +55,7 @@ jobs:
           for dir in hooks/*/; do
             [ -f "$dir/CHANGELOG.md" ] || continue
             HOOK_NAME=$(basename "$dir")
-            SECTION=$(awk '/^## \[/{if(found) exit; found=1} found' "$dir/CHANGELOG.md")
+            SECTION=$(awk '/^## \[[0-9]/{if(found) exit; found=1} found' "$dir/CHANGELOG.md")
             if [ -n "$SECTION" ]; then
               NOTES="${NOTES}### ${HOOK_NAME} (hook)\n${SECTION}\n\n"
             fi
@@ -64,7 +64,7 @@ jobs:
           for dir in packs/*/; do
             [ -f "$dir/CHANGELOG.md" ] || continue
             PACK_NAME=$(basename "$dir")
-            SECTION=$(awk '/^## \[/{if(found) exit; found=1} found' "$dir/CHANGELOG.md")
+            SECTION=$(awk '/^## \[[0-9]/{if(found) exit; found=1} found' "$dir/CHANGELOG.md")
             if [ -n "$SECTION" ]; then
               NOTES="${NOTES}### ${PACK_NAME} (pack)\n${SECTION}\n\n"
             fi
