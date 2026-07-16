@@ -5,6 +5,32 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-07-16
+
+### Added
+
+- **轮间 lens 轮换（带测量的试运行）**：修复后复审轮的 reviewer 组合从"与 Phase 4 同配置重跑"改为**钉死核心 + 自由槽轮换**——fixture 风险包选中的 lens 每轮必在（承担修复回归召回），其余槽位轮换为本 PR 尚未用过的 reviewer 包（同 lens 轮次共享盲区，轮换以零边际成本买联合召回）。禁止轮换掉任何钉死的风险包 lens。落点：phase-flow Phase 4 review rounds / Phase 6.5、phase-4-cross-review follow-up 规则。
+- **日志归因字段**：`review-loop-log.jsonl` 行新增 `round_lenses`（逐轮实际 lens 组合）与 `catches`（每条 net-catch finding 的轮次/产出 lens/失效类/严重度），把"后续轮的捕获来自钉死核心还是轮换进来的 lens"变成可查询事实。
+- **轮换 keep/cut 裁决标准**（沿用既有 ADR 人工决策机制，样本 ≥8 个多轮 PR）：后续轮捕获集中于轮换 lens → 留任；几乎全部来自钉死核心对修复区新代码的回归召回 → 轮换无收益，记录 ADR 并回退为 round-1 同配置。试运行政策靠机制论证上线，靠净捕获归因数据留任。
+
+## [0.18.0] - 2026-07-16
+
+### Changed
+
+- **Phase 4.5 verifier 从 per-finding 改为 per-failure-class 批量**：去重后的 candidate 先按 failure class 分组，每个 class 批次一个 `verifier` 子代理，批内至多 5 条（超出拆批；单条 class 退化为单条批，行为同旧版）。成本随 class 聚类因子下降；同 class 兄弟 finding 共享证据基，同一验证者一起裁决还能提高 verdict 一致性、捞出 dedup 漏掉的近重复。
+- 逐条裁决语义不变且硬化：每条 candidate 一个独立 verdict（CONFIRMED/PLAUSIBLE/REFUTED）+ 逐条证据，"批级一口价"判定无效、整批重跑；批内发现同一缺陷的两条 candidate 须各自 verdict 并在 note 标注重复，不得静默合并。
+- 独立性规则随批量调整：verifier 不得是产出**该批内任一** candidate 的 reviewer；编排器不得代裁不变。verdict 持久化从 `verify-<CANDIDATE_ID>.md` 改为按批 `verify-<CLASS_ID>.md`（逐条 verdict 表）。
+- 同步三处：SKILL.md 核心规则、`phase-flow.md` Phase 4.5 步骤 3/4、`phase-4-cross-review.md` verifier 模板（新增 `<CLASS_ID>`/`<CANDIDATE_BLOCKS>` 变量与批量输出表）。
+
+## [0.17.0] - 2026-07-16
+
+### Added
+
+- **Review Failure Retro 新增第四个 failure shape `converging`**，修补 0.16.0 三轮 gate 在健康收敛轨迹上的误触发：运行数据表明多轮 review 每轮都有净捕获，"第 3 轮不 clean"是常态而非病态信号，但 0.16.0 的三个 shape（breadth/depth/noise）没有一个描述健康收敛，默认动作（拆 PR/重构/降级）对它全是错误处方。
+- `converging` 判据（须在 retro 中列出逐轮数字作证据）：各轮已验证 finding 无同类复发，数量与最高严重度逐轮不增、至少一项严格下降；第 3 轮出现任一 critical/major 或任何同类复发即丧失资格。
+- `converging` 默认动作：**有界延长**——ordinary loop 至多再跑 2 轮 comprehensive cross-review，retro 只写一段收敛趋势、跳过策略章节；每 PR 至多选择一次。第 5 轮仍不 clean 则重进 gate，`converging` 不再可选，必须从 breadth/depth/noise 三选一。实质效果：3→5 轮之间的梯子由收敛证据驱动重建，gate 对病态轨迹仍是硬转向，对健康收敛只收一段话的税。
+- Post-gate budget 拆分为两支：pivot 支（breadth/depth/noise，纠正动作后至多一轮、仍有 critical/major 则升级重进）与 converging 支（硬 2 轮上限、round 5 强制重进且排除 converging）。
+
 ## [0.16.0] - 2026-07-16
 
 ### Changed
