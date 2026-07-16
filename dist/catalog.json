@@ -860,7 +860,7 @@
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
       "description": "End-to-end GitHub issue implementation workflow orchestrated by Claude Code or Codex, delegating implementation, cross-review, and finding verification to subagents (implementer, reviewer, verifier). Covers OpenSpec fixtures, risk-adaptive review, verification, PR evidence, CI, and human-gated merge.",
-      "version": "0.15.0",
+      "version": "0.16.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1397,5 +1397,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-15T03:54:47.295Z"
+  "generatedAt": "2026-07-16T15:20:41.450Z"
 }

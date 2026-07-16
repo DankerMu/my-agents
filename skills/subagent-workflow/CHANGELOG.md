@@ -5,6 +5,14 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-07-16
+
+### Changed
+- **审查升级 gate 从 5 轮提前到 3 轮，四文档包降为单份 retro**：删除五轮硬 gate 全套（Deep Review Failure Retro + Gate-Level PR Strategy Review + Invariant Surface Inventory + Regression Matrix 四文档包及 post-five budget）——触发太晚、仪式过重。新的唯一硬 gate：第 3 轮 comprehensive cross-review 仍不 clean（不再限定同一 failure class）即停 ordinary loop，持久化一份升级版 Review Failure Retro 后按归因执行纠正动作。
+- **Review Failure Retro 升级**：模板新增 PR/SHA/轮次证据行与 `Failure shape` 归因（breadth 分散 / depth 同 invariant 反复 / noise 评审噪音），并绑定默认动作映射——breadth 默认**拆 PR**（子 PR 以新 PR 身份重进工作流、round counter 归零，父 PR 证据束记录拆分方案与 finding 归属）；depth 默认 refactor/redesign 或诊断任务（**禁止拆分反复失败的 invariant**：每个子 PR 都继承同一缺陷）；noise 默认 reviewer-pattern downgrade 并记录理由。偏离默认动作须在 retro 中记录原因。
+- Post-gate budget 随 gate 前移：纠正动作后至多一轮 comprehensive cross-review，仍有 critical/major 则带更新后的 retro 重进 gate 并选更强动作，不得回退到逐行修补。
+- SKILL.md 不可协商项同步：由"第 6 轮前必须持久化 Gate-Level 包"改为"第 4 轮前必须持久化 Review Failure Retro 并执行其纠正动作"；round counter 不重置规则补充唯一合法例外——gate 选定的 PR split 产生的子 PR。
+
 ## [0.15.0] - 2026-07-14
 
 ### Added
