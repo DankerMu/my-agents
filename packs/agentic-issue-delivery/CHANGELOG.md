@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-07-16
+
+### Added
+
+- 收入 `handoff` 0.1.0（user-invoked）：issue 工作流的跨会话续跑——`/handoff` 把会话独有状态（决策、round counter、gate 状态、已排除路径、下一步）压成交接文档写到 `.workplans/` 证据束旁，新会话加载接续；与 `git-worktree-workflows` 分别覆盖跨会话与并行两类续跑场景。
+
 ## [0.10.0] - 2026-07-14
 
 - Add `diagnosing-bugs`（0.1.0，ported from `mattpocock/skills` v1.1.0）: 因未知失败的诊断纪律（红色反馈回路优先、红命令硬闸、可证伪假设、seam 纪律的回归测试）。`subagent-workflow` 0.14.0 在 Phase 2/5/6/8 以诊断闸门消费它（canonical 词汇技能模式，同 `risk-adaptive-cross-review`）；独立场景经 on-ramp 直接调用。
