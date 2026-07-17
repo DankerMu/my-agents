@@ -25,7 +25,14 @@ if not state.get("enabled", True) or not state.get("locked"):
     sys.exit(0)
 
 tool_input = data.get("tool_input") or {}
-subagent = (tool_input.get("subagent_type") or "").strip().lower()
+# Claude Code Task carries `subagent_type`; Codex collaboration.spawn_agent /
+# followup_task payloads name the agent under one of the other keys.
+subagent = ""
+for key in ("subagent_type", "agent", "agent_type", "agent_name", "name", "role", "target_agent"):
+    value = tool_input.get(key)
+    if isinstance(value, str) and value.strip():
+        subagent = value.strip().lower()
+        break
 blocked = [s.lower() for s in state.get("blockedSubagents") or ["implementer", "reviewer"]]
 if subagent not in blocked:
     sys.exit(0)

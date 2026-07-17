@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-17
+
+### Added
+
+- **Codex fragment**：matcher `(collaboration\.)?(spawn_agent|followup_task)`，锁定期间拦截 Codex 的子代理创建与后续任务派发。agent 名从 payload 常见字段（`agent`/`agent_type`/`agent_name`/`name`/`role`/`target_agent`，Claude 的 `subagent_type` 仍优先）提取；未命中候选字段时 fail-open，退回 CLI 当场拒绝 + pre-merge 兜底。确认真实 payload 字段后应收紧候选集。
+
 ## [0.1.0] - 2026-07-17
 
 ### Added

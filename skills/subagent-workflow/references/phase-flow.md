@@ -144,7 +144,7 @@ Include the PR description's `偏离记录` section in every reviewer brief: dev
 Review rounds:
 
 - Round 1 uses the risk-adaptive reviewer count above.
-- After a Phase 6 fix pass, rerun cross-review before Phase 7 with the same risk-adaptive reviewer count on the current head. The follow-up mix follows the **pinned-core + rotating-free-slots** policy (instrumented trial): lenses selected by the fixture's risk packs are pinned and present in every round; the remaining free slots rotate to complementary lenses from reviewer packs not yet used on this PR (`risk-adaptive-cross-review` `reviewer-packages.md`). Rotation is additive on the free dimension only — never rotate out a pinned risk-pack lens (same-lens rounds share blind spots; rotation buys union recall at zero marginal cost, but only the pinned core carries fix-regression recall). Record each round's lens mix in the evidence bundle; the policy is adjudicated by the review-loop log's lens attribution (Phase 8), keep/cut via the existing ADR mechanism.
+- After a Phase 6 fix pass, rerun cross-review before Phase 7 with the same risk-adaptive reviewer count on the current head (classified exceptions rerun only their own gates: Phase 8 `ci-only` repairs and Phase 7 `local-repair` fixes). The follow-up mix follows the **pinned-core + rotating-free-slots** policy (instrumented trial): lenses selected by the fixture's risk packs are pinned and present in every round; the remaining free slots rotate to complementary lenses from reviewer packs not yet used on this PR (`risk-adaptive-cross-review` `reviewer-packages.md`). Rotation is additive on the free dimension only — never rotate out a pinned risk-pack lens (same-lens rounds share blind spots; rotation buys union recall at zero marginal cost, but only the pinned core carries fix-regression recall). Record each round's lens mix in the evidence bundle; the policy is adjudicated by the review-loop log's lens attribution (Phase 8), keep/cut via the existing ADR mechanism.
 - Do not narrow follow-up rounds to only the risk areas touched by the fix. A prior round can miss issues outside the fix area, so each post-fix round must be a comprehensive review of the updated PR diff and OpenSpec fixture before Phase 7.
 - A cross-review round is clean only when it has no actionable findings. Critical/major findings and test coverage gaps always return to Phase 5-6. Minor findings must be fixed or explicitly deferred with issue/OpenSpec/user-instruction basis. When the `issue-scribe` agent is installed, "deferred with issue basis" means delegating the deferred finding to `issue-scribe` (it verifies, dedups, and files the tracked issue) and recording the returned issue URL in the evidence bundle; a deferral with neither an issue URL nor a recorded reason is not a valid deferral.
 - When a comprehensive cross-review round comes back clean, record `Last clean reviewed SHA: <sha>` in the evidence bundle. This recorded SHA — not the frozen final HEAD — is the rollback anchor the Phase 8 pre-merge gate resets to if a later fix round corrupts a clean reviewed state.
@@ -429,7 +429,7 @@ If the invariant audit reports findings, return to Phase 6 with an invariant-clo
 
 ## Phase 6.5: Repeat Cross-Review After Fixes
 
-After a Phase 6 fix pass (and Phase 6.2 when a pattern escalation triggered it), rerun a full Phase 4-style comprehensive cross-review on the current head, except for CI-only repairs classified in Phase 8. Use the same risk-adaptive reviewer count as Phase 4 with the pinned-core + rotating-free-slots mix (Phase 4 review rounds); do not narrow the rerun to only the fixed area, because a prior round can miss issues outside it.
+After a Phase 6 fix pass (and Phase 6.2 when a pattern escalation triggered it), rerun a full Phase 4-style comprehensive cross-review on the current head, except for CI-only repairs classified in Phase 8 and `local-repair` fixes classified in Phase 7. Use the same risk-adaptive reviewer count as Phase 4 with the pinned-core + rotating-free-slots mix (Phase 4 review rounds); do not narrow the rerun to only the fixed area, because a prior round can miss issues outside it.
 
 When the rerun round comes back clean, record `Last clean reviewed SHA: <sha>` in the evidence bundle as the rollback anchor (see the Phase 4 review-round rule).
 
@@ -443,9 +443,13 @@ Mandatory for every PR.
 2. Spawn a clean-context `reviewer` subagent for read-only final review. It must not edit files, invoke this workflow, use skills, or spawn further subagents.
 3. Provide PR number, branch, full SHA, diff scope/changed files, OpenSpec files, fixture level/risk packs, all cross-review round summaries, the verified-findings list, and fix summary.
 4. Run this as the **Gap Sweep** defined in `risk-adaptive-cross-review` (`SKILL.md` → Synthesis): a fresh clean-slate pass with the already-verified findings visible, looking only for real defects not already listed — especially removed behavior never re-established, caller/callee contract drift, boundary/error/cleanup paths, async ordering and cancellation, cross-tenant/permission paths, migration/backfill, cache invalidation, and wrapper recursion. It must also confirm test coverage vs `tasks.md` and pre-existing consumer compatibility. Apply the Reject When precision gate; do not pad when the sweep is clean.
-5. Convert critical/major findings into Phase 6 style fix prompts.
-6. Commit each logical fix after verification and push.
-7. Do not post PR comments until Phase 7 is complete.
+5. Classify each critical/major finding's fix before delegating (same spirit as the Phase 8 `ci-only`/`semantic` split):
+   - `local-repair`: test-only or evidence-only additions, or a single-file local fix with a covering test that touches no contract, shared helper, `Invariant Matrix` surface, auth/path/publish behavior, or public API. For `high`/`broad-expanded` fixtures only test/evidence-only changes qualify — any source behavior change is `semantic`.
+   - `semantic`: everything else.
+6. `local-repair` path: delegate the fix (Phase 6 style prompt), run Phase 2 verification, commit/push, record the classification and rationale in the evidence bundle, then rerun the Phase 7 final review on the new head. No comprehensive cross-review round is required and the round counter does not move. At most two `local-repair` loops per PR; a third Phase 7 finding pass is `semantic` by definition — a gap sweep that keeps finding issues is a signal, not a nuisance.
+7. `semantic` path: return to Phase 5-6; the post-fix Phase 6.5 comprehensive round applies (it increments the round counter and the three-round hard-gate machinery), then rerun Phase 7 on the new head.
+8. Commit each logical fix after verification and push.
+9. Do not post PR comments until Phase 7 is complete.
 
 ## Phase 8: Evidence, CI, Merge Gate
 
@@ -548,9 +552,9 @@ Before requesting merge approval or running a pre-authorized auto-merge, verify 
 
 - The review track is satisfied by EITHER (a) or (b):
   - **(a) SHA-matched review artifacts**, all present for the frozen final HEAD:
-    - The PR `Agent Review` section lists the reviewer agents actually used and a `Reviewed head SHA` equal to the frozen `FULL_SHA`.
-    - The Phase 4.5 verifier verdict table for the final head is persisted in the review evidence directory (`<REVIEW_DIR>`, default `.workplans/<issue-or-pr>/review/`).
-    - The latest comprehensive cross-review round is clean (no actionable findings) and the Phase 7 final review is complete on the final head.
+    - The PR `Agent Review` section lists the reviewer agents actually used and a `Reviewed head SHA` that is either the frozen `FULL_SHA` or the recorded `Last clean reviewed SHA` with every later commit recorded as a Phase 8 `ci-only` repair or Phase 7 `local-repair` fix (an unclassified commit after the clean SHA is a gate failure).
+    - The Phase 4.5 verifier verdict tables for the comprehensive rounds actually run are persisted in the review evidence directory (`<REVIEW_DIR>`, default `.workplans/<issue-or-pr>/review/`).
+    - The latest comprehensive cross-review round is clean (no actionable findings) at the recorded `Last clean reviewed SHA`, and the Phase 7 final review is complete on the frozen final HEAD.
   - **(b) "review not required" record**: the fixture risk tier is `none` and the Phase 2 audit found no risk, and that fact is persisted in the evidence bundle against the frozen `FULL_SHA`. This is the only path that legitimately skips Phase 4/4.5/7 (see Phase 4 `none` handling and the Phase 2 audit).
   - Missing both (a) and (b) is a skip block: do not merge, and record it for the accountability log.
 - No posted evidence presents stale findings as current.

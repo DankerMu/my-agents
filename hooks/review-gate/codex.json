@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "(collaboration\\.)?(spawn_agent|followup_task)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .codex/hooks/review-gate/review-gate.sh",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

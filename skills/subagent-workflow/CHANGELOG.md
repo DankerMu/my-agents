@@ -5,7 +5,15 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
-## [0.21.0] - 2026-07-17
+## [0.22.0] - 2026-07-17
+
+### Added
+
+- **Phase 7 修复分级**（复用 Phase 8 `ci-only`/`semantic` 的分级精神）：终审 Gap Sweep 发现的 critical/major 修复先分类——`local-repair`（纯测试/证据补充，或单文件局部修复+覆盖测试，不触合同/共享 helper/Invariant Matrix/auth/path/publish/公共 API；`high`/`broad-expanded` fixture 下仅测试/证据类可入）只重跑 Phase 7 终审于新 head，不占 comprehensive 轮次、round counter 不动，每 PR 至多两次 local 循环，第三次 Phase 7 仍有 finding 即按 `semantic` 处理（gap sweep 反复出 finding 是信号不是噪音）；`semantic` 回 Phase 5-6 走全量 Phase 6.5 comprehensive 轮（计入三轮硬门）后重跑 Phase 7。
+
+### Fixed
+
+- **Pre-merge 硬门 SHA 条款与 ci-only 旁路的潜在矛盾**：原条款要求 clean comprehensive round 与 `Agent Review` 的 Reviewed head SHA 都等于冻结 FULL_SHA，但 Phase 8 `ci-only` 修复（明文"不为此类重跑 cross-review"）落地后 SHA 必然不匹配，字面上永远过不了门。改为：Reviewed head SHA 可为冻结 FULL_SHA **或**记录的 `Last clean reviewed SHA`——前提是其后每个 commit 都被记录为 Phase 8 `ci-only` 或 Phase 7 `local-repair`（存在未分类 commit 即 gate failure）；Phase 4.5 verdict 表按实际跑过的 comprehensive 轮持久化；Phase 7 终审必须完成于冻结 HEAD。SKILL.md Core Rule 同步。
 
 ### Added
 
