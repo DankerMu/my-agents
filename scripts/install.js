@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const fs = require("node:fs");
 const path = require("node:path");
 
 const { ALL_PLATFORMS, DEFAULT_PROJECT_MANIFEST, USAGE } = require("./lib/install-shared");
@@ -217,9 +218,19 @@ async function runInstallCli(argv = process.argv) {
 
   if (ok && !isUninstall && scope === "project" && type !== "project") {
     console.log("");
-    console.log(
-      "Next: run the `project-instruction-bootstrap` skill to bootstrap or align this project's CLAUDE.md / AGENTS.md (it presents a plan/diff before writing)."
+    let hint =
+      "Next: run the `project-instruction-bootstrap` skill to bootstrap or align this project's CLAUDE.md / AGENTS.md (it presents a plan/diff before writing).";
+    const bootstrapDir = path.join(
+      process.cwd(),
+      ".claude",
+      "skills",
+      "project-instruction-bootstrap"
     );
+    if (!fs.existsSync(bootstrapDir)) {
+      hint +=
+        " It is not installed in this project yet: `npx my-agents install skill project-instruction-bootstrap --scope project`.";
+    }
+    console.log(hint);
   }
 
   if (!ok) {
