@@ -5,6 +5,18 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-07-17
+
+### Added
+
+- **Fixture artifact 集按 level 缩放**（动机：审查侧早已按 fixture level 缩放人数与风险包，fixture 本身的 artifact 集却始终全套——小 PR 与大改动同价，是 TDD 微循环同款的"过程重量与风险脱钩"病）。`none`/`compact`：`proposal.md` + `tasks.md` + **一个最小 spec delta**（单 requirement + 单 `#### Scenario:` 块），`design.md` 豁免（豁免理由一行写进 proposal，风险包勾选落 tasks.md）；`expanded` 全套；`high`/`broad-expanded` 全套 + Invariant Matrix（现状不变）。分级经 openspec CLI 1.3.1 实测背书：validator 硬性要求 ≥1 delta（首版"compact 豁免 delta"方案被实测否决——delta 恰是唯一被 `archive` 沉淀进主 spec 的 artifact，最不该省），`design.md` 实测可选。省掉的是四件里最重的自由散文，保留的是机器要校验、要归档的部分。落点：issue-risk-contract Fixture Level Rules + compact 模板 + fixture review 输入清单、phase-flow Phase 0 第 6 条。
+
+## [0.26.1] - 2026-07-17
+
+### Fixed
+
+- **`openspec instructions` 调用形式与 CLI 1.3.x 不兼容**：phase-flow Phase 0 与 issue-risk-contract 中的 `openspec instructions --change <name>` 缺失必填的 `<artifact>` 位置参数，实际 CLI 报 "Missing required argument \<artifact\>"。改为 `openspec instructions <artifact> --change <change-name>`（artifact ∈ proposal | design | specs | tasks，按待撰写的 artifact 逐个执行），与 stage-change-pipeline 既有的正确用法对齐。同块的 `openspec new change`/`validate`/`show` 经 1.3.1 实测兼容，未动。
+
 ## [0.26.0] - 2026-07-17
 
 ### Changed

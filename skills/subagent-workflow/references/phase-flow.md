@@ -46,9 +46,10 @@ The profile is a living document, not a one-shot. It does not change per issue, 
 5. If missing, create the change:
    ```bash
    openspec new change <change-name> --description "<short issue summary>"
-   openspec instructions --change <change-name>
+   # artifact is required: proposal | design | specs | tasks - run once per artifact being authored
+   openspec instructions <artifact> --change <change-name>
    ```
-6. The orchestrator may directly edit `openspec/changes/<change>/**`; keep artifacts concise and focused.
+6. The orchestrator may directly edit `openspec/changes/<change>/**`; keep artifacts concise and focused. Author only the artifact set the fixture level requires (`issue-risk-contract.md` Fixture Level Rules): `none`/`compact` = `proposal.md` + `tasks.md` + one minimal spec delta (`design.md` exempt); `expanded` and above = full set.
 7. Ensure `tasks.md` maps every selected risk pack to a scenario-level test, verification command, or explicit non-goal with input and expected output.
 8. For high or broad-expanded repair intensity, add a compact `Invariant Matrix` to the fixture before implementation. This is a hard gate, not an optional review aid:
    ```text
