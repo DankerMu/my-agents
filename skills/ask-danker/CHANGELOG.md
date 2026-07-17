@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-07-16
+
+### Changed
+
+- user-invoked 清单登记 `improve-codebase-architecture` 0.5.0（hybrid → manual 翻转）；仓库健康节的路由描述不变——该节本就标注"多为手动调用"。
+
 ## [0.1.2] - 2026-07-16
 
 ### Changed

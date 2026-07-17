@@ -72,7 +72,7 @@
       "path": "skills/ask-danker",
       "displayName": "Ask Danker",
       "description": "本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。",
-      "version": "0.1.2",
+      "version": "0.1.3",
       "maturity": "experimental",
       "categories": [
         "productivity",
@@ -475,7 +475,7 @@
       "path": "skills/improve-codebase-architecture",
       "displayName": "Improve Codebase Architecture",
       "description": "基于“深模块”哲学寻找架构改进点：用 explorer subagent 扫描 codebase，对照 openspec/glossary.md 术语与 docs/adr/ 决策，找出 shallow modules 并提出 deepening 重构（提升 testability 与 AI 可导航性），产出可视化 HTML 评审并进入 grill 对话逐个落地；落定的 deepening 可经 gh-create-issue / stage-change-pipeline 变成可追踪工作项。Use to improve architecture, find refactoring opportunities, consolidate tightly-coupled modules, make a codebase more testable, or turn a settled deepening into trackable issues.",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "maturity": "experimental",
       "categories": [
         "refactoring",
@@ -1414,5 +1414,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-17T02:41:23.467Z"
+  "generatedAt": "2026-07-17T02:54:36.161Z"
 }

@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-16
+
+### Changed
+
+- **翻为 user-invoked**（`disable-model-invocation: true`，posture hybrid → manual）：使用形态是"扫描 → HTML 评审 → grill 对话"的人主导治理会话，模型中途自动拉起属于惊吓而非帮助；backbone 引用为 0，`diagnosing-bugs` 对它只是修复落地后的下游路由（路牌非调用），与同族 `repo-entropy-audit` 的 manual 姿态对齐。入口变为 `/improve-codebase-architecture`，`ask-danker` 0.1.3 已登记进 user-invoked 清单（仓库健康节路由不变）。常驻上下文省 ~380 字符描述。
+
 ## [0.4.0] - 2026-07-14
 
 ### Added

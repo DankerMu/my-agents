@@ -6,8 +6,9 @@ description: >
   产出可视化 HTML 评审，再进入 grill 对话逐个落地；落定的 deepening 可经 gh-create-issue / stage-change-pipeline 变成可追踪工作项。
   触发词："improve architecture"、"找重构机会"、"合并紧耦合模块"、"让代码更可测"、"架构评审"、"把重构拆成 issue"。
   不用于纯需求澄清（用 clarify）或纯方向选型（用 future-aware-architecture）。
-invocation_posture: hybrid
-version: 0.4.0
+disable-model-invocation: true
+invocation_posture: manual
+version: 0.5.0
 ---
 
 # Improve Codebase Architecture
