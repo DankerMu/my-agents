@@ -2,7 +2,7 @@
 name: subagent-workflow
 description: >
   GitHub issue → verified PR workflow: the orchestrator delegates implementation, cross-review, and finding verification to the implementer/reviewer/verifier subagents, with mandatory OpenSpec fixtures, risk-adaptive review, CI, and human-gated merge. Use to implement a GitHub issue or process the next DAG issue ("implement #XX", "处理下一个issue"). Not for docs/spec-only work, hotfixes that skip review, or Codex-implements-under-Claude-orchestration (use cc-cx-workflow).
-version: 0.20.0
+version: 0.21.0
 ---
 
 # Subagent Issue Workflow
@@ -17,7 +17,7 @@ The orchestrator (Claude Code or Codex) runs the issue workflow. Code/test/confi
 - `gh` CLI authenticated.
 - `git`.
 - Project build/test toolchain.
-- Optional: the `worktree-guard` hook (mechanical write fence for parallel worktree delegation), the `monitor` agent (cheap-model watchdog for harness-external waits such as CI), and the `issue-scribe` agent (follow-up capture: deferred findings and known limits become tracked issues). When installed, this workflow wires them in; when absent, the corresponding discipline stays orchestrator-enforced.
+- Optional: the `worktree-guard` hook (mechanical write fence for parallel worktree delegation), the `review-gate` hook (mechanical spawn fence for the three-round hard gate: while the `review_gate.py` state says locked, implementer/reviewer spawns are denied until the retro is registered), the `monitor` agent (cheap-model watchdog for harness-external waits such as CI), and the `issue-scribe` agent (follow-up capture: deferred findings and known limits become tracked issues). When installed, this workflow wires them in; when absent, the corresponding discipline stays orchestrator-enforced.
 
 Read the `implementer`, `reviewer`, and `verifier` agent definitions before the first delegation; they carry the per-role contracts this workflow relies on.
 

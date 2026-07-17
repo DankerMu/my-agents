@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-07-17
+
+### Added
+
+- 新增 hook 成员 `review-gate` 0.1.0：`subagent-workflow` 三轮硬门的机械派发拦截（锁定期间拒绝 implementer/reviewer 子代理派发），与 skill 0.21.0 打包的 `review_gate.py` 状态机 CLI 配套。引用完整性：由主干 skill `subagent-workflow`（Prerequisites 可选件 + Phase 4/5/8 挂接）直接引用，与 `worktree-guard` 同一"可选机械底座"模式。
+
 ## [0.12.0] - 2026-07-16
 
 ### Removed

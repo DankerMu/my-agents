@@ -5,6 +5,14 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-07-17
+
+### Added
+
+- **三轮硬门机械化：打包 `scripts/review_gate.py` 状态机 CLI**（stdlib-only、确定性、随 skill 双平台分发）。编排器 Phase 4 开始 `open --pr`，每轮 `record-round`（自动检测跨轮同类复发、追加 ledger 行、锁定时 exit 2 当场反馈），retro 持久化后 `record-retro`（机械校验 `converging` 资格：同类复发/第 3 轮起 critical-major/逐轮趋势单调性/每 PR 一次/第 5 轮排除，任一条即拒绝，并按 shape 装填 post-gate 预算），working-day/same-invariant 触发用 `lock --reason`，合并后 `close`。锁定状态预计算进 `.review-gate.json` 供 hook 消费。非法转移（锁定期间记录的轮次）带违规标记写入 ledger 并保持锁定——拦截在动作瞬间，不是 pre-merge 末端。
+- **配套 `review-gate` hook 挂接**（新 hook 包 0.1.0，可选，Claude Code）：锁定期间 `Task` 派发按 `subagent_type` 机械拒绝 implementer/reviewer；hook 零 gate 逻辑，只读 CLI 预计算字段。未安装时纪律回退为编排器自持（与 worktree-guard/monitor/issue-scribe 同一可选模式）。Codex 侧无稳定 spawn 工具名可 match，机械层由 CLI 当场拒绝承担。
+- 需求驱动单测 15 例（`tests/test_review_gate.py`，经 `scripts/run_unit_tests.py` 进入仓库共享验证链）：三轮锁定、锁定期违规记录、pivot/converging 预算与重锁、converging 五类取消资格、手动触发、参数与文件校验、开闭生命周期。
+
 ## [0.20.0] - 2026-07-17
 
 ### Added

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "name": "review-gate",
+  "displayName": "Review Gate",
+  "description": "PreToolUse hook that denies implementer/reviewer subagent spawns while the subagent-workflow three-round hard gate is locked. No-op until the project has a .review-gate.json state file (maintained by the skill's review_gate.py CLI), so it is safe to install everywhere.",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "categories": ["workflow", "review"],
+  "tags": ["review-gate", "guardrail", "pre-tool-use", "subagent-workflow"],
+  "authors": [
+    {
+      "name": "danker"
+    }
+  ],
+  "events": ["PreToolUse"],
+  "requirements": {
+    "os": ["macos", "linux"],
+    "tools": ["bash", "python3"],
+    "network": "none"
+  }
+}

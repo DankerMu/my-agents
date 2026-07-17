@@ -879,7 +879,7 @@
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
       "description": "End-to-end GitHub issue implementation workflow orchestrated by Claude Code or Codex, delegating implementation, cross-review, and finding verification to subagents (implementer, reviewer, verifier). Covers OpenSpec fixtures, risk-adaptive review, verification, PR evidence, CI, and human-gated merge.",
-      "version": "0.20.0",
+      "version": "0.21.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1212,6 +1212,30 @@
       ]
     },
     {
+      "name": "review-gate",
+      "path": "hooks/review-gate",
+      "displayName": "Review Gate",
+      "description": "PreToolUse hook that denies implementer/reviewer subagent spawns while the subagent-workflow three-round hard gate is locked. No-op until the project has a .review-gate.json state file (maintained by the skill's review_gate.py CLI), so it is safe to install everywhere.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "workflow",
+        "review"
+      ],
+      "tags": [
+        "review-gate",
+        "guardrail",
+        "pre-tool-use",
+        "subagent-workflow"
+      ],
+      "events": [
+        "PreToolUse"
+      ],
+      "platforms": [
+        "claude-code"
+      ]
+    },
+    {
       "name": "worktree-guard",
       "path": "hooks/worktree-guard",
       "displayName": "Worktree Guard",
@@ -1243,7 +1267,7 @@
       "path": "packs/agentic-issue-delivery",
       "displayName": "Agentic Issue Delivery Pack",
       "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through subagent-driven review and delivery gates, with whole-repo entropy governance.",
-      "version": "0.12.0",
+      "version": "0.13.0",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "agentic-developer",
@@ -1284,7 +1308,8 @@
         "issue-scribe"
       ],
       "hooks": [
-        "worktree-guard"
+        "worktree-guard",
+        "review-gate"
       ]
     },
     {
@@ -1414,5 +1439,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-17T04:59:32.026Z"
+  "generatedAt": "2026-07-17T05:15:50.488Z"
 }
