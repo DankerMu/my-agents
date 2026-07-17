@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.19.1] - 2026-07-16
+
+### Changed
+
+- 描述减重（常驻上下文税）：frontmatter description 从 655 字符压至 ~450——删去为弱触发模型准备的触发词枚举（保留 "implement #XX"/"处理下一个issue" 两个最强触发与全部反触发语义），语义边界不变。未跑 skill-creator 触发评测（无 ANTHROPIC_API_KEY），实际触发率变化需在使用中观察。
+
 ## [0.19.0] - 2026-07-16
 
 ### Added

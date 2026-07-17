@@ -5,6 +5,20 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-07-16
+
+### Removed
+
+- **成员瘦身（引用完整性判据，18 → 15）**：pack 承诺"每个成员被两条主干流程路由或引用"，按 backbone 引用数据执行：
+  - `review`：交付流内评审是 `risk-adaptive-cross-review`；单遍轻评审与之并列只制造触发歧义（三个 review 类 skill 竞争同一意图）。独立安装仍可用。
+  - `brainstorming`：主干对它的全部引用是反向路由（"方向没定别进流水线"）——出口路牌不是交付依赖；`ask-danker` 照常路由。
+  - `repo-entropy-audit`：全仓周期体检归 `codebase-stewardship`（本就在那），交付流内健康门是 `entropy-review`；双 pack 挂名徒增成员维护。
+
+### Changed
+
+- `blind-spot-pass` 留任的前提兑现：`stage-change-pipeline` 0.13.0 把它正式接进 Stage 1（此前 0 引用、违反成员规则）。
+- 配合 `subagent-workflow` 0.19.1 / `stage-change-pipeline` 0.13.0 的描述减重，pack 常驻上下文税约降 40%（成员切除 + 触发词枚举删除）。
+
 ## [0.11.0] - 2026-07-16
 
 ### Added

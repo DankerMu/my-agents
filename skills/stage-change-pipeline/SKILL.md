@@ -1,17 +1,15 @@
 ---
 name: stage-change-pipeline
 description: >
-  设计文档 → openspec change → subagent 并行审核 → 修复 → GitHub issue 全流水线。
-  将 tasks 拆为细粒度、模块边界清晰、适合小 PR 审核的 GitHub issue。
-  触发词："开始下一个阶段"、"stage change pipeline"、"设计到issue"、"阶段实施"、
-  "openspec审核"、"创建 M* change"、"start the next stage"、"turn this design into
-  issues"、"create issues from the spec/design"、"run the stage pipeline"，
-  或用户指定一个开发阶段要求生成审核过的 issue（a design/stage doc that should become
-  a reviewed OpenSpec change plus implementation-ready GitHub issues）。
+  设计文档 → OpenSpec change → subagent 并行审核 → 修复 → 实现就绪 GitHub issue 全流水线，
+  tasks 拆为模块边界清晰、适合小 PR 审核的细粒度 issue。用于把设计/阶段文档变成审核过的
+  OpenSpec change 加 implementation-ready issues——"开始下一个阶段"、"设计到issue"、
+  "run the stage pipeline"。单个 issue 的实现/修复/合并走 subagent-workflow，不需要
+  OpenSpec change 与并行审核的普通 issue 不用本流水线。
 license: MIT
 metadata:
   author: danker
-  version: "0.12.0"
+  version: "0.13.0"
 ---
 
 # Stage Change Pipeline
@@ -25,6 +23,7 @@ metadata:
 **支撑 skill**：按需要复用本仓库已有 skill，不把它们的完整流程复制进来。
 
 - `clarify`：阶段目标、验收标准、范围边界或设计文档优先级不清时，在 Stage 1 前先澄清。
+- `blind-spot-pass`：目标阶段进入陌生模块、外部系统或设计文档覆盖不到的区域时，Stage 1 读完文档、压测门禁之前跑——从代码库考古（git 历史、相似实现、隐形约定、危险区、邻接面）挖出没想到要问的问题，盲区清单的决策点直接作为 `grill-me` 的压测输入。
 - `grill-me`：Stage 1 收尾、创建 OpenSpec change 之前，对阶段计划/设计文档做对抗式压测——沿决策树逐分支追问、一次一个问题，把未言明的假设和模糊边界逼清，降低 Stage 3 审核返工。
 - `grill-with-docs`：Stage 2 写 design/specs 时，对领域复杂、术语易漂的 change 做领域压测——对齐术语并 inline 沉淀到 `openspec/glossary.md`，够格的长期决策落 `docs/adr/`。
 - `future-aware-architecture`：Stage 2 的 `design.md` 涉及架构方向、技术选型、可逆性或长期演进风险时，用它形成决策输入。
@@ -77,6 +76,8 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
 2. 如果没有实施计划文档，从用户描述中提取阶段目标，然后搜索项目中的设计文档（用 `find . -name "*.md" -path "*/docs/*" | head -30` 发现文档结构，不假设固定路径）。
 3. 并行读取目标阶段涉及的核心设计文档（通常 3-6 个文件），记录关键实体：表名、API 端点、ENUM 值、ID 规范等。
 4. 输出一份简要的阶段上下文摘要，确认后进入 Stage 2。
+
+**盲区侦察（陌生领域时，压测门禁之前）**：目标阶段涉及不熟悉的模块、外部系统或团队约定，且设计文档覆盖不足时，先跑 `blind-spot-pass` 产出带证据的盲区清单，其决策点作为下方 `grill-me` 压测的输入；熟悉领域可直接跳过，无需留痕。
 
 **压测门禁（EITHER/OR，必须留痕）**：进入 Stage 2 之前，对设计压测做出显式决策，二选一：
 
