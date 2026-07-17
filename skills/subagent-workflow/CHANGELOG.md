@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-07-17
+
+### Added
+
+- **证据卫生机械化：打包 `scripts/evidence_check.py`**（stdlib-only、确定性；动机：xagent 实跑 Round 7/8 连续两轮 reviewer 命中同类证据治理缺口——current-head SHA 归属过期、PR 正文轮次状态滞后、manifest 占位符——comprehensive 轮是最贵的 linter，不该用来 lint 编排器自己的文书）。三项检查：模板占位符/TODO/TBD 残留（仅扫 `--file` 指定的编排器自著文件；reviewer 报告可合法引用代码泛型与 TODO 讨论，设计上豁免；autolink/邮箱不误伤）、current/frozen head SHA 声明必须前缀匹配实际 HEAD（`Last clean reviewed SHA` 等历史锚点豁免）、`Round K pending` 类声明与 `.review-gate.json` 已记轮次冲突即过期（无状态文件时降级跳过并明示）。exit 2 即先修簿记再行动——不占轮次、不进 ledger。落点：phase-flow Phase 4 spawn 前置（初审与 6.5 复审共用）、Phase 8 发帖前检查清单首条。分层原则：秒级确定性检查放轮间与发帖前，CI 既有检查不动——这是左移新增，不是搬迁。
+- 需求驱动单测 14 例（`tests/test_evidence_check.py`）：占位符命中与代码泛型/autolink 豁免、TODO 仅限自著文件、SHA 全长/前缀匹配与失配、历史锚点豁免、已记轮次 pending 过期与未来轮次放行、无状态文件降级、空输入/缺失目标/HEAD 不可解析的响亮失败。
+
 ## [0.23.0] - 2026-07-17
 
 ### Changed

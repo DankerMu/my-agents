@@ -139,6 +139,8 @@ Select reviewers from fixture level:
 - `high` or `broad-expanded`: use all 4 standard reviewers (Correctness, Integration, Security/Performance, Test & Evidence Coverage). Escalate to 6 reviewers when the PR touches DB-backed state, retry/cancellation, publish/delete/rollback, schema/evidence contracts, security boundaries, production config, or shared helper/state-machine roots. The two additional reviewers are `Spec Compliance` and `Invariant / State Machine / Compatibility`.
 - Initial round only: if repository policy requires a fixed number of evidence comments, follow it only when it does not conflict with the six-reviewer high-risk escalation defined in `phase-flow.md` Phase 4; otherwise post a consolidated evidence bundle rather than reducing reviewer coverage.
 
+Before spawning any comprehensive round's reviewers (initial or Phase 6.5 rerun), run the packaged evidence-hygiene linter `scripts/evidence_check.py`, passing the current PR body draft and evidence manifest via `--file`. A non-zero exit means the orchestrator's own bookkeeping is stale — unreplaced template placeholders, a current/frozen-head SHA claim that does not match HEAD, or a `Round N pending` claim the ledger already recorded. Fix the bookkeeping directly before spawning: it is orchestrator paperwork, not an implementer fix task, and it consumes no review round and gets no ledger line. Reviewer-authored reports are exempt from the placeholder scan by design; a review round is the most expensive linter there is, so reviewers get only what this script cannot judge.
+
 Include the PR description's `偏离记录` section in every reviewer brief: deviations are where the implementer made choices the plan did not cover, so review attention goes there first. Use `phase-4-cross-review.md` to build the parallel reviewer-subagent briefs. Prefer spawning the full reviewer set as parallel subagents in one batch (Claude Code: multiple Task calls in one message; Codex: parallel subagents). Reviewer subagents are read-only and return their complete reports as their final messages; the orchestrator collects each returned report and persists it to `<REVIEW_DIR>/<report file>` (default `<REVIEW_DIR>` = `.workplans/<issue-or-pr>/review/`). Do not post PR comments in this phase.
 
 Review rounds:
@@ -443,6 +445,7 @@ Generate evidence locally before posting:
 3. Create the Chinese work-summary markdown file.
 4. Inspect with `sed -n` or equivalent before posting.
 5. Check:
+   - `scripts/evidence_check.py --file <each drafted body/comment file>` exits 0 (no unreplaced placeholders or TODO/TBD markers, current/frozen-head SHA claims match the frozen `HEAD`, no stale `Round N pending` lines);
    - frozen SHA is the final `HEAD`;
    - comments do not present stale findings as current findings;
    - prior findings are clearly marked as resolved when included;
