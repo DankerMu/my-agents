@@ -5,6 +5,17 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-07-17
+
+### Added
+
+- **Round Ledger（强制逐轮簿记，即 round counter 本体）**：每个 comprehensive cross-review 轮（初审或修复后复审）结束时，必须先向证据束追加一行 ledger——轮次 N、SHA、clean/not-clean、已验证 finding 数、最高严重度、failure class 列表、是否与此前任一轮同类复发、gate 判定——才能选择下一动作（fix synthesis / 下一轮 / Phase 7 / CI / merge）。三轮硬 gate 读的是这行的 `N` 与 `gate` 字段；Phase 4.5 验证与失败无报告的调用不占行；未记 ledger 就行动记为 skip block。动机：实跑中执行模型（gpt-5.6）在第 3 轮不 clean 后未触发硬 gate，直接续跑逐条修复——把"记得检查条件"改为"必须执行的簿记步骤"，让 gate 判定成为机械动作而非散文条件。落点：phase-flow Phase 4 review rounds（定义）、Phase 5 gate 入口、Phase 6.5 循环条件。
+
+### Changed
+
+- **反豁免措辞封漏洞**（SKILL.md 不可协商项 + phase-flow Phase 4）：明确"逐轮 finding 数下降"不构成绕过三轮 gate 的豁免——`converging` 是在已持久化的 retro 内部选择的 shape，不是跳过 retro 的理由；第 3 轮出现任一 critical/major 或与任一轮同类复发即取消 `converging` 资格（重申 0.17.0 判据并前置到 gate 触发点）。
+- **不可协商项扩展**：由"第 4 轮前必须持久化 retro 并执行纠正动作"收紧为"第 3 轮不 clean 后，任何普通动作（implementer fix / 复审 / Phase 7 / CI 等待 / merge）都不得先于 retro 持久化运行，且 retro 之后的下一动作必须是选定的纠正动作本身"；round counter 的实体绑定为证据束中的逐轮 ledger 行。
+
 ## [0.19.1] - 2026-07-16
 
 ### Changed
