@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.15.1] - 2026-07-17
+
+### Fixed
+
+- **凭证时点语义**：明确 `grillGate` 凭证以启动时点的最终共识为准——Stage 2 期间经用户确认的决策变更须先更新凭证对应分支再启动。否则照抄 grill 时点快照会让 Stage 3 把合理变更判成"漂移"，强制 artifact 对齐过期决策。
+
 ## [0.15.0] - 2026-07-17
 
 ### Added

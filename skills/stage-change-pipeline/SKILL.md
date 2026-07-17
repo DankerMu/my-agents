@@ -9,7 +9,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.15.0"
+  version: "0.15.1"
 ---
 
 # Stage Change Pipeline
@@ -94,7 +94,7 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
 
 **目标**：生成 proposal → design → specs → tasks 四个 artifact。
 
-**Grill 清单是强制输入**（Stage 1 压测跑过时）：每个已拍板分支的结论必须落入对应 artifact——设计决策进 design.md 的技术决策，范围/边界类结论进 proposal 的 What Changes 或 Non-goals；每个开放项要么在 Stage 2 被解决，要么显式写成 proposal/design 的 open question 或 non-goal。压测结论不靠对话记忆传导：`full-pipeline` 会把 `grillGate` 凭证里的逐分支清单注入 Stage 3 审核 prompt，逐条核对——漂移、矛盾或开放项静默消失都是 finding。
+**Grill 清单是强制输入**（Stage 1 压测跑过时）：每个已拍板分支的结论必须落入对应 artifact——设计决策进 design.md 的技术决策，范围/边界类结论进 proposal 的 What Changes 或 Non-goals；每个开放项要么在 Stage 2 被解决，要么显式写成 proposal/design 的 open question 或 non-goal。压测结论不靠对话记忆传导：`full-pipeline` 会把 `grillGate` 凭证里的逐分支清单注入 Stage 3 审核 prompt，逐条核对——漂移、矛盾或开放项静默消失都是 finding。凭证以**启动时点**的最终共识为准：Stage 2 期间经用户确认的决策变更，先更新凭证里对应分支再启动——ledger 核对的是最终共识，不是 grill 时点的快照。
 
 **前置**：确认 `openspec` CLI 可用（`which openspec`），项目已初始化（`openspec/` 目录存在，否则执行 `openspec init --tools claude`）。
 
