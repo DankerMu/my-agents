@@ -5,6 +5,17 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-07-17
+
+### Changed
+
+- **结构重构：减熵减体量，行为契约零变化**（本会话熵审计第 1 项的偿还：规则面密度是最会咬人的熵，三处 gate 散文重复是矛盾温床——0.22.0 刚修过一个 Phase 8 ci-only × pre-merge SHA 条款的既有矛盾）。所有 gate 语义、阈值、模板、预算与 0.22.0 完全一致，仅改归属与表述：
+  - **新增 `references/gates.md`**：ordinary-loop gate 体系唯一事实源——Round Ledger（格式/计数语义/CLI 机制/skip-block）、Gate Table（三轮/working-day/same-invariant：触发→动作→预算）、Review Failure Retro 模板、failure shape 默认动作与 post-gate 预算表、converging 取消资格清单。此前同一套规则散布在 phase-flow Phase 4/5/6.5 三处（约 90 行重复散文），现各留 1-2 行指针。
+  - **新增 `references/skill-map.md`**：SKILL.md 的 Supporting Skills 十条 + Related skills 下沉于此（canonical 词汇关系保持约束力，其余为路由建议）。
+  - **SKILL.md 从法律附录改回刀**：24.6KB → 11.9KB（-52%）。巨型 bullet（原 pre-merge gate ~300 词、governance ~400 词单条）压成每条 1-3 行；两条不可协商项保留原语义原强度，细节全部指针化。Execution Source 精简为带优先级的引用表（gates.md 列第 3 位）。
+  - phase-flow 中两处 "6-review high-risk escalation in SKILL.md" 悬空指针改指 phase-flow Phase 4 本体（六评审升级的实际定义处）。
+  - 全包 markdown 体量 125.0KB → 115.2KB（净 -8%，同时新增两个结构文件）。关键规范 token 归属核对：retro 模板/converging 判据/预算/ledger 机制仅存于 gates.md，pre-merge 条款细节仅存于 Phase 8，Seams under test 字段仅存于 issue-risk-contract。
+
 ## [0.22.0] - 2026-07-17
 
 ### Added
