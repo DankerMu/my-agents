@@ -1163,8 +1163,8 @@
       "name": "verifier",
       "path": "agents/verifier",
       "displayName": "Verifier",
-      "description": "Independent finding-verification agent. Adjudicates a single candidate review finding as CONFIRMED, PLAUSIBLE, or REFUTED using only diff/spec/code/test evidence. Read-only; never the reviewer that produced the candidate.",
-      "version": "0.1.5",
+      "description": "Independent finding-verification agent. Adjudicates one failure-class batch of candidate review findings (at most 5) with exactly one verdict per candidate — CONFIRMED, PLAUSIBLE, or REFUTED — using only diff/spec/code/test evidence. Read-only; never a reviewer that produced any candidate in its batch.",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1440,5 +1440,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-17T07:36:28.323Z"
+  "generatedAt": "2026-07-17T08:24:36.867Z"
 }

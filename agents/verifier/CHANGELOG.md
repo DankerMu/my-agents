@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.0] - 2026-07-17
+
+### Changed
+
+- **合同对齐 Phase 4.5 批处理语义**：subagent-workflow 的验证门早已按 failure-class 分批派发（每批至多 5 个 candidate、同类共享证据基座、单例类即一批），但本合同仍写"每次只裁决一个 candidate"——同一执行方看到互相矛盾的两条规则，就是给跳过或敷衍留的口子。合同、operating guide、描述全面改为：裁决所属批次内每个 candidate、逐个独立、每个自带证据，批级一票无逐条证据即无效、编排器必须重跑该批；verifier 不得是产出本批任一 candidate 的 reviewer。输出模板改为批头 + 逐 candidate 块。
+
 ## [0.1.5] - 2026-07-12
 
 ### Changed
