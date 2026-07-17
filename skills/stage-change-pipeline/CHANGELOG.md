@@ -5,7 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
-## [0.14.0] - 2026-07-17
+## [0.15.0] - 2026-07-17
+
+### Added
+
+- **Grill 结论闭环消费**（补 0.14.0 留下的断链：凭证只用于校验和计数，分支内容校验后即被丢弃，结论传导全靠对话记忆）：
+  - Stage 2 新增强制输入规则：每个已拍板分支的结论必须落入对应 artifact（设计决策进 design.md，范围/边界类进 proposal 的 What Changes/Non-goals）；开放项要么解决、要么显式写成 open question/non-goal。
+  - `full-pipeline.workflow.js` 把凭证对象渲染成 Grill ledger 文本块（`[decided:user|fact-check]` / `[open]` 逐条），注入 Stage 3 的 design-consistency 与 spec-completeness 两路审核 prompt，逐条核对：漂移、矛盾、开放项静默消失均为 finding。`skipped:<理由>` 运行不注入。review-loop 独立运行无上游凭证，不含此块（同步注释已标注差异）。
 
 ### Changed
 

@@ -75,6 +75,21 @@ if (typeof rawGrillGate === "string" && /^skipped:.+/.test(rawGrillGate)) {
   };
 }
 
+// Render the grill ledger for reviewer consumption: the Stage 2 artifacts must
+// honor the Stage 1 stress-test decisions, and open items must not silently
+// vanish. Empty for "skipped:<reason>" runs.
+const grillLedgerBlock =
+  rawGrillGate && typeof rawGrillGate === "object"
+    ? "\nGrill ledger (Stage 1 stress-test outcomes — the artifacts must honor these):\n" +
+      rawGrillGate.branches
+        .map((b) => `- [decided:${b.decidedBy}] ${b.branch} -> ${b.decision}`)
+        .join("\n") +
+      ((rawGrillGate.openItems || []).length
+        ? "\n" + rawGrillGate.openItems.map((o) => `- [open] ${o}`).join("\n")
+        : "") +
+      "\nCheck: every decided branch is reflected in proposal/design/specs (drift or contradiction = finding); every [open] item is either resolved by the artifacts or explicitly recorded as an open question / non-goal (silent disappearance = finding).\n"
+    : "";
+
 // Count of subagent (agent()) invocations across the whole run — for the accountability log.
 let subagentCalls = 0;
 
@@ -250,13 +265,14 @@ const ALIGN_VERIFY_SCHEMA = {
 phase("Review");
 log(`Starting 3-way parallel review: ${changeName}`);
 
-// NOTE: duplicated in review-loop.workflow.js — keep in sync
+// NOTE: duplicated in review-loop.workflow.js — keep in sync (the grill ledger
+// block is full-pipeline-only: standalone review-loop has no grillGate upstream)
 const REVIEWERS = [
   {
     key: "design-consistency",
     prompt: `Review the OpenSpec change "${changePath}" for design consistency.
 Design docs: ${designDocs}
-
+${grillLedgerBlock}
 Focus: table/field/ENUM naming consistency across proposal, design, specs, tasks; API endpoint coverage; ID spec compliance; manifest field alignment.
 
 Return P0/P1 findings with IDs prefixed "DC-". Each finding needs: id, severity, title, failureClass (from the risk-adaptive-cross-review finding-contract Failure-Class Vocabulary — commonly design-consistency / spec-completeness / task-executability), evidence (quote the inconsistency with file paths), impact (what breaks if left unfixed), fixDirection.
@@ -266,7 +282,7 @@ Reject vague or style-only observations — only concrete, anchored issues with 
     key: "spec-completeness",
     prompt: `Review the OpenSpec change "${changePath}" for spec completeness.
 Design docs: ${designDocs}
-
+${grillLedgerBlock}
 Focus: every proposal capability has a spec with requirements; each requirement has testable WHEN/THEN scenarios; boundary conditions covered; cross-spec consistency; no functional gaps vs design.md.
 
 Return P0/P1 findings with IDs prefixed "SC-". Each finding needs: id, severity, title, failureClass (from the risk-adaptive-cross-review finding-contract Failure-Class Vocabulary — commonly design-consistency / spec-completeness / task-executability), evidence (quote the gap with file paths), impact (what breaks if left unfixed), fixDirection.
