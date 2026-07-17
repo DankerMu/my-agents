@@ -4,13 +4,17 @@
 The orchestrator records every comprehensive cross-review round here. The CLI
 recomputes the gate lock, appends the human-readable ledger line, and refuses
 illegal transitions (recording a round that ran while locked, a `converging`
-retro that does not qualify) at the moment they are attempted - not at the
+or `depth` retro that does not qualify) at the moment they are attempted - not at the
 pre-merge gate. The optional `review-gate` hook (Claude Code PreToolUse)
 denies implementer/reviewer subagent spawns whenever the persisted state says
 `locked`; it reads the precomputed `locked`/`lockReason` fields and contains
 no gate logic of its own.
 
 State file: <root>/.review-gate.json. Deterministic, stdlib-only.
+
+Hard ceiling: 5 comprehensive rounds per PR (cost governor). The 5th not-clean
+round is terminal - only a `breadth` (PR split) retro may be registered, and
+`record-round` refuses any 6th round regardless of retro budgets.
 
 Commands:
   open         --pr N [--review-dir PATH]
@@ -29,11 +33,13 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
 STATE_NAME = ".review-gate.json"
 LEDGER_NAME = "round-ledger.log"
+MAX_ROUNDS = 5
 SEVERITIES = ["none", "minor", "major", "critical"]
 SHAPES = ["breadth", "depth", "noise", "converging"]
 DEFAULT_BLOCKED = ["implementer", "reviewer"]
@@ -65,6 +71,13 @@ def compute_lock(state: dict) -> tuple[bool, str | None]:
             "with record-retro before any further review/fix action"
         )
     rounds = state.get("rounds", [])
+    if rounds and not rounds[-1]["clean"] and rounds[-1]["n"] >= MAX_ROUNDS:
+        return True, (
+            f"round ceiling: {MAX_ROUNDS} comprehensive rounds reached and the loop is still not clean - "
+            "terminal for the ordinary loop. The corrective action is a PR split (children re-enter as new "
+            "PRs with fresh counters); descope or a user decision are the only alternatives. No retro "
+            "extends this budget"
+        )
     if not rounds or rounds[-1]["clean"] or rounds[-1]["n"] < 3:
         return False, None
     last = rounds[-1]
@@ -124,6 +137,38 @@ def converging_disqualifiers(state: dict) -> list[str]:
     return out
 
 
+def _bullets_after(text: str, heading: str) -> list[str]:
+    lines = text.splitlines()
+    for i, line in enumerate(lines):
+        if heading in line:
+            rest = line.split(":", 1)[1].strip() if ":" in line else ""
+            found = [rest] if rest and not rest.startswith("<") else []
+            for follow in lines[i + 1:]:
+                stripped = follow.strip()
+                if not stripped.startswith("-"):
+                    break
+                content = stripped.lstrip("- ").strip()
+                if content and not content.startswith("<"):
+                    found.append(content)
+            return found
+    return []
+
+
+def depth_form_problems(text: str) -> list[str]:
+    problems = []
+    inv = re.search(r"^\s*-?\s*Invariant:\s*(.+)$", text, re.MULTILINE)
+    if not inv or inv.group(1).strip().startswith("<"):
+        problems.append("missing or unfilled `Invariant:` line naming the single recurring rule")
+    if len(_bullets_after(text, "Recurring findings:")) < 2:
+        problems.append("`Recurring findings:` must map at least two verified findings "
+                        "(across rounds or sibling surfaces) to the invariant")
+    return problems
+
+
+def split_rebuttal_present(text: str) -> bool:
+    return bool(_bullets_after(text, "Split rebuttal"))
+
+
 def ledger_line(rd: dict, gate: str) -> str:
     classes = ", ".join(rd["classes"]) if rd["classes"] else "none"
     repeats = f"yes ({'; '.join(rd['repeats'])})" if rd["repeats"] else "no"
@@ -162,6 +207,13 @@ def cmd_open(args) -> int:
 
 def cmd_record_round(args) -> int:
     state = load_state(args.root)
+    if len(state["rounds"]) >= MAX_ROUNDS:
+        append_ledger(args.root, state,
+                      f"VIOLATION | round attempt beyond the {MAX_ROUNDS}-round ceiling refused: sha {args.sha}")
+        print(f"review_gate: refused - the {MAX_ROUNDS}-round ceiling is reached for this PR. The ordinary "
+              "loop is closed: split the PR (fresh counters per child), descope, or take a user decision, "
+              "then `close`.", file=sys.stderr)
+        return 2
     was_locked, prior_reason = state.get("locked", False), state.get("lockReason")
     clean = args.clean
     classes = [c.strip() for c in (args.classes or "").split(",") if c.strip()]
@@ -184,7 +236,14 @@ def cmd_record_round(args) -> int:
     locked, reason = state["locked"], state["lockReason"]
     gate = "none"
     if locked:
-        gate = "manual" if state.get("manualLock") else ("three-round" if not state["retros"] else "post-gate-budget")
+        if state.get("manualLock"):
+            gate = "manual"
+        elif not rd["clean"] and rd["n"] >= MAX_ROUNDS:
+            gate = "round-ceiling"
+        elif not state["retros"]:
+            gate = "three-round"
+        else:
+            gate = "post-gate-budget"
     line = ledger_line(rd, gate)
     append_ledger(args.root, state, line)
     print(line)
@@ -202,8 +261,30 @@ def cmd_record_round(args) -> int:
 def cmd_record_retro(args) -> int:
     state = load_state(args.root)
     retro_file = Path(args.path)
-    if not retro_file.is_file() or not retro_file.read_text(encoding="utf-8").strip():
-        print(f"review_gate: retro file missing or empty: {args.path} - persist the retro first", file=sys.stderr)
+    if not retro_file.is_file():
+        print(f"review_gate: retro file missing: {args.path} - persist the retro first", file=sys.stderr)
+        return 2
+    text = retro_file.read_text(encoding="utf-8")
+    if not text.strip():
+        print(f"review_gate: retro file empty: {args.path} - persist the retro first", file=sys.stderr)
+        return 2
+    rounds = state.get("rounds", [])
+    if rounds and not rounds[-1]["clean"] and rounds[-1]["n"] >= MAX_ROUNDS and args.shape != "breadth":
+        print("review_gate: refused - the round ceiling is terminal; only a `breadth` retro documenting "
+              "the PR split may be registered (descope or a user decision go through `close`)", file=sys.stderr)
+        return 2
+    if args.shape == "depth":
+        problems = depth_form_problems(text)
+        if problems:
+            print("review_gate: `depth` refused - retro lacks required depth evidence:", file=sys.stderr)
+            for item in problems:
+                print(f"  - {item}", file=sys.stderr)
+            print("name the invariant and map the recurring findings, or choose breadth/noise instead", file=sys.stderr)
+            return 2
+    if state["retros"] and args.shape in ("depth", "noise") and not split_rebuttal_present(text):
+        print("review_gate: refused - from the second gate entry a PR split is the default corrective action. "
+              "A depth/noise retro must carry a non-empty `Split rebuttal:` citing why the surfaces are not "
+              "independently splittable (`breadth` is the split; `converging` is exempt)", file=sys.stderr)
         return 2
     if args.shape == "converging":
         disqualifiers = converging_disqualifiers(state)
@@ -220,7 +301,14 @@ def cmd_record_retro(args) -> int:
     save_state(args.root, state)
     line = f"Retro | shape: {args.shape} | at round {at_round} | {retro_file} | budget: {retro['budget']} round(s)"
     append_ledger(args.root, state, line)
-    print(f"review_gate: retro registered ({line}); gate unlocked - next action must be the retro's corrective action")
+    status = ("gate unlocked - next action must be the retro's corrective action"
+              if not state["locked"] else f"gate remains locked ({state['lockReason']})")
+    print(f"review_gate: retro registered ({line}); {status}")
+    if args.shape == "depth" and not any(rd.get("repeats") for rd in state["rounds"]):
+        warn = ("Depth-without-recurrence | ledger shows no failure-class repeat - verify the depth claim "
+                "at grill/Phase 8 (label granularity or misclassification)")
+        append_ledger(args.root, state, warn)
+        print(f"review_gate: WARNING - {warn}", file=sys.stderr)
     return 0
 
 
