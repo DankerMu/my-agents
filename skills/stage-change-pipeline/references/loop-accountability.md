@@ -5,7 +5,7 @@
 脚本返回的 `logEntry` schema（未含 date，编排器写入前补上）：
 
 ```json
-{"change":"<name>","grill_gate":"passed|skipped:<reason>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
+{"change":"<name>","grill_gate":"passed:branches=<n>,open=<n>|skipped:<reason>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
 ```
 
 （`grill_gate` 仅 `full-pipeline` 返回；`review-loop` 独立运行时作用于已存在的 change，门禁决策在其上游，无此字段。）
@@ -13,7 +13,7 @@
 编排器补 date 后写入文件的完整一行：
 
 ```json
-{"date":"<run-date>","change":"<name>","grill_gate":"passed|skipped:<reason>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
+{"date":"<run-date>","change":"<name>","grill_gate":"passed:branches=<n>,open=<n>|skipped:<reason>","rounds":<n>,"gate_net_catch":<n>,"p0":{"in":<n>,"resolved":<n>,"residual":<n>},"p1":{"resolved":<n>,"carried":<n>},"regressions":<n>,"approx_subagent_calls":<n>,"verdict":"clean|residual"}
 ```
 
 - `gate_net_catch`：**本节核心指标**——验证门独有的价值。统计"修复者声称已解决但独立验证者判为 unresolved 或 regressed 的数量——即没有这道门就会被漏过的量"。Stage 3 审核和 `openspec status` 已经抓到的不计入。

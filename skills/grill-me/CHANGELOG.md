@@ -5,7 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
-## [0.3.2] - 2026-07-14
+## [0.4.0] - 2026-07-17
+
+### Added
+
+- **铁律 8：嵌入工作流时退出判据不变**。实跑发现被 `stage-change-pipeline` 嵌入时压测强度塌缩——单独使用能追问很多轮，管道内两三问就"passed"。根因是目标竞争：管道内压测只是通往下一 stage 的闸门，模型的主目标是推进管道，最便宜的路径就是敷衍几问。铁律 8 明确：收敛判据与单独使用完全一致（分支收敛 + 用户确认），推进压力不是收敛信号，"问了几个问题"不构成完成。
+- **收敛小结升级为逐分支清单**（分支 / 结论 / 由谁定：用户拍板或事实核查）：写不出这份清单 = 压测没跑完。清单直接充当 `full-pipeline` `grillGate` 凭证对象的数据源，使压测深度可被下游机械校验。
 
 ### Changed
 - 泛化适用范围：压测靶子从软件 plan/design 放宽到**任何计划、决策或想法**（description 与开篇明确"不限软件"）；事实来源措辞从 codebase 泛化为**环境**（codebase、文档、数据、其它已有产物），铁律 #3、锚定靶子、交叉核对步骤同步改写，审讯技法不变。Adapted from `mattpocock/skills` 未发布 changeset `grilling-general-use`（post-v1.1.0）。

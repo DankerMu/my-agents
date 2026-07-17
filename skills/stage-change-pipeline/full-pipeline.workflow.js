@@ -16,14 +16,15 @@ export const meta = {
   ]
 };
 
-// args: { changeName: string, designDocs?: string[], stageLabel?: string, grillGate: "passed" | "skipped:<reason>" }
+// args: { changeName: string, designDocs?: string[], stageLabel?: string,
+//   grillGate: { status: "passed", branches: [{ branch, decision, decidedBy: "user"|"fact-check" }],
+//                openItems?: string[], userConfirmed: true } | "skipped:<reason>" }
 // Defensive: handle args passed as JSON string (caller-side serialization bug)
 const _args = typeof args === "string" ? JSON.parse(args) : args || {};
 const changeName = _args.changeName;
 const changePath = `openspec/changes/${changeName}`;
 const designDocs = (_args.designDocs || []).join(", ");
 const stageLabel = _args.stageLabel || "";
-const grillGate = typeof _args.grillGate === "string" ? _args.grillGate : "";
 
 if (!changeName) {
   log("FATAL: changeName is missing from args — aborting");
@@ -33,17 +34,44 @@ if (!changeName) {
 // Grill-gate attestation. The Stage 1→2 grill-me stress-test is multi-round and
 // user-interactive, so it can only happen in the main conversation BEFORE this
 // script launches — workflow subagents cannot talk to the user, and this script
-// cannot run it retroactively. All it can enforce is refusing to start until the
-// orchestrator attests the gate decision was made: grill-me ran ("passed") or the
-// skip was recorded with a reason ("skipped:<reason>").
-if (grillGate !== "passed" && !/^skipped:.+/.test(grillGate)) {
+// cannot run it retroactively. "passed" is EVIDENCE, not assertion: a real
+// grill-me run produces a per-branch ledger (branch, decision, who decided) and
+// the user's explicit shared-understanding confirmation (grill-me non-negotiable
+// #7). The old bare "passed" string was trivially satisfiable and produced
+// perfunctory few-question runs under pipeline-advancement pressure; it is no
+// longer accepted.
+const rawGrillGate = _args.grillGate;
+let grillGate = "";
+if (typeof rawGrillGate === "string" && /^skipped:.+/.test(rawGrillGate)) {
+  grillGate = rawGrillGate;
+} else if (
+  rawGrillGate &&
+  typeof rawGrillGate === "object" &&
+  rawGrillGate.status === "passed" &&
+  Array.isArray(rawGrillGate.branches) &&
+  rawGrillGate.branches.length >= 1 &&
+  rawGrillGate.branches.every(
+    (b) =>
+      b &&
+      typeof b.branch === "string" &&
+      b.branch.trim() &&
+      typeof b.decision === "string" &&
+      b.decision.trim() &&
+      (b.decidedBy === "user" || b.decidedBy === "fact-check")
+  ) &&
+  rawGrillGate.userConfirmed === true
+) {
+  grillGate = `passed:branches=${rawGrillGate.branches.length},open=${(rawGrillGate.openItems || []).length}`;
+} else {
   log(
-    'FATAL: grillGate missing or invalid — run grill-me in the main conversation first (grillGate: "passed"), or record an explicit skip (grillGate: "skipped:<reason>")'
+    "FATAL: grillGate missing or invalid — run grill-me in the main conversation first and pass its per-branch ledger " +
+      '(grillGate: { status: "passed", branches: [{ branch, decision, decidedBy: "user"|"fact-check" }], openItems: [...], userConfirmed: true }), ' +
+      'or record an explicit skip (grillGate: "skipped:<reason>"). A bare "passed" is assertion, not evidence, and is rejected.'
   );
   return {
     verdict: "error",
     reason:
-      'grillGate must be "passed" or "skipped:<reason>" — decide the Stage 1→2 grill gate before Stage 3 starts'
+      'grillGate must be a per-branch evidence object ({ status: "passed", branches: [...], userConfirmed: true }) or "skipped:<reason>" — decide the Stage 1→2 grill gate before Stage 3 starts'
   };
 }
 

@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-07-17
+
+### Changed
+
+- **压测门禁从声明升级为凭证（breaking：`grillGate` 参数形态变更）**。实跑发现管道内 grill 强度塌缩为敷衍几问——裸 `"passed"` 字符串是纯自我声明，workflow 只校验格式不校验证据，而管道推进压力天然把模型推向最便宜的"过门"路径（与 subagent-workflow 三轮硬门被跳过是同一失效类：散文规则输给目标竞争）。现在 `full-pipeline.workflow.js` 只接受逐分支凭证对象 `{ status: "passed", branches: [{ branch, decision, decidedBy: "user"|"fact-check" }], openItems, userConfirmed: true }`（每分支需有非空结论且 `decidedBy` 合法、`userConfirmed` 必须为 true）或 `"skipped:<理由>"`；裸 `"passed"` 拒绝启动。凭证数据源 = grill-me 0.4.0 的逐分支收敛清单（其铁律 8 同步声明：嵌入时退出判据与单独使用一致）。
+- Stage 1 门禁措辞同步：passed 的判据是分支收敛 + 用户确认，不是问题个数；轮数由决策树分支数决定，不由管道进度决定。`logEntry.grill_gate` 落盘形态改为 `passed:branches=<n>,open=<n>`，压测深度随跳过率一并可审计（`references/loop-accountability.md` 同步）。
+
 ## [0.13.0] - 2026-07-16
 
 ### Added
