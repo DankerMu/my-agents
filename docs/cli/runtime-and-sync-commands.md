@@ -41,6 +41,7 @@ npx my-agents install skill clarify --platform codex
 npx my-agents install skill clarify --scope user
 npx my-agents install agent explorer
 npx my-agents install agent explorer --platform codex
+npx my-agents install agent explorer --platform omp
 npx my-agents install pack product-manager
 npx my-agents install pack product-manager --platform codex
 ```
@@ -48,7 +49,7 @@ npx my-agents install pack product-manager --platform codex
 The install tool also supports:
 
 - `--all`
-- `--platform claude|codex|all`
+- `--platform claude|codex|omp|all`
 - `--scope user|project`
 - matching `npx my-agents uninstall skill|agent|pack`
 

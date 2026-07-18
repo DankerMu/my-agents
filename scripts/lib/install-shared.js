@@ -1,6 +1,6 @@
 const path = require("node:path");
 
-const ALL_PLATFORMS = ["claude", "codex"];
+const ALL_PLATFORMS = ["claude", "codex", "omp"];
 const DEFAULT_PROJECT_MANIFEST = "my-agents.project.json";
 const PROJECT_SYNC_STATE_PATH = path.join(".my-agents", "project-sync-state.json");
 
@@ -30,7 +30,7 @@ const USAGE = `Usage:
 Options:
   --all                    Install/uninstall all packages of the selected type
   --manifest <path>        Project manifest path (default: my-agents.project.json)
-  --platform, -p <list>    Platforms: claude, codex, or all (default: all)
+  --platform, -p <list>    Platforms: claude, codex, omp, or all (default: all)
   --prune                  When used with project sync, remove previously managed items no longer desired
   --scope <scope>          Scope: user or project (default: project)
 

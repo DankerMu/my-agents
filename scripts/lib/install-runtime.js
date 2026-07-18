@@ -174,6 +174,20 @@ async function installHook(repoRoot, name, platforms, scope) {
       continue;
     }
 
+    if (target.factoryDestPath) {
+      if (hasScripts) {
+        await fs.rm(target.scriptsDestDir, { recursive: true, force: true });
+        await copyPath(scriptsDir, target.scriptsDestDir);
+      }
+      await fs.mkdir(path.dirname(target.factoryDestPath), { recursive: true });
+      await fs.copyFile(fragmentPath, target.factoryDestPath);
+      console.log(
+        `Installed (${target.platform}, ${scope}): hook ${name} -> ${target.factoryDestPath}`
+      );
+      installed += 1;
+      continue;
+    }
+
     let fragment;
     try {
       fragment = await readJson(fragmentPath);
@@ -195,7 +209,9 @@ async function installHook(repoRoot, name, platforms, scope) {
   }
 
   if (installed === 0) {
-    console.error(`No platform files found in hooks/${name} (claude-code.json or codex.json)`);
+    console.error(
+      `No platform files found in hooks/${name} (claude-code.json, codex.json, or omp.ts)`
+    );
     return false;
   }
 
@@ -207,6 +223,19 @@ async function uninstallHook(repoRoot, name, platforms, scope) {
   const targets = getHookTargets(name, platforms, scope);
 
   for (const target of targets) {
+    if (target.factoryDestPath) {
+      if (await fileExists(target.factoryDestPath)) {
+        await fs.unlink(target.factoryDestPath);
+        console.log(`Uninstalled (${target.platform}, ${scope}): ${target.factoryDestPath}`);
+      } else {
+        console.log(`Not installed (${target.platform}, ${scope}): hook ${name}`);
+      }
+      if (await removeDirRecursive(target.scriptsDestDir)) {
+        console.log(`Removed (${target.platform}, ${scope}): ${target.scriptsDestDir}/`);
+      }
+      continue;
+    }
+
     const fragmentPath = path.join(hookDir, target.fragmentFile);
     if (await fileExists(fragmentPath)) {
       try {

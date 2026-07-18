@@ -7,6 +7,7 @@ const assert = require("node:assert/strict");
 const {
   renderClaudeProjection,
   renderCodexProjection,
+  renderOmpProjection,
   validateAgentContractPackage,
   validateContractContent
 } = require("../lib/agent-contract");
@@ -39,6 +40,18 @@ test("agent contract renders identical behavior into Claude and Codex projection
     codex,
     /developer_instructions = """\n# demo Contract[\s\S]*operating-guide\.md\.\n"""/
   );
+});
+
+test("agent contract renders the omp projection with preserved frontmatter", () => {
+  const omp = renderOmpProjection(
+    `---\nname: demo\ndescription: Demo agent.\ntools: read, grep\n---\n\nOld body.\n`,
+    contract
+  );
+  assert.equal(
+    omp,
+    `---\nname: demo\ndescription: Demo agent.\ntools: read, grep\n---\n\n${contract}`
+  );
+  assert.throws(() => renderOmpProjection("No frontmatter here.\n", contract), /omp\.md/);
 });
 
 test("agent contract enforces the concise 5-8 bullet budget", () => {

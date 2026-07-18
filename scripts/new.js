@@ -218,6 +218,20 @@ async function scaffoldAgent(repoRoot, name) {
   );
 
   await fs.writeFile(
+    path.join(agentDir, "omp.md"),
+    [
+      "---",
+      `name: ${name}`,
+      "description: TODO: describe when to use this agent",
+      "tools: read, grep, glob",
+      "---",
+      "",
+      ...contractLines
+    ].join("\n"),
+    "utf8"
+  );
+
+  await fs.writeFile(
     path.join(agentDir, "CHANGELOG.md"),
     [
       "# Changelog",

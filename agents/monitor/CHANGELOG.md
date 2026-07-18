@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0] - 2026-07-18
+
+### Added
+
+- omp platform projection (`omp.md`): task-agent definition for `.omp/agents/`, generated from `AGENT.md` with tools mapped to omp tool ids and explicit `spawns` where the Claude projection used `Agent(...)`.
+- omp projection pins `model: "@smol"` (role alias; resolves via the machine's modelRoles table).
+
 ## [0.1.1] - 2026-07-10
 
 ### Changed

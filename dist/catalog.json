@@ -922,7 +922,7 @@
       "path": "agents/debugger",
       "displayName": "Debugger",
       "description": "Systematic debugging agent that diagnoses bugs, test failures, and unexpected behavior through hypothesis-driven investigation.",
-      "version": "1.0.7",
+      "version": "1.1.0",
       "maturity": "experimental",
       "categories": [
         "debugging",
@@ -943,7 +943,8 @@
       ],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     },
     {
@@ -951,7 +952,7 @@
       "path": "agents/docs-researcher",
       "displayName": "Docs Researcher",
       "description": "Documentation-backed research agent for verifying APIs, SDKs, frameworks, and libraries against official sources.",
-      "version": "1.0.1",
+      "version": "1.1.0",
       "maturity": "experimental",
       "categories": [
         "documentation",
@@ -970,7 +971,8 @@
       "agents": [],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     },
     {
@@ -978,7 +980,7 @@
       "path": "agents/explorer",
       "displayName": "Explorer",
       "description": "Use when a task needs fast read-only codebase mapping, evidence gathering, impact analysis, or file and symbol discovery before implementation or review.",
-      "version": "1.3.1",
+      "version": "1.4.0",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -994,7 +996,8 @@
       "agents": [],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     },
     {
@@ -1002,7 +1005,7 @@
       "path": "agents/implementer",
       "displayName": "Implementer",
       "description": "Code implementation agent that writes, modifies, and refactors code based on plans, specs, or direct instructions.",
-      "version": "1.5.0",
+      "version": "1.6.0",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -1021,7 +1024,8 @@
       ],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     },
     {
@@ -1029,7 +1033,7 @@
       "path": "agents/issue-scribe",
       "displayName": "Issue Scribe",
       "description": "Follow-up capture agent: takes a raw observation noticed during primary work, verifies it read-only, determines origin, boundary, and solution direction, dedups against existing issues, and files one structured GitHub issue for later delivery. Never fixes anything itself.",
-      "version": "0.1.4",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1046,7 +1050,8 @@
       "agents": [],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     },
     {
@@ -1054,7 +1059,7 @@
       "path": "agents/monitor",
       "displayName": "Monitor",
       "description": "Cheap-model watchdog for harness-external long-running jobs (slurm, remote PID over ssh, CI runs). ID-based completion detection, one blocking poll loop per check, quiet waits, final-state report with evidence. Read-only; never does side work.",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "devops",
@@ -1072,7 +1077,8 @@
       "agents": [],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     },
     {
@@ -1080,7 +1086,7 @@
       "path": "agents/planner",
       "displayName": "Planner",
       "description": "Architecture and implementation planning agent that designs step-by-step plans with trade-off analysis and escalates to implementation-planning for complex technical execution plans.",
-      "version": "1.2.6",
+      "version": "1.3.0",
       "maturity": "experimental",
       "categories": [
         "design",
@@ -1104,7 +1110,8 @@
       ],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     },
     {
@@ -1112,7 +1119,7 @@
       "path": "agents/researcher",
       "displayName": "Researcher",
       "description": "Web research agent for deep investigation, multi-source verification, and structured report generation.",
-      "version": "1.1.7",
+      "version": "1.2.0",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -1130,7 +1137,8 @@
       "agents": [],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     },
     {
@@ -1138,7 +1146,7 @@
       "path": "agents/reviewer",
       "displayName": "Reviewer",
       "description": "Code review agent that performs structured, severity-graded reviews on PRs, diffs, and code changes.",
-      "version": "2.1.3",
+      "version": "2.2.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1156,7 +1164,8 @@
       ],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     },
     {
@@ -1164,7 +1173,7 @@
       "path": "agents/verifier",
       "displayName": "Verifier",
       "description": "Independent finding-verification agent. Adjudicates one failure-class batch of candidate review findings (at most 5) with exactly one verdict per candidate — CONFIRMED, PLAUSIBLE, or REFUTED — using only diff/spec/code/test evidence. Read-only; never a reviewer that produced any candidate in its batch.",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1180,7 +1189,8 @@
       "agents": [],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     }
   ],
@@ -1190,7 +1200,7 @@
       "path": "hooks/large-file-guard",
       "displayName": "Large File Guard",
       "description": "PreToolUse hook that blocks `git commit` when the commit includes text files over a line-count threshold (default 1000). Incremental ratchet: only files touched by the commit are checked; legacy large files do not block until modified. Configurable via .large-file-guard.json.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1208,7 +1218,8 @@
       ],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     },
     {
@@ -1216,7 +1227,7 @@
       "path": "hooks/review-gate",
       "displayName": "Review Gate",
       "description": "PreToolUse hook that denies implementer/reviewer subagent spawns while the subagent-workflow three-round hard gate is locked. No-op until the project has a .review-gate.json state file (maintained by the skill's review_gate.py CLI), so it is safe to install everywhere.",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1233,7 +1244,8 @@
       ],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     },
     {
@@ -1241,7 +1253,7 @@
       "path": "hooks/worktree-guard",
       "displayName": "Worktree Guard",
       "description": "PreToolUse hook that blocks file writes outside declared worktree roots. No-op until the project declares .worktree-guard.json, so it is safe to install everywhere.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "security",
@@ -1258,7 +1270,8 @@
       ],
       "platforms": [
         "claude-code",
-        "codex"
+        "codex",
+        "omp"
       ]
     }
   ],
@@ -1440,5 +1453,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-17T15:07:06.647Z"
+  "generatedAt": "2026-07-18T11:32:17.078Z"
 }

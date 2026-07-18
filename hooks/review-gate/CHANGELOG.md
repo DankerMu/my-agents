@@ -3,6 +3,10 @@
 All notable changes to this hook will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-07-18
+
+- 新增 omp 平台支持：`omp.ts` 扩展工厂安装到 `.omp/hooks/pre/review-gate.ts`，匹配 `task` 工具并从 payload 的 `agent` 字段提取子代理名，调用同一份 shell 脚本；退出码 2 翻译为 `{ block, reason }`，其余退出码放行。
+
 ## [Unreleased]
 
 ## [0.2.0] - 2026-07-17

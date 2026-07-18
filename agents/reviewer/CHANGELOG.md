@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.2.0] - 2026-07-18
+
+### Added
+
+- omp platform projection (`omp.md`): task-agent definition for `.omp/agents/`, generated from `AGENT.md` with tools mapped to omp tool ids and explicit `spawns` where the Claude projection used `Agent(...)`.
+- omp projection pins `model: "sol:high"` (fuzzy-matched against the local model catalog).
+
+### Notes
+
+- omp bundles its own `reviewer` agent; installing this one overrides it (omp resolves same-name agents non-bundled-first).
+
 ## [2.1.3] - 2026-07-12
 
 ### Changed

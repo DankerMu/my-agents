@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0] - 2026-07-18
+
+### Added
+
+- omp platform projection (`omp.md`): task-agent definition for `.omp/agents/`, generated from `AGENT.md` with tools mapped to omp tool ids and explicit `spawns` where the Claude projection used `Agent(...)`.
+- omp projection pins `model: "claude-opus-4-8:xhigh"` (fuzzy-matched against the local model catalog).
+
 ## [1.5.0] - 2026-07-17
 
 ### Changed

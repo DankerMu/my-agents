@@ -3,7 +3,7 @@
   "name": "reviewer",
   "displayName": "Reviewer",
   "description": "Code review agent that performs structured, severity-graded reviews on PRs, diffs, and code changes.",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "maturity": "experimental",
   "categories": ["review", "coding"],
   "tags": ["code-review", "pr", "security"],

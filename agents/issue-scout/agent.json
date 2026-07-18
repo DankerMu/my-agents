@@ -3,7 +3,7 @@
   "name": "issue-scout",
   "displayName": "Issue Scout",
   "description": "Given a GitHub issue or bug description, search the codebase for relevant files, symbols, and context to scope the change surface before implementation.",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "maturity": "experimental",
   "categories": ["coding", "productivity"],
   "tags": ["issue", "context", "search", "read-only", "issue-agent-os"],

@@ -244,13 +244,18 @@ async function validateAgents(
     const platforms = await detectPlatforms(baseDir);
     if (platforms.length === 0) {
       errors.push(
-        `agents/${dirName}: must have at least one platform file (claude-code.md or codex.toml)`
+        `agents/${dirName}: must have at least one platform file (claude-code.md, codex.toml, or omp.md)`
       );
     }
 
     const claudeCodePath = path.join(baseDir, "claude-code.md");
     if (await fileExists(claudeCodePath)) {
       await checkDocLength(claudeCodePath, `agents/${dirName}/claude-code.md`, errors);
+    }
+
+    const ompAgentPath = path.join(baseDir, "omp.md");
+    if (await fileExists(ompAgentPath)) {
+      await checkDocLength(ompAgentPath, `agents/${dirName}/omp.md`, errors);
     }
 
     for (const skillRef of agent.skills ?? []) {
@@ -366,8 +371,18 @@ async function validateHooks(repoRoot, validateHook, allowedCategories, errors, 
     const platforms = await detectHookPlatforms(baseDir);
     if (platforms.length === 0) {
       errors.push(
-        `hooks/${dirName}: must have at least one platform fragment (claude-code.json or codex.json)`
+        `hooks/${dirName}: must have at least one platform fragment (claude-code.json, codex.json, or omp.ts)`
       );
+    }
+
+    const ompHookPath = path.join(baseDir, "omp.ts");
+    if (await fileExists(ompHookPath)) {
+      const ompHookContent = await fs.readFile(ompHookPath, "utf8");
+      if (!/export\s+default\s/.test(ompHookContent)) {
+        errors.push(
+          `hooks/${dirName}/omp.ts: must default-export a hook factory (omp loads it as an extension module)`
+        );
+      }
     }
 
     const declaredEvents = new Set(hook.events ?? []);

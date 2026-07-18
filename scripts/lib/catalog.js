@@ -24,6 +24,9 @@ async function detectPlatforms(agentDir) {
   if (await fileExists(path.join(agentDir, "codex.toml"))) {
     platforms.push("codex");
   }
+  if (await fileExists(path.join(agentDir, "omp.md"))) {
+    platforms.push("omp");
+  }
   return platforms.sort();
 }
 
@@ -34,6 +37,9 @@ async function detectHookPlatforms(hookDir) {
   }
   if (await fileExists(path.join(hookDir, "codex.json"))) {
     platforms.push("codex");
+  }
+  if (await fileExists(path.join(hookDir, "omp.ts"))) {
+    platforms.push("omp");
   }
   return platforms.sort();
 }

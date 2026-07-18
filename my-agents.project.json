@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "description": "Bootstrap manifest for the my-agents authoring repository.",
-  "platforms": ["claude", "codex"],
+  "platforms": ["claude", "codex", "omp"],
   "packs": [],
   "skills": [
     "agent-lifecycle-manager",

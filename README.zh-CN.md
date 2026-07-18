@@ -5,7 +5,7 @@
 [![Validate](https://github.com/DankerMu/my-agents/actions/workflows/validate.yml/badge.svg)](https://github.com/DankerMu/my-agents/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-这是一个用于编写、校验和发布可复用 skills、agents、hooks 和 installable packs 的 monorepo，面向 Claude Code、Codex 以及类似的 AI 编程代理工作流。
+这是一个用于编写、校验和发布可复用 skills、agents、hooks 和 installable packs 的 monorepo，面向 Claude Code、Codex、omp（oh-my-pi）以及类似的 AI 编程代理工作流。
 
 仓库把 `skills/`、`agents/`、`hooks/` 和 `packs/` 作为唯一的源码入口，再基于这些源文件生成目录索引、执行结构校验，并把内容投影到不同运行时需要的安装位置。
 
@@ -58,25 +58,25 @@ npm test
 
 ## 仓库结构
 
-| 路径                       | 用途                                                                                     |
-| -------------------------- | ---------------------------------------------------------------------------------------- |
-| `docs/architecture/`       | 面向维护者的说明文档，解释工具边界、投影流程和仓库架构                                   |
-| `docs/catalog/`            | 自动生成的技能、代理、Hook 与 pack 目录索引                                              |
-| `docs/cli/`                | 面向操作方的命令参考，覆盖 runtime、sync 与维护工作流                                    |
-| `docs/metadata/`           | 仓库级元数据策略与编写约定                                                               |
-| `eval/routing/`            | 跨 Skill 竞争式路由评估集，覆盖不点名 prompt、预期胜者、禁止路由与流程深度               |
-| `skills/<name>/`           | Skills 的标准源码包，包含 `skill.json`、`SKILL.md`、`CHANGELOG.md`                       |
-| `agents/<name>/`           | Agent 标准包，包含 canonical `AGENT.md`、可选 `references/`、平台元数据/投影与 changelog |
-| `hooks/<name>/`            | Hook 的标准源码包，包含 `hook.json`、`HOOK.md`、平台片段、脚本与 `CHANGELOG.md`          |
-| `packs/<name>/`            | Pack 的标准源码包，可组合 skills、agents 与 hooks                                        |
-| `my-agents.project.json`   | 可选的项目引导清单，供 `npx my-agents project sync` 使用                                 |
-| `instructions/root/`       | 用来生成根目录 `AGENTS.md` 与 `CLAUDE.md` 的标准源文件                                   |
-| `scripts/`                 | 脚手架、安装、目录构建与校验脚本                                                         |
-| `schemas/`                 | Skill、Agent、Hook、Pack、项目清单与 Catalog 对应的 JSON Schema                          |
-| `research/`                | 调研笔记、资料整理和较长的背景文档                                                       |
-| `workspaces/<skill-name>/` | Skill 开发时的评估沙箱与临时工作区                                                       |
-| `.my-agents/`              | 本地忽略的状态目录，例如 project sync state 与可选的 `reference-repos.json` 清单         |
-| `.claude/` 和 `.agents/`   | 本地执行项目级安装时产生的运行时投影目录                                                 |
+| 路径                            | 用途                                                                                     |
+| ------------------------------- | ---------------------------------------------------------------------------------------- |
+| `docs/architecture/`            | 面向维护者的说明文档，解释工具边界、投影流程和仓库架构                                   |
+| `docs/catalog/`                 | 自动生成的技能、代理、Hook 与 pack 目录索引                                              |
+| `docs/cli/`                     | 面向操作方的命令参考，覆盖 runtime、sync 与维护工作流                                    |
+| `docs/metadata/`                | 仓库级元数据策略与编写约定                                                               |
+| `eval/routing/`                 | 跨 Skill 竞争式路由评估集，覆盖不点名 prompt、预期胜者、禁止路由与流程深度               |
+| `skills/<name>/`                | Skills 的标准源码包，包含 `skill.json`、`SKILL.md`、`CHANGELOG.md`                       |
+| `agents/<name>/`                | Agent 标准包，包含 canonical `AGENT.md`、可选 `references/`、平台元数据/投影与 changelog |
+| `hooks/<name>/`                 | Hook 的标准源码包，包含 `hook.json`、`HOOK.md`、平台片段、脚本与 `CHANGELOG.md`          |
+| `packs/<name>/`                 | Pack 的标准源码包，可组合 skills、agents 与 hooks                                        |
+| `my-agents.project.json`        | 可选的项目引导清单，供 `npx my-agents project sync` 使用                                 |
+| `instructions/root/`            | 用来生成根目录 `AGENTS.md` 与 `CLAUDE.md` 的标准源文件                                   |
+| `scripts/`                      | 脚手架、安装、目录构建与校验脚本                                                         |
+| `schemas/`                      | Skill、Agent、Hook、Pack、项目清单与 Catalog 对应的 JSON Schema                          |
+| `research/`                     | 调研笔记、资料整理和较长的背景文档                                                       |
+| `workspaces/<skill-name>/`      | Skill 开发时的评估沙箱与临时工作区                                                       |
+| `.my-agents/`                   | 本地忽略的状态目录，例如 project sync state 与可选的 `reference-repos.json` 清单         |
+| `.claude/`、`.agents/`、`.omp/` | 本地执行项目级安装时产生的运行时投影目录                                                 |
 
 ## 常用工作流
 
@@ -152,12 +152,14 @@ ESLint 负责仓库里的 JavaScript 工具脚本，Prettier 负责 Markdown、J
 
 ## 安装目标
 
-| 包类型 | Claude Code 目标路径                                                                                         | Codex 目标路径                                                                                    |
-| ------ | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| Skill  | `~/.claude/skills/<name>/` 或 `.claude/skills/<name>/`                                                       | `~/.agents/skills/<name>/` 或 `.agents/skills/<name>/`                                            |
-| Agent  | 定义位于 `.claude/agents/<name>.md`，按需指南位于 `.claude/agents/<name>/references/`（或用户级路径）        | 定义位于 `.codex/agents/<name>.toml`，按需指南位于 `.codex/agents/<name>/references/`             |
-| Hook   | 把脚本复制到 `.claude/hooks/<name>/`，并把 `claude-code.json` 合并进 `.claude/settings.json`（或用户级路径） | 把脚本复制到 `.codex/hooks/<name>/`，并把 `codex.json` 合并进 `.codex/hooks.json`（或用户级路径） |
-| Pack   | 会把它引用的 skills、agents 与 hooks 安装到上面的目标路径                                                    | 会把它引用的 skills、agents 与 hooks 安装到上面的目标路径                                         |
+| 包类型 | Claude Code 目标路径                                                                                         | Codex 目标路径                                                                                    | omp 目标路径                                                                                    |
+| ------ | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Skill  | `~/.claude/skills/<name>/` 或 `.claude/skills/<name>/`                                                       | `~/.agents/skills/<name>/` 或 `.agents/skills/<name>/`                                            | `~/.omp/agent/skills/<name>/` 或 `.omp/skills/<name>/`                                          |
+| Agent  | 定义位于 `.claude/agents/<name>.md`，按需指南位于 `.claude/agents/<name>/references/`（或用户级路径）        | 定义位于 `.codex/agents/<name>.toml`，按需指南位于 `.codex/agents/<name>/references/`             | 定义位于 `.omp/agents/<name>.md`，按需指南位于 `.omp/agents/<name>/references/`（或用户级路径） |
+| Hook   | 把脚本复制到 `.claude/hooks/<name>/`，并把 `claude-code.json` 合并进 `.claude/settings.json`（或用户级路径） | 把脚本复制到 `.codex/hooks/<name>/`，并把 `codex.json` 合并进 `.codex/hooks.json`（或用户级路径） | 把脚本复制到 `.omp/hooks/<name>/`，并把 `omp.ts` 扩展工厂复制到 `.omp/hooks/pre/<name>.ts`      |
+| Pack   | 会把它引用的 skills、agents 与 hooks 安装到上面的目标路径                                                    | 会把它引用的 skills、agents 与 hooks 安装到上面的目标路径                                         | 会把它引用的 skills、agents 与 hooks 安装到上面的目标路径                                       |
+
+omp 自身也会发现本仓库的 Claude Code / Codex 安装产物（`.claude/skills`、`.agents/skills`、根 `AGENTS.md`），所以 omp 目标路径主要服务于 omp-only 安装，以及 omp 不从 `.claude/`、`.codex/` 读取的 task agents 与 hooks。注意：把 `reviewer` agent 装到 omp 会覆盖 omp 内置的同名 `reviewer`（同名时非内置定义优先）。
 
 ## 生成文件
 

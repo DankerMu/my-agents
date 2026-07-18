@@ -3,7 +3,7 @@
   "name": "splitter",
   "displayName": "Splitter",
   "description": "Issue Agent OS decomposition worker. Breaks large or vague issues into 2-5 concrete, right-sized sub-issues with dependency links.",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "maturity": "experimental",
   "categories": ["workflow"],
   "tags": ["decomposition", "issue", "splitting", "issue-agent-os"],

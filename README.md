@@ -5,7 +5,7 @@ Language: English | [Chinese](README.zh-CN.md)
 [![Validate](https://github.com/DankerMu/my-agents/actions/workflows/validate.yml/badge.svg)](https://github.com/DankerMu/my-agents/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A monorepo for authoring, validating, and publishing reusable skills, agents, hooks, and installable packs for Claude Code, Codex, and similar AI coding agents.
+A monorepo for authoring, validating, and publishing reusable skills, agents, hooks, and installable packs for Claude Code, Codex, omp (oh-my-pi), and similar AI coding agents.
 
 This repository keeps the canonical source of truth under `skills/`, `agents/`, `hooks/`, and `packs/`, generates discovery catalogs from that source, and provides scaffold/install tooling so the same content can be projected into different runtime surfaces.
 
@@ -58,25 +58,25 @@ For package authoring workflows, start with `skill-lifecycle-manager`, `agent-li
 
 ## Repository Layout
 
-| Path                       | Purpose                                                                                                                        |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `docs/architecture/`       | Maintainer-oriented notes about tooling boundaries, projection flow, and repository architecture                               |
-| `docs/catalog/`            | Generated Markdown catalogs for tracked skills, agents, hooks, and packs                                                       |
-| `docs/cli/`                | Operator-facing command reference for runtime, sync, and maintenance workflows                                                 |
-| `docs/metadata/`           | Repository-level metadata policy and authoring conventions                                                                     |
-| `eval/routing/`            | Cross-skill competition suites with unlabeled prompts, expected winners, negative routes, and depth controls                   |
-| `skills/<name>/`           | Canonical source packages for reusable skills (`skill.json`, `SKILL.md`, `CHANGELOG.md`)                                       |
-| `agents/<name>/`           | Agent packages with canonical `AGENT.md`, optional `references/`, platform metadata/projections, and changelog                 |
-| `hooks/<name>/`            | Canonical hook packages (`hook.json`, `HOOK.md`, platform fragments, scripts, `CHANGELOG.md`)                                  |
-| `packs/<name>/`            | Canonical source packages for installable compositions of skills, agents, and hooks (`pack.json`, `README.md`, `CHANGELOG.md`) |
-| `my-agents.project.json`   | Optional project bootstrap manifest consumed by `npx my-agents project sync`                                                   |
-| `instructions/root/`       | Canonical source fragments used to generate root `AGENTS.md` and `CLAUDE.md`                                                   |
-| `scripts/`                 | Scaffolding, install, catalog build, and validation tooling                                                                    |
-| `schemas/`                 | JSON Schemas for skill, agent, hook, pack, project manifest, and catalog metadata                                              |
-| `research/`                | Research notes, source digests, and longer-form background documents                                                           |
-| `workspaces/<skill-name>/` | Evaluation sandboxes and scratch space for skill development                                                                   |
-| `.my-agents/`              | Ignored local state such as project sync state and the optional `reference-repos.json` manifest                                |
-| `.claude/` and `.agents/`  | Project-scope runtime projections created during local installation flows                                                      |
+| Path                            | Purpose                                                                                                                        |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `docs/architecture/`            | Maintainer-oriented notes about tooling boundaries, projection flow, and repository architecture                               |
+| `docs/catalog/`                 | Generated Markdown catalogs for tracked skills, agents, hooks, and packs                                                       |
+| `docs/cli/`                     | Operator-facing command reference for runtime, sync, and maintenance workflows                                                 |
+| `docs/metadata/`                | Repository-level metadata policy and authoring conventions                                                                     |
+| `eval/routing/`                 | Cross-skill competition suites with unlabeled prompts, expected winners, negative routes, and depth controls                   |
+| `skills/<name>/`                | Canonical source packages for reusable skills (`skill.json`, `SKILL.md`, `CHANGELOG.md`)                                       |
+| `agents/<name>/`                | Agent packages with canonical `AGENT.md`, optional `references/`, platform metadata/projections, and changelog                 |
+| `hooks/<name>/`                 | Canonical hook packages (`hook.json`, `HOOK.md`, platform fragments, scripts, `CHANGELOG.md`)                                  |
+| `packs/<name>/`                 | Canonical source packages for installable compositions of skills, agents, and hooks (`pack.json`, `README.md`, `CHANGELOG.md`) |
+| `my-agents.project.json`        | Optional project bootstrap manifest consumed by `npx my-agents project sync`                                                   |
+| `instructions/root/`            | Canonical source fragments used to generate root `AGENTS.md` and `CLAUDE.md`                                                   |
+| `scripts/`                      | Scaffolding, install, catalog build, and validation tooling                                                                    |
+| `schemas/`                      | JSON Schemas for skill, agent, hook, pack, project manifest, and catalog metadata                                              |
+| `research/`                     | Research notes, source digests, and longer-form background documents                                                           |
+| `workspaces/<skill-name>/`      | Evaluation sandboxes and scratch space for skill development                                                                   |
+| `.my-agents/`                   | Ignored local state such as project sync state and the optional `reference-repos.json` manifest                                |
+| `.claude/`, `.agents/`, `.omp/` | Project-scope runtime projections created during local installation flows                                                      |
 
 ## Common Workflows
 
@@ -152,12 +152,14 @@ ESLint covers the repo's JavaScript tooling and Prettier covers supported reposi
 
 ## Installation Targets
 
-| Package type | Claude Code target                                                                                                         | Codex target                                                                                                    |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Skill        | `~/.claude/skills/<name>/` or `.claude/skills/<name>/`                                                                     | `~/.agents/skills/<name>/` or `.agents/skills/<name>/`                                                          |
-| Agent        | Definition at `.claude/agents/<name>.md`; on-demand guides under `.claude/agents/<name>/references/` (or user equivalents) | Definition at `.codex/agents/<name>.toml`; on-demand guides under `.codex/agents/<name>/references/`            |
-| Hook         | Copies scripts to `.claude/hooks/<name>/` and merges `claude-code.json` into `.claude/settings.json` (or user equivalents) | Copies scripts to `.codex/hooks/<name>/` and merges `codex.json` into `.codex/hooks.json` (or user equivalents) |
-| Pack         | Installs its referenced skills, agents, and hooks into the targets above                                                   | Installs its referenced skills, agents, and hooks into the targets above                                        |
+| Package type | Claude Code target                                                                                                         | Codex target                                                                                                    | omp target                                                                                                           |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Skill        | `~/.claude/skills/<name>/` or `.claude/skills/<name>/`                                                                     | `~/.agents/skills/<name>/` or `.agents/skills/<name>/`                                                          | `~/.omp/agent/skills/<name>/` or `.omp/skills/<name>/`                                                               |
+| Agent        | Definition at `.claude/agents/<name>.md`; on-demand guides under `.claude/agents/<name>/references/` (or user equivalents) | Definition at `.codex/agents/<name>.toml`; on-demand guides under `.codex/agents/<name>/references/`            | Definition at `.omp/agents/<name>.md`; on-demand guides under `.omp/agents/<name>/references/` (or user equivalents) |
+| Hook         | Copies scripts to `.claude/hooks/<name>/` and merges `claude-code.json` into `.claude/settings.json` (or user equivalents) | Copies scripts to `.codex/hooks/<name>/` and merges `codex.json` into `.codex/hooks.json` (or user equivalents) | Copies scripts to `.omp/hooks/<name>/` and the `omp.ts` extension factory to `.omp/hooks/pre/<name>.ts`              |
+| Pack         | Installs its referenced skills, agents, and hooks into the targets above                                                   | Installs its referenced skills, agents, and hooks into the targets above                                        | Installs its referenced skills, agents, and hooks into the targets above                                             |
+
+omp also discovers this repo's Claude Code and Codex installs on its own (`.claude/skills`, `.agents/skills`, root `AGENTS.md`), so the omp targets matter mainly for omp-only installs and for task agents and hooks, which omp does not read from `.claude/` or `.codex/`. Note: installing the `reviewer` agent to omp overrides omp's bundled `reviewer` (non-bundled definitions win by name).
 
 ## Generated Files
 

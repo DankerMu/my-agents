@@ -37,12 +37,20 @@ function validateContractContent(content) {
   return errors;
 }
 
-function renderClaudeProjection(existingContent, contractContent) {
+function renderFrontmatterProjection(existingContent, contractContent, label) {
   const match = existingContent.match(/^---\s*\r?\n[\s\S]*?\r?\n---/);
   if (!match) {
-    throw new Error("claude-code.md must start with closed YAML frontmatter");
+    throw new Error(`${label} must start with closed YAML frontmatter`);
   }
   return `${match[0]}\n\n${normalizeContract(contractContent)}`;
+}
+
+function renderClaudeProjection(existingContent, contractContent) {
+  return renderFrontmatterProjection(existingContent, contractContent, "claude-code.md");
+}
+
+function renderOmpProjection(existingContent, contractContent) {
+  return renderFrontmatterProjection(existingContent, contractContent, "omp.md");
 }
 
 function renderCodexProjection(existingContent, contractContent) {
@@ -78,6 +86,14 @@ async function expectedAgentProjections(agentDir) {
   try {
     const codexContent = await fs.readFile(codexPath, "utf8");
     projections.set(codexPath, renderCodexProjection(codexContent, contractContent));
+  } catch (err) {
+    if (err.code !== "ENOENT") throw err;
+  }
+
+  const ompPath = path.join(agentDir, "omp.md");
+  try {
+    const ompContent = await fs.readFile(ompPath, "utf8");
+    projections.set(ompPath, renderOmpProjection(ompContent, contractContent));
   } catch (err) {
     if (err.code !== "ENOENT") throw err;
   }
@@ -179,6 +195,7 @@ module.exports = {
   normalizeContract,
   renderClaudeProjection,
   renderCodexProjection,
+  renderOmpProjection,
   syncAgentContractPackage,
   syncAllAgentContracts,
   validateAgentContractPackage,

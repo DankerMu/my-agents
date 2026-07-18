@@ -10,6 +10,7 @@ __pycache__/
 .agents/
 .claude/
 .codex/
+.omp/
 .my-agents/
 .tmp/
 .eslintcache

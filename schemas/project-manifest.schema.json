@@ -127,7 +127,7 @@
       "type": "array",
       "items": {
         "type": "string",
-        "enum": ["claude", "codex"]
+        "enum": ["claude", "codex", "omp"]
       }
     },
     "packs": {

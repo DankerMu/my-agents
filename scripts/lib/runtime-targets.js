@@ -5,6 +5,14 @@ function getScopeBase(scope) {
   return scope === "user" ? os.homedir() : process.cwd();
 }
 
+// omp keeps user-scope files under ~/.omp/agent/ but project-scope files under
+// <project>/.omp/, so the omp base is scope-shaped instead of a plain prefix.
+function getOmpBase(scope) {
+  return scope === "user"
+    ? path.join(os.homedir(), ".omp", "agent")
+    : path.join(process.cwd(), ".omp");
+}
+
 // Skills flagged `disable-model-invocation: true` are user-invoked only. Codex
 // has no such frontmatter key, so their Codex copy lands in `.agents/skills-manual/`
 // (outside the scanned skills directory) instead of `.agents/skills/`.
@@ -26,6 +34,17 @@ function getSkillTargets(name, platforms, scope, options = {}) {
       platformKey: "codex",
       platform: "Codex",
       destDir: path.join(base, ".agents", codexDirName, name)
+    });
+  }
+
+  // omp honors `disable-model-invocation` natively (hidden from the system
+  // prompt, still reachable via /skill:<name>), so user-invoked skills stay in
+  // the scanned skills directory.
+  if (platforms.includes("omp")) {
+    targets.push({
+      platformKey: "omp",
+      platform: "omp",
+      destDir: path.join(getOmpBase(scope), "skills", name)
     });
   }
 
@@ -58,6 +77,18 @@ function getAgentTargets(name, platforms, scope) {
     });
   }
 
+  if (platforms.includes("omp")) {
+    const ompBase = getOmpBase(scope);
+    targets.push({
+      platform: "omp",
+      srcFile: "omp.md",
+      destDir: path.join(ompBase, "agents"),
+      destPath: path.join(ompBase, "agents", `${name}.md`),
+      supportDestDir: path.join(ompBase, "agents", name),
+      referencesDestDir: path.join(ompBase, "agents", name, "references")
+    });
+  }
+
   return targets;
 }
 
@@ -82,6 +113,21 @@ function getHookTargets(name, platforms, scope) {
       fragmentFile: "codex.json",
       scriptsDestDir: path.join(base, ".codex", "hooks", name),
       configPath: path.join(base, ".codex", "hooks.json")
+    });
+  }
+
+  // omp has no hooks config file: it imports .ts/.js extension factories from
+  // <config>/hooks/pre|post/. The omp.ts fragment is copied there verbatim and
+  // resolves the shell scripts at ../<name>/ relative to itself. Directories
+  // under hooks/ are never scanned, so the scripts dir is inert.
+  if (platforms.includes("omp")) {
+    const ompBase = getOmpBase(scope);
+    targets.push({
+      platformKey: "omp",
+      platform: "omp",
+      fragmentFile: "omp.ts",
+      factoryDestPath: path.join(ompBase, "hooks", "pre", `${name}.ts`),
+      scriptsDestDir: path.join(ompBase, "hooks", name)
     });
   }
 
