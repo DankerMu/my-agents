@@ -757,7 +757,7 @@
       "path": "skills/risk-adaptive-cross-review",
       "displayName": "Risk-Adaptive Cross Review",
       "description": "Multi-perspective, risk-adaptive review for PRs, diffs, branches, OpenSpec changes, or stage artifacts — reviewers split across correctness, integration, security/performance, test evidence, spec compliance, or invariant/state-machine compatibility. Use on explicit asks for risk-adaptive, multi-perspective, parallel, cross-review, or high-risk PR review. Not for ordinary quick review.",
-      "version": "0.4.1",
+      "version": "0.4.2",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -838,7 +838,7 @@
       "path": "skills/stage-change-pipeline",
       "displayName": "Stage Change Pipeline",
       "description": "Turn a development-stage design package into a reviewed OpenSpec change and fine-grained GitHub issues with clear module boundaries and small-PR execution scope.",
-      "version": "0.15.1",
+      "version": "0.17.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -879,7 +879,7 @@
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
       "description": "End-to-end GitHub issue implementation workflow orchestrated by Claude Code or Codex, delegating implementation, cross-review, and finding verification to subagents (implementer, reviewer, verifier). Covers OpenSpec fixtures, risk-adaptive review, verification, PR evidence, CI, and human-gated merge.",
-      "version": "0.27.0",
+      "version": "0.30.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1281,7 +1281,7 @@
       "path": "packs/agentic-issue-delivery",
       "displayName": "Agentic Issue Delivery Pack",
       "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through subagent-driven review and delivery gates, with whole-repo entropy governance.",
-      "version": "0.13.0",
+      "version": "0.14.0",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "agentic-developer",
@@ -1453,5 +1453,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-23T05:19:17.786Z"
+  "generatedAt": "2026-07-23T15:35:29.070Z"
 }

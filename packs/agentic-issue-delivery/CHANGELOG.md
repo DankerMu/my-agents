@@ -5,7 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
-## [0.13.0] - 2026-07-17
+## [0.14.0] - 2026-07-23
+
+### Changed
+
+- **上下游联合改版：`stage-change-pipeline` 0.16.0 + `subagent-workflow` 0.28.0/0.29.0 + `risk-adaptive-cross-review` 0.4.2**——pack 两条主干之间从单向交接升级为回路。上游 Stage 5 契约新增 `Suggested fixture level` 与 `Minimal mergeable slice`（下游 triage 与 Split rebuttal 的锚）；下游终局事件（round-ceiling 拆分/放弃/降档）回流为上游 sizing-retro，拆分子项重过 Stage 5 契约。下游同批新增 per-issue ceiling 记忆（`review_gate.py --issue` + `.review-gate-issues.json`）、终局记账行与子 PR 全覆盖、`loop_log_audit.py` keep/cut 裁决欠账检查、evidence_check gate-lock 与 loop-log 词表校验、分支尖一致性 merge 前置、fixture 修复两轮封顶、merge 后 `openspec archive` 认领；0.29.0 追加 P2 延期默认 + P1 顺风车（严重度配给复审轮），P0-P2 与 critical/major/minor 的显式 crosswalk 落 canonical finding-contract（0.4.2）。动机与实跑证据（SHUD-Harness 26 merges、xagent 双 ceiling 复盘）详见各 skill changelog。同批结构减重收尾：`subagent-workflow` 0.30.0 与 `stage-change-pipeline` 0.17.0 删除战史散文、Stage 细节下沉 references、手抄词表改 canonical 指针——行为契约零变化。
 
 ### Added
 

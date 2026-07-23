@@ -22,6 +22,11 @@ Phase 4/5/6.5, versions 0.20.0/0.21.0):
 - Round ceiling (0.26.0): 5 comprehensive rounds per PR, absolute. The 5th
   not-clean round is terminal (only a breadth retro registers, lock persists);
   a 6th round is refused and logged as a violation, even after a clean 5th.
+- Per-issue ceiling memory (0.28.0): with `open --issue`, a ceiling event is
+  recorded in .review-gate-issues.json (survives `close`); a later PR for the
+  same issue refuses depth/noise retros without --user-approved (recorded to
+  the ledger), leaves breadth/converging untouched, and `close --outcome`
+  records how each PR ended. Without --issue, legacy behavior is unchanged.
 - Bookkeeping: every round appends a ledger line; state file is created by
   `open`, removed by `close`.
 """
@@ -72,14 +77,18 @@ Recurring findings:
 SPLIT_REBUTTAL = "Split rebuttal: all findings share the receipt-validation helper; child PRs would inherit it\n"
 
 
-def retro(root: Path, shape: str, *, text: str | None = None, rebuttal: bool = False) -> int:
+def retro(root: Path, shape: str, *, text: str | None = None, rebuttal: bool = False,
+          approved: str | None = None) -> int:
     if text is None:
         text = DEPTH_EVIDENCE if shape == "depth" else "Review Failure Retro: evidence\n"
     if rebuttal:
         text += SPLIT_REBUTTAL
     path = root / f"retro-{shape}.md"
     path.write_text(text, encoding="utf-8")
-    return run(root, "record-retro", "--path", str(path), "--shape", shape)
+    argv = ["record-retro", "--path", str(path), "--shape", shape]
+    if approved is not None:
+        argv += ["--user-approved", approved]
+    return run(root, *argv)
 
 
 # --- happy path -----------------------------------------------------------
@@ -332,3 +341,90 @@ def test_retro_requires_persisted_file(tmp_path):
         record(tmp_path, sha, classes=cls)
     assert run(tmp_path, "record-retro", "--path", str(tmp_path / "missing.md"), "--shape", "depth") == 2
     assert state(tmp_path)["locked"] is True
+
+
+# --- per-issue ceiling memory (0.28.0) --------------------------------------
+
+
+def history(root: Path) -> dict:
+    return json.loads((root / ".review-gate-issues.json").read_text(encoding="utf-8"))
+
+
+def hit_ceiling(root: Path, pr: int, issue: int) -> None:
+    """Open a PR for the issue and drive it to the terminal 5th not-clean round."""
+    assert run(root, "open", "--pr", str(pr), "--issue", str(issue)) == 0
+    for sha, cls in (("a", "c1"), ("b", "c2"), ("c", "c3")):
+        record(root, sha, classes=cls)
+    assert retro(root, "breadth") == 0
+    assert record(root, "d", classes="c4") == 2
+    assert retro(root, "breadth") == 0
+    assert record(root, "e", classes="c5") == 2
+    assert "round ceiling" in state(root)["lockReason"]
+
+
+def test_ceiling_recorded_in_issue_history_and_close_outcome(tmp_path):
+    hit_ceiling(tmp_path, 292, 291)
+    assert history(tmp_path)["issues"]["291"]["ceilingPrs"] == [292]
+    assert run(tmp_path, "close", "--outcome", "superseded-by-split") == 0
+    closed = history(tmp_path)["issues"]["291"]["closed"]
+    assert closed == [{"pr": 292, "outcome": "superseded-by-split", "rounds": 5}]
+    assert not (tmp_path / ".review-gate.json").exists()
+    assert (tmp_path / ".review-gate-issues.json").exists()  # memory survives close
+
+
+def test_successor_pr_refuses_depth_noise_without_user_decision(tmp_path):
+    hit_ceiling(tmp_path, 292, 291)
+    run(tmp_path, "close", "--outcome", "superseded-by-split")
+    assert run(tmp_path, "open", "--pr", "305", "--issue", "291") == 0
+    assert state(tmp_path)["issueEscalated"]
+    for sha, cls in (("a", "wrapper"), ("b", "c2"), ("c", "wrapper")):
+        record(tmp_path, sha, classes=cls)
+    assert retro(tmp_path, "depth") == 2       # escalated: no silent digging
+    assert retro(tmp_path, "noise") == 2
+    assert retro(tmp_path, "breadth") == 0     # the split stays the default exit
+
+
+def test_successor_pr_depth_with_user_decision_registers_and_logs(tmp_path):
+    hit_ceiling(tmp_path, 292, 291)
+    run(tmp_path, "close", "--outcome", "superseded-by-split")
+    run(tmp_path, "open", "--pr", "305", "--issue", "291")
+    for sha, cls in (("a", "wrapper"), ("b", "c2"), ("c", "wrapper")):
+        record(tmp_path, sha, classes=cls)
+    assert retro(tmp_path, "depth", approved="user chose invariant closure over split") == 0
+    ledger_305 = (tmp_path / ".workplans/pr-305/review/round-ledger.log").read_text(encoding="utf-8")
+    assert "User decision | post-ceiling depth continuation approved" in ledger_305
+
+
+def test_successor_pr_converging_unaffected_by_escalation(tmp_path):
+    hit_ceiling(tmp_path, 292, 291)
+    run(tmp_path, "close", "--outcome", "superseded-by-split")
+    run(tmp_path, "open", "--pr", "305", "--issue", "291")
+    record(tmp_path, "a", verified=5, highest="minor", classes="c1")
+    record(tmp_path, "b", verified=3, highest="minor", classes="c2")
+    record(tmp_path, "c", verified=1, highest="minor", classes="c3")
+    assert retro(tmp_path, "converging") == 0
+
+
+def test_same_pr_reopen_is_not_escalated(tmp_path):
+    hit_ceiling(tmp_path, 292, 291)
+    run(tmp_path, "close")
+    run(tmp_path, "open", "--pr", "292", "--issue", "291")
+    assert state(tmp_path)["issueEscalated"] is None
+
+
+def test_without_issue_flag_legacy_behavior_and_no_history(tmp_path):
+    open_gate(tmp_path)  # no --issue
+    for sha, cls in (("a", "wrapper"), ("b", "c2"), ("c", "wrapper")):
+        record(tmp_path, sha, classes=cls)
+    assert retro(tmp_path, "depth") == 0
+    assert run(tmp_path, "close", "--outcome", "merged") == 0
+    assert not (tmp_path / ".review-gate-issues.json").exists()
+
+
+def test_gate_entries_counted_per_issue(tmp_path):
+    assert run(tmp_path, "open", "--pr", "10", "--issue", "8") == 0
+    for sha, cls in (("a", "c1"), ("b", "c2"), ("c", "c3")):
+        record(tmp_path, sha, classes=cls)
+    assert retro(tmp_path, "breadth") == 0
+    assert history(tmp_path)["issues"]["8"]["gateEntries"] == 1
+    assert history(tmp_path)["issues"]["8"]["ceilingPrs"] == []

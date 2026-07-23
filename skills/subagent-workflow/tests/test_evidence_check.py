@@ -11,6 +11,14 @@ evidence checklist, version 0.24.0):
   K; future rounds pass; no state file -> check skipped, others still run.
 - R4 exit codes: 0 clean, 2 findings; loud failure (2) on nothing to check,
   missing --file target, or unresolvable HEAD.
+- R5 gate-lock (0.28.0): a locked .review-gate.json fails the check even when
+  every scanned file is clean - the out-of-band bypass (corrective action run
+  before the gate transition) is caught at the next spawn/post point.
+- R6 loop-log entry (0.28.0): --loop-log-entry validates a pending
+  review-loop-log line: canonical single-token fixture vocabulary (composites
+  and ad-hoc labels rejected), outcome vocabulary, date format, required keys;
+  merged lines need gate_net_catch/verdicts, terminal outcomes are exempt;
+  works standalone without --file.
 """
 
 from __future__ import annotations
@@ -147,3 +155,83 @@ def test_missing_file_target_fails(tmp_path):
 def test_unresolvable_head_fails(tmp_path):
     body = write(tmp_path / "pr-body.md", "fine\n")
     assert evidence_check.main(["--root", str(tmp_path), "--file", str(body)]) == 2
+
+
+# --- R5 gate-lock -------------------------------------------------------------
+
+
+def lock_gate(root: Path) -> None:
+    """Three not-clean rounds; the third locks the gate (its exit code 2 is the lock signal)."""
+    open_gate_with_rounds(root, 2)
+    assert review_gate.main([
+        "--root", str(root), "record-round", "--sha", "sha2", "--not-clean",
+        "--verified", "1", "--highest", "minor", "--classes", "c2",
+    ]) == 2
+
+
+def test_locked_gate_fails_even_with_clean_files(tmp_path, capsys):
+    lock_gate(tmp_path)
+    body = write(tmp_path / "pr-body.md", "All evidence current.\n")
+    assert run(tmp_path, "--file", str(body)) == 2
+    assert "[gate-lock]" in capsys.readouterr().out
+
+
+def test_unlocked_gate_after_retro_passes(tmp_path):
+    lock_gate(tmp_path)
+    retro = write(tmp_path / "retro.md", "Review Failure Retro: evidence\n")
+    assert review_gate.main(["--root", str(tmp_path), "record-retro",
+                             "--path", str(retro), "--shape", "breadth"]) == 0
+    body = write(tmp_path / "pr-body.md", "All evidence current.\n")
+    assert run(tmp_path, "--file", str(body)) == 0
+
+
+# --- R6 loop-log entry ---------------------------------------------------------
+
+
+MERGED_LINE = {
+    "issue": 88, "pr": 128, "date": "2026-07-23", "fixture": "expanded", "rounds": 3,
+    "gate_net_catch": 2, "verdicts": {"confirmed": 2, "plausible": 0, "refuted": 1},
+    "residual_deferred": 0, "premerge_skip_blocks": 0,
+}
+
+
+def entry(tmp_path: Path, **overrides) -> Path:
+    import json
+    data = {**MERGED_LINE, **overrides}
+    for key, value in list(data.items()):
+        if value is None:
+            del data[key]
+    return write(tmp_path / "pending-line.json", json.dumps(data) + "\n")
+
+
+def test_valid_merged_line_passes_standalone(tmp_path):
+    assert run(tmp_path, "--loop-log-entry", str(entry(tmp_path))) == 0
+
+
+def test_off_vocabulary_fixture_labels_fail(tmp_path, capsys):
+    assert run(tmp_path, "--loop-log-entry", str(entry(tmp_path, fixture="standard"))) == 2
+    assert "off-vocabulary" in capsys.readouterr().out
+    assert run(tmp_path, "--loop-log-entry", str(entry(tmp_path, fixture="expanded/high"))) == 2
+
+
+def test_terminal_outcome_exempt_from_merged_keys(tmp_path):
+    line = entry(tmp_path, outcome="ceiling-split", gate_net_catch=None, verdicts=None,
+                 residual_deferred=None, premerge_skip_blocks=None)
+    assert run(tmp_path, "--loop-log-entry", str(line)) == 0
+
+
+def test_merged_line_missing_net_catch_fails(tmp_path):
+    assert run(tmp_path, "--loop-log-entry", str(entry(tmp_path, gate_net_catch=None))) == 2
+
+
+def test_invalid_outcome_date_rounds_and_missing_key_fail(tmp_path):
+    assert run(tmp_path, "--loop-log-entry", str(entry(tmp_path, outcome="split"))) == 2
+    assert run(tmp_path, "--loop-log-entry", str(entry(tmp_path, date="07/23"))) == 2
+    assert run(tmp_path, "--loop-log-entry", str(entry(tmp_path, rounds=-1))) == 2
+    assert run(tmp_path, "--loop-log-entry", str(entry(tmp_path, fixture=None))) == 2
+
+
+def test_malformed_or_missing_entry_file_fails(tmp_path):
+    bad = write(tmp_path / "pending-line.json", "{not json\n")
+    assert run(tmp_path, "--loop-log-entry", str(bad)) == 2
+    assert run(tmp_path, "--loop-log-entry", str(tmp_path / "absent.json")) == 2
