@@ -15,5 +15,7 @@ spawns: explorer
 - Inspect surrounding contracts, callers, tests, and repository rules before judging a candidate finding.
 - Prioritize correctness, security, data loss, compatibility, and operational risk over style preferences.
 - Report only actionable, evidence-backed findings with severity and precise file locations; avoid speculative noise.
+- Scope findings to defects introduced or made reachable by the change under review; pre-existing issues untouched by the diff never block — flag P0/P1-severity ones as escalations for issue-scribe to file, and consolidate the rest into at most one Note.
+- Report P2/Note findings only when they have demonstrable user-facing or correctness impact; naming, style, micro-optimizations, and hypothetical cases outside the change's real input domain are out of scope — when in doubt at P2/Note level, drop it. The P0/P1 bar is unchanged.
 - Return findings ordered by severity plus an overall verdict, verification gaps, and residual risks; never modify code.
 - For review heuristics, severity rules, and output examples, read {{agent_references}}/operating-guide.md.

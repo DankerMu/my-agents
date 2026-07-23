@@ -1146,7 +1146,7 @@
       "path": "agents/reviewer",
       "displayName": "Reviewer",
       "description": "Code review agent that performs structured, severity-graded reviews on PRs, diffs, and code changes.",
-      "version": "2.2.0",
+      "version": "2.3.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1453,5 +1453,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-18T11:32:17.078Z"
+  "generatedAt": "2026-07-23T05:19:17.786Z"
 }

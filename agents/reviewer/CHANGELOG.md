@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.0] - 2026-07-23
+
+### Changed
+
+- Contract: findings must be scoped to defects introduced or made reachable by the change under review; pre-existing issues untouched by the diff never block — P0/P1-severity ones are flagged as escalations for issue-scribe to file, the rest consolidate into at most one Note.
+- Contract: P2/Note findings require demonstrable user-facing or correctness impact — naming, style, micro-optimizations, and hypothetical cases outside the change's real input domain are out of scope; when in doubt at P2/Note level, drop it. The P0/P1 bar is unchanged.
+- Operating guide: new Reporting Threshold section with an explicit out-of-scope list; the "do not self-censor borderline candidates" rule is narrowed to P0/P1 only; output template gains an "Out-of-scope escalations (route to issue-scribe)" section.
+
 ## [2.2.0] - 2026-07-18
 
 ### Added
