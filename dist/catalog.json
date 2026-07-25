@@ -879,7 +879,7 @@
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
       "description": "End-to-end GitHub issue implementation workflow orchestrated by Claude Code or Codex, delegating implementation, cross-review, and finding verification to subagents (implementer, reviewer, verifier). Covers OpenSpec fixtures, risk-adaptive review, verification, PR evidence, CI, and human-gated merge.",
-      "version": "0.30.0",
+      "version": "0.31.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1173,7 +1173,7 @@
       "path": "agents/verifier",
       "displayName": "Verifier",
       "description": "Independent finding-verification agent. Adjudicates one failure-class batch of candidate review findings (at most 5) with exactly one verdict per candidate — CONFIRMED, PLAUSIBLE, or REFUTED — using only diff/spec/code/test evidence. Read-only; never a reviewer that produced any candidate in its batch.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1453,5 +1453,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-23T15:35:29.070Z"
+  "generatedAt": "2026-07-25T06:09:38.216Z"
 }

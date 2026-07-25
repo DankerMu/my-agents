@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.0] - 2026-07-25
+
+### Added
+
+- Disposition axis, orthogonal to the verdict: every CONFIRMED/PLAUSIBLE candidate additionally gets FIX_NOW, DEFER, or DISCARD, derived mechanically from three evidence-cited tests — T1 reachability within the real input domain, T2 observable impact at a boundary an external party depends on, T3 oracle anchor on a project-owned authority ladder (spec/fixture → issue/PR requirements → tests → project rules → de facto contract). Universal invariants need no anchor.
+- Guardrails: CONFIRMED P0 is never DISCARD; every DEFER/DISCARD must cite its decisive test; severity may be downgraded with a finding-contract Downgrading rationale but never upgraded; inconclusive evidence resolves to FIX_NOW/DEFER, never DISCARD.
+
+### Changed
+
+- REFUTED no longer includes "pure style with no observable effect" — a true-but-style-only concern is verdicted honestly and discarded by the T2 test instead.
+
 ## [0.3.0] - 2026-07-18
 
 ### Added
