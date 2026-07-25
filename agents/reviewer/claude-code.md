@@ -5,6 +5,7 @@ description: >
   Performs structured, severity-graded reviews covering correctness, security, performance,
   and maintainability. Can spawn explorer for deeper codebase investigation.
 tools: Read, Glob, Grep, Bash(readonly), Agent(explorer)
+model: claude-opus-5
 ---
 
 # reviewer Contract

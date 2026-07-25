@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.4.0]
+
+- Pin the Claude Code projection to `model: claude-opus-5` so the agent no longer inherits the parent session's model. Claude Code has no per-subagent reasoning-effort field, so effort still follows the session setting.
+
 ## [2.3.0] - 2026-07-23
 
 ### Changed

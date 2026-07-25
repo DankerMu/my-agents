@@ -1005,7 +1005,7 @@
       "path": "agents/implementer",
       "displayName": "Implementer",
       "description": "Code implementation agent that writes, modifies, and refactors code based on plans, specs, or direct instructions.",
-      "version": "1.6.0",
+      "version": "1.7.0",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -1033,7 +1033,7 @@
       "path": "agents/issue-scribe",
       "displayName": "Issue Scribe",
       "description": "Follow-up capture agent: takes a raw observation noticed during primary work, verifies it read-only, determines origin, boundary, and solution direction, dedups against existing issues, and files one structured GitHub issue for later delivery. Never fixes anything itself.",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1146,7 +1146,7 @@
       "path": "agents/reviewer",
       "displayName": "Reviewer",
       "description": "Code review agent that performs structured, severity-graded reviews on PRs, diffs, and code changes.",
-      "version": "2.3.0",
+      "version": "2.4.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1173,7 +1173,7 @@
       "path": "agents/verifier",
       "displayName": "Verifier",
       "description": "Independent finding-verification agent. Adjudicates one failure-class batch of candidate review findings (at most 5) with exactly one verdict per candidate — CONFIRMED, PLAUSIBLE, or REFUTED — using only diff/spec/code/test evidence. Read-only; never a reviewer that produced any candidate in its batch.",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1453,5 +1453,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-25T06:09:38.216Z"
+  "generatedAt": "2026-07-25T07:32:59.010Z"
 }

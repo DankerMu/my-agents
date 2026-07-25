@@ -7,6 +7,7 @@ description: >
   Read-only. Must not be a reviewer that produced any candidate in the batch, and must not
   search for new findings.
 tools: Read, Glob, Grep, Bash(readonly)
+model: claude-opus-5
 ---
 
 # verifier Contract
