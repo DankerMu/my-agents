@@ -52,7 +52,7 @@ Prompt、skill、context 是 map；真实代码库、真实约束、真实运行
 ## 出口路由
 
 - 暴露的**决策点** → `grill-me` 当作分支逐个拷问（本 skill 挖出问题，grill-me 逼出答案）。
-- 值得沉淀的**团队隐形约定** → `grill-with-docs`（`openspec/glossary.md` / `docs/adr/`）。
+- 值得沉淀的**团队隐形约定** → `grill-me` docs 模式（`openspec/glossary.md` / `docs/adr/`）。
 - 范围外撞见的**雷** → `issue-scribe`（已安装时）或 `gh-create-issue`，不顺手修。
 - 发现**方向本身没定** → `brainstorming`。
 

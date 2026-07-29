@@ -52,7 +52,7 @@ and derivations as detailed as necessary, but keep the mapping tables explicit.
 |---|---|---|---|---|---|
 
 ## Pressure-Test
-- Mode: grill-me | grill-with-docs | skipped:<reason>
+- Mode: grill-me | grill-me:docs | skipped:<reason>
 - Decisions closed:
 - Open questions:
 - Glossary / ADR changes:

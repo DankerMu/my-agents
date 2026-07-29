@@ -100,7 +100,7 @@ required confirmations and artifacts remain binding.
   parameterizations, scientific state, coupling or numerical representation.
 - `grill-me` — pressure-test an existing question brief or protocol without
   persistent terminology work.
-- `grill-with-docs` — pressure-test plans whose scientific terms or durable
+- `grill-me` docs mode — pressure-test plans whose scientific terms or durable
   project decisions must be aligned with `openspec/glossary.md` and `docs/adr/`.
   Use it when the research terminology will govern implementation; keep
   research-only decision records under the study directory.
@@ -185,7 +185,7 @@ freezing the protocol.
 
 Apply the shared gate in
 [pressure-test-contract.md](references/pressure-test-contract.md): record one
-explicit decision — `grill-me`, `grill-with-docs`, or `skipped:<reason>` (only
+explicit decision — `grill-me`, `grill-me:docs`, or `skipped:<reason>` (only
 for genuinely narrow, low-impact work) — before freezing.
 
 Freeze the approved protocol before result-aware execution. Freeze

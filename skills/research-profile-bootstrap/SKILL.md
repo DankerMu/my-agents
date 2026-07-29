@@ -117,7 +117,7 @@ marked `human-confirmed`, `inferred`, or `unknown`.
 
 Apply the shared gate rule (canonical in `research-lifecycle`,
 `references/pressure-test-contract.md`): `grill-me` when no terminology needs
-persistence, `grill-with-docs` when a term, process boundary or durable
+persistence, `grill-me` docs mode when a term, process boundary or durable
 project decision will govern later OpenSpec and code work. Ask one material
 question at a time and provide a recommended answer.
 

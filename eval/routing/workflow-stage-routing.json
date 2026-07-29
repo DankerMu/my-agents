@@ -8,7 +8,6 @@
     "brainstorming",
     "blind-spot-pass",
     "grill-me",
-    "grill-with-docs",
     "future-aware-architecture",
     "implementation-planning",
     "stage-change-pipeline",
@@ -86,7 +85,7 @@
       "name": "Pressure-test an existing rollout plan",
       "prompt": "We already have a rollout plan for the new billing engine. Challenge it one decision branch at a time, recommend an answer with each question, verify anything discoverable from the repository, and stop when the plan is mutually understood. Do not write glossary or decision-record files.",
       "expected_route": "grill-me",
-      "forbidden_routes": ["clarify", "grill-with-docs", "implementation-planning"],
+      "forbidden_routes": ["clarify", "implementation-planning"],
       "allowed_followups": ["implementation-planning"],
       "expected_depth": "standard",
       "rationale": "A concrete plan exists and needs adversarial questioning, without domain-document persistence."
@@ -96,7 +95,7 @@
       "name": "Interrogate security design branches",
       "prompt": "Interrogate our completed session-security design. Ask one high-impact branch question at a time, offer a recommended answer, and use code evidence instead of asking us for facts the repository already contains. Keep the result conversational rather than producing a new design document.",
       "expected_route": "grill-me",
-      "forbidden_routes": ["brainstorming", "grill-with-docs", "future-aware-architecture"],
+      "forbidden_routes": ["brainstorming", "future-aware-architecture"],
       "allowed_followups": ["implementation-planning"],
       "expected_depth": "standard",
       "rationale": "The direction is already documented; the task is adversarial branch-by-branch understanding, not ideation or architecture selection."
@@ -105,21 +104,21 @@
       "id": "grill-docs-domain-terminology",
       "name": "Pressure-test domain terminology and persist it",
       "prompt": "Challenge our marketplace settlement plan against real domain scenarios and repository behavior. As terms stabilize, update the project glossary inline; record only durable architectural decisions in ADRs.",
-      "expected_route": "grill-with-docs",
-      "forbidden_routes": ["clarify", "grill-me", "implementation-planning"],
+      "expected_route": "grill-me",
+      "forbidden_routes": ["clarify", "implementation-planning"],
       "allowed_followups": ["implementation-planning", "stage-change-pipeline"],
       "expected_depth": "heavy",
-      "rationale": "The request combines adversarial plan testing with explicit glossary and ADR persistence."
+      "rationale": "The request combines adversarial plan testing with explicit glossary and ADR persistence (routes to grill-me docs mode after the grill-with-docs merge)."
     },
     {
       "id": "grill-docs-scenario-boundaries",
       "name": "Persist scenario-tested language",
       "prompt": "Use concrete insurance claim scenarios to probe the boundaries of our existing design, align ambiguous project terminology as we go, and persist accepted terms plus qualifying long-lived decisions in the repository documentation.",
-      "expected_route": "grill-with-docs",
-      "forbidden_routes": ["brainstorming", "grill-me", "future-aware-architecture"],
+      "expected_route": "grill-me",
+      "forbidden_routes": ["brainstorming", "future-aware-architecture"],
       "allowed_followups": ["implementation-planning", "stage-change-pipeline"],
       "expected_depth": "heavy",
-      "rationale": "Scenario pressure-testing and inline domain-document persistence are both required."
+      "rationale": "Scenario pressure-testing and inline domain-document persistence are both required (routes to grill-me docs mode after the grill-with-docs merge)."
     },
     {
       "id": "future-architecture-platform-choice",
@@ -202,12 +201,7 @@
       "name": "Summarize completed test output",
       "prompt": "Summarize the supplied test output in three sentences and identify the single failing suite. Do not inspect the repository or propose a delivery workflow.",
       "expected_route": "none",
-      "forbidden_routes": [
-        "brainstorming",
-        "grill-me",
-        "grill-with-docs",
-        "future-aware-architecture"
-      ],
+      "forbidden_routes": ["brainstorming", "grill-me", "future-aware-architecture"],
       "allowed_followups": [],
       "expected_depth": "none",
       "rationale": "This is a direct transformation task with no ambiguity, design decision, plan, or staged delivery requirement."
@@ -257,7 +251,7 @@
       "name": "Update a stale scientific profile",
       "prompt": "After adopting a second observation network and a new reanalysis forcing product, our project-level scientific profile is stale. Update it with the new recurring surfaces, authority order, and evidence oracles, keeping study-specific results out.",
       "expected_route": "research-profile-bootstrap",
-      "forbidden_routes": ["study-design", "scientific-evidence-synthesis", "grill-with-docs"],
+      "forbidden_routes": ["study-design", "scientific-evidence-synthesis"],
       "allowed_followups": [],
       "expected_depth": "light",
       "rationale": "Recurring project-surface maintenance belongs to the profile workflow, not to any single study or synthesis artifact."
@@ -381,7 +375,7 @@
       "name": "Hand off an approved schema change",
       "prompt": "Our approved data-product decision changes the output schema consumed by downstream tools. Write the upstream contract that delivery must honor: schema authorities, lineage and checksum rules, compatibility and rollback boundaries, and the post-merge scientific evaluation obligations.",
       "expected_route": "research-engineering-handoff",
-      "forbidden_routes": ["stage-change-pipeline", "implementation-planning", "grill-with-docs"],
+      "forbidden_routes": ["stage-change-pipeline", "implementation-planning"],
       "allowed_followups": ["stage-change-pipeline"],
       "expected_depth": "heavy",
       "rationale": "Translating an approved scientific decision into a bounded upstream contract is the handoff deliverable, not pipeline execution."

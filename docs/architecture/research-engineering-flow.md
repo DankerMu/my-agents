@@ -139,7 +139,7 @@ and never let a software gate rewrite the research evidence record.
    define idealized tests, conservation cases, no-snow regression, multi-climate
    observational evaluation, uncertainty and go/no-go branches
 
-6. grill-me or grill-with-docs
+6. grill-me (optionally docs mode)
    pressure-test the scientific contract and persist project terminology/ADRs when needed
 
 7. execute + scientific-evidence-synthesis + human decision
@@ -166,7 +166,7 @@ The research skills delegate instead of embedding copies:
 - `blind-spot-pass` for unknown unknowns
 - `deep-research` and research agents for external evidence
 - `grill-me` for adversarial pressure-testing without persistence
-- `grill-with-docs` for pressure-testing plus project glossary/ADR persistence
+- `grill-me` docs mode for pressure-testing plus project glossary/ADR persistence
 - `future-aware-architecture` for architecture decisions
 - `implementation-planning` for post-decision execution planning
 - `meta-loop` for checking expensive verification/evaluation loops

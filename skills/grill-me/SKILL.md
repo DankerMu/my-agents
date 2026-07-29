@@ -3,11 +3,11 @@ name: grill-me
 description: >
   对一个已有的 plan、design 或任何待定决策/想法做对抗式压测（不限软件）：沿决策树逐个分支追问，直到与用户达成共同理解。
   一次只问一个问题，每个问题都给出你的推荐答案；事实能从环境（codebase、文档、数据）查到的就去查，决策必须交给用户拍板。
-  触发词："grill me"、"拷问我"、"压测这个计划"、"挑战我的设计"、"stress-test the plan"，
-  或用户希望在动手前把计划/设计的每个决策点逼到清晰。
+  触发词："grill me"、"拷问我"、"压测这个计划"、"挑战我的设计"、"stress-test the plan"。
+  需要同时对齐项目术语、沉淀 glossary/ADR 时用 docs 模式（触发词："grill with docs"、"对齐术语"）。
   不用于开放式头脑风暴、方向选型，或已经明确、无歧义的任务。
 invocation_posture: hybrid
-version: 0.4.0
+version: 0.5.0
 ---
 
 # Grill Me
@@ -37,7 +37,10 @@ version: 0.4.0
 - 从零把模糊需求变成 actionable scope → `clarify`（grill-me 针对**已有计划**做对抗，不做从零需求澄清）
 - 任务进入陌生区域、计划还不存在、要找 unknown unknowns → `blind-spot-pass`（它从代码库考古出发挖你没问的问题；本 skill 从已有计划出发拷问）
 - 已经明确、无歧义、可直接执行的小任务
-- 需要边谈边沉淀术语表（`openspec/glossary.md`）或 ADR（`docs/adr/`）的领域建模场景 → 那是同仓的 `grill-with-docs` 的职责；**本 skill 只对话、不写任何文档**
+
+## Docs 模式（可选）
+
+默认模式**只对话、不写任何文档**。当压测同时需要统一项目语言、沉淀长期资产——领域概念多、术语在 design/specs 间漂移、决策需跨变更追溯，或用户说 "grill with docs"/"对齐术语"——切到 docs 模式：在追问中对照 `openspec/glossary.md` 挑刺、收敛 canonical term、用具体场景探边界，术语一解决就 inline 写入 glossary，满足三门槛（难回退 + 无背景会困惑 + 真实权衡）的决策落 `docs/adr/`。完整纪律、沉淀落点与格式见 [references/docs-mode.md](./references/docs-mode.md)。
 
 ## 怎么 Grill（流程）
 
@@ -51,7 +54,7 @@ version: 0.4.0
 ## 输出
 
 - **过程中**：一连串单点问题，每个带推荐答案。
-- **结束时**：逐分支的确定决策清单（分支 / 结论 / 由谁定）+ 开放项 + 关键假设。**不写入任何项目文档**（持久化是 `grill-with-docs` 的职责，本 skill 刻意不做）；嵌入 `stage-change-pipeline` 时，这份清单直接充当 `grillGate` 凭证对象的 `branches`/`openItems` 字段。
+- **结束时**：逐分支的确定决策清单（分支 / 结论 / 由谁定）+ 开放项 + 关键假设。默认模式**不写入任何项目文档**；docs 模式额外附本轮新增/修订的 glossary 术语与 ADR 列表。嵌入 `stage-change-pipeline` 时，这份清单直接充当 `grillGate` 凭证对象的 `branches`/`openItems` 字段。
 - **放行条件**：小结给出后等用户确认共同理解已达成，确认前不进入执行；下游（实现、`stage-change-pipeline` 后续 Stage）以该确认为闸门。
 
 ## 与本仓库其它 skill 的关系
@@ -63,4 +66,4 @@ version: 0.4.0
 
 ---
 
-改编自 [`mattpocock/skills`](https://github.com/mattpocock/skills) 的 `grill-me`（中文参考 [`vinvcn/mattpocock-skills-zh-CN`](https://github.com/vinvcn/mattpocock-skills-zh-CN)），按本仓库 skill 规范本地化，并接入 `stage-change-pipeline` 工作体系。原作另有一个文档持久化变体；本仓库对应的是同仓的 `grill-with-docs`（沉淀落点为 `openspec/glossary.md` 与 `docs/adr/`），而本 skill 刻意不含任何文档写入行为。
+改编自 [`mattpocock/skills`](https://github.com/mattpocock/skills) 的 `grill-me` 与 `grill-with-docs`（中文参考 [`vinvcn/mattpocock-skills-zh-CN`](https://github.com/vinvcn/mattpocock-skills-zh-CN)），按本仓库 skill 规范本地化，并接入 `stage-change-pipeline` 工作体系。上游的文档持久化变体在本仓库合并为本 skill 的 docs 模式（沉淀落点为 `openspec/glossary.md` 与 `docs/adr/`）。

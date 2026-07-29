@@ -68,7 +68,7 @@
 - Research profile remains authoritative for:
 
 ## Pressure-Test
-- Mode: grill-me | grill-with-docs | skipped:<reason>
+- Mode: grill-me | grill-me:docs | skipped:<reason>
 - Closed decisions:
 - Open human questions:
 

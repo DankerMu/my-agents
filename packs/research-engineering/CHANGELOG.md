@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-29
+
+### Changed
+
+- 移除 `grill-with-docs`（并入 `grill-me` 0.5.0 的 docs 模式）。research 流水线的领域压测 + glossary/ADR 沉淀改用 `grill-me` docs 模式（pressure-test 契约 token 由 `grill-with-docs` 改为 `grill-me:docs`）。skills 由 17 减为 16。
+
 ## [0.1.0] - 2026-07-10
 
 - Initial research-engineering role pack with an open-axis research lifecycle rather than a closed task taxonomy.

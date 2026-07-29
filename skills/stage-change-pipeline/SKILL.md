@@ -18,7 +18,7 @@ metadata:
 
 **依赖**：`openspec` CLI（npm）、具备并行 subagent 能力的编排器（Claude Code Task subagents 或 Codex subagents）、已认证的 `gh` CLI、包含设计文档的 git repo。可选读取 `IMPLEMENTATION_PLAN.md` 作为阶段上下文。
 
-**支撑 skill**（挂点细节见各 Stage 节）：`clarify`（Stage 1 前澄清）、`blind-spot-pass`（陌生域侦察）、`grill-me`（Stage 1→2 压测门禁）、`grill-with-docs` / `future-aware-architecture` / `implementation-planning`（Stage 2 设计与任务规划）、`risk-adaptive-cross-review`（Stage 3 审查语义）、`project-documentation`（docs 漂移）、`gh-create-issue`（Stage 5 批量创建）。按需复用，不把它们的完整流程复制进来。
+**支撑 skill**（挂点细节见各 Stage 节）：`clarify`（Stage 1 前澄清）、`blind-spot-pass`（陌生域侦察）、`grill-me`（Stage 1→2 压测门禁；Stage 2 用其 docs 模式对齐术语/沉淀 ADR）、`future-aware-architecture` / `implementation-planning`（Stage 2 设计与任务规划）、`risk-adaptive-cross-review`（Stage 3 审查语义）、`project-documentation`（docs 漂移）、`gh-create-issue`（Stage 5 批量创建）。按需复用，不把它们的完整流程复制进来。
 
 ## When Not to Use
 

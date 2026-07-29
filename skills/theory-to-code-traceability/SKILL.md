@@ -79,7 +79,7 @@ The package must name:
 - Use `brainstorming` when multiple scientific representations remain viable.
 - Use `grill-me` to pressure-test a stable traceability draft when terminology is
   already settled.
-- Use `grill-with-docs` when process names, state semantics, coupling boundaries,
+- Use `grill-me` docs mode when process names, state semantics, coupling boundaries,
   or long-lived implementation decisions must be reconciled with
   `openspec/glossary.md` and `docs/adr/`.
 - Use `future-aware-architecture` only for genuine system-architecture choices,
@@ -129,7 +129,7 @@ units, missing values, coordinate systems, calendars, and update timing.
 
 - Reuse existing project terminology where it is correct.
 - Resolve overloaded or conflicting terms before code mapping.
-- Use `grill-with-docs` when the terminology will govern future OpenSpec and code
+- Use `grill-me` docs mode when the terminology will govern future OpenSpec and code
   work; persist project-wide terms in `openspec/glossary.md`.
 - Keep study-specific derivation detail in the study traceability package, not in
   the project glossary.
@@ -200,7 +200,7 @@ formula-level verification case.
 ### 7. Pressure-Test the Contract
 
 Before approval, record one explicit gate decision: `grill-me` when
-terminology is stable, `grill-with-docs` when terms, process boundaries or
+terminology is stable, `grill-me` docs mode when terms, process boundaries or
 durable decisions must persist to `openspec/glossary.md` / `docs/adr/`, or
 `skipped:<reason>` — only for genuinely narrow, low-impact work. A delegated
 grill stays interactive (one question at a time) and must not be simulated.

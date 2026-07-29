@@ -5,6 +5,16 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-29
+
+### Added
+
+- **合并 `grill-with-docs` 为本 skill 的 docs 模式**：领域增强四件事、术语/ADR 沉淀纪律与落点（`openspec/glossary.md`、`docs/adr/`）移入 `references/docs-mode.md`，`ADR-FORMAT.md`/`GLOSSARY-FORMAT.md` 迁至 `references/`。默认模式行为不变（只对话、不写文档）；docs 模式按触发词或领域复杂度显式升级。合并动机：两个 skill 的 description 高度近义，常驻 listing 里构成路由税，且 grill-with-docs 自述即为"grill-me 的领域增强变体"——变体应是模式，不是独立 skill。
+
+### Changed
+
+- `capabilities.filesystemWrite` 改为 `true`（docs 模式需要写 glossary/ADR）；categories 增加 `documentation`，tags 增加 `glossary`/`adr`/`domain-model`。
+
 ## [0.4.0] - 2026-07-17
 
 ### Added

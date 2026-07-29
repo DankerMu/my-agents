@@ -38,7 +38,7 @@
 
 **不可协商项**：按依赖顺序生成 proposal → design/specs → tasks，每个 artifact 撰写前先取 `openspec instructions <artifact> --change "<name>" --json`；design.md 必须含 **Sketch seams under test** 清单（自动、不设交互停点——优先已有 seam、用最高的 seam、越少越好，每个 seam 附一行理由；Stage 3 与下游 fixture review 检查它，清单随 fixture 流入 `subagent-workflow` 的 `Seams under test` 字段，实现期只消费不再谈判）；收尾 `openspec status --change "<name>"` 确认 4/4 complete。
 
-逐 artifact 写法、命令骨架与支撑 skill 挂点（`future-aware-architecture`、`grill-with-docs`、`implementation-planning`）见 [stage-2-artifacts.md](stage-2-artifacts.md)。
+逐 artifact 写法、命令骨架与支撑 skill 挂点（`future-aware-architecture`、`grill-me` docs 模式、`implementation-planning`）见 [stage-2-artifacts.md](stage-2-artifacts.md)。
 
 ---
 

@@ -141,7 +141,7 @@ choices.
 ### 8. Pressure-Test the Draft
 
 Record one explicit gate decision on the draft contract: `grill-me` when
-terminology is stable, `grill-with-docs` when terms, process boundaries or
+terminology is stable, `grill-me` docs mode when terms, process boundaries or
 durable decisions must persist to `openspec/glossary.md` / `docs/adr/`, or
 `skipped:<reason>` — only for genuinely narrow, low-impact work. A delegated
 grill stays interactive (one question at a time) and must not be simulated.

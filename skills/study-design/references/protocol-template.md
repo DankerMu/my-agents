@@ -62,7 +62,7 @@ Decision owner:
 - Failure/missing handling:
 
 ## 10. Pressure Test
-- Mode: grill-me | grill-with-docs | skipped:<reason>
+- Mode: grill-me | grill-me:docs | skipped:<reason>
 - Closed decisions:
 - Open questions:
 

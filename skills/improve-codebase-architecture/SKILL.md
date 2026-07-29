@@ -36,7 +36,7 @@ version: 0.5.0
 - **The interface is the test surface.**
 - **One adapter = hypothetical seam. Two adapters = real seam.**
 
-本 skill 参考项目的领域模型：**领域术语**来自 `openspec/glossary.md`（为好的 seam 命名）；**决策**来自 `docs/adr/`（记录 skill 不应重新争论的事）。两者都是 `grill-with-docs` 维护的资产。
+本 skill 参考项目的领域模型：**领域术语**来自 `openspec/glossary.md`（为好的 seam 命名）；**决策**来自 `docs/adr/`（记录 skill 不应重新争论的事）。两者都是 `grill-me`（docs 模式） 维护的资产。
 
 ## When Not To Use
 
@@ -101,11 +101,11 @@ Report 用 **Tailwind via CDN** 做 layout，**Mermaid via CDN** 处理 graph/fl
 
 - **replace, don't layer**：深化落地时替换旧的 shallow module，并删除只为旧结构存在的 unit tests——在新的 deepened interface 上重写 test（interface is the test surface；纪律见 [DEEPENING.md](DEEPENING.md)）。
 
-决策成形时内联产生 side effects，纪律同 `grill-with-docs`：
+决策成形时内联产生 side effects，纪律同 `grill-me`（docs 模式）：
 
-- **用 `openspec/glossary.md` 中没有的概念命名 deepened module？** 把 term 加进 `openspec/glossary.md`（格式见 [../grill-with-docs/GLOSSARY-FORMAT.md](../grill-with-docs/GLOSSARY-FORMAT.md)）；文件不存在就懒创建。
+- **用 `openspec/glossary.md` 中没有的概念命名 deepened module？** 把 term 加进 `openspec/glossary.md`（格式见 [../grill-me/references/GLOSSARY-FORMAT.md](../grill-me/references/GLOSSARY-FORMAT.md)）；文件不存在就懒创建。
 - **对话中收紧了模糊 term？** 立刻更新 `openspec/glossary.md`。
-- **用户用有分量的理由拒绝 candidate？** 提议落 ADR 到 `docs/adr/`（格式见 [../grill-with-docs/ADR-FORMAT.md](../grill-with-docs/ADR-FORMAT.md)）：_"要我把这记录成 ADR，避免未来 architecture review 再次建议它吗？"_ 三门槛全真才落 ADR：**难回退**（决定日后代价高）、**无背景会困惑**（未来的 explorer 缺了这条理由会重复建议）、**真实权衡**（是取舍，不是显而易见的对错）；任一不满足就跳过。
+- **用户用有分量的理由拒绝 candidate？** 提议落 ADR 到 `docs/adr/`（格式见 [../grill-me/references/ADR-FORMAT.md](../grill-me/references/ADR-FORMAT.md)）：_"要我把这记录成 ADR，避免未来 architecture review 再次建议它吗？"_ 三门槛全真才落 ADR：**难回退**（决定日后代价高）、**无背景会困惑**（未来的 explorer 缺了这条理由会重复建议）、**真实权衡**（是取舍，不是显而易见的对错）；任一不满足就跳过。
 - **想探索 deepened module 的替代 interfaces？** 见 [INTERFACE-DESIGN.md](INTERFACE-DESIGN.md)。
 
 ### 4. Handoff（决策 → 交付）
@@ -118,7 +118,7 @@ Grilling 落定、用户要执行时，不要在本 skill 内实现——本 ski
 
 ## 与本仓库其它 skill 的关系
 
-- `grill-with-docs`：本 skill 复用其 `openspec/glossary.md` / `docs/adr/` 落点与术语/ADR 纪律；grilling loop 与它同源。
+- `grill-me`（docs 模式）：本 skill 复用其 `openspec/glossary.md` / `docs/adr/` 落点与术语/ADR 纪律；grilling loop 与它同源。
 - `future-aware-architecture`：定架构方向与可逆性；本 skill 在既定方向内找模块深化机会。
 - `repo-entropy-audit` / `entropy-review`：治全仓库的乱与冗余（广度）；本 skill 深化模块、提升可测试性（深度）。
 - `gh-create-issue` / `stage-change-pipeline`：第 4 步 Handoff 的出口，把落定的 deepening 变成可追踪的交付工作项。
@@ -126,4 +126,4 @@ Grilling 落定、用户要执行时，不要在本 skill 内实现——本 ski
 
 ---
 
-改编自 [`mattpocock/skills`](https://github.com/mattpocock/skills) 的 `improve-codebase-architecture`（中文参考 [`vinvcn/mattpocock-skills-zh-CN`](https://github.com/vinvcn/mattpocock-skills-zh-CN)）。沉淀落点由上游的 `CONTEXT.md`/`docs/adr/` 本地化为本仓库的 `openspec/glossary.md`/`docs/adr/`，并复用 `grill-with-docs` 的格式与纪律。深模块理念出自 Ousterhout《A Philosophy of Software Design》与 Michael Feathers 的 seam 概念。
+改编自 [`mattpocock/skills`](https://github.com/mattpocock/skills) 的 `improve-codebase-architecture`（中文参考 [`vinvcn/mattpocock-skills-zh-CN`](https://github.com/vinvcn/mattpocock-skills-zh-CN)）。沉淀落点由上游的 `CONTEXT.md`/`docs/adr/` 本地化为本仓库的 `openspec/glossary.md`/`docs/adr/`，并复用 `grill-me`（docs 模式） 的格式与纪律。深模块理念出自 Ousterhout《A Philosophy of Software Design》与 Michael Feathers 的 seam 概念。

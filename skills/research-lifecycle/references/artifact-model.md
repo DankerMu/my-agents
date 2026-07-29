@@ -70,7 +70,7 @@ introduces a recurring software risk surface.
 
 `openspec/glossary.md` remains the single source for project-wide ubiquitous
 language, and `docs/adr/` remains the ledger for long-lived project decisions
-(both owned by the `grill-with-docs` conventions). The optional research
+(both owned by the `grill-me` docs mode conventions). The optional research
 ledgers are subordinate staging areas with one-way promotion rules:
 
 - `research/glossary.md` may hold research-only terms (working symbols,

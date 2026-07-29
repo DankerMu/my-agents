@@ -49,7 +49,7 @@ decision, scope, invariants, evidence obligations and downstream route.
   consumers and legacy surfaces before freezing the handoff.
 - Use `grill-me` to challenge a stable handoff for missing decisions,
   cross-surface impacts and untestable acceptance criteria.
-- Use `grill-with-docs` when scientific terms, implementation boundaries or
+- Use `grill-me` docs mode when scientific terms, implementation boundaries or
   long-lived decisions must be reconciled with `openspec/glossary.md` and
   `docs/adr/` before OpenSpec authoring.
 - Use `future-aware-architecture` for high-impact architecture choices after the
@@ -153,7 +153,7 @@ qualification gate passes.
 ### 7. Pressure-Test the Handoff
 
 Record one explicit gate decision on the handoff: `grill-me` when terminology
-is stable, `grill-with-docs` when terms, process boundaries or durable
+is stable, `grill-me` docs mode when terms, process boundaries or durable
 decisions must persist to `openspec/glossary.md` / `docs/adr/`, or
 `skipped:<reason>` — only for genuinely narrow, low-impact work. A delegated
 grill stays interactive (one question at a time) and must not be simulated.

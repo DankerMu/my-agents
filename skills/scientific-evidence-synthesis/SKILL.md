@@ -71,7 +71,7 @@ human authority records a verdict.
   external source or official contract not already captured.
 - Use `grill-me` when the evidence interpretation or proposed decision needs an
   adversarial conversation but terminology is stable.
-- Use `grill-with-docs` when evidence exposes ambiguous process terms or a
+- Use `grill-me` docs mode when evidence exposes ambiguous process terms or a
   project-wide decision that must be reconciled with the glossary/ADR system.
 - Use `meta-loop` to audit an expensive or safety-critical evidence loop where
   producer/checker independence, stopping rules, or evaluator reliability are in

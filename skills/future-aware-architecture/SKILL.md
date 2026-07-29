@@ -237,7 +237,7 @@ Default outputs:
 - **Standard**: Architecture Decision Brief
 - **Deep**: Architecture Decision Record or ADR seed saved to the project's ADR
   directory — use the existing one if the project has one, otherwise default to
-  `docs/adr/` (create lazily). When the `grill-with-docs` skill is installed,
+  `docs/adr/` (create lazily). When the `grill-me` skill is installed, its docs mode,
   follow its `ADR-FORMAT.md`.
 
 When the direction is approved and the next problem is execution, hand off to

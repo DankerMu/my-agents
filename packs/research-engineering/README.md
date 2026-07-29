@@ -73,7 +73,7 @@ inconclusive studies and “do not change the model” are valid outcomes.
   `researcher` agent dependency.
 - `grill-me` — adversarially pressure-tests an existing question, protocol,
   traceability package or handoff when terminology is already stable.
-- `grill-with-docs` — pressure-tests domain-heavy artifacts while reconciling
+- `grill-me` (docs mode) — pressure-tests domain-heavy artifacts while reconciling
   project-wide terminology and long-lived decisions with
   `openspec/glossary.md` and `docs/adr/`.
 - `future-aware-architecture` — handles real architecture/technology choices after
