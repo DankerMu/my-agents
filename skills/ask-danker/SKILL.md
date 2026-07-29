@@ -3,7 +3,7 @@ name: ask-danker
 description: 本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。
 disable-model-invocation: true
 invocation_posture: manual
-version: 0.1.3
+version: 0.2.0
 ---
 
 # Ask Danker
@@ -13,11 +13,11 @@ version: 0.1.3
 ## 主流：想法 → 交付
 
 1. **方向还没选** → `brainstorming`（探索/对比方向）；**需求含糊、验收标准缺失** → `clarify`。
-2. **压测已选的方向**：`grill-me`（对话式逼清决策，不写文档）或 `grill-with-docs`（同时对齐术语、沉淀 `openspec/glossary.md` 与 ADR）。**任务进入陌生领域、计划还不存在**时先跑 `blind-spot-pass` 从代码库挖出你没想到要问的问题。
-3. **需要产品文档** → `prd-authoring`（方向已定才进，产出可评审的 PRD）。
-4. **设计变交付物** → `stage-change-pipeline`：设计文档 → OpenSpec change → 三路并行审核 → 修复与独立验证门 → implementation-ready GitHub issues。它内部按需调用 `implementation-planning`、`future-aware-architecture`、`grill-with-docs`、`gh-create-issue`。
-5. **实现 issue**：`issue-controller`（DAG 主控循环，多 issue 调度）或 `subagent-workflow`（单 issue 全周期：实现 → PR → 交叉评审 → 合并）。
-6. **评审，三选一**：单遍 diff/PR/staged 评审 → `review`；高风险、多视角、不变量/状态机聚焦 → `risk-adaptive-cross-review`；只关心一致性漂移、命名/模式重复 → `entropy-review`。
+2. **压测已选的方向** → `grill-me`（对话式逼清决策，默认不写文档；需要同时对齐术语、沉淀 `openspec/glossary.md` 与 ADR 时用其 docs 模式）。**任务进入陌生领域、计划还不存在**时先跑 `blind-spot-pass` 从代码库挖出你没想到要问的问题。
+3. **需要产品文档** → `prd-authoring`（方向已定才进，产出可评审的 PRD）；**生意本身还没论证**（商业模式、市场、财务）→ `business-plan`（在 PRD 之前）。
+4. **设计变交付物** → `stage-change-pipeline`：设计文档 → OpenSpec change → 三路并行审核 → 修复与独立验证门 → implementation-ready GitHub issues。它内部按需调用 `implementation-planning`、`future-aware-architecture`、`grill-me`（docs 模式）、`gh-create-issue`。
+5. **实现 issue** → `subagent-workflow`（单 issue 全周期：实现 → PR → 交叉评审 → 合并；多 issue 按 DAG 顺序逐个跑它）。
+6. **评审，二选一**：单遍 diff/PR/staged 评审、或只关心一致性漂移/命名/模式重复 → `review`（后者走其 consistency 模式）；高风险、多视角、不变量/状态机聚焦 → `risk-adaptive-cross-review`。
 
 ## On-ramps（汇入主流的起点）
 
@@ -29,8 +29,7 @@ version: 0.1.3
 
 ## 仓库健康（多为手动调用）
 
-- `repo-entropy-audit` — 全仓六轴熵体检，产出优先级清单。
-- `entropy-review` — 变更集的一致性/漂移评审（自动触发型，也可点名）。
+- `repo-entropy-audit` — 全仓六轴熵体检，产出优先级清单（变更集级的一致性评审走 `review` consistency 模式）。
 - `control-plane-auditor` — 控制面审计：CLAUDE.md/AGENTS.md、hooks、生成物、指令一致性。
 - `improve-codebase-architecture` — 深模块机会扫描；选中的候选回到主流第 2 步压测。
 - `project-documentation` — docs 漂移检查与刷新。
@@ -45,7 +44,7 @@ version: 0.1.3
 
 ## 治理 / 元
 
-- `skill-lifecycle-manager` — skill 的创建、验证、评测、投影、发布、审计全周期。
+- `skill-lifecycle-manager` — skill 的创建、验证、评测、投影、发布、审计全周期；深度生态调研委托 `skill-researcher`。
 - `agent-lifecycle-manager` / `agent-architect` — agent 合约的同套治理 / 设计。
 - `prompt-engineering` — 提示词与系统提示设计（知识型 skill，显式调用最可靠）。
 - `hook-development` — Claude Code hooks 开发。

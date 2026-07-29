@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "name": "future-aware-architecture",
   "displayName": "Future-Aware Architecture",
-  "description": "Manual-first architecture methodology for system design and technology selection using problem-first framing, stack-agnostic trade-offs, uncertainty handling, future-aware decision lenses, and context-aware grounding.",
+  "description": "Manual-first architecture methodology for system design and technology selection using problem-first framing, stack-agnostic trade-offs, uncertainty handling, and future-aware decision lenses. Use when a project needs architecture direction or selection decisions; do not use for pure implementation planning, narrow stack research, or review-only tasks.",
   "version": "0.3.1",
   "maturity": "experimental",
   "categories": ["design", "workflow", "research"],

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "name": "skill-researcher",
   "displayName": "Skill Researcher",
-  "description": "Research existing community skills for a skill topic, pause for candidate confirmation, and produce a Fusion Report for downstream skill creation.",
+  "description": "Research existing community skills for a skill topic, pause for candidate confirmation, and produce a Fusion Report for downstream skill creation. Use only for skill-ecosystem research, not installation, general research, or direct skill authoring.",
   "version": "0.2.3",
   "maturity": "experimental",
   "categories": ["research", "workflow"],

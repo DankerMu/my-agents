@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-29
+
+### Changed
+
+- 路由表随体系精简更新：`grill-with-docs` 并入 `grill-me` docs 模式（主流第 2/4 步）；`entropy-review` 并入 `review` consistency 模式（第 6 步"三选一"改为"二选一"，仓库健康节移除独立条目）；`issue-controller` 归档（第 5 步只保留 `subagent-workflow`，多 issue 按 DAG 顺序逐个跑）。
+- 补齐缺失路由：`business-plan`（主流第 3 步，PRD 之前的商业论证）、`skill-researcher`（治理节，`skill-lifecycle-manager` 的委托研究出口）。
+
 ## [0.1.3] - 2026-07-16
 
 ### Changed

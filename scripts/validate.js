@@ -157,22 +157,25 @@ async function validateSkills(repoRoot, validateSkill, allowedCategories, errors
     }
   }
 
-  // User-invoked skills are stripped from the model's standing context, so the
-  // router map is their only discovery surface — a router that misses one lies.
-  if (userInvokedSkills.length > 0) {
-    const routerDocPath = path.join(repoRoot, "skills", ROUTER_SKILL_NAME, "SKILL.md");
-    if (!(await fileExists(routerDocPath))) {
+  // The router map must cover every skill. User-invoked skills are stripped
+  // from the model's standing context, so the router is their only discovery
+  // surface; for the rest, a router that misses one silently misroutes.
+  const routerDocPath = path.join(repoRoot, "skills", ROUTER_SKILL_NAME, "SKILL.md");
+  if (!(await fileExists(routerDocPath))) {
+    if (userInvokedSkills.length > 0) {
       errors.push(
         `skills/${ROUTER_SKILL_NAME}/SKILL.md is required while user-invoked skills exist: ${userInvokedSkills.join(", ")}`
       );
-    } else {
-      const routerContent = await fs.readFile(routerDocPath, "utf8");
-      for (const name of userInvokedSkills) {
-        if (!routerContent.includes(name)) {
-          errors.push(
-            `skills/${ROUTER_SKILL_NAME}/SKILL.md: user-invoked skill '${name}' is missing from the router map`
-          );
-        }
+    }
+  } else {
+    const routerContent = await fs.readFile(routerDocPath, "utf8");
+    const userInvokedSet = new Set(userInvokedSkills);
+    for (const name of skillNames) {
+      if (!routerContent.includes(name)) {
+        const kind = userInvokedSet.has(name) ? "user-invoked skill" : "skill";
+        errors.push(
+          `skills/${ROUTER_SKILL_NAME}/SKILL.md: ${kind} '${name}' is missing from the router map`
+        );
       }
     }
   }
