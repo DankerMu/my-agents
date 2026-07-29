@@ -2,14 +2,15 @@
 name: project-instruction-bootstrap
 description: >
   为目标项目安装 pack 之后，扫描项目并补全/对齐它自己的 CLAUDE.md 与 AGENTS.md。
-  推荐用 shared 源生成模式：项目维护 instructions/agents/{shared,claude,codex}.md，
+  默认用 shared 源生成模式：项目维护 instructions/agents/{shared,claude,codex}.md，
   本 skill 充当生成器拼接出两文件（shared 段单一事实源、零漂移），不给项目装脚本或 hook。
-  内容含项目自身约定、已装 pack/skill/agent 用法、可移植编排骨架。增量、绝不覆盖、写前出 diff。
+  只写会话推导不出的内容：项目用途、非标准命令、禁区/gotchas、能力路由纠偏；
+  可推导的技术栈/目录/标准命令一律不写。增量、绝不覆盖、写前出 diff。
   触发词："补全项目指令"、"装完 pack 初始化 CLAUDE.md/AGENTS.md"、"bootstrap project instructions"。
   不用于 my-agents 仓库自身的根指令（那是 instructions/root 生成的）。
 disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.2.1
+version: 0.3.0
 ---
 
 # Project Instruction Bootstrap
@@ -61,11 +62,11 @@ version: 0.2.1
 
 ### 4. 内容三块
 
-模板与源结构见 [references/instruction-templates.md](references/instruction-templates.md)。
+模板与源结构见 [references/instruction-templates.md](references/instruction-templates.md)。**内容准则统摄一切：只写目标项目的会话自己推导不出的东西**——技术栈、目录布局、标准命令都能从 manifest 和 `ls` 读出，写进去就是每会话付费的死重和失同步风险。
 
-1. **项目自身约定**（→ `shared.md`）：技术栈、build/test/lint 命令、目录与命名约定、领域规则。能扫描确定的填实；不确定的留**显式 TODO 占位**，不臆造。
-2. **已装能力**（→ `shared.md`）：从 manifest/投影列出 packs、skills、agents；关键触发与用法、平台分工（Claude 读 `CLAUDE.md`/投影在 `.claude/`，Codex 读 `AGENTS.md`/投影在 `.agents/`+`.codex/`）；装了成对 pack 时指向其搭配说明；执行编排默认引用已装的 `subagent-workflow` + native 子代理（implementer/reviewer/verifier），勿默认套用 `codeagent` 或旧名 `codex-codeagent-workflow`。
-3. **可移植骨架**：项目无关、从 my-agents 编排理念移植——`shared.md` 放 Observable Completion（`Execution Summary` 契约）、反熵下沉、开发环境约定（Python→`uv` 防御性默认，其它语言工具链按扫描到的栈补）、项目本地适配指引（`openspec/project-profile.md` / `openspec/glossary.md` / `docs/adr/`）；`claude.md` 放 Claude 特有项（知识域 skill 显式 `/调用` 等）；`codex.md` 放 Codex 按模型纠偏（自然段落写作、禁末尾追问）。
+1. **非显而易见的约定**（→ `shared.md`）：一行项目用途；**非标准**命令（特殊 flag、环境准备、非常规脚本名）；禁区（"never do X"）；领域规则/gotchas 留**显式 TODO 占位**，不臆造。工具链纪律**按扫描结果有条件写入**：扫描到 Python 才写 `uv` 强制条款，没有就不写；其它栈同理，只写偏离默认的部分。
+2. **能力路由**（→ `shared.md` 只放纠偏；简表 → `codex.md`）：已装清单指向 `my-agents.project.json`，**不在 shared 复述**——Claude 侧平台自动把已装 skill 的 description 载入上下文，再枚举就是双重计费；Codex 无自动 listing，已装能力简表放 `codex.md` 段。shared 只保留反直觉的路由纠偏（执行编排走 `subagent-workflow` + native 子代理，勿默认套 `codeagent`）与成对 pack 的搭配指向。
+3. **可移植骨架**：`shared.md` 放反熵下沉约定、项目本地适配指引（`openspec/project-profile.md` / `openspec/glossary.md` / `docs/adr/`）；`claude.md` 放 Claude 特有项（知识域 skill 显式 `/调用` 等）；`codex.md` 放 Codex 按模型纠偏（自然段落写作、禁末尾追问）。Observable Completion（`Execution Summary` 契约）为**可选段**：用户点名才写入，不进默认骨架。
 
 ### 5. 生成 / 写入
 

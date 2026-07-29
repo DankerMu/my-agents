@@ -5,6 +5,16 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-29
+
+### Changed
+
+- **模板对齐上下文工程新规则，只播种不可推导内容**："项目速览"（技术栈/目录/标准命令）删除，改为"非显而易见的约定"（一行用途 + 非标准命令 + 禁区 + gotchas TODO）——可推导内容是目标项目每会话付费的死重与失同步源。
+- **"已装能力"清单降级为路由纠偏**：shared 段只保留反直觉路由（subagent-workflow vs codeagent）与成对 pack 指向，清单指向 `my-agents.project.json`；已装能力简表移入 `codex.md` 段（Codex 无自动 skill listing，Claude 侧平台已自动载入 description，复述即双重计费）。
+- **uv 条款改为条件写入**：扫描到 Python 才写，取消"无条件默认"——不为假设性未来付每会话租金，项目长出 Python 时重跑本 skill 补上。
+- **Observable Completion 移出默认骨架**：改为用户点名才写入的可选段。
+- 增量模式补充：追加缺失段时同样遵守"不可推导"内容准则。
+
 ## [0.2.1] - 2026-07-11
 
 - Remove the body invocation-posture restatement; posture lives in frontmatter/description.
