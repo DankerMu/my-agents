@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-07-29
+
+### Changed
+
+- **Thin-core 拆分**：SKILL.md 从 18.2KB 精简到 ~6.3KB。Step 2 元数据发现清单、Step 3 分类信号表、Step 4 分类型访谈题库与 Update 模式变更映射表下沉 `references/project-analysis.md`；质量清单全梯 + 反模式表 + 排除规则下沉 `references/quality-standards.md`。正文保留模式检测、四族分类摘要、写作原则、三模式流程骨架与 Must Pass 要点。行为无变化。
+
 ## [1.1.8] - 2026-07-11
 
 - Add a trivial-edit exclusion to the trigger description: typo-fix and other one-line README edits must not route here. Boundary gap surfaced by the cross-skill routing suite's none-control (the baseline description stole the typo case in one gate run); gated by `skill-lifecycle-manager/scripts/run_routing_ab.py` with zero per-case regressions and candidate 27/27 across two runs.

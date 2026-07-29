@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-29
+
+### Changed
+
+- **Thin-core 拆分**：SKILL.md 从 18.0KB 精简到 ~5.6KB。Phase 0–5 详细流程、五个 thinking moves、领域框架路由与 skill 评估指引下沉 `references/process-playbook.md`；Decision Brief / Design Decision Record 模板下沉 `references/output-templates.md`。正文保留 Hard Gate、scope 分级表、流程骨架、退出判据与原则。行为无变化。
+
 ## [0.2.7] - 2026-07-11
 
 - Compress When Not To Use into one-line arrows (slimming batch 4); all boundaries and redirect targets preserved. The ambiguity-resolves-quickly hand-off rule is unchanged.

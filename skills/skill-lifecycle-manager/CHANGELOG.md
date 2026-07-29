@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-07-29
+
+### Changed
+
+- **Thin-core 拆分**：SKILL.md 从 25.2KB 精简到 ~8.6KB。Phase 2–8 的完整操作流程（Discover 委托边界、Create/Update 步骤、Validate 命令序列、Evaluate 循环、Trigger 优化、Project/Install、Audit 维度）下沉 `references/stage-playbooks.md`。正文保留路由表、Discover-first 门禁、11 条操作规则、命令路径模型、九阶段骨架与失败模式清单。Outputs 清单并入各 playbook。行为无变化。
+
 ## [0.11.0] - 2026-07-11
 
 - Add `scripts/run_routing_ab.py`: a cross-skill routing A/B runner that gates description changes against `eval/cross-skill-routing-cases.json` via an OpenAI-compatible judge endpoint (baseline vs candidate skill lists, reasoning-model-safe answer parsing, non-zero exit on per-case regressions). Ships with unit tests in the shared validation path and a Cross-Skill Routing A/B Gate section in `references/evaluation-loop.md`.
