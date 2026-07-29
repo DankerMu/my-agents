@@ -1,6 +1,6 @@
 {
   "name": "@dankermu/my-agents",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "description": "A monorepo for authoring, validating, installing, and publishing reusable skills, agents, hooks, and packs.",
   "type": "commonjs",
   "engines": {
