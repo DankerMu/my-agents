@@ -12,10 +12,11 @@ The root `AGENTS.md` and `CLAUDE.md` files are generated outputs. Edit `instruct
 
 - `instructions/root/reference/structure.md` — project layout, package conventions, directory roles. Consult when creating or reorganizing packages.
 - `instructions/root/reference/commands.md` — build, test, lint, install, and scaffolding commands. Consult when you need to run or document a command.
+- `instructions/root/reference/skill-flags.md` — per-platform behavior of `disable-model-invocation: true` and the router contract. Consult when adding, renaming, removing, or re-flagging a skill.
 
 ## Coding Style & Naming Conventions
 
-Match the existing style in surrounding files. JavaScript in `scripts/` uses CommonJS, 2-space indentation, semicolons, and double quotes. Python helpers use 4-space indentation and should stay deterministic and CLI-friendly. Use kebab-case for package directories and keep `name` fields in `skill.json`, `agent.json`, `hook.json`, and `pack.json` aligned with the folder name. Prefer ASCII Markdown. Do not hand-edit generated catalogs, `dist/catalog.json`, or the generated root instruction files.
+Match the existing style in surrounding files; Prettier and ESLint enforce JavaScript formatting mechanically, so don't restate what they cover. Python helpers should stay deterministic and CLI-friendly. Use kebab-case for package directories and keep `name` fields in `skill.json`, `agent.json`, `hook.json`, and `pack.json` aligned with the folder name. Prefer ASCII Markdown. Do not hand-edit generated catalogs, `dist/catalog.json`, or the generated root instruction files.
 
 ## Quality & Validation Rules
 
@@ -25,12 +26,12 @@ Match the existing style in surrounding files. JavaScript in `scripts/` uses Com
 - Follow SemVer: MAJOR for breaking changes, MINOR for new capabilities, PATCH for fixes.
 - Run `npm run sync-instructions`, `npm run build`, and `npm test` before opening a PR after changing canonical packages, metadata, generated outputs, or contributor instructions.
 - The versioned `pre-commit` hook keeps local commits fast: it syncs root instructions, formats staged files, auto-fixes staged JavaScript where possible, and re-stages the results.
-- Validation checks schema compliance, directory conventions, changelog/version alignment, category whitelists, pack and project-manifest reference integrity, canonical agent-contract budgets and projection freshness, generated catalog/instruction freshness, and packaged Python unit tests that participate in the shared validation path.
-- User-invoked skills set `disable-model-invocation: true` in SKILL.md frontmatter: Claude Code drops them from standing context (only `/name` reaches them), Codex installs/projections land in `.agents/skills-manual/` instead of `.agents/skills/`, and omp honors the flag natively so its copies stay in `.omp/skills/`. The `ask-danker` router skill is their discovery surface — when you add, rename, remove, or re-flag any skill, or change a flow, update the router map in the same change; validation fails if a user-invoked skill is missing from it. Never flag a skill that other skills or pipelines invoke mid-run.
+- Validation checks schema compliance, directory conventions, changelog/version alignment, category whitelists, pack and project-manifest reference integrity, canonical agent-contract budgets and projection freshness, generated catalog/instruction freshness, skill.json description sync with SKILL.md frontmatter (`npm run sync-descriptions` fixes drift), router-map coverage of every skill, and packaged Python unit tests that participate in the shared validation path.
+- When adding, renaming, removing, or re-flagging a skill, update the `ask-danker` router map in the same change and consult `instructions/root/reference/skill-flags.md` for the `disable-model-invocation` platform behavior; validation fails if any skill is missing from the router map.
 
 ## GitHub & Contribution Workflow
 
-Use Conventional Commits such as `feat(skills): add skill lifecycle manager workflow` or `chore(catalog): refresh generated metadata`. Keep PRs focused, explain whether the change affects canonical packages, generated outputs, install flows, or local-only behavior, and link any relevant issue or research note. GitHub Actions runs `npm test` on every push and PR via `.github/workflows/validate.yml`. Tagging `v*` triggers `.github/workflows/release.yml`, which assembles GitHub Release notes from skill, agent, hook, and pack changelogs.
+Use Conventional Commits such as `feat(skills): add skill lifecycle manager workflow` or `chore(catalog): refresh generated metadata`. Keep PRs focused, explain whether the change affects canonical packages, generated outputs, install flows, or local-only behavior, and link any relevant issue or research note. Tagging `v*` triggers `.github/workflows/release.yml`, which assembles GitHub Release notes from skill, agent, hook, and pack changelogs.
 
 ## Common Gotchas
 

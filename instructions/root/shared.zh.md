@@ -8,10 +8,11 @@
 
 - `instructions/root/reference/structure.md` — 项目布局、包约定、目录职责。创建或重组包时查阅。
 - `instructions/root/reference/commands.md` — 构建、测试、lint、安装和脚手架命令。需要运行或记录命令时查阅。
+- `instructions/root/reference/skill-flags.md` — `disable-model-invocation: true` 的各平台行为与路由契约。新增、改名、删除或重新标记 skill 时查阅。
 
 ## 编码风格与命名约定
 
-与周围文件的现有风格保持一致。`scripts/` 中的 JavaScript 使用 CommonJS、2 空格缩进、分号和双引号。Python 辅助脚本使用 4 空格缩进，应保持确定性且对 CLI 友好。包目录使用 kebab-case，`skill.json`、`agent.json`、`hook.json` 和 `pack.json` 中的 `name` 字段与文件夹名称保持一致。优先使用 ASCII Markdown。不要手动编辑生成的目录、`dist/catalog.json` 或生成的根指令文件。
+与周围文件的现有风格保持一致；Prettier 和 ESLint 机械化地强制 JavaScript 格式，不要复述它们已覆盖的内容。Python 辅助脚本应保持确定性且对 CLI 友好。包目录使用 kebab-case，`skill.json`、`agent.json`、`hook.json` 和 `pack.json` 中的 `name` 字段与文件夹名称保持一致。优先使用 ASCII Markdown。不要手动编辑生成的目录、`dist/catalog.json` 或生成的根指令文件。
 
 ## 质量与验证规则
 
@@ -21,11 +22,12 @@
 - 遵循语义化版本：MAJOR 用于破坏性变更，MINOR 用于新功能，PATCH 用于修复。
 - 在修改规范包、元数据、生成产物或贡献者指南后开 PR 之前，运行 `npm run sync-instructions`、`npm run build` 和 `npm test`。
 - 版本化 `pre-commit` 钩子保持本地提交快速：它同步根指令、格式化暂存文件、尽可能自动修复暂存的 JavaScript，并重新暂存结果。
-- 验证检查包括 schema 合规性、目录约定、changelog/版本对齐、分类白名单、pack 和项目清单引用完整性、Agent 核心合同预算与投影新鲜度、生成目录/指令新鲜度，以及参与共享验证路径的 Python 打包单元测试。
+- 验证检查包括 schema 合规性、目录约定、changelog/版本对齐、分类白名单、pack 和项目清单引用完整性、Agent 核心合同预算与投影新鲜度、生成目录/指令新鲜度、skill.json description 与 SKILL.md frontmatter 的同步（`npm run sync-descriptions` 修复漂移）、路由表对全部 skill 的覆盖，以及参与共享验证路径的 Python 打包单元测试。
+- 新增、改名、删除或重新标记 skill 时，在同一变更中更新 `ask-danker` 路由表，并查阅 `instructions/root/reference/skill-flags.md` 了解 `disable-model-invocation` 的平台行为；任何 skill 缺席路由表都会导致校验失败。
 
 ## GitHub 与贡献工作流
 
-使用约定式提交，如 `feat(skills): add skill lifecycle manager workflow` 或 `chore(catalog): refresh generated metadata`。保持 PR 聚焦，说明变更是否影响规范包、生成产物、安装流程或仅限本地行为，并链接相关 issue 或研究笔记。GitHub Actions 通过 `.github/workflows/validate.yml` 在每次 push 和 PR 时运行 `npm test`。标记 `v*` 会触发 `.github/workflows/release.yml`，从 skill、agent、hook 和 pack 的 changelog 中汇总 GitHub Release 说明。
+使用约定式提交，如 `feat(skills): add skill lifecycle manager workflow` 或 `chore(catalog): refresh generated metadata`。保持 PR 聚焦，说明变更是否影响规范包、生成产物、安装流程或仅限本地行为，并链接相关 issue 或研究笔记。标记 `v*` 会触发 `.github/workflows/release.yml`，从 skill、agent、hook 和 pack 的 changelog 中汇总 GitHub Release 说明。
 
 ## 常见陷阱
 
