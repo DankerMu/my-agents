@@ -35,7 +35,7 @@ version: 0.1.0
 （只列本对话新达成、且未沉淀到其他工件的；每条一行）
 
 ## 工作流状态
-（处于 subagent-workflow / issue-controller 等工作流时必填，否则删除本节）
+（处于 subagent-workflow / stage-change-pipeline 等工作流时必填，否则删除本节）
 - Skill/流: <名称> Phase <N>
 - Review round counter: <n>（跨会话不得归零——三轮硬 gate 依赖它）
 - Gate 状态: <未触发 / 已触发，retro 路径: ...>
