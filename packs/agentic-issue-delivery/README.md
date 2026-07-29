@@ -17,10 +17,8 @@ This pack bundles the repository's design-to-issue and issue-to-PR delivery work
 - `clarify`
 - `blind-spot-pass`
 - `grill-me`
-- `grill-with-docs`
 - `future-aware-architecture`
 - `implementation-planning`
-- `entropy-review`
 - `git-worktree-workflows`
 - `project-documentation`
 - `handoff`
@@ -73,6 +71,6 @@ See [Research Engineering flow](../../docs/architecture/research-engineering-flo
 
 ## Pairs With: `codebase-stewardship`
 
-This pack and [`codebase-stewardship`](../codebase-stewardship/README.md) form a loop: stewardship decides _what to improve_ and holds the code-health baseline; this pack turns those decisions into reviewed PRs, and the new code it produces flows back into the next stewardship pass. They share `openspec/glossary.md` + `docs/adr/` as the single source of truth, the grill skills as a common decision base, and `entropy-review` as the in-delivery health gate.
+This pack and [`codebase-stewardship`](../codebase-stewardship/README.md) form a loop: stewardship decides _what to improve_ and holds the code-health baseline; this pack turns those decisions into reviewed PRs, and the new code it produces flows back into the next stewardship pass. They share `openspec/glossary.md` + `docs/adr/` as the single source of truth, the grill skills as a common decision base, and `review`'s consistency mode as the in-delivery health gate.
 
 Full workflow: [Delivery + Stewardship pairing](../../docs/architecture/delivery-and-stewardship.md).

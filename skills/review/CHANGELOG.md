@@ -5,6 +5,16 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-07-29
+
+### Added
+
+- **合并 `entropy-review` 为本 skill 的 consistency 模式**：八个熵维度、E0–E3 分级、约束上下文加载与 Constraint Gaps 报告移入 `references/consistency-checklist.md`（含 P 级 crosswalk）。consistency-only 请求（"is this consistent with our conventions?"、naming drift）走 consistency 模式；常规 review 在变更引入新标识符/模式时把 consistency 作为一条分析轴。合并动机：entropy-review 与 review 靠 negative constraint 互相划界，构成常驻 listing 路由税；"consistency only, not correctness" 本质是 review 的一个维度而非独立 skill。
+
+### Changed
+
+- **Thin-core 拆分**：SKILL.md 从 19.2KB 精简到 ~10.7KB。输出模板/finding 协议/tone 下沉 `references/output-formats.md`；行为变更分析、removal inventory、open questions、impact analysis、spec 轴细则下沉 `references/analysis-guides.md`。正文保留决策骨架：激活边界、模式表、内容类型路由表、分析原则、severity 表与 verdict 逻辑。
+
 ## [0.7.0] - 2026-07-14
 
 ### Added

@@ -1,6 +1,6 @@
-# Entropy Review Checklist
+# Consistency & Drift Checklist (Entropy Dimensions)
 
-Detailed checks for each analysis dimension. Use during Phase 2 — Analyze.
+Detailed checks for the consistency/drift axis of `review` (formerly the standalone `entropy-review` skill). Use in consistency mode, or when a change set warrants drift analysis alongside correctness review.
 
 These dimensions are the diff-granularity instantiation of the entropy suite's shared six-axes vocabulary (`control-plane-auditor` `references/methodology/six-entropy-axes.md`). Mapping:
 
@@ -209,3 +209,44 @@ The core question is not "is this code duplicated?" but "if an agent sees this P
 ### Common false positives
 - Infrastructure changes that inherently require deployment to verify
 - UI changes that require visual inspection (though screenshot tests can help)
+
+---
+
+## Constraint Context (load before analyzing)
+
+Effectiveness depends on constraint information in the target repo's instruction files. For each affected module: read the nearest and root AGENTS.md; extract glossary, dependency rules, error model, naming conventions, doc freshness rules, state model references. When `openspec/glossary.md` exists, treat it as the canonical domain glossary (the convention maintained by `grill-me` docs mode); AGENTS.md-level constraints supplement it. If none found, note "no formal constraints available; reviewing against surrounding code patterns" and assess against surrounding code.
+
+If constraints are missing or thin, list them at the end under "Constraint Gaps" and suggest running `control-plane-auditor` to establish them first:
+
+```
+## Constraint Gaps
+
+- [ ] Glossary (no canonical terms defined)
+- [ ] Error Model (no standard envelope documented)
+
+→ Run `control-plane-auditor` for a full gap analysis and improvement plan.
+```
+
+## E-Severity (consistency axis grading)
+
+Grades are **harm-based, not dimension-coded**: any dimension can yield any grade. A naming change is E0 when it forks the glossary's canonical term, but E2 when it is a one-off local inconsistency.
+
+| Level | Name | Meaning | Gate |
+|-------|------|---------|------|
+| **E0** | Standard Conflict | Direct conflict or fork with an established project standard (error model, state definition, glossary term, dependency rule) | Fails the consistency verdict |
+| **E1** | Divergent Pattern | Introduces a new divergent pattern with high replication risk | Fix before merge |
+| **E2** | Localized Inconsistency | Local inconsistency that does not fork a standard | Fix or accept with a note |
+| **E3** | Doc/Metadata Desync | Documentation or metadata out of sync with the changed behavior | Note |
+
+**Finding format**: tag the grade, name the dimension, cite the location, give a fix direction:
+
+```
+**[E1] Naming Drift** — `apps/api/src/auth/handler.ts:42`
+New identifier `fetchUserProfile` uses "User" instead of glossary term "Member".
+Surrounding code uses `getMember*` pattern; likely to be copied by later code.
+→ Consider: rename to `fetchMemberProfile` before merge.
+```
+
+**Consistency-only verdict** (consistency mode): ❌ Standard conflict — any E0. ⚠️ Fix before merge — no E0, one or more E1. ✅ Clean — E2/E3 reported as notes.
+
+**Crosswalk into P-severities** (when consistency findings fold into a standard or cross review): E0 → P1 (or P0 if it breaks a selected risk-pack invariant), E1 → P2, E2 → P2, E3 → Note. Defined canonically in `risk-adaptive-cross-review`'s `references/finding-contract.md`.

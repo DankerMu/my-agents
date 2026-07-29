@@ -16,7 +16,7 @@ Routing guide for skills adjacent to this workflow. Consult when deciding whethe
 
 - `implementation-planning`: non-interactive execution-strategy aid when the accepted issue/fixture is clear but the path needs staged rollout, rollback, dependency ordering, or PR split strategy. Never for discovering or negotiating product scope.
 - `review`: focused artifact review when the work does not justify multi-perspective cross-review.
-- `entropy-review`: follow-up checks specifically about consistency, naming drift, error-model splits, or pattern duplication.
+- `review` (consistency mode): follow-up checks specifically about consistency, naming drift, error-model splits, or pattern duplication.
 - `git-worktree-workflows`: user-facing worktree guidance or recovery only; parallel code-writing isolation inside this workflow stays governed by `parallel-worktree-delegation.md`.
 - `project-documentation`: docs-set refresh, docs drift checks, or source-of-truth cleanup outside the PR evidence summary.
 

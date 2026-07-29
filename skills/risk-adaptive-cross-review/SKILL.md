@@ -28,13 +28,13 @@ Choose one mode:
 | **Hybrid Review** | A PR must be checked against OpenSpec or design docs | Both implementation and fixture |
 
 If the request is a simple quick code review, use `review` instead. If the
-request is only consistency/drift-focused, use `entropy-review`.
+request is only consistency/drift-focused, use `review` (consistency mode).
 
 ## When Not to Use
 
 - Do not use for ordinary quick review, small diffs, or style-only feedback; use
   `review`.
-- Do not use for consistency-only or entropy-only checks; use `entropy-review`.
+- Do not use for consistency-only or entropy-only checks; use `review` (consistency mode).
 - Do not use to implement fixes, update code, or merge PRs; use the appropriate
   implementation workflow.
 - Do not use to turn a design stage into GitHub issues; use `stage-change-pipeline`.

@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-07-29
+
+### Changed
+
+- 移除 `grill-with-docs`（并入 `grill-me` 0.5.0 的 docs 模式）与 `entropy-review`（并入 `review` 0.8.0 的 consistency 模式）。pack 能力不变：术语/ADR 沉淀走 `grill-me` docs 模式，交付内一致性守门走 `review` consistency 模式。skills 由 15 减为 13。
+
 ## [0.14.0] - 2026-07-23
 
 ### Changed

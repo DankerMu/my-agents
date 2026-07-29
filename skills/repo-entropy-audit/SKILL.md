@@ -8,7 +8,7 @@ description: >-
   control (rule enforcement gaps). Produces a module-level heatmap, trend
   comparison, and prioritized cleanup targets. Activate when the user asks for
   "entropy audit", "repo health scan", "heatmap", "tech debt scan", or
-  "full entropy report". Do NOT use for PR-level review (use entropy-review)
+  "full entropy report". Do NOT use for PR-level review (use review)
   or control-plane audit (use control-plane-auditor).
 disable-model-invocation: true
 invocation_posture: manual-first
@@ -19,7 +19,7 @@ version: 0.4.1
 
 Scan an entire repository for entropy across six axes and produce a module-level heatmap, trend comparison against a stored baseline, and prioritized cleanup targets.
 
-This skill examines the **code itself** for entropy patterns. For auditing the control system (instruction files, rules, guards), use `control-plane-auditor`. For PR-level consistency checks, use `entropy-review`.
+This skill examines the **code itself** for entropy patterns. For auditing the control system (instruction files, rules, guards), use `control-plane-auditor`. For PR-level consistency checks, use `review` (consistency mode).
 
 ## When To Use
 
@@ -30,7 +30,7 @@ This skill examines the **code itself** for entropy patterns. For auditing the c
 
 ## When Not To Use
 
-- Reviewing a specific PR or diff → `entropy-review`
+- Reviewing a specific PR or diff → `review`（consistency 模式）
 - Auditing instruction files and control infrastructure → `control-plane-auditor`
 - Reviewing code for correctness → `review`
 
@@ -68,7 +68,7 @@ If a baseline exists, load it for trend comparison in Phase 3.
 
 ### 1d. Load constraint context
 
-Read available instruction files and extract any defined constraints (glossary, dependency rules, error model, naming conventions). These improve scan accuracy but are not required. When `openspec/glossary.md` exists, treat it as the canonical domain glossary (the convention maintained by `grill-with-docs`); AGENTS.md-level constraints supplement it.
+Read available instruction files and extract any defined constraints (glossary, dependency rules, error model, naming conventions). These improve scan accuracy but are not required. When `openspec/glossary.md` exists, treat it as the canonical domain glossary (the convention maintained by `grill-me` docs mode); AGENTS.md-level constraints supplement it.
 
 ---
 

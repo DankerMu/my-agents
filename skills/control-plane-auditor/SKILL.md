@@ -12,7 +12,7 @@ description: >-
   Do NOT use for code review (use review),
   full-repo code/entropy scan (use repo-entropy-audit), general
   documentation work (use project-documentation), or reviewing a
-  specific PR or diff (use review or entropy-review).
+  specific PR or diff (use review).
 disable-model-invocation: true
 invocation_posture: manual-first
 version: 0.4.0
@@ -34,7 +34,7 @@ This skill examines the **control system** — memory, invariants, protocols, pe
 
 ## When Not To Use
 
-- Reviewing a specific PR or diff → `review` or `entropy-review`
+- Reviewing a specific PR or diff → `review`（consistency 模式覆盖 drift 检查）
 - Writing or aligning the project's root CLAUDE.md/AGENTS.md as such (post-pack-install alignment, shared-source generation) → `project-instruction-bootstrap`; in write modes this skill only decides control-plane section content and delegates instruction-file mechanics to it when present (see the Bootstrap Playbook ownership split)
 - Restructuring the docs/ directory → `project-documentation`
 - Designing the AI tool setup → `agent-architect`
@@ -199,7 +199,7 @@ For each layer, assign:
 - ❌ **Missing**: layer not meaningfully established
 - ℹ️ **Informational**: (Governance only) observations without judgment
 
-These glyphs grade layer **coverage** (covered / partial / missing), not finding severity — they are distinct from `entropy-review`'s verdict glyphs.
+These glyphs grade layer **coverage** (covered / partial / missing), not finding severity — they are distinct from `review` consistency mode's verdict glyphs.
 
 ### AGENTS.md Constraint Dimensions
 
@@ -234,12 +234,12 @@ Rank the top 3–5 improvement actions by impact on **future agent correct-chang
 3. Adding instruction files to critical modules that lack them (reduces re-discovery cost)
 4. Establishing freshness checks for key documentation (prevents context rot)
 
-**Severity semantics:** Priority Actions are repo-setup improvements, deliberately outside the P0/P1/P2/Note change-review scale. When a control-plane gap blocks an active change, raise it through `entropy-review` (E-grades) and fold it via the Severity Crosswalk in `risk-adaptive-cross-review`'s `finding-contract.md`.
+**Severity semantics:** Priority Actions are repo-setup improvements, deliberately outside the P0/P1/P2/Note change-review scale. When a control-plane gap blocks an active change, raise it through `review` consistency mode (E-grades) and fold it via the Severity Crosswalk in `risk-adaptive-cross-review`'s `finding-contract.md`.
 
 ### Tool Recommendations
 
 Based on gaps found, recommend which other skills can help:
-- `entropy-review` — for PR-level consistency checks and dependency-direction drift in a change (requires constraint dimensions in AGENTS.md)
+- `review` (consistency mode) — for PR-level consistency checks and dependency-direction drift in a change (requires constraint dimensions in AGENTS.md)
 - `repo-entropy-audit` — for code-level entropy scanning, including whole-repo structural dependency scans
 - `project-documentation` — for docs/ tree restructuring
 - `review` — for general code review

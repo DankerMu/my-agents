@@ -13,7 +13,6 @@
     "brainstorming",
     "implementation-planning",
     "deep-research",
-    "entropy-review",
     "study-design",
     "business-plan"
   ],
@@ -24,7 +23,9 @@
       "prompt": "Go over PR #212 for bugs, breaking changes, and test gaps.",
       "rationale": "A concrete artifact plus defect-finding intent is the core positive signal; it must not escalate to the multi-perspective pack without a risk/parallel ask.",
       "expected_route": "review",
-      "forbidden_routes": ["risk-adaptive-cross-review", "entropy-review"],
+      "forbidden_routes": [
+        "risk-adaptive-cross-review"
+      ],
       "expected_depth": "standard"
     },
     {
@@ -33,7 +34,9 @@
       "prompt": "帮我看看这个 diff 有没有 bug，顺带查一下安全隐患。",
       "rationale": "Bilingual users phrase artifact-scoped checks in Chinese; the description must still catch diff + defect vocabulary.",
       "expected_route": "review",
-      "forbidden_routes": ["brainstorming"],
+      "forbidden_routes": [
+        "brainstorming"
+      ],
       "expected_depth": "standard"
     },
     {
@@ -42,7 +45,9 @@
       "prompt": "This auth refactor PR is high risk — split it across parallel checkers for correctness, security, and invariant compatibility.",
       "rationale": "Explicit multi-perspective, high-risk vocabulary is what separates the pack from the ordinary reviewer.",
       "expected_route": "risk-adaptive-cross-review",
-      "forbidden_routes": ["review"],
+      "forbidden_routes": [
+        "review"
+      ],
       "expected_depth": "heavy"
     },
     {
@@ -51,7 +56,9 @@
       "prompt": "Before merge, run this OpenSpec change past several independent perspectives — spec compliance, integration, and test evidence.",
       "rationale": "OpenSpec artifacts with a multi-perspective ask belong to the pack, not the single reviewer or a consistency-only pass.",
       "expected_route": "risk-adaptive-cross-review",
-      "forbidden_routes": ["review", "entropy-review"],
+      "forbidden_routes": [
+        "review"
+      ],
       "expected_depth": "heavy"
     },
     {
@@ -60,7 +67,10 @@
       "prompt": "The ticket says to support both SSO and passwordless login but also says no third-party auth — pin down what we are actually building before we start.",
       "rationale": "A direct contradiction inside an implementation request is the strongest auto-trigger signal for disambiguation.",
       "expected_route": "clarify",
-      "forbidden_routes": ["brainstorming", "implementation-planning"],
+      "forbidden_routes": [
+        "brainstorming",
+        "implementation-planning"
+      ],
       "expected_depth": "standard"
     },
     {
@@ -69,7 +79,9 @@
       "prompt": "Spec this change properly before we build it: the acceptance criteria are missing and the request contradicts itself about caching behavior.",
       "rationale": "Missing acceptance criteria that would change the build is an explicit boundary condition in the description.",
       "expected_route": "clarify",
-      "forbidden_routes": ["brainstorming"],
+      "forbidden_routes": [
+        "brainstorming"
+      ],
       "expected_depth": "standard"
     },
     {
@@ -78,7 +90,10 @@
       "prompt": "We picked the notification-preferences direction; write the requirements document with acceptance criteria and success metrics.",
       "rationale": "A chosen direction plus a requirements-document ask is the positive gate; ideation and planning must not steal it.",
       "expected_route": "prd-authoring",
-      "forbidden_routes": ["brainstorming", "business-plan"],
+      "forbidden_routes": [
+        "brainstorming",
+        "business-plan"
+      ],
       "expected_depth": "standard"
     },
     {
@@ -87,7 +102,10 @@
       "prompt": "把我们定下来的搜索改版方向写成 PRD。",
       "rationale": "The Chinese trigger vocabulary must survive description tightening.",
       "expected_route": "prd-authoring",
-      "forbidden_routes": ["brainstorming", "implementation-planning"],
+      "forbidden_routes": [
+        "brainstorming",
+        "implementation-planning"
+      ],
       "expected_depth": "standard"
     },
     {
@@ -96,7 +114,10 @@
       "prompt": "We just installed the research-engineering pack in the hydrology repo — set up the standing project research profile.",
       "rationale": "Install-time profile setup is the primary positive case for the bootstrap skill.",
       "expected_route": "research-profile-bootstrap",
-      "forbidden_routes": ["study-design", "research-question-framing"],
+      "forbidden_routes": [
+        "study-design",
+        "research-question-framing"
+      ],
       "expected_depth": "standard"
     },
     {
@@ -105,7 +126,9 @@
       "prompt": "This repo keeps running snow simulations now; scan the codebase and create the durable research profile for it.",
       "rationale": "A repository gaining a recurring scientific surface is the second positive condition named by the description.",
       "expected_route": "research-profile-bootstrap",
-      "forbidden_routes": ["research-question-framing"],
+      "forbidden_routes": [
+        "research-question-framing"
+      ],
       "expected_depth": "standard"
     },
     {
@@ -114,7 +137,10 @@
       "prompt": "We suspect the melt bias comes from the temperature-index scheme; turn this into a bounded research contract before anyone designs a study.",
       "rationale": "Pre-study framing of a scientific uncertainty is the core positive; study design must wait for an approved contract.",
       "expected_route": "research-question-framing",
-      "forbidden_routes": ["study-design", "deep-research"],
+      "forbidden_routes": [
+        "study-design",
+        "deep-research"
+      ],
       "expected_depth": "standard"
     },
     {
@@ -123,7 +149,10 @@
       "prompt": "Frame the sediment-transport uncertainty into explicit claims, alternatives, and evidence needs — we are not ready to design the experiment yet.",
       "rationale": "Claims/alternatives/evidence-needs vocabulary belongs to framing; the profile bootstrap and study design are adjacent thieves.",
       "expected_route": "research-question-framing",
-      "forbidden_routes": ["study-design", "research-profile-bootstrap"],
+      "forbidden_routes": [
+        "study-design",
+        "research-profile-bootstrap"
+      ],
       "expected_depth": "standard"
     },
     {
@@ -132,7 +161,11 @@
       "prompt": "Should we build the importer as a plugin or as a separate service? I am genuinely unsure which direction fits us.",
       "rationale": "Direction is not chosen, so the PRD author, disambiguation, and execution planning must all stay quiet.",
       "expected_route": "brainstorming",
-      "forbidden_routes": ["prd-authoring", "clarify", "implementation-planning"],
+      "forbidden_routes": [
+        "prd-authoring",
+        "clarify",
+        "implementation-planning"
+      ],
       "expected_depth": "standard"
     },
     {
@@ -141,7 +174,9 @@
       "prompt": "I have a fuzzy idea about improving onboarding — help me explore the option space first.",
       "rationale": "Explicit option-space exploration with no chosen direction is the ideation skill's home turf.",
       "expected_route": "brainstorming",
-      "forbidden_routes": ["prd-authoring"],
+      "forbidden_routes": [
+        "prd-authoring"
+      ],
       "expected_depth": "standard"
     },
     {
@@ -150,7 +185,10 @@
       "prompt": "Direction is fixed: migrate auth to the new gateway. Draft the phased execution plan with rollback, dependency order, and verification.",
       "rationale": "Phases, rollback, and dependency ordering after a chosen direction are the planning skill's positive signals.",
       "expected_route": "implementation-planning",
-      "forbidden_routes": ["brainstorming", "prd-authoring"],
+      "forbidden_routes": [
+        "brainstorming",
+        "prd-authoring"
+      ],
       "expected_depth": "heavy"
     },
     {
@@ -159,7 +197,9 @@
       "prompt": "这个跨模块重构方向已经定了，给我一份带依赖顺序和回滚路径的深度实施计划。",
       "rationale": "Chinese execution-planning vocabulary must keep routing correctly.",
       "expected_route": "implementation-planning",
-      "forbidden_routes": ["clarify"],
+      "forbidden_routes": [
+        "clarify"
+      ],
       "expected_depth": "heavy"
     },
     {
@@ -168,7 +208,10 @@
       "prompt": "Compare the current LLM eval frameworks with fresh citations — what actually changed in the past year?",
       "rationale": "Fresh, sourced external comparison is the research pipeline's positive case, not framing or ideation.",
       "expected_route": "deep-research",
-      "forbidden_routes": ["research-question-framing", "brainstorming"],
+      "forbidden_routes": [
+        "research-question-framing",
+        "brainstorming"
+      ],
       "expected_depth": "heavy"
     },
     {
@@ -177,25 +220,29 @@
       "prompt": "Give me a sourced market overview of vector databases with a date on every claim.",
       "rationale": "Cited market research is external research work, not business-model authoring.",
       "expected_route": "deep-research",
-      "forbidden_routes": ["business-plan"],
+      "forbidden_routes": [
+        "business-plan"
+      ],
       "expected_depth": "heavy"
     },
     {
       "id": "rt-entropy-naming-drift",
       "name": "Consistency-only PR check routes to the entropy pass",
       "prompt": "Check this PR only for naming drift and pattern duplication against our existing conventions.",
-      "rationale": "Consistency-only scope excludes the correctness reviewer; the drift vocabulary belongs to the entropy pass.",
-      "expected_route": "entropy-review",
-      "forbidden_routes": ["review"],
+      "rationale": "Consistency-only scope excludes the correctness reviewer; the drift vocabulary belongs to the entropy pass (routes to review consistency mode after the entropy-review merge).",
+      "expected_route": "review",
+      "forbidden_routes": [],
       "expected_depth": "light"
     },
     {
       "id": "rt-entropy-error-model",
       "name": "Error-model consistency check routes to the entropy pass",
       "prompt": "Does this diff stay consistent with our error-handling model? Not asking for a full correctness pass.",
-      "rationale": "An explicit not-correctness qualifier must keep both reviewer skills out.",
-      "expected_route": "entropy-review",
-      "forbidden_routes": ["review", "risk-adaptive-cross-review"],
+      "rationale": "An explicit not-correctness qualifier must keep both reviewer skills out (routes to review consistency mode after the entropy-review merge).",
+      "expected_route": "review",
+      "forbidden_routes": [
+        "risk-adaptive-cross-review"
+      ],
       "expected_depth": "light"
     },
     {
@@ -204,7 +251,10 @@
       "prompt": "The research contract is approved; design the study protocol with verification thresholds and falsifiable checks.",
       "rationale": "An approved contract is the hand-off point where framing ends and protocol design begins.",
       "expected_route": "study-design",
-      "forbidden_routes": ["research-question-framing", "implementation-planning"],
+      "forbidden_routes": [
+        "research-question-framing",
+        "implementation-planning"
+      ],
       "expected_depth": "heavy"
     },
     {
@@ -213,7 +263,9 @@
       "prompt": "Turn the approved snow-scheme question into a falsifiable experimental design with explicit thresholds.",
       "rationale": "Experimental-design vocabulary after approval belongs to protocol design, not another framing round.",
       "expected_route": "study-design",
-      "forbidden_routes": ["research-question-framing"],
+      "forbidden_routes": [
+        "research-question-framing"
+      ],
       "expected_depth": "heavy"
     },
     {
@@ -222,7 +274,10 @@
       "prompt": "Draft the full business case for our chosen SaaS pricing pivot — market sizing, unit economics, and go-to-market.",
       "rationale": "Business-model deliverables for a chosen direction belong to the business strategist, not the product-requirements author or the research pipeline.",
       "expected_route": "business-plan",
-      "forbidden_routes": ["deep-research", "prd-authoring"],
+      "forbidden_routes": [
+        "deep-research",
+        "prd-authoring"
+      ],
       "expected_depth": "heavy"
     },
     {
@@ -231,7 +286,9 @@
       "prompt": "把这个已经定下来的副业方向写成一份商业计划，包含收入模型和风险评估。",
       "rationale": "Chinese business-plan vocabulary must route to business strategy, not product requirements.",
       "expected_route": "business-plan",
-      "forbidden_routes": ["prd-authoring"],
+      "forbidden_routes": [
+        "prd-authoring"
+      ],
       "expected_depth": "heavy"
     },
     {
@@ -240,7 +297,10 @@
       "prompt": "Rename the utils folder to lib and fix the imports.",
       "rationale": "Specific, unambiguous execution needs no skill; disambiguation and planning must not add ceremony.",
       "expected_route": "none",
-      "forbidden_routes": ["clarify", "implementation-planning"],
+      "forbidden_routes": [
+        "clarify",
+        "implementation-planning"
+      ],
       "expected_depth": "none"
     },
     {
@@ -249,7 +309,10 @@
       "prompt": "What is the difference between git rebase and git merge?",
       "rationale": "A one-off factual answer needs neither the research pipeline nor ideation.",
       "expected_route": "none",
-      "forbidden_routes": ["deep-research", "brainstorming"],
+      "forbidden_routes": [
+        "deep-research",
+        "brainstorming"
+      ],
       "expected_depth": "none"
     },
     {
@@ -258,7 +321,9 @@
       "prompt": "Fix this typo in the README, it says 'recieve'.",
       "rationale": "A trivial edit must not wake the reviewer.",
       "expected_route": "none",
-      "forbidden_routes": ["review"],
+      "forbidden_routes": [
+        "review"
+      ],
       "expected_depth": "none"
     }
   ]

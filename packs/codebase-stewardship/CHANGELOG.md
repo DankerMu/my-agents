@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-29
+
+### Changed
+
+- 移除 `grill-with-docs`（并入 `grill-me` 0.5.0 的 docs 模式）与 `entropy-review`（并入 `review` 0.8.0 的 consistency 模式）。治理能力不变；熵套件的 per-change 守门改由 `review` consistency 模式承担。skills 由 10 减为 8。
+
 ## [0.4.1] - 2026-07-10
 
 - Document coupling with `research-engineering`: code-health and architecture work may restructure implementation, but scientific invariants, units/state semantics, evidence authorities and unresolved research obligations from the approved handoff remain upstream contracts. Scientific-semantic changes route back to a new research decision rather than being hidden inside refactoring.
