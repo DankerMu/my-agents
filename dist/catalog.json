@@ -916,7 +916,7 @@
       "path": "agents/docs-researcher",
       "displayName": "Docs Researcher",
       "description": "Documentation-backed research agent for verifying APIs, SDKs, frameworks, and libraries against official sources.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "maturity": "experimental",
       "categories": [
         "documentation",
@@ -944,7 +944,7 @@
       "path": "agents/explorer",
       "displayName": "Explorer",
       "description": "Use when a task needs fast read-only codebase mapping, evidence gathering, impact analysis, or file and symbol discovery before implementation or review.",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -969,7 +969,7 @@
       "path": "agents/implementer",
       "displayName": "Implementer",
       "description": "Code implementation agent that writes, modifies, and refactors code based on plans, specs, or direct instructions.",
-      "version": "1.7.0",
+      "version": "1.8.0",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -997,7 +997,7 @@
       "path": "agents/issue-scribe",
       "displayName": "Issue Scribe",
       "description": "Follow-up capture agent: takes a raw observation noticed during primary work, verifies it read-only, determines origin, boundary, and solution direction, dedups against existing issues, and files one structured GitHub issue for later delivery. Never fixes anything itself.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1023,7 +1023,7 @@
       "path": "agents/monitor",
       "displayName": "Monitor",
       "description": "Cheap-model watchdog for harness-external long-running jobs (slurm, remote PID over ssh, CI runs). ID-based completion detection, one blocking poll loop per check, quiet waits, final-state report with evidence. Read-only; never does side work.",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "maturity": "experimental",
       "categories": [
         "devops",
@@ -1050,7 +1050,7 @@
       "path": "agents/planner",
       "displayName": "Planner",
       "description": "Architecture and implementation planning agent that designs step-by-step plans with trade-off analysis and escalates to implementation-planning for complex technical execution plans.",
-      "version": "1.3.0",
+      "version": "1.4.0",
       "maturity": "experimental",
       "categories": [
         "design",
@@ -1083,7 +1083,7 @@
       "path": "agents/researcher",
       "displayName": "Researcher",
       "description": "Web research agent for deep investigation, multi-source verification, and structured report generation.",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -1110,7 +1110,7 @@
       "path": "agents/reviewer",
       "displayName": "Reviewer",
       "description": "Code review agent that performs structured, severity-graded reviews on PRs, diffs, and code changes.",
-      "version": "2.4.0",
+      "version": "2.5.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1137,7 +1137,7 @@
       "path": "agents/verifier",
       "displayName": "Verifier",
       "description": "Independent finding-verification agent. Adjudicates one failure-class batch of candidate review findings (at most 5) with exactly one verdict per candidate — CONFIRMED, PLAUSIBLE, or REFUTED — using only diff/spec/code/test evidence. Read-only; never a reviewer that produced any candidate in its batch.",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1412,5 +1412,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-29T10:38:49.922Z"
+  "generatedAt": "2026-07-30T07:50:07.691Z"
 }

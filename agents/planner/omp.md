@@ -7,7 +7,7 @@ description: >
   than a normal inline plan. Can spawn explorer (codebase context) and researcher (external best
   practices).
 tools: read, glob, grep, bash, task
-model: "sol:xhigh"
+model: "openai-codex/terra:max"
 spawns: explorer, researcher
 ---
 

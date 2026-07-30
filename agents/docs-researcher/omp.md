@@ -5,7 +5,7 @@ description: >
   and libraries. Prioritizes official docs, release notes, and source-of-truth
   references, and returns precise answers with citations. Does not modify code.
 tools: web_search, read, glob, grep
-model: "terra:high"
+model: "openai-codex/terra:max"
 ---
 
 # docs-researcher Contract

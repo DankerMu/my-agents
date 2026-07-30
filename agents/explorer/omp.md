@@ -5,7 +5,7 @@ description: >
   impact analysis, or file and symbol discovery before implementation or review.
   Does not modify any files.
 tools: read, glob, grep, bash
-model: "terra:high"
+model: "openai-codex/terra:high"
 ---
 
 # explorer Contract

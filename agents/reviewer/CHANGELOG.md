@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.5.0] - 2026-07-30
+
+### Changed
+
+- omp projection: pin `model: "openai-codex/terra:max"` (was `terra:max`) so the agent resolves through the `openai-codex` provider explicitly instead of relying on fuzzy provider coalescing.
+
 ## [2.4.0]
 
 - Pin the Claude Code projection to `model: claude-opus-5` so the agent no longer inherits the parent session's model. Claude Code has no per-subagent reasoning-effort field, so effort still follows the session setting.

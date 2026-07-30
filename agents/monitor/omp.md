@@ -7,7 +7,7 @@ description: >
   of polling by hand. Read-only. Do NOT use for local background Bash tasks or
   subagents the harness already notifies about.
 tools: bash, read, glob
-model: "@smol"
+model: "openai-codex/terra:medium"
 ---
 
 # monitor Contract

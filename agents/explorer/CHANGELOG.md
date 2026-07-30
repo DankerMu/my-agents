@@ -2,6 +2,12 @@
 
 All notable changes to the **explorer** agent will be documented in this file.
 
+## [1.5.0] - 2026-07-30
+
+### Changed
+
+- omp projection: pin `model: "openai-codex/terra:high"` (was `terra:high`) so the agent resolves through the `openai-codex` provider explicitly instead of relying on fuzzy provider coalescing.
+
 ## [1.4.0] - 2026-07-18
 
 ### Added

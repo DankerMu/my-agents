@@ -2,6 +2,12 @@
 
 All notable changes to the **docs-researcher** agent will be documented in this file.
 
+## [1.2.0] - 2026-07-30
+
+### Changed
+
+- omp projection: pin `model: "openai-codex/terra:max"` (was `terra:high`) so the agent resolves through the `openai-codex` provider explicitly instead of relying on fuzzy provider coalescing.
+
 ## [1.1.0] - 2026-07-18
 
 ### Added
