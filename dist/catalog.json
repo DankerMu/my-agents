@@ -969,7 +969,7 @@
       "path": "agents/implementer",
       "displayName": "Implementer",
       "description": "Code implementation agent that writes, modifies, and refactors code based on plans, specs, or direct instructions.",
-      "version": "1.8.0",
+      "version": "1.8.1",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -1137,7 +1137,7 @@
       "path": "agents/verifier",
       "displayName": "Verifier",
       "description": "Independent finding-verification agent. Adjudicates one failure-class batch of candidate review findings (at most 5) with exactly one verdict per candidate — CONFIRMED, PLAUSIBLE, or REFUTED — using only diff/spec/code/test evidence. Read-only; never a reviewer that produced any candidate in its batch.",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1412,5 +1412,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-07-30T07:50:07.691Z"
+  "generatedAt": "2026-08-01T16:05:04.388Z"
 }

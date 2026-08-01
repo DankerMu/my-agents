@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.6.1]
+
+- omp projection: repin the model to `sub-claude/claude-opus-4-8:max` (was `openai-codex/terra:max`); this agent runs on Claude again, with an explicit provider prefix, while the other omp projections stay on `openai-codex/terra`.
+
 ## [0.6.0] - 2026-07-30
 
 ### Changed
