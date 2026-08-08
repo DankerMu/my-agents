@@ -3,7 +3,7 @@ name: ask-danker
 description: 本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。
 disable-model-invocation: true
 invocation_posture: manual
-version: 0.2.0
+version: 0.3.0
 ---
 
 # Ask Danker
@@ -16,7 +16,7 @@ version: 0.2.0
 2. **压测已选的方向** → `grill-me`（对话式逼清决策，默认不写文档；需要同时对齐术语、沉淀 `openspec/glossary.md` 与 ADR 时用其 docs 模式）。**任务进入陌生领域、计划还不存在**时先跑 `blind-spot-pass` 从代码库挖出你没想到要问的问题。
 3. **需要产品文档** → `prd-authoring`（方向已定才进，产出可评审的 PRD）；**生意本身还没论证**（商业模式、市场、财务）→ `business-plan`（在 PRD 之前）。
 4. **设计变交付物** → `stage-change-pipeline`：设计文档 → OpenSpec change → 三路并行审核 → 修复与独立验证门 → implementation-ready GitHub issues。它内部按需调用 `implementation-planning`、`future-aware-architecture`、`grill-me`（docs 模式）、`gh-create-issue`。
-5. **实现 issue** → `subagent-workflow`（单 issue 全周期：实现 → PR → 交叉评审 → 合并；多 issue 按 DAG 顺序逐个跑它）。
+5. **实现 issue** → `subagent-workflow`（单 issue 全周期：实现 → PR → 交叉评审 → 合并；多 issue 按 DAG 顺序逐个跑它）。想把实现/评审/验证压到 omp（oh-my-pi）上跑、只留 Phase 7 终审在原生 subagent → `orche-omp-workflow`（同一套相位与闸门，只换执行基座；需要 `codeagent-wrapper` + omp 可用）。
 6. **评审，二选一**：单遍 diff/PR/staged 评审、或只关心一致性漂移/命名/模式重复 → `review`（后者走其 consistency 模式）；高风险、多视角、不变量/状态机聚焦 → `risk-adaptive-cross-review`。
 
 ## On-ramps（汇入主流的起点）

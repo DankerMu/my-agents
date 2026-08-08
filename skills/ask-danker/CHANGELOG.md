@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0]
+
+- 路由表第 5 步新增 `orche-omp-workflow`：与 `subagent-workflow` 同相位同闸门，实现/评审/验证委派给 omp，Phase 7 终审仍走原生 subagent；标注前置依赖 `codeagent-wrapper` + omp。
+
 ## [0.2.0] - 2026-07-29
 
 ### Changed
