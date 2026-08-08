@@ -1,7 +1,7 @@
 ---
 name: codeagent
 description: Execute codeagent-wrapper for multi-backend AI code tasks. Supports Codex, Claude, Gemini, OpenCode, and OMP (oh-my-pi) backends with agent presets, skill injection, worktree isolation, parallel task orchestration, and structured JSON output.
-version: 0.2.0
+version: 0.2.2
 ---
 
 # Codeagent Wrapper Integration
@@ -40,7 +40,7 @@ codeagent-wrapper --parallel [flags] < tasks_config
 | `--agent <name>` | Agent preset (from `~/.codeagent/models.json` or `~/.codeagent/agents/`) | none |
 | `--model <name>` | Model override for any backend | backend default |
 | `--skills <names>` | Comma-separated skill names to inject | auto-detected |
-| `--reasoning-effort <level>` | Reasoning level: low, medium, high (**ignored by omp**) | backend default |
+| `--reasoning-effort <level>` | Reasoning level: off/minimal/low/medium/high/xhigh/max; for omp it becomes `--thinking` | backend default |
 | `--prompt-file <path>` | Custom prompt file | none |
 | `--output <path>` | Write structured JSON output to file | none |
 | `--worktree` | Execute in an isolated git worktree (branch `do/{task_id}`) | false |
@@ -67,9 +67,10 @@ Per-backend guidance, session resume, parallel task DSL, agent presets, and skil
 `--backend omp` expands to `omp -p --mode json --auto-approve --no-title --no-skills --no-rules --model <model>`. Four consequences matter:
 
 - **Credentials come from `~/.omp/agent/`**; `base_url`/`api_key` in `models.json` are ignored.
-- **No skills, no rules, no agent definition are loaded.** The session starts from omp's generic coding-assistant prompt — no project `AGENTS.md`/`CLAUDE.md`, no `.omp/agents/<name>.md`. Anything a role needs must be in the prompt, or at a file path the prompt tells the session to read.
-- **Reasoning effort goes in the model string**, not `--reasoning-effort` (which the omp backend silently drops): `--model "sub-gpt/gpt-5.6-luna:max"`, one of `off|minimal|low|medium|high|xhigh|max`. Caveat: the `:effort` suffix resolves only for models the local omp model cache lists authoritatively — on a provider whose discovery cache is empty, `provider/model:max` fails with `Model "…" not found` while the bare `provider/model` resolves. Verify a pin with a throwaway task before relying on it.
+- **No skills, no rules, no agent definition are loaded.** The session starts from omp's generic coding-assistant prompt — no project `AGENTS.md`/`CLAUDE.md`, no `.omp/agents/<name>.md`. The two halves differ in cost: `--no-skills` is compensated by the wrapper's own `--skills` injection, but **nothing compensates for `--no-rules`**, and there is no passthrough for extra omp flags. A task that writes code must therefore be told to read the project's rules itself, e.g. `Before editing anything, read AGENTS.md (and CLAUDE.md if present) at the repo root and follow them; they are not loaded into your session.`
+- **Set reasoning effort with `--reasoning-effort`** (or `reasoning_effort:` in a `--parallel` task header). The wrapper translates it into omp's `--thinking`, and it works on every provider. Do **not** put the effort in the model string: `provider/model:effort` resolves only for providers omp lists authoritatively — on a gateway-defined provider both `sub-gpt/gpt-5.6-luna:max` and `sub-claude/claude-opus-4-8:max` fail with `Model "…" not found` and exit 1, while the bare model resolves. And a bare model with no effort does not inherit the effort from `modelRoles` in `~/.omp/agent/config.yml` — those apply only when no `--model` is passed at all; the observed fallback is a fixed `high`. Verify what actually applied with `grep -h thinking_level_change ~/.omp/agent/sessions/*/*.jsonl | tail`.
 - **Omitting `--model` uses omp's own `default` role** from `~/.omp/agent/config.yml`, which is usually not what a caller assumes. Pass `--model` explicitly.
+- `--auto-approve` is on by default (`CODEAGENT_SKIP_PERMISSIONS`), so a delegated write task runs without an approval gate. Scope it with `workdir` — a worktree, not a shared checkout — when that matters.
 - Tools are allowlist-only with lowercase names (`read`, `bash`, `edit`, `grep`, …); `disallowed_tools` is ignored. List models with `omp models`.
 
 ## Usage

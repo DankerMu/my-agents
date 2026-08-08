@@ -2,7 +2,7 @@
 name: orche-omp-workflow
 description: >
   GitHub issue → verified PR workflow where Claude Code / Codex orchestrates and omp (oh-my-pi) executes: implementation, cross-review, and finding verification are delegated to omp implementer/reviewer/verifier sessions through codeagent-wrapper, while Phase 7 final review stays a native subagent. Mandatory OpenSpec fixtures, risk-adaptive review, CI, human-gated merge. Use when the issue loop should run on omp ("用 omp 跑这个 issue", "omp 实现 #XX"). Not for docs/spec-only work, hotfixes that skip review, or all-native runs (use subagent-workflow).
-version: 0.1.0
+version: 0.1.4
 ---
 
 # Orchestrated omp Issue Workflow
@@ -31,7 +31,7 @@ The contract is a loop, not a handoff: incoming issues carry `Suggested fixture 
 ## Core Rules
 
 - **omp executes, the orchestrator adjudicates**: every `implementer`/`reviewer`/`verifier` leaf task except Phase 7 runs as an omp session via `codeagent-wrapper --backend omp`, with the role contract injected into the brief. Invocation, model pins, brief assembly, parallel mode, and failure classification are governed by `references/omp-delegation.md`. Phase 7 runs native; delegating it to omp is a gate failure, not a variant.
-- **Delegated omp sessions load no skills, no rules, and no agent definition** (`--no-skills --no-rules`): whatever the role needs is in the brief or in a file path the brief tells it to read. A session that could not read its operating guide or ran without its contract bullets produced a degraded result — discard and re-delegate; never consume it as a review round.
+- **Delegated omp sessions load no skills, no rules, and no agent definition** (`--no-skills --no-rules`): whatever the role needs is in the brief or in a file path the brief tells it to read. `--no-skills` is compensated by the wrapper's own `--skills` injection; **`--no-rules` is not compensated by anything**, so every code-writing brief must point the session at the project's `AGENTS.md`/`CLAUDE.md`. A session that could not read its operating guide, ran without its contract bullets, or wrote code without the project rules pointer produced a degraded result — discard and re-delegate; never consume it as a review round.
 - **OpenSpec change is mandatory and is the fixture**: every implemented issue has `openspec/changes/<change>/{proposal.md,design.md,tasks.md}` plus required spec deltas, carrying risk triage, must-preserve behavior, seams under test (upstream-declared, consumed not renegotiated — a needed-but-missing seam is a reported deviation), selected/not-selected risk packs with reasons, evidence mapping, and non-goals. One read-only fixture review plus `openspec validate <change> --strict --no-interactive` before implementation.
 - **Project profile is project-local and living**: the active profile lives at `openspec/project-profile.md` (bootstrapped Phase 0.0, maintained Phase 0.5); it records risk surfaces, command entry points, and the verification matrix that Phase 2 and the Phase 8 self-audit consume. Never hand-fork project-specific surfaces into this shared skill.
 - **Orchestrator edits specs, not implementation**: `openspec/changes/<change>/**` may be edited directly; source, runtime tests, configs, and PR templates go through a delegated `implementer` task unless the user explicitly overrides.

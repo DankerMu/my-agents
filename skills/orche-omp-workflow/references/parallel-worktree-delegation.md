@@ -90,7 +90,8 @@ codeagent-wrapper --parallel --output .workplans/<N>/impl-batch.json <<'OMPBATCH
 ---TASK---
 id: <worker-id>
 backend: omp
-model: sub-claude/claude-opus-4-8
+model: sub-gpt/gpt-5.6-luna
+reasoning_effort: max
 workdir: <absolute repo path>/.worktrees/pr-<N>-<worker-id>
 ---CONTENT---
 <worker brief>

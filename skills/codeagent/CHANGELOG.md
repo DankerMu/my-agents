@@ -5,6 +5,20 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-08-08
+
+### Fixed
+
+- 纠正 0.2.0/0.2.1 的错误说法：`--reasoning-effort` **不会**被 omp backend 丢弃，wrapper 会把它翻译成 omp 的 `--thinking`（实测生成 `--thinking max`，session 记录确认生效）；`--parallel` 的 `reasoning_effort:` 头同样生效。
+- OMP 小节与 CLI flag 表改为推荐用 `--reasoning-effort` 传强度，并说明为何不要写进 model 串：`provider/model:effort` 只对 omp 权威列出的 provider 有效，网关自定义 provider（如 `sub-gpt`/`sub-claude`）会直接 `Model not found`；裸 model 不带 effort 也不会继承 `modelRoles` 的配置，实测落到固定的 `high`。
+
+## [0.2.1] - 2026-08-08
+
+### Changed
+
+- OMP 小节点明 `--no-skills` 与 `--no-rules` 的不对称：前者有 wrapper 的 `--skills` 顶上，后者没有任何补偿通道，也没有 omp 额外参数的透传口；写代码的任务必须在 prompt 里让它自己去读 `AGENTS.md`/`CLAUDE.md`。
+- 补充 `--auto-approve` 默认开启的后果：委派的写任务没有审批闸，用 `workdir` 圈住作用范围。
+
 ## [0.2.0] - 2026-08-08
 
 ### Added

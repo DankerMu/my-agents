@@ -5,6 +5,40 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-08-08
+
+### Changed
+
+- `reviewer` 的模型改为 `sub-gpt/gpt-5.6-terra`（仍走 sub-gpt 渠道、仍是 `--reasoning-effort max`）；implementer/verifier 保持 `sub-gpt/gpt-5.6-luna`。Phase 4 / 6.5 的并行 reviewer 批量示例同步。
+
+## [0.1.3] - 2026-08-08
+
+### Fixed
+
+- **纠正 effort 传递方式**：`--reasoning-effort` 并未被 omp backend 丢弃 —— wrapper 会把它翻译成 omp 的 `--thinking`（实测 `--model openai-codex/gpt-5.6-luna --reasoning-effort max` 生成 `--thinking max`，session 记录 `thinkingLevel=max`）。`--parallel` 的 `reasoning_effort:` 头同样生效。此前 0.1.0–0.1.2 写的"静默丢弃"是错的。
+
+### Changed
+
+- 三个角色的 pin 统一改为 `sub-gpt/gpt-5.6-luna` + `--reasoning-effort max`，模型与强度分开传。
+- Model Pins 一节重写：明确"不要把 effort 写进 model 串"（`provider/model:effort` 只对 omp 权威列出的 provider 有效，网关自定义 provider 上会直接 `Model not found` 退出 1），以及"裸 pin 不带 effort 会静默落到 high"。
+- 并行 task 头要求同时写 `backend` / `model` / `reasoning_effort` 三项；示例（Phase 1 单任务、worktree worker 批量、reviewer 批量）全部同步。
+- 保留自查手段：`grep -h thinking_level_change ~/.omp/agent/sessions/*<project>*/*.jsonl`，并注明少数调用中未观察到 `--thinking` 输出、成因未定位，effort 不符按 degraded delegation 处理。
+
+## [0.1.2] - 2026-08-08
+
+### Fixed
+
+- 修正 Model Pins 一节的错误说法：裸 pin（不带 `:effort`）**不会**继承 `~/.omp/agent/config.yml` 里 `modelRoles` 的 effort —— 那些 role 只在完全不传 `--model` 时生效；显式传 `--model` 而没有后缀时落到固定的 `high`。因此 implementer/verifier 的 `sub-claude/claude-opus-4-8` 实际跑在 `high` 而非 `max`，表格已如实标注。
+- 新增自查方法：`grep -h thinking_level_change ~/.omp/agent/sessions/*<project>*/*.jsonl`，看实际生效的 thinking level 而不是你写下的那个。
+
+## [0.1.1] - 2026-08-08
+
+### Changed
+
+- `omp-delegation.md` brief 组装新增第 4 步 **项目规则指针**：委派会话不加载 `AGENTS.md`/`CLAUDE.md`，且 wrapper 没有对应的注入通道（`--skills` 只补 skill，不补 rules），所以每个写代码的 brief 必须用路径指针把规则文件指给它。implementer 强制，只读角色可选。
+- 明确 `--no-skills` 与 `--no-rules` 的性质差异：前者是职责划分（wrapper 独占 skill 注入，避免同一 skill 两个来源），后者是无补偿损失。
+- 补充 `--auto-approve` 默认开启的后果：委派写任务没有审批闸，这是"写代码任务绝不指向父 PR worktree"的理由之一。
+
 ## [0.1.0] - 2026-08-08
 
 ### Added

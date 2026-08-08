@@ -105,7 +105,7 @@ The profile is a living document, not a one-shot. It does not change per issue, 
 5. Launch either a single omp `implementer` task or the parallel worktree delegation defined by `parallel-worktree-delegation.md`, passing the implementation brief built above and the repository root (or the worker worktree path) as the positional working directory:
 
    ```bash
-   codeagent-wrapper --backend omp --model sub-claude/claude-opus-4-8 \
+   codeagent-wrapper --backend omp --model sub-gpt/gpt-5.6-luna --reasoning-effort max \
      --output .workplans/<issue-or-pr>/impl-result.json - <absolute repo path> <<'OMPTASK'
    <implementation brief>
    OMPTASK

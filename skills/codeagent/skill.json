@@ -3,7 +3,7 @@
   "name": "codeagent",
   "displayName": "Codeagent",
   "description": "Execute codeagent-wrapper for multi-backend AI code tasks. Supports Codex, Claude, Gemini, OpenCode, and OMP (oh-my-pi) backends with agent presets, skill injection, worktree isolation, parallel task orchestration, and structured JSON output.",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "maturity": "experimental",
   "categories": ["coding", "workflow", "ai"],
   "tags": ["codeagent-wrapper", "codex", "claude", "gemini", "opencode", "omp", "parallel"],
