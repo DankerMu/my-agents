@@ -5,6 +5,17 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-08-09
+
+### Changed
+
+- Contract declarations move upstream: every tasks.md task group now ends with two contract lines (`Suggested fixture level`, `Minimal mergeable slice`) authored in Stage 2 (`stage-2-artifacts.md`), audited for credibility by Stage 3 Review 3 (missing lines are P0), and only consumed — never invented — by Stage 5. This closes the ordering defect where Review 3 was asked to audit fields that did not exist until Stage 5, and stops the width gate's executor from writing its own inputs.
+- `full-pipeline.workflow.js` Stage 5 issue-creation prompt now carries the full width gate: contract-field inheritance from tasks.md, the three criteria (slice-deferred / multi-path / merged-tasks), the single `Width exception` escape, and the recursion endpoint. Previously the hardcoded workflow path created issues with the pre-0.17 field list, so the gate existed only in prose and degraded into Stage 5.5 after-the-fact repair.
+- Review 3 (tasks-executability) prompts in `full-pipeline.workflow.js` and `review-loop.workflow.js` now audit the tasks.md contract lines and flag coarse tasks (multiple verification paths or an independently deliverable subset inside one task).
+- Removed the >5-issue recursion cap and its return-to-Stage-4 backflow: it contradicted the first grouping principle (no cap on sub-issue count) and had no execution path inside the hardcoded workflow. Recursion ends only when the remainder is `atomic`; issue count follows module boundaries and dependencies.
+- Slices produced by first-slice recursion are linked by real dependencies only — independent slices must not be chained linearly, preserving downstream DAG parallelism.
+- `multi-path` criterion clarified everywhere (both reference docs and both reviewer prompts): only paths needed to prove the acceptance criteria count; hygiene checks (lint/build/format) do not.
+
 ## [0.18.0] - 2026-08-09
 
 ### Added

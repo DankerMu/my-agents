@@ -9,7 +9,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.18.0"
+  version: "0.19.0"
 ---
 
 # Stage Change Pipeline
@@ -56,11 +56,11 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
 完整语义在 `stage-flow.md` 对应节；本索引只保证触发时可见，不替代阅读。
 
 - **Stage 1 压测门禁（EITHER/OR，必须留痕）**：进 Stage 2 前要么用 `grill-me` 逐分支压测并形成凭证，要么 `skipped:<理由>` 留痕跳过。凭证必须在**主会话、启动脚本之前**备好（Workflow 子代理无法与用户交互，脚本内无法补跑）；`full-pipeline.workflow.js` 对缺失/格式不符/裸 `"passed"` 直接拒绝启动。
-- **Stage 2**：grill 已拍板分支必须落入 artifact（Stage 3 会拿凭证逐条核对，漂移即 finding）；design.md 必须含 **Sketch seams under test** 清单；收尾 `openspec status` 4/4 complete。
+- **Stage 2**：grill 已拍板分支必须落入 artifact（Stage 3 会拿凭证逐条核对，漂移即 finding）；design.md 必须含 **Sketch seams under test** 清单；tasks.md 每个 task 组尾部必须带 `Suggested fixture level` 与 `Minimal mergeable slice` 两行契约声明（Stage 5 宽度门禁的输入，Review 3 审可信度、Stage 5 只消费不发明）；收尾 `openspec status` 4/4 complete。
 - **Stage 3**：三路并行只读 `reviewer`（设计一致性 / Spec 完整性 / Tasks 可执行性），finding 取 `finding-contract.md` 失败类词表，含糊无锚点条目直接拒收。
 - **Stage 4 / 4.5**：P0 + P1 均为阻塞带；每轮修复必过独立验证门（验证者不参与修复、每条 finding 默认未解决、oracle 不可篡改、ack 两行凭据缺失即视为门被跳过）；回环 ≤3 轮由 workflow 脚本硬编码，触顶残留如实标 `needs-followup`。
 - **Stage 5 实现就绪契约**：每个子 issue 满足全字段才允许 `Implementation Ready: yes`——单一模块范围、In/Out of Scope、任务清单、验收标准、必读文档与 change 引用、逐行 `Depends on #<dep>`、预期 PR 边界、`Suggested fixture level`、`Minimal mergeable slice`；不得把需求澄清留到实现阶段。
-- **Stage 5 宽度门禁**：创建前逐个分组过三条判据——`Minimal mergeable slice` 非 `atomic` 则首刀必须拆出来（剩余部分 `Depends on` 首刀并递归）、验收标准限一条独立验证路径、合并 task 须留痕。唯一出口是 `Width exception: <slice-deferred|multi-path|merged-tasks> - <理由>`，缺失即门禁未过；理由须论证更细的切法对交付没有价值，不是"拆开麻烦"。单分组递归产出 >5 个 issue 即回 Stage 4 修 tasks.md，不在 Stage 5 硬切。
+- **Stage 5 宽度门禁**：创建前逐个分组过三条判据——`Minimal mergeable slice` 非 `atomic` 则首刀必须拆出来（剩余部分 `Depends on` 首刀并递归）、验收标准限一条独立验证路径、合并 task 须留痕。唯一出口是 `Width exception: <slice-deferred|multi-path|merged-tasks> - <理由>`，缺失即门禁未过；理由须论证更细的切法对交付没有价值，不是"拆开麻烦"。递归以剩余部分 `atomic` 为终点，不设 issue 数量上限；切片间按真实依赖连边，不机械串成线性链。
 - **Stage 5.5**：issue-change 对齐审核 ≤2 轮（七维度，含专查单模块内过宽的 `over-broad`），P0 + P1 阻塞，残留如实记录到 Epic。
 - **收尾问责**：每次运行把 workflow 返回的 `logEntry` 补 `date` 后 append 到 `docs/stage-pipeline-log.jsonl` 并提交（四步流程见 [references/loop-accountability.md](references/loop-accountability.md)，缺一即漏记）。
 - **终局回流（sizing-retro）**：下游 `subagent-workflow` 任何 PR 以 round-ceiling 拆分/放弃/降档收场，都是本流水线切片或契约失败的证据——拆分子项必须重过 Stage 5 契约（不得以裸 PR/裸 fixture 出生）+ 一轮轻量 Stage 5.5（≤1 轮）；每个终局事件落一行 sizing-retro（`slice-error|contract-gap|genuinely-hard`，schema 见 loop-accountability.md）。仅做问责，不做跨 change 学习——sizing-retro 不注入后续 change 的审核 brief。

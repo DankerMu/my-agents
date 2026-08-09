@@ -35,6 +35,9 @@ openspec instructions <artifact> --change "<name>" --json
 
 - 按 capability 分组，每个任务用 `- [ ] X.Y 描述` 格式
 - 任务粒度：单个 session 可完成；任务顺序：按依赖关系排列
+- **每个 task 组尾部写两行契约声明**（Stage 5 宽度门禁的输入，在此产出、受 Stage 3 Review 3 审核、Stage 5 只消费不发明）：
+  - `Suggested fixture level: <none|compact|expanded> - <一行理由>`——词表以下游 `subagent-workflow` 的 `issue-risk-contract.md` 为单一事实源
+  - `Minimal mergeable slice: <首刀描述>` 或 `Minimal mergeable slice: atomic - <理由>`——最小可独立合并保绿的子集（模块/文件级 + 一行为何它能独立保绿）；`atomic` 必须给具体理由，不是省事默认
 - 如果任务依赖、验证或回滚路径复杂，先用 `implementation-planning` 产出执行计划，再写 tasks
 
 ## 收尾验证

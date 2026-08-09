@@ -101,7 +101,7 @@ Steps:
 
    - **missing-coverage**: a task in tasks.md is not covered by any issue
    - **wrong-boundary**: an issue mixes multiple modules or ownership scopes
-   - **over-broad**: an issue stays inside one module but is too big — its \`Minimal mergeable slice\` is not \`atomic:\` yet the first slice was never split out, its acceptance criteria span more than one independent verification path, or its task checklist contains an independently deliverable subset — and it carries no \`Width exception:\` line, or that line's reason is a convenience default ("splitting is a hassle", "they ship together anyway") rather than an argument that a finer cut has no delivery value
+   - **over-broad**: an issue stays inside one module but is too big — its \`Minimal mergeable slice\` is not \`atomic:\` yet the first slice was never split out, its acceptance criteria span more than one independent verification path (hygiene checks like lint/build do not count as paths), or its task checklist contains an independently deliverable subset — and it carries no \`Width exception:\` line, or that line's reason is a convenience default ("splitting is a hassle", "they ship together anyway") rather than an argument that a finer cut has no delivery value
    - **wrong-dependency**: issue dependency chain doesn't match task dependency order
    - **scope-mismatch**: issue "In Scope" / "Out of Scope" doesn't match actual task content
    - **missing-reference**: issue is missing required spec or design doc references from the change

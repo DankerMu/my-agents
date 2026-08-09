@@ -145,6 +145,8 @@ Reject vague or style-only observations — only concrete, anchored issues.`
 Design docs: ${designDocs}
 
 Focus: every spec requirement maps to a task; task granularity (single-session); dependency ordering; no orphan tasks; verification methods clear; design decisions reflected.
+Contract lines: every task group in tasks.md must end with two contract lines — \`Suggested fixture level: <none|compact|expanded> - <reason>\` and \`Minimal mergeable slice: <first-slice or atomic: reason>\`. Missing lines are P0. Audit their credibility: fixture level proportionate to the actual risk surface (not inflated because the work feels important); the declared first slice genuinely mergeable and green on its own; \`atomic\` claims backed by a concrete reason, not a convenience default.
+Coarse tasks: a single task that spans multiple independent verification paths or contains an independently deliverable subset is a tasks.md granularity defect — flag it here; Stage 5 must not absorb it via the "1-3 tasks" ceiling.
 
 Return P0/P1 findings with IDs prefixed "TE-". Each finding needs: id, severity, title, failureClass (from the risk-adaptive-cross-review finding-contract Failure-Class Vocabulary — commonly design-consistency / spec-completeness / task-executability), evidence (quote the gap with file paths), impact (what breaks if left unfixed), fixDirection.
 Reject vague or style-only observations — only concrete, anchored issues.`

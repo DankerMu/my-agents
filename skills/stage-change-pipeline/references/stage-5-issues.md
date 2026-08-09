@@ -7,7 +7,7 @@
 - 不设置子 issue 数量上限；数量由模块边界、依赖关系和可审阅 PR 体量决定。用 Epic 保持总览，不通过合并子 issue 来压低数量。
 - 每个子 issue 只覆盖一个模块、包、服务、目录边界或 ownership 边界。禁止一个实现 issue 同时修改数据库、后端 API、前端 UI、CI、文档生成等多个模块。
 - 按"可独立实现和验证的模块内交付物"分组。一个子 issue 应包含 1-3 个紧密相关的 tasks；如果 tasks 会形成大 PR，继续拆分。**1-3 是上限不是许可证**：它约束 task 计数、不约束工作量，一个粗 task 撑爆的 issue 同样违规——粒度的实际下限由下面的宽度门禁给出。
-- **单一验证路径**：一个子 issue 的全部验收标准应当能由**一条**验证路径证明（同一测试套件 / 同一条验证命令 / 同一个手工验证流程）。需要两条及以上互不重叠的路径才能全部证明，就按验证路径切分，除非写 `Width exception: multi-path - <理由>`。这是"小 PR"唯一可证伪的判据；行数和文件数都太容易被自圆其说。
+- **单一验证路径**：一个子 issue 的全部验收标准应当能由**一条**验证路径证明（同一测试套件 / 同一条验证命令 / 同一个手工验证流程）。需要两条及以上互不重叠的路径才能全部证明，就按验证路径切分，除非写 `Width exception: multi-path - <理由>`。只数证明验收标准所需的路径，lint/build/format 等 hygiene 检查不计入。这是"小 PR"唯一可证伪的判据；行数和文件数都太容易被自圆其说。
 - 跨模块能力必须拆成多个子 issue，用 `Dependencies` 串联：先创建共享契约或接口准备 issue，再分别创建各模块实现 issue，最后创建必要的集成验证 issue。
 - **宽改造（wide refactor）例外**：单一机械改动（改列名、改共享类型）爆炸半径横跨全库、任何模块内切片都无法独立保绿时，不按模块硬切，改用 **expand–contract** 三段拆分——先建"新旧并存"的 expand issue；再按爆炸半径（按包/目录）分批迁移调用点，每批一个 issue 且 `Depends on` expand issue，旧形态仍在故 CI 逐批保绿；最后一个 contract issue 在无调用者后删除旧形态，`Depends on` 全部迁移批次。批次也无法独立保绿时，各批共享集成分支，绿灯只在最终 integrate-and-verify issue 承诺。
 - 只有当多个 task 位于同一模块、同一 owner、同一验证路径，且拆开会制造无意义阻塞时，才允许合并——**且必须写 `Width exception: merged-tasks - <理由>` 留痕**。与 `atomic` 声明对称：省事地合并和省事地宣称原子，都要举证。
@@ -25,15 +25,14 @@
 
 2. 创建 Epic issue：概述和交付物表、设计文档引用、子任务占位（后续更新）、依赖关系图。
 
-3. 从 `tasks.md` 生成子 issue 分组：标注每个 task 的目标模块、主要文件/目录、依赖 task、验证方式；将跨模块 task 拆成模块内 task（无法拆分时在 issue 正文说明原因和预期 PR 边界）；检查每个分组是否能由一个小 PR 完成，不能则继续拆分。
+3. 从 `tasks.md` 生成子 issue 分组：标注每个 task 的目标模块、主要文件/目录、依赖 task、验证方式，并**继承所属 task 组的 `Suggested fixture level` 与 `Minimal mergeable slice` 声明**（Stage 2 产出、Review 3 已审，此处只消费不发明；tasks.md 缺声明属上游缺陷，如实记录并回报，不得现场补写）；将跨模块 task 拆成模块内 task（无法拆分时在 issue 正文说明原因和预期 PR 边界）；检查每个分组是否能由一个小 PR 完成，不能则继续拆分。
 
 3.5. **过宽度门禁**（`stage-flow.md` Stage 5"宽度门禁"，创建前逐个分组执行）：
 
-   - **首刀拆分**：分组的 `Minimal mergeable slice` 不是 `atomic:` 时，把首刀拆成独立 issue，剩余部分作为后继 issue 并 `Depends on #<首刀>`，对剩余部分递归本闸直到它自身 `atomic`。
-   - **验证路径**：验收标准需要多于一条独立验证路径时，按路径切分。
+   - **首刀拆分**：分组的 `Minimal mergeable slice` 不是 `atomic:` 时，把首刀拆成独立 issue，剩余部分作为后继 issue 并 `Depends on #<首刀>`，对剩余部分递归本闸直到它自身 `atomic`。不设数量上限；递归拆出的切片之间按真实依赖连边，互相独立的切片不得机械串成线性链。
+   - **验证路径**：验收标准需要多于一条独立验证路径时，按路径切分（hygiene 检查不计入路径）。
    - **合并留痕**：合并多个 task 时写 `Width exception: merged-tasks - <理由>`。
    - 任何一条不执行拆分，都必须在 issue 正文写 `**Width exception:** <触发项> - <理由>`；缺失即门禁未过，不得标 `Implementation Ready: yes`。
-   - 单个分组递归产出超过 5 个 issue：**回 Stage 4 修 tasks.md**，不在此硬切，并把回流记为 Review 3 的 task 粒度缺陷。
 
 4. 为每个分组创建子 issue，正文包含：
    - `Part of #<epic>` 链接
@@ -41,8 +40,8 @@
    - `**Module / Scope:** <module-or-path>` 单一模块或路径范围
    - `**In Scope:**` / `**Out of Scope:**`
    - `**PR Boundary:**` 预期修改范围和明确不包含的相邻模块
-   - `**Suggested fixture level:** <none|compact|expanded> - <一行理由>`（实现就绪契约同名字段）
-   - `**Minimal mergeable slice:** <首刀描述或 atomic: 理由>`（实现就绪契约同名字段）
+   - `**Suggested fixture level:** <none|compact|expanded> - <一行理由>`（继承自 tasks.md task 组声明）
+   - `**Minimal mergeable slice:** <首刀描述或 atomic: 理由>`（继承自 tasks.md task 组声明）
    - `**Width exception:** <slice-deferred|multi-path|merged-tasks> - <理由>`（**条件字段**，仅当突破默认粒度时出现；理由须说明为何更细的切法对交付没有价值，而不是"拆开麻烦"）
    - 任务清单（从 tasks.md 提取，保留 checkbox 格式）
    - 必读文档表（从 IMPLEMENTATION_PLAN.md 或 Stage 1 收集的文档清单中提取，标注优先级和重点章节）

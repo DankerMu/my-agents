@@ -295,6 +295,8 @@ Reject vague or style-only observations — only concrete, anchored issues.`
 Design docs: ${designDocs}
 
 Focus: every spec requirement maps to a task; task granularity (single-session); dependency ordering; no orphan tasks; verification methods clear; design decisions reflected.
+Contract lines: every task group in tasks.md must end with two contract lines — \`Suggested fixture level: <none|compact|expanded> - <reason>\` and \`Minimal mergeable slice: <first-slice or atomic: reason>\`. Missing lines are P0. Audit their credibility: fixture level proportionate to the actual risk surface (not inflated because the work feels important); the declared first slice genuinely mergeable and green on its own; \`atomic\` claims backed by a concrete reason, not a convenience default.
+Coarse tasks: a single task that spans multiple independent verification paths or contains an independently deliverable subset is a tasks.md granularity defect — flag it here; Stage 5 must not absorb it via the "1-3 tasks" ceiling.
 
 Return P0/P1 findings with IDs prefixed "TE-". Each finding needs: id, severity, title, failureClass (from the risk-adaptive-cross-review finding-contract Failure-Class Vocabulary — commonly design-consistency / spec-completeness / task-executability), evidence (quote the gap with file paths), impact (what breaks if left unfixed), fixDirection.
 Reject vague or style-only observations — only concrete, anchored issues.`
@@ -518,18 +520,26 @@ Instructions:
 1. Run: gh auth status — confirm authenticated
 2. Create labels (epic, sub-task, priority, stage labels) using: gh label create <name> --color <hex> --description "<desc>" --force${stageLabelInstruction}
 3. Create an Epic issue with: overview, design doc references, sub-task placeholders, dependency graph
-4. Read tasks.md from the change, generate sub-issue groupings — one module per issue, small-PR scope
-5. Create sub-issues, each with:
+4. Read tasks.md from the change, generate sub-issue groupings — one module per issue, small-PR scope. Each task group in tasks.md ends with two contract lines (\`Suggested fixture level\`, \`Minimal mergeable slice\`) authored in Stage 2 and reviewed in Stage 3 — inherit them into the groupings, do NOT invent or rewrite them here. If a group is missing them, record it as an upstream defect in the Epic and proceed; do not backfill.
+5. Width gate — run per grouping BEFORE creating its issue. The ONLY escape is a \`**Width exception:** <slice-deferred|multi-path|merged-tasks> - <reason>\` line in the issue body, and the reason must argue a finer cut has no delivery value ("splitting is a hassle" does not qualify):
+   - First-slice split (slice-deferred): if \`Minimal mergeable slice\` is not \`atomic:\`, split the first slice into its own issue; the remainder becomes a follow-on issue with \`Depends on #<first-slice>\`; recurse on the remainder until it is itself atomic. No cap on issue count. Link slices by REAL dependencies only — independent slices must not be chained linearly.
+   - Single verification path (multi-path): if the acceptance criteria need more than one non-overlapping verification path to prove (hygiene checks like lint/build/format do not count), split along the path seam.
+   - Merge audit trail (merged-tasks): merging multiple tasks into one issue requires the exception line.
+   A grouping that trips any criterion without its exception line must NOT get \`Implementation Ready: yes\`.
+6. Create sub-issues, each with:
    - Part of #<epic> link
    - One \`Depends on #NN\` line per dependency (downstream DAG readers grep for literal \`Depends on #NN\` lines — do NOT collapse them into a single comma-separated list)
    - Module / Scope: <module-or-path>
    - In Scope / Out of Scope
    - PR Boundary
+   - Suggested fixture level: <none|compact|expanded> - <reason> (inherited from the tasks.md group)
+   - Minimal mergeable slice: <first-slice description or atomic: reason> (inherited from the tasks.md group)
+   - Width exception: <trigger> - <reason> (conditional — only when the width gate was bypassed)
    - Task checklist (from tasks.md, checkbox format)
    - Required reading docs with priority and focus sections
    - Acceptance criteria
    - Implementation Ready: yes
-6. Backfill the Epic with the final sub-issue list and dependency graph
+7. Backfill the Epic with the final sub-issue list and dependency graph
 ${residualNote}
 
 Return the Epic number and all sub-issue numbers as structured output.`,
@@ -577,7 +587,7 @@ Steps:
 
    - **missing-coverage**: a task in tasks.md is not covered by any issue
    - **wrong-boundary**: an issue mixes multiple modules or ownership scopes
-   - **over-broad**: an issue stays inside one module but is too big — its \`Minimal mergeable slice\` is not \`atomic:\` yet the first slice was never split out, its acceptance criteria span more than one independent verification path, or its task checklist contains an independently deliverable subset — and it carries no \`Width exception:\` line, or that line's reason is a convenience default ("splitting is a hassle", "they ship together anyway") rather than an argument that a finer cut has no delivery value
+   - **over-broad**: an issue stays inside one module but is too big — its \`Minimal mergeable slice\` is not \`atomic:\` yet the first slice was never split out, its acceptance criteria span more than one independent verification path (hygiene checks like lint/build do not count as paths), or its task checklist contains an independently deliverable subset — and it carries no \`Width exception:\` line, or that line's reason is a convenience default ("splitting is a hassle", "they ship together anyway") rather than an argument that a finer cut has no delivery value
    - **wrong-dependency**: issue dependency chain doesn't match task dependency order
    - **scope-mismatch**: issue "In Scope" / "Out of Scope" doesn't match actual task content
    - **missing-reference**: issue is missing required spec or design doc references from the change
