@@ -15,8 +15,15 @@ stays in `phase-flow.md`.
 | Phase 1 implementation, Phase 6 fix pass, Phase 6 diagnosis task | **omp** `implementer` | Long, write-heavy, tool-heavy work. |
 | Phase 0.5 fixture review, Phase 4 / 6.5 cross-review, Phase 6.2 invariant audit | **omp** `reviewer` | Recall-biased candidate production benefits from a different engine than the orchestrator. |
 | Phase 4.5 verification gate | **omp** `verifier` | Adjudication must not run in the same context that produced the candidates. |
+| Phase 0.0 repo structure scan, Phase 0.5 impact-surface mapping | **omp** `explorer` (when the scan is non-trivial) | Read-only breadth-first mapping; keeps a wide file sweep out of the orchestrator's context. |
 | **Phase 7 independent final review** | **native cc/cx `reviewer` subagent** | Deliberate cross-harness gate — see below. |
-| Everything else (issue selection, fixture authoring, local verification, synthesis, git/PR, CI, merge gate) | **orchestrator** | Unchanged from `subagent-workflow`. |
+| Everything else (issue selection, fixture authoring, triage decisions, local verification, synthesis, git/PR, CI, merge gate) | **orchestrator** | Unchanged from `subagent-workflow`. |
+
+`explorer` is an evidence gatherer, never a decider: it returns a map (files, symbols,
+call paths, tests, conventions, impact surfaces) and the orchestrator makes every triage,
+fixture, and design call from it. A delegated explorer report that contains a risk-level
+assignment, a fixture level, or a design recommendation is over-reach — take the evidence,
+discard the conclusion.
 
 ### Why Phase 7 stays native
 
@@ -64,6 +71,7 @@ OMPTASK
 | `implementer` | `sub-gpt/gpt-5.6-luna` | `--reasoning-effort max` |
 | `verifier` | `sub-gpt/gpt-5.6-luna` | `--reasoning-effort max` |
 | `reviewer` | `sub-gpt/gpt-5.6-terra` | `--reasoning-effort max` |
+| `explorer` | `sub-gpt/gpt-5.6-luna` | `--reasoning-effort max` |
 
 Rules:
 
@@ -104,7 +112,7 @@ below is mandatory for every task that writes code.
 
 Every delegated brief is assembled in this order:
 
-1. **Role header** — `You are acting as the <implementer|reviewer|verifier> agent.`
+1. **Role header** — `You are acting as the <implementer|reviewer|verifier|explorer> agent.`
 2. **Contract bullets** — inline verbatim from the installed agent file's contract section:
    `.omp/agents/<role>.md`, falling back to `.claude/agents/<role>.md` or
    `.codex/agents/<role>.toml`. Do not paraphrase; the contract is the role's definition.
@@ -142,8 +150,11 @@ omp delegation boundary:
 - If the task cannot be completed without nested AI delegation, stop and report the blocker.
 ```
 
-For read-only tasks (fixture review, cross-review, invariant audit, verification) replace the
-last two action bullets with: `Do not edit files, commit, push, or change any state.`
+For read-only tasks (fixture review, cross-review, invariant audit, verification, exploration)
+replace the last two action bullets with: `Do not edit files, commit, push, or change any state.`
+
+An `explorer` brief adds one more line, because a mapper that starts designing costs a round:
+`Report evidence only — file paths, symbols, call paths, tests, conventions, impact surfaces. Do not assign risk levels, propose a design, or recommend an implementation.`
 
 ## Parallel Delegation
 

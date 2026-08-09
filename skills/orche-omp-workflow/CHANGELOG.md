@@ -5,6 +5,19 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-08
+
+### Added
+
+- **`explorer` 成为第四个 omp 执行角色**，pin `sub-gpt/gpt-5.6-luna` + `--reasoning-effort max`。此前 skill 里只在 Phase 7 原生边界里提过 explorer 一句禁令，没有任何相位真正编排它。
+- Phase 0.0 profile bootstrap 的仓库结构扫描：单包以上的仓库改为委派一个只读 omp `explorer` 任务采证，profile 字段仍由编排器写。
+- Phase 0.5 影响面测绘：change surface 不明朗（陌生子系统／共享 helper／疑似多面爆炸半径／将要判 `high`/`broad-expanded`）时先跑一个只读 explorer，产出 producers / validators / storage / entrypoints / downstream / 失败回滚路径及其现有测试，喂给第 8-9 步的 Invariant Matrix 与边界清单。单文件且已了解的改动跳过。
+
+### Changed
+
+- explorer brief 多一条硬约束：**只报证据，不判风险等级、不提设计、不给实现建议**。带着结论回来的报告按越权处理——留证据、丢结论。fixture level / repair intensity / risk pack 始终是编排器的决定。
+- `omp-delegation.md` 分工表、Model Pins、role header、只读边界一节同步；`SKILL.md` 前置条件、Core Rules、边界适用相位（新增 0.0）、相位骨架同步。
+
 ## [0.1.4] - 2026-08-08
 
 ### Changed

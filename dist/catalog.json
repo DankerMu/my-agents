@@ -482,8 +482,8 @@
       "name": "orche-omp-workflow",
       "path": "skills/orche-omp-workflow",
       "displayName": "Orchestrated omp Issue Workflow",
-      "description": "GitHub issue → verified PR workflow where Claude Code / Codex orchestrates and omp (oh-my-pi) executes: implementation, cross-review, and finding verification are delegated to omp implementer/reviewer/verifier sessions through codeagent-wrapper, while Phase 7 final review stays a native subagent. Mandatory OpenSpec fixtures, risk-adaptive review, CI, human-gated merge. Use when the issue loop should run on omp (\"用 omp 跑这个 issue\", \"omp 实现 #XX\"). Not for docs/spec-only work, hotfixes that skip review, or all-native runs (use subagent-workflow).",
-      "version": "0.1.4",
+      "description": "GitHub issue → verified PR workflow where Claude Code / Codex orchestrates and omp (oh-my-pi) executes: codebase exploration, implementation, cross-review, and finding verification are delegated to omp explorer/implementer/reviewer/verifier sessions through codeagent-wrapper, while Phase 7 final review stays a native subagent. Mandatory OpenSpec fixtures, risk-adaptive review, CI, human-gated merge. Use when the issue loop should run on omp (\"用 omp 跑这个 issue\", \"omp 实现 #XX\"). Not for docs/spec-only work, hotfixes that skip review, or all-native runs (use subagent-workflow).",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1435,5 +1435,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-08-08T12:43:23.242Z"
+  "generatedAt": "2026-08-09T01:44:25.903Z"
 }

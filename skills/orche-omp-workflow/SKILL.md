@@ -1,13 +1,13 @@
 ---
 name: orche-omp-workflow
 description: >
-  GitHub issue → verified PR workflow where Claude Code / Codex orchestrates and omp (oh-my-pi) executes: implementation, cross-review, and finding verification are delegated to omp implementer/reviewer/verifier sessions through codeagent-wrapper, while Phase 7 final review stays a native subagent. Mandatory OpenSpec fixtures, risk-adaptive review, CI, human-gated merge. Use when the issue loop should run on omp ("用 omp 跑这个 issue", "omp 实现 #XX"). Not for docs/spec-only work, hotfixes that skip review, or all-native runs (use subagent-workflow).
-version: 0.1.4
+  GitHub issue → verified PR workflow where Claude Code / Codex orchestrates and omp (oh-my-pi) executes: codebase exploration, implementation, cross-review, and finding verification are delegated to omp explorer/implementer/reviewer/verifier sessions through codeagent-wrapper, while Phase 7 final review stays a native subagent. Mandatory OpenSpec fixtures, risk-adaptive review, CI, human-gated merge. Use when the issue loop should run on omp ("用 omp 跑这个 issue", "omp 实现 #XX"). Not for docs/spec-only work, hotfixes that skip review, or all-native runs (use subagent-workflow).
+version: 0.2.0
 ---
 
 # Orchestrated omp Issue Workflow
 
-The orchestrator (Claude Code or Codex) runs the issue workflow but executes almost none of it. Code/test/config implementation, fix passes, diagnosis, fixture review, cross-review, invariant audit, and finding verification are delegated to **omp (oh-my-pi)** sessions launched through `codeagent-wrapper`. The orchestrator owns issue selection, OpenSpec fixture authoring, local verification, review synthesis, git/PR operations, CI tracking, and the final merge gate.
+The orchestrator (Claude Code or Codex) runs the issue workflow but executes almost none of it. Codebase exploration, code/test/config implementation, fix passes, diagnosis, fixture review, cross-review, invariant audit, and finding verification are delegated to **omp (oh-my-pi)** sessions launched through `codeagent-wrapper`. The orchestrator owns issue selection, OpenSpec fixture authoring, local verification, review synthesis, git/PR operations, CI tracking, and the final merge gate.
 
 One deliberate exception: **Phase 7 independent final review runs as a native Claude Code / Codex `reviewer` subagent**, not on omp. Every other agent-executed phase shares one engine; the last gate before merge must not. See `references/omp-delegation.md`.
 
@@ -17,7 +17,7 @@ This is `subagent-workflow` with the execution substrate swapped. Every gate, le
 
 - `codeagent-wrapper` on `PATH` with a working `--backend omp` (`codeagent-wrapper --backend omp --model <pin> "Reply OK" .` returns before the first real delegation).
 - `omp` installed and authenticated, with the workflow's model pins resolvable in `omp models` (`references/omp-delegation.md` → Model Pins).
-- The `implementer`, `reviewer`, and `verifier` agent definitions installed in the host project (`.omp/agents/`, or `.claude/agents/` / `.codex/agents/` as fallback) — their contract text is what the orchestrator injects into each omp brief. Read them before the first delegation.
+- The `implementer`, `reviewer`, `verifier`, and `explorer` agent definitions installed in the host project (`.omp/agents/`, or `.claude/agents/` / `.codex/agents/` as fallback) — their contract text is what the orchestrator injects into each omp brief. Read them before the first delegation.
 - A native subagent mechanism in the orchestrator for Phase 7 only: Claude Code Task subagents or Codex subagents, with `reviewer` installed.
 - `openspec` CLI, `gh` CLI (authenticated), `git`, and the project build/test toolchain.
 - Optional, wired in when installed (discipline stays orchestrator-enforced when absent): `worktree-guard` hook (write fence for parallel worktree delegation), `review-gate` hook (spawn fence while the gate CLI state says locked), `monitor` agent (quiet watchdog for CI and other harness-external waits), `issue-scribe` agent (turns deferred findings into tracked issues).
@@ -30,7 +30,7 @@ The contract is a loop, not a handoff: incoming issues carry `Suggested fixture 
 
 ## Core Rules
 
-- **omp executes, the orchestrator adjudicates**: every `implementer`/`reviewer`/`verifier` leaf task except Phase 7 runs as an omp session via `codeagent-wrapper --backend omp`, with the role contract injected into the brief. Invocation, model pins, brief assembly, parallel mode, and failure classification are governed by `references/omp-delegation.md`. Phase 7 runs native; delegating it to omp is a gate failure, not a variant.
+- **omp executes, the orchestrator adjudicates**: every `implementer`/`reviewer`/`verifier`/`explorer` leaf task except Phase 7 runs as an omp session via `codeagent-wrapper --backend omp`, with the role contract injected into the brief. `explorer` is the read-only evidence gatherer for the Phase 0.0 repo scan and Phase 0.5 impact mapping — it returns a map, never a triage, fixture, or design decision. Invocation, model pins, brief assembly, parallel mode, and failure classification are governed by `references/omp-delegation.md`. Phase 7 runs native; delegating it to omp is a gate failure, not a variant.
 - **Delegated omp sessions load no skills, no rules, and no agent definition** (`--no-skills --no-rules`): whatever the role needs is in the brief or in a file path the brief tells it to read. `--no-skills` is compensated by the wrapper's own `--skills` injection; **`--no-rules` is not compensated by anything**, so every code-writing brief must point the session at the project's `AGENTS.md`/`CLAUDE.md`. A session that could not read its operating guide, ran without its contract bullets, or wrote code without the project rules pointer produced a degraded result — discard and re-delegate; never consume it as a review round.
 - **OpenSpec change is mandatory and is the fixture**: every implemented issue has `openspec/changes/<change>/{proposal.md,design.md,tasks.md}` plus required spec deltas, carrying risk triage, must-preserve behavior, seams under test (upstream-declared, consumed not renegotiated — a needed-but-missing seam is a reported deviation), selected/not-selected risk packs with reasons, evidence mapping, and non-goals. One read-only fixture review plus `openspec validate <change> --strict --no-interactive` before implementation.
 - **Project profile is project-local and living**: the active profile lives at `openspec/project-profile.md` (bootstrapped Phase 0.0, maintained Phase 0.5); it records risk surfaces, command entry points, and the verification matrix that Phase 2 and the Phase 8 self-audit consume. Never hand-fork project-specific surfaces into this shared skill.
@@ -55,7 +55,7 @@ The contract is a loop, not a handoff: incoming issues carry `Suggested fixture 
 
 Two boundary blocks are in play, and they are not interchangeable:
 
-- **omp delegation boundary** — for every omp-executed task (Phases 0.5, 1, 4, 4.5, 6, 6.2, 6.5). Canonical text in `references/omp-delegation.md`.
+- **omp delegation boundary** — for every omp-executed task (Phases 0.0, 0.5, 1, 4, 4.5, 6, 6.2, 6.5). Canonical text in `references/omp-delegation.md`.
 - **Native subagent boundary** — for the Phase 7 final review only:
 
 ```text
@@ -73,8 +73,8 @@ Subagent boundary:
 
 ```text
 Phase 0:   select issue + discover/create OpenSpec change                    [orchestrator]
-Phase 0.0: one-time project-profile bootstrap when missing                   [orchestrator]
-Phase 0.5: risk triage + OpenSpec fixture + fixture review + validate        [omp reviewer]
+Phase 0.0: one-time project-profile bootstrap when missing                   [omp explorer -> orchestrator]
+Phase 0.5: risk triage + OpenSpec fixture + fixture review + validate        [omp explorer + omp reviewer]
 Phase 1:   implementation + tests                                            [omp implementer]
 Phase 2:   local verification + read-only audit                              [orchestrator]
 Phase 3:   commit + open PR                                                  [orchestrator]
