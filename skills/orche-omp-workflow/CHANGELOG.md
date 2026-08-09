@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-09
+
+### Changed
+
+- `reviewer` 的 pin 从 `sub-gpt/gpt-5.6-terra` 改回 `sub-gpt/gpt-5.6-luna`（仍 `--reasoning-effort max`）。terra 在评审位上想得过多，产出的候选噪声抬高了 Phase 4.5 的裁决成本。四个 omp 角色现在统一 `sub-gpt/gpt-5.6-luna` + max；Phase 4 / 6.5 的并行 reviewer 批量示例同步。
+
 ## [0.2.0] - 2026-08-08
 
 ### Added

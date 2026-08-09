@@ -70,7 +70,7 @@ OMPTASK
 | --- | --- | --- |
 | `implementer` | `sub-gpt/gpt-5.6-luna` | `--reasoning-effort max` |
 | `verifier` | `sub-gpt/gpt-5.6-luna` | `--reasoning-effort max` |
-| `reviewer` | `sub-gpt/gpt-5.6-terra` | `--reasoning-effort max` |
+| `reviewer` | `sub-gpt/gpt-5.6-luna` | `--reasoning-effort max` |
 | `explorer` | `sub-gpt/gpt-5.6-luna` | `--reasoning-effort max` |
 
 Rules:
@@ -166,7 +166,7 @@ codeagent-wrapper --parallel --output <OUT_JSON> <<'OMPBATCH'
 ---TASK---
 id: review-correctness
 backend: omp
-model: sub-gpt/gpt-5.6-terra
+model: sub-gpt/gpt-5.6-luna
 reasoning_effort: max
 workdir: <absolute repo path>
 ---CONTENT---
@@ -175,7 +175,7 @@ workdir: <absolute repo path>
 ---TASK---
 id: review-integration
 backend: omp
-model: sub-gpt/gpt-5.6-terra
+model: sub-gpt/gpt-5.6-luna
 reasoning_effort: max
 workdir: <absolute repo path>
 ---CONTENT---
