@@ -5,7 +5,7 @@ description: >
   and libraries. Prioritizes official docs, release notes, and source-of-truth
   references, and returns precise answers with citations. Does not modify code.
 tools: WebSearch, WebFetch, Read, Glob, Grep
-model: sonnet
+model: sonnet[1m]
 ---
 
 # docs-researcher Contract

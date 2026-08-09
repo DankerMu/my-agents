@@ -939,7 +939,7 @@
       "path": "agents/docs-researcher",
       "displayName": "Docs Researcher",
       "description": "Documentation-backed research agent for verifying APIs, SDKs, frameworks, and libraries against official sources.",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "maturity": "experimental",
       "categories": [
         "documentation",
@@ -967,7 +967,7 @@
       "path": "agents/explorer",
       "displayName": "Explorer",
       "description": "Use when a task needs fast read-only codebase mapping, evidence gathering, impact analysis, or file and symbol discovery before implementation or review.",
-      "version": "1.5.0",
+      "version": "1.5.1",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -992,7 +992,7 @@
       "path": "agents/implementer",
       "displayName": "Implementer",
       "description": "Code implementation agent that writes, modifies, and refactors code based on plans, specs, or direct instructions.",
-      "version": "1.8.2",
+      "version": "1.8.3",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -1020,7 +1020,7 @@
       "path": "agents/issue-scribe",
       "displayName": "Issue Scribe",
       "description": "Follow-up capture agent: takes a raw observation noticed during primary work, verifies it read-only, determines origin, boundary, and solution direction, dedups against existing issues, and files one structured GitHub issue for later delivery. Never fixes anything itself.",
-      "version": "0.4.1",
+      "version": "0.4.2",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1133,7 +1133,7 @@
       "path": "agents/reviewer",
       "displayName": "Reviewer",
       "description": "Code review agent that performs structured, severity-graded reviews on PRs, diffs, and code changes.",
-      "version": "2.5.1",
+      "version": "2.5.2",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1160,7 +1160,7 @@
       "path": "agents/verifier",
       "displayName": "Verifier",
       "description": "Independent finding-verification agent. Adjudicates one failure-class batch of candidate review findings (at most 5) with exactly one verdict per candidate — CONFIRMED, PLAUSIBLE, or REFUTED — using only diff/spec/code/test evidence. Read-only; never a reviewer that produced any candidate in its batch.",
-      "version": "0.6.2",
+      "version": "0.6.3",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1435,5 +1435,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-08-09T08:32:45.651Z"
+  "generatedAt": "2026-08-09T08:37:19.860Z"
 }

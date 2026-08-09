@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.3] - 2026-08-09
+
+### Changed
+
+- Claude Code 投影的 `model` 改为 1M 上下文变体 `opus[1m]`（原 `opus`）。别名解析链不变（仍走 `ANTHROPIC_DEFAULT_*_MODEL`），只是显式要 1M 上下文窗口。
+
 ## [0.6.2] - 2026-08-09
 
 ### Changed

@@ -5,7 +5,7 @@ description: >
   impact analysis, or file and symbol discovery before implementation or review.
   Does not modify any files.
 tools: Read, Glob, Grep, Bash(readonly)
-model: sonnet
+model: sonnet[1m]
 ---
 
 # explorer Contract

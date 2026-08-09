@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.1] - 2026-08-09
+
+### Changed
+
+- Claude Code 投影的 `model` 改为 1M 上下文变体 `sonnet[1m]`（原 `sonnet`）。别名解析链不变（仍走 `ANTHROPIC_DEFAULT_*_MODEL`），只是显式要 1M 上下文窗口。
+
 All notable changes to the **explorer** agent will be documented in this file.
 
 ## [1.5.0] - 2026-07-30
