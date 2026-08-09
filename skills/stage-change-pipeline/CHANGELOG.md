@@ -5,6 +5,23 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-08-09
+
+### Added
+
+- **Stage 5 宽度门禁**（`stage-flow.md`）：创建子 issue 前逐个分组过三条判据，补上"issue 拆得太宽"的四个漏洞。
+  - **首刀拆分闸**：`Minimal mergeable slice` 非 `atomic:` 时默认把首刀拆成独立 issue，剩余部分 `Depends on` 首刀并递归至自身 `atomic`。此前该字段书面证明了可拆性却不触发任何动作，只服务下游 gate 的事后补救——可拆性一旦被证明就必须兑现。
+  - **单一验证路径**：验收标准需多于一条互不重叠的验证路径才能全部证明即为过宽，按路径切分。这是给"一个小 PR"补上的唯一可证伪判据；行数/文件数太容易被自圆其说。
+  - **合并需举证**：合并多个 task 须留痕，与 `atomic` 声明对称——此前省事地合并无人过问，省事地宣称原子反被 Review 3 审查。
+  - 递归产出 >5 个 issue 判为上游粒度缺陷，回 Stage 4 修 `tasks.md`，不在 Stage 5 硬切。
+- **`Width exception` 条件字段**（`<slice-deferred|multi-path|merged-tasks> - <理由>`）：三条判据的唯一豁免出口，缺失即门禁未过、不得标 `Implementation Ready: yes`。合并为单一字段而非三个平行免责字段。理由须论证更细的切法对交付没有价值，而非"拆开麻烦"。
+- **Stage 5.5 新增 `over-broad` 维度**（第七维，同步两个 workflow 脚本的 enum、维度描述与修复指引）：专查单模块内过宽。此前 `wrong-boundary` 只查"混合多个模块"，一个老实待在单模块内、却塞进整个模块改造的 issue 六个维度全绿放行——这是对齐审核对宽度的硬盲区。
+
+### Changed
+
+- Stage 3 Review 3 增加 **task 粒度过粗** 检查项：单个 task 跨越多条验证路径或含可独立交付子集，是 `tasks.md` 的粒度缺陷，在 Stage 4 修，不得留到 Stage 5 靠"1-3 个 tasks"的计数上限糊过去。
+- 分组硬规则明确"**1-3 个 tasks 是上限不是许可证**"：它约束 task 计数、不约束工作量，一个粗 task 撑爆的 issue 同样违规。
+
 ## [0.17.0] - 2026-07-23
 
 ### Changed

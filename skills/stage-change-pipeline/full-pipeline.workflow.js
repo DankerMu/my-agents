@@ -218,6 +218,7 @@ const ALIGNMENT_SCHEMA = {
             enum: [
               "missing-coverage",
               "wrong-boundary",
+              "over-broad",
               "wrong-dependency",
               "scope-mismatch",
               "missing-reference",
@@ -576,6 +577,7 @@ Steps:
 
    - **missing-coverage**: a task in tasks.md is not covered by any issue
    - **wrong-boundary**: an issue mixes multiple modules or ownership scopes
+   - **over-broad**: an issue stays inside one module but is too big — its \`Minimal mergeable slice\` is not \`atomic:\` yet the first slice was never split out, its acceptance criteria span more than one independent verification path, or its task checklist contains an independently deliverable subset — and it carries no \`Width exception:\` line, or that line's reason is a convenience default ("splitting is a hassle", "they ship together anyway") rather than an argument that a finer cut has no delivery value
    - **wrong-dependency**: issue dependency chain doesn't match task dependency order
    - **scope-mismatch**: issue "In Scope" / "Out of Scope" doesn't match actual task content
    - **missing-reference**: issue is missing required spec or design doc references from the change
@@ -652,6 +654,7 @@ ${gapsList}
 For each gap type, use gh CLI:
 - missing-coverage: create a new sub-issue linked to Epic #${epicNumber}, with proper module boundary and Implementation Ready contract
 - wrong-boundary: split the issue or re-scope using gh issue edit
+- over-broad: split along the declared first slice or the verification-path seam — create the follow-on issue with a \`Depends on #<first-slice>\` line and trim the original; only when a finer cut genuinely has no delivery value, add a \`**Width exception:** <slice-deferred|multi-path|merged-tasks> - <reason>\` line instead
 - wrong-dependency: update the \`Depends on #NN\` lines in the issue body (one line per dependency)
 - scope-mismatch: edit In Scope / Out of Scope to match change artifacts
 - missing-reference: add spec/design doc references to issue body

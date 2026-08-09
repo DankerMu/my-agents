@@ -60,7 +60,7 @@
    |---|---|---|
    | Review 1: 设计一致性 | change 文件 vs 设计文档 | 表名/字段/ENUM 拼写一致性、API 端点覆盖完整性、ID 规范合规、manifest 字段对齐 |
    | Review 2: Spec 完整性 | 各 spec 之间 + 对照实施计划 | Requirement-Scenario 完备性、WHEN/THEN 可测试性、边界条件覆盖、跨 spec 一致性、功能点遗漏 |
-   | Review 3: Tasks 可执行性 | tasks.md vs design + specs | 任务粒度、依赖顺序、spec 覆盖率、多余任务、验证方法明确性、技术决策落地；Stage 5 契约新字段的可信度——`Suggested fixture level` 与风险面相称（不因重要就抬档）、`Minimal mergeable slice` 声明的首刀真能独立合并保绿（`atomic` 声明有具体理由，不是省事默认） |
+   | Review 3: Tasks 可执行性 | tasks.md vs design + specs | 任务粒度、依赖顺序、spec 覆盖率、多余任务、验证方法明确性、技术决策落地；Stage 5 契约新字段的可信度——`Suggested fixture level` 与风险面相称（不因重要就抬档）、`Minimal mergeable slice` 声明的首刀真能独立合并保绿（`atomic` 声明有具体理由，不是省事默认）；**task 粒度过粗**——单个 task 跨越多条独立验证路径、或本身含可独立交付的子集，是 tasks.md 的粒度缺陷，在此修，不得留到 Stage 5 靠"1-3 个 tasks"的计数上限糊过去 |
 
 3. 并行 spawn 3 个 `reviewer` subagent（每路一个 brief），互不通信；每个都是只读 leaf——只审核、不改 change 文件、不嵌套发起本流水线。建议 task id：`review-design-consistency` / `review-spec-completeness` / `review-tasks-executability`。
 
@@ -124,10 +124,19 @@
 - 依赖 issue 列表
 - 预期 PR 边界
 - `Suggested fixture level`：`none|compact|expanded` 之一 + 一行理由。词表以下游 `subagent-workflow` 的 `issue-risk-contract.md` 为单一事实源（指针引用，不镜像）；下游 Phase 0.5 从该建议起判，双向偏离都须记录理由——字段存在的意义是让分级偏离成为可见决策。
-- `Minimal mergeable slice`：首刀声明——若本 issue 需要拆分，最小可独立合并保绿的子集是什么（模块/文件级 + 一行为何它能独立保绿）；确实原子不可拆时写 `atomic: <理由>`，宽改造 expand–contract 各批次天然满足。下游 gate 的拆分默认与 `Split rebuttal` 以此为锚：反驳的对象是这一刀为什么现在不能独立合并，不是泛泛散文。
+- `Minimal mergeable slice`：首刀声明——若本 issue 需要拆分，最小可独立合并保绿的子集是什么（模块/文件级 + 一行为何它能独立保绿）；确实原子不可拆时写 `atomic: <理由>`，宽改造 expand–contract 各批次天然满足。下游 gate 的拆分默认与 `Split rebuttal` 以此为锚：反驳的对象是这一刀为什么现在不能独立合并，不是泛泛散文。**本字段非 `atomic` 时触发 Stage 5 的首刀拆分闸（下方"宽度门禁"），不再只是一句声明。**
+- `Width exception`（**条件字段**）：仅当本 issue 突破默认粒度时出现，格式 `<触发项> - <理由>`，触发项取 `slice-deferred|multi-path|merged-tasks`。这是宽度门禁三条判据的**唯一**豁免出口，缺失即视为门禁未过。理由必须解释为何更细的切法**对交付没有价值**，而不是"拆开麻烦"或"反正一起做"；Review 3 与 Stage 5.5 `over-broad` 都以它为审查对象。
 - 不需要实现阶段再做产品决策、范围判断或需求澄清
 
-**分组硬规则**：每个子 issue 单一模块/ownership 边界、1-3 个紧密相关 tasks、预期对应一个小 PR；跨模块能力拆多个 issue 用逐行 `Depends on #<dep>` 串联；单一机械宽改造走 **expand–contract** 三段拆分例外；issue 排序按决策密度前置。
+**分组硬规则**：每个子 issue 单一模块/ownership 边界、1-3 个紧密相关 tasks、预期对应一个小 PR；跨模块能力拆多个 issue 用逐行 `Depends on #<dep>` 串联；单一机械宽改造走 **expand–contract** 三段拆分例外；issue 排序按决策密度前置。**"1-3 个 tasks"是上限不是许可证**——它约束 task 计数，不约束工作量；一个粗 task 撑爆的 issue 照样违规，由下面的宽度门禁拦截。
+
+**宽度门禁**：在创建每个子 issue 前逐个分组执行，三条判据，全部只有 `Width exception` 一个出口。
+
+1. **首刀拆分闸**（`slice-deferred`）：分组的 `Minimal mergeable slice` 若不是 `atomic:`，**默认就把首刀拆成独立 issue**，剩余部分作为后继 issue 并 `Depends on #<首刀>`；对剩余部分递归本闸，直到它自身 `atomic`。可拆性一旦被书面证明就必须兑现——写得出首刀却整块创建，是本流水线最常见的过宽来源。
+2. **单一验证路径**（`multi-path`）：一个子 issue 的全部验收标准应当能由**一条**验证路径证明（同一测试套件 / 同一条验证命令 / 同一个手工验证流程）。需要两条及以上互不重叠的路径才能全部证明，就按验证路径切分。这是"小 PR"唯一可证伪的判据——它可检查、难自圆其说，比行数/文件数更难被 game。
+3. **合并需举证**（`merged-tasks`）：把多个 task 合进一个 issue 时必须写 `Width exception`，与 `atomic` 声明对称。此前"拆开会制造无意义阻塞"这条口子不需要留痕，导致省事地合并无人过问、而省事地声明原子反被审查。
+
+递归以剩余部分自身 `atomic` 为终点。若单个分组递归产出 **超过 5 个** issue，说明它在 Stage 2 就该是多个 task 组——**回 Stage 4 修 tasks.md，不要在 Stage 5 硬切**，并把这次回流记为 Review 3 的 task 粒度缺陷。
 
 分组原则全文、创建步骤（标签/Epic/子 issue 正文模板/回填）见 [stage-5-issues.md](stage-5-issues.md)。
 
