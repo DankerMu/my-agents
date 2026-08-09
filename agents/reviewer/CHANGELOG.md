@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.5.1] - 2026-08-09
+
+### Changed
+
+- Claude Code 投影的 `model` 从字面 ID `claude-opus-5` 改为别名 `opus`。字面 ID 会原样透传给 endpoint，没有解析层；别名经 `ANTHROPIC_DEFAULT_OPUS_MODEL` 解析，使模型名映射（环境变量侧或网关侧）成为可能。代价是不再精确钉死某个 opus 版本：未设该环境变量时跟随 Claude Code 当前的 opus 默认值。
+
 ## [2.5.0] - 2026-07-30
 
 ### Changed

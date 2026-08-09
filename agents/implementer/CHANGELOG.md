@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.8.2] - 2026-08-09
+
+### Changed
+
+- Claude Code 投影的 `model` 从字面 ID `claude-opus-5` 改为别名 `opus`。字面 ID 会原样透传给 endpoint，没有解析层；别名经 `ANTHROPIC_DEFAULT_OPUS_MODEL` 解析，使模型名映射（环境变量侧或网关侧）成为可能。代价是不再精确钉死某个 opus 版本：未设该环境变量时跟随 Claude Code 当前的 opus 默认值。
+
 ## [1.8.1]
 
 - omp projection: repin the model to `sub-claude/claude-opus-4-8:max` (was `openai-codex/terra:max`); this agent runs on Claude again, with an explicit provider prefix, while the other omp projections stay on `openai-codex/terra`.
