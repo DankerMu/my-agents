@@ -66,6 +66,10 @@ def rotation_attribution(entry: dict) -> tuple[int, int]:
     core_lenses = set(lenses[0]) if lenses else set()
     core = rotated = 0
     for catch in entry.get("catches") or []:
+        # Tolerate legacy rows whose catches are bare strings (pre-validation
+        # drift); a string carries no round/lens so it is skipped, not fatal.
+        if not isinstance(catch, dict):
+            continue
         if catch.get("round", 1) < 2:
             continue
         if catch.get("lens") in core_lenses:

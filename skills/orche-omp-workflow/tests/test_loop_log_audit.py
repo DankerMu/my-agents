@@ -116,6 +116,19 @@ def test_rotation_below_threshold_informational(tmp_path, capsys):
     assert "rotation attribution: 3 multi-round" in capsys.readouterr().out
 
 
+def test_rotation_tolerates_legacy_string_catches(tmp_path, capsys):
+    """Legacy rows carry catches as bare strings; they are skipped, never fatal."""
+    entry = merged(60, catch=1, rounds=3,
+                   lenses=[["correctness"], ["correctness"], ["security"]])
+    entry["catches"] = ["round3-p0-some-legacy-string", "phase7-p1-another"]
+    lines = [rotation_entry(i) for i in range(8)] + [entry]
+    # The 8 clean multi-round entries still drive the decision; the legacy
+    # string-catch row contributes no attribution and does not crash the audit.
+    assert run(write_log(tmp_path, lines)) == 2
+    out = capsys.readouterr().out
+    assert "core=8 rotated=8" in out
+
+
 # --- R3 off-vocabulary labels ----------------------------------------------
 
 
