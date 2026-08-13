@@ -3,7 +3,7 @@ name: ask-danker
 description: 本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。
 disable-model-invocation: true
 invocation_posture: manual
-version: 0.3.0
+version: 0.4.0
 ---
 
 # Ask Danker
@@ -54,6 +54,8 @@ version: 0.3.0
 ## 跨会话
 
 上下文将满时：同一会话内的阶段过渡用原生 compact；**要开新会话/换 agent 续跑 → `/handoff`**——把会话独有状态（已定决策、工作流计数器、已排除路径、下一步）压成交接文档，issue 工作流中写到 `.workplans/` 证据束旁，新会话第一条消息加载接续。并行实现用 `git-worktree-workflows` 隔离工作区。
+
+**要从一个主会话调度多个 issue、每个 issue 开独立子会话并行跑**（桌面端；子会话在 worktree 里跑 `subagent-workflow` 等，决策全部上行主会话仲裁，chip 点击即审批）→ `session-orchestrator`。单 issue 不必进——直接跑 `subagent-workflow`。
 
 ## User-invoked 清单
 

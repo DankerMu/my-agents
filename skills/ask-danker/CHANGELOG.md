@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-13
+
+- 跨会话节新增 `session-orchestrator` 路由：主会话调度多 issue、chip 审批开子会话并行执行、决策上行仲裁；标注单 issue 直接走 `subagent-workflow`。
+
 ## [0.3.0]
 
 - 路由表第 5 步新增 `orche-omp-workflow`：与 `subagent-workflow` 同相位同闸门，实现/评审/验证委派给 omp，Phase 7 终审仍走原生 subagent；标注前置依赖 `codeagent-wrapper` + omp。

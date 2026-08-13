@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "name": "session-orchestrator",
+  "displayName": "Session Orchestrator",
+  "description": "Orchestrate parallel issue execution across Claude Code desktop sessions: the main session dispatches one issue per spawn_task chip (user click = approval) into an isolated worktree child session, the child runs the project's resolution workflow (e.g. subagent-workflow), and every task-level decision is uplinked to the main session via SendMessage instead of AskUserQuestion. Use when the user wants multiple issues driven from one coordinating session (\"主session调度\", \"开子session处理issues\", \"跨session并行\"). Not for single-issue in-session work (run subagent-workflow directly), terminal-only environments, or delegating permission approvals.",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "categories": ["workflow", "ai", "productivity"],
+  "tags": [
+    "cross-session",
+    "orchestration",
+    "worktree",
+    "spawn-task",
+    "decision-uplink",
+    "claude-code-desktop"
+  ],
+  "authors": [
+    {
+      "name": "danker"
+    }
+  ],
+  "entrypoints": {
+    "skillDoc": "SKILL.md",
+    "changelog": "CHANGELOG.md"
+  },
+  "requirements": {
+    "tools": ["claude-code-desktop"],
+    "network": "optional"
+  },
+  "capabilities": {
+    "shell": true,
+    "network": false,
+    "filesystemRead": true,
+    "filesystemWrite": false
+  }
+}
