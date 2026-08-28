@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-08-28
+
+### Added
+
+- Stellarlink 流 section routing the nine skills imported from stellarlink-skills (`architecture-design`, `to-spec`, `implement`, `tdd`, `vdd`, `code-migration`, `eng-init`, `self-evolution`, `reverse-skill`), with overlap boundaries against the main flow.
+- User-invoked list extended with the seven manual-invoke stellarlink skills; `tdd`/`vdd` noted as model-invocable because `implement`/`code-migration` invoke them mid-run.
+
 ## [0.4.0] - 2026-08-13
 
 - 跨会话节新增 `session-orchestrator` 路由：主会话调度多 issue、chip 审批开子会话并行执行、决策上行仲裁；标注单 issue 直接走 `subagent-workflow`。

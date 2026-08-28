@@ -68,11 +68,29 @@
       ]
     },
     {
+      "name": "architecture-design",
+      "path": "skills/architecture-design",
+      "displayName": "Architecture Design",
+      "description": "Design a new project's architecture — module decomposition, seams, and directory structure — or audit an existing one for refactoring recommendations, recording load-bearing decisions as ADRs.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "design",
+        "coding"
+      ],
+      "tags": [
+        "architecture",
+        "adr",
+        "module-decomposition",
+        "user-invoked"
+      ]
+    },
+    {
       "name": "ask-danker",
       "path": "skills/ask-danker",
       "displayName": "Ask Danker",
       "description": "本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "maturity": "experimental",
       "categories": [
         "productivity",
@@ -171,6 +189,25 @@
         "specification",
         "questioning",
         "autonomous"
+      ]
+    },
+    {
+      "name": "code-migration",
+      "path": "skills/code-migration",
+      "displayName": "Code Migration",
+      "description": "Use for codebase-scale language ports, compatibility-preserving replacements, same-stack runtime or framework uplifts, strangler rewrites, migration feasibility, migration pilots, phased cutovers, or resuming an artifact-backed code migration. This skill owns migration classification, domain artifacts, phase gates, and handoffs. It delegates durable execution to Missions and executable oracle qualification and acceptance to VDD. Do not use for a local file conversion, routine refactor, data/schema-only migration, or a small incremental language adoption that fits ordinary TDD/VDD.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "coding",
+        "refactoring"
+      ],
+      "tags": [
+        "migration",
+        "port",
+        "equivalence",
+        "cutover",
+        "user-invoked"
       ]
     },
     {
@@ -279,6 +316,25 @@
         "fact-check",
         "grammar",
         "publishing"
+      ]
+    },
+    {
+      "name": "eng-init",
+      "path": "skills/eng-init",
+      "displayName": "Eng Init",
+      "description": "Agent Engineering Readiness Control Plane — establishes, audits, repairs, and maintains the repo-local agent control plane for safe AI-agent work. Use whenever the user wants to bootstrap a new project, harden a repo for AI-agent work, set up AGENTS.md, create CONTEXT.md, establish unified dev commands, add tests/lint/CI/pre-commit guardrails, audit agent readiness, repair failing readiness signals, install a refactor harness, or prevent AI-coding drift (_v1/_v2 files, scratchpad bloat, dead code). Also governs verification tiers (snapshot replay, built-artifact smokes, per-file coverage), decision-record/agent-notes operational lifecycles (proposed/implemented/rejected/archived, archive freeze), documentation discipline (doc gates, Known Limitations, generated catalogs), and agent-harness architecture clauses (model-visible ⟺ logged, runtime invariant companions). Trigger phrases include \"initialize project\", \"set up AGENTS.md\", \"bootstrap this repo\", \"engineering setup\", \"agent-ready repo\", \"audit agent readiness\", \"fix readiness\", \"repair lint/tests/guardrails\", \"refactor harness\", \"create CONTEXT.md\", \"工程初始化\", \"项目初始化\", \"仓库约束\", \"AI 就绪检查\", \"文档纪律\", \"决策记录\", \"agent notes\", \"验证分层\", \"stop the v2 file problem\". Produces the hot-path AGENTS.md interface, CONTEXT.md, command entrypoints, validation baseline, readiness report/repair evidence, and mechanical guardrails.",
+      "version": "3.5.8",
+      "maturity": "experimental",
+      "categories": [
+        "devops",
+        "workflow"
+      ],
+      "tags": [
+        "bootstrap",
+        "control-plane",
+        "guardrails",
+        "readiness",
+        "user-invoked"
       ]
     },
     {
@@ -408,6 +464,23 @@
         "claude-code",
         "codex",
         "automation"
+      ]
+    },
+    {
+      "name": "implement",
+      "path": "skills/implement",
+      "displayName": "Implement",
+      "description": "Implement a piece of work based on a spec or set of tickets.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "coding",
+        "workflow"
+      ],
+      "tags": [
+        "implementation",
+        "spec-driven",
+        "user-invoked"
       ]
     },
     {
@@ -715,6 +788,24 @@
       ]
     },
     {
+      "name": "reverse-skill",
+      "path": "skills/reverse-skill",
+      "displayName": "Reverse Skill Router",
+      "description": "Routes reverse engineering, APK analysis, JavaScript signature analysis, binary analysis, CTF, firmware, mobile, malware, API security, and penetration testing tasks to specialized sub-skills and tool workflows.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "security"
+      ],
+      "tags": [
+        "reverse-engineering",
+        "security",
+        "ctf",
+        "pentest",
+        "user-invoked"
+      ]
+    },
+    {
       "name": "review",
       "path": "skills/review",
       "displayName": "Review",
@@ -778,6 +869,24 @@
         "scientific-review",
         "negative-results",
         "human-decision"
+      ]
+    },
+    {
+      "name": "self-evolution",
+      "path": "skills/self-evolution",
+      "displayName": "Self Evolution",
+      "description": "Iteratively evolve any measurable artifact (prompt, skill, harness, code, idea, configuration, document, benchmarked experiment) through autonomous mutation-evaluate-gate loops. Supports GT case suites, autoresearch-style scalar metric loops where a fixed command prints one score, and pairwise-preference loops for open-ended output with no absolute metric. Uses 8-phase iteration, 3-layer evaluation, deterministic keep/discard gates, blocking holdout gates, budget-matched control arms that separate real improvement from extra search, trace-driven diagnosis, and layered mutation. Can evolve itself. Trigger on \"evolve this\", \"optimize iteratively\", \"self-improve\", \"train this prompt\", \"iterate on this code\", \"make this better through iteration\", \"run evolution loop\", \"self-evolution\", \"evolve this skill\", \"train this skill\", \"optimize skill quality\", \"autonomous research\", \"autoresearch\", or whenever the user has a measurable artifact that needs data-driven improvement with automatic keep/revert decisions.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "ai",
+        "workflow"
+      ],
+      "tags": [
+        "evolution",
+        "optimization",
+        "eval-loop",
+        "user-invoked"
       ]
     },
     {
@@ -903,6 +1012,23 @@
       ]
     },
     {
+      "name": "tdd",
+      "path": "skills/tdd",
+      "displayName": "TDD",
+      "description": "Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions \"red-green-refactor\", wants integration tests, or asks for test-first development.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "testing",
+        "coding"
+      ],
+      "tags": [
+        "tdd",
+        "red-green-refactor",
+        "tests"
+      ]
+    },
+    {
       "name": "theory-to-code-traceability",
       "path": "skills/theory-to-code-traceability",
       "displayName": "Theory to Code Traceability",
@@ -921,6 +1047,42 @@
         "units",
         "invariants",
         "verification"
+      ]
+    },
+    {
+      "name": "to-spec",
+      "path": "skills/to-spec",
+      "displayName": "To Spec",
+      "description": "Turn conversation context, repo facts, or a feature idea into a compact PRD plus execution spec by default, with independently-grabbable issue slices when requested, or a questionnaire for someone else to fill in. Use when the user asks for a PRD, feature spec, implementation spec, mission handoff, issue breakdown, task slicing, a questionnaire, or to convert requirements into agent-ready work.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "productivity",
+        "documentation"
+      ],
+      "tags": [
+        "prd",
+        "spec",
+        "issue-slicing",
+        "user-invoked"
+      ]
+    },
+    {
+      "name": "vdd",
+      "path": "skills/vdd",
+      "displayName": "VDD",
+      "description": "Use when software work must be governed by executable evidence: new behavior or bug fixes, behavior-preserving refactors, ports, migrations, measurable improvements, verifier or observability construction, verification-governed operating plans, audit closure, or repair of compromised validation evidence. Also use when the user explicitly asks for VDD, verification-first, oracle-first, self-verifying, or self-healing development. Do not use for pure explanation, non-software artifacts, ordinary review with no implementation or verification deliverable, or trivial coding where the user did not request VDD and ordinary TDD is sufficient.",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "categories": [
+        "testing",
+        "workflow"
+      ],
+      "tags": [
+        "verification",
+        "oracle",
+        "evidence",
+        "acceptance"
       ]
     }
   ],
@@ -1454,7 +1616,44 @@
         "monitor"
       ],
       "hooks": []
+    },
+    {
+      "name": "stellarlink",
+      "path": "packs/stellarlink",
+      "displayName": "Stellarlink Pack",
+      "description": "从 stellarlink-skills 吸收的工程方法论组合：证据驱动交付（tdd/vdd/implement）、代码库级迁移（code-migration）、架构设计与 spec 化（architecture-design/to-spec）、仓库就绪控制面（eng-init）、可度量工件进化（self-evolution）与逆向工程路由（reverse-skill）。除 tdd/vdd（被其他 skill 运行中调用，保持模型可调）外全部手动调用。",
+      "version": "0.1.0",
+      "maturity": "experimental",
+      "packType": "role-pack",
+      "categories": [
+        "coding",
+        "testing",
+        "workflow",
+        "security"
+      ],
+      "tags": [
+        "stellarlink",
+        "vdd",
+        "tdd",
+        "migration",
+        "spec",
+        "bootstrap",
+        "reverse-engineering"
+      ],
+      "skills": [
+        "architecture-design",
+        "to-spec",
+        "implement",
+        "tdd",
+        "vdd",
+        "code-migration",
+        "eng-init",
+        "self-evolution",
+        "reverse-skill"
+      ],
+      "agents": [],
+      "hooks": []
     }
   ],
-  "generatedAt": "2026-08-13T13:34:07.001Z"
+  "generatedAt": "2026-08-28T06:15:11.243Z"
 }

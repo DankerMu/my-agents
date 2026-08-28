@@ -3,7 +3,7 @@ name: ask-danker
 description: 本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。
 disable-model-invocation: true
 invocation_posture: manual
-version: 0.4.0
+version: 0.5.0
 ---
 
 # Ask Danker
@@ -26,6 +26,20 @@ version: 0.4.0
 - **只是要把需求变成 GitHub issue** → `gh-create-issue`（含 Epic/子 issue 拆分与宽改造 expand–contract 切法）。
 - **出了毛病、原因不明**（难缠 bug、性能回归、修了又复发、CI 挂但本地复现不了）→ `diagnosing-bugs`：先建红色反馈回路后假设，确诊后修复回所在工作流；`subagent-workflow` 的修复环节内部也消费它。原因已确诊只差动手的修复不必进——直接修。
 - **多后端 AI 代码任务（Codex/Claude/Gemini 执行）** → `codeagent`。
+
+## Stellarlink 流（证据驱动交付；除注明外均手动调用）
+
+来自 `stellarlink` pack 的另一条交付链，与主流平行；重叠处按下述分界选：
+
+- **新项目定架构 / 存量架构审计** → `architecture-design`（用 `grill-me` 的访谈协议逐轮推进，落定决策记 ADR）；greenfield 产出接 `to-spec`，brownfield 深化接 `improve-codebase-architecture`。
+- **把想法/会话上下文压成紧凑 PRD+执行 spec、切可认领 issue 分片** → `to-spec`（要正式可评审 PRD 走主流的 `prd-authoring`）。
+- **拿着 spec/tickets 直接动手实现** → `implement`（内部在预定 seam 用 `tdd`/`vdd`，完成后走 `review`；要 issue→PR 全周期编排走主流 `subagent-workflow`）。
+- **测试先行的红-绿-重构** → `tdd`（**模型可调**——被 `implement`/`code-migration` 运行中调用）。
+- **以可执行证据治理开发**（oracle 资格审查、独立验收、证据 attestation）→ `vdd`（**模型可调**——同上）。
+- **代码库级迁移**（语言移植、同栈升级、strangler 重写）→ `code-migration`（验收委托 `vdd`，局部修复委托 `tdd`/`diagnosing-bugs`；假定外部 Missions 运行时，缺席时按其降级路径征询）。
+- **仓库 agent 就绪 bootstrap/审计/修复** → `eng-init`（与 `project-instruction-bootstrap`/`control-plane-auditor` 职能重叠，同一目标项目二选一）。
+- **可度量工件的变异-评估-门控进化循环** → `self-evolution`（eval 工作区在 `workspaces/self-evolution/`）。
+- **逆向工程 / APK / 二进制 / 固件 / CTF / 渗透（仅授权场景）** → `reverse-skill`（包内自带子 skill 路由）。
 
 ## 仓库健康（多为手动调用）
 
@@ -61,6 +75,6 @@ version: 0.4.0
 
 以下 skill 设了 `disable-model-invocation: true`——只能由你 `/name` 调用，模型不会自动触发，也不占常驻上下文：
 
-`ask-danker`（本 skill）、`agentic-development`、`git-worktree-workflows`、`handoff`、`improve-codebase-architecture`、`project-instruction-bootstrap`、`prompt-engineering`、`control-plane-auditor`、`repo-entropy-audit`。
+`ask-danker`（本 skill）、`agentic-development`、`git-worktree-workflows`、`handoff`、`improve-codebase-architecture`、`project-instruction-bootstrap`、`prompt-engineering`、`control-plane-auditor`、`repo-entropy-audit`，以及 stellarlink pack 的 `architecture-design`、`to-spec`、`implement`、`code-migration`、`eng-init`、`self-evolution`、`reverse-skill`（该 pack 仅 `tdd`、`vdd` 保持模型可调）。
 
 > 维护约定：新增、改名、删除任何 skill，或改动上述任何流的走向时，必须回查本地图并更新——路由器撒谎比没有路由器更糟。校验器会检查每个 user-invoked skill 都出现在本地图中。
