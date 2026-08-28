@@ -24,6 +24,9 @@
 
 ### 独立工具
 
+- `visual-design` — 视觉设计工程：先定页面形态（转化 / 任务 / 判断 / 叙事 / agentic）与任务级设计契约，再填领域内容与语义组件、补全 loading/empty/error/permission 等非 happy-path 状态，**最后**才做排版配色；交付前跑四层证据（标记有效性 → 主路径行为 → 截图观感 → 契约语义），缺陷按 spec/domain/shape/components/system/craft/implementation 归因并回到对应阶段修。六种模式：create / explore / tweak / review / system-bound / agentic。
+  - 上游名为 `design`，导入时改名以避开 Claude Code 内置的 `design`（画布 Artifact）以及各类软件架构 `design` skill——三者同名但不同轴。本 skill 只管视觉产物，软件架构走 `architecture-design`。
+  - 其输出契约默认写"cwd 里一个可运行的 HTML 文件"。若要改走 Claude Code 的画布 Artifact（`.dc.html` 多画板），需要自行调整该节。
 - `reverse-skill` — 逆向工程路由器：APK / JS 签名 / 二进制 / 固件 / CTF / API 安全 / 渗透测试任务路由到包内子 skill 与工具工作流。仅用于授权的安全测试与研究场景。
 
 ## Dependencies On Repo Skills (not bundled)

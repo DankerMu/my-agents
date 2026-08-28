@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "name": "stellarlink",
   "displayName": "Stellarlink Pack",
-  "description": "从 stellarlink-skills 吸收的工程方法论组合：证据驱动交付（tdd/vdd/implement）、代码库级迁移（code-migration）、架构设计与 spec 化（architecture-design/to-spec）、仓库就绪控制面（eng-init）、可度量工件进化（self-evolution）与逆向工程路由（reverse-skill）。除 tdd/vdd（被其他 skill 运行中调用，保持模型可调）外全部手动调用。",
-  "version": "0.1.0",
+  "description": "从 stellarlink-skills 吸收的工程方法论组合：证据驱动交付（tdd/vdd/implement）、代码库级迁移（code-migration）、架构设计与 spec 化（architecture-design/to-spec）、视觉设计工程（visual-design）、仓库就绪控制面（eng-init）、可度量工件进化（self-evolution）与逆向工程路由（reverse-skill）。除 tdd/vdd（被其他 skill 运行中调用，保持模型可调）外全部手动调用。",
+  "version": "0.2.0",
   "maturity": "experimental",
   "packType": "role-pack",
-  "categories": ["coding", "testing", "workflow", "security"],
+  "categories": ["coding", "testing", "workflow", "security", "design"],
   "skills": [
     "architecture-design",
     "to-spec",
@@ -16,9 +16,19 @@
     "code-migration",
     "eng-init",
     "self-evolution",
-    "reverse-skill"
+    "reverse-skill",
+    "visual-design"
   ],
-  "tags": ["stellarlink", "vdd", "tdd", "migration", "spec", "bootstrap", "reverse-engineering"],
+  "tags": [
+    "stellarlink",
+    "vdd",
+    "tdd",
+    "migration",
+    "spec",
+    "bootstrap",
+    "reverse-engineering",
+    "visual-design"
+  ],
   "authors": [
     {
       "name": "danker"

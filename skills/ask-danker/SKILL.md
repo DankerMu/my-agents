@@ -3,7 +3,7 @@ name: ask-danker
 description: 本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。
 disable-model-invocation: true
 invocation_posture: manual
-version: 0.5.0
+version: 0.6.0
 ---
 
 # Ask Danker
@@ -39,6 +39,7 @@ version: 0.5.0
 - **代码库级迁移**（语言移植、同栈升级、strangler 重写）→ `code-migration`（验收委托 `vdd`，局部修复委托 `tdd`/`diagnosing-bugs`；假定外部 Missions 运行时，缺席时按其降级路径征询）。
 - **仓库 agent 就绪 bootstrap/审计/修复** → `eng-init`（与 `project-instruction-bootstrap`/`control-plane-auditor` 职能重叠，同一目标项目二选一）。
 - **可度量工件的变异-评估-门控进化循环** → `self-evolution`（eval 工作区在 `workspaces/self-evolution/`）。
+- **要做出界面/原型/落地页/仪表盘/deck 这类视觉产物** → `visual-design`：先定页面形态与设计契约，再补齐非 happy-path 状态，最后才做排版配色，交付前跑四层证据。软件架构设计走上面的 `architecture-design`，别混。
 - **逆向工程 / APK / 二进制 / 固件 / CTF / 渗透（仅授权场景）** → `reverse-skill`（包内自带子 skill 路由）。
 
 ## 仓库健康（多为手动调用）
@@ -75,6 +76,6 @@ version: 0.5.0
 
 以下 skill 设了 `disable-model-invocation: true`——只能由你 `/name` 调用，模型不会自动触发，也不占常驻上下文：
 
-`ask-danker`（本 skill）、`agentic-development`、`git-worktree-workflows`、`handoff`、`improve-codebase-architecture`、`project-instruction-bootstrap`、`prompt-engineering`、`control-plane-auditor`、`repo-entropy-audit`，以及 stellarlink pack 的 `architecture-design`、`to-spec`、`implement`、`code-migration`、`eng-init`、`self-evolution`、`reverse-skill`（该 pack 仅 `tdd`、`vdd` 保持模型可调）。
+`ask-danker`（本 skill）、`agentic-development`、`git-worktree-workflows`、`handoff`、`improve-codebase-architecture`、`project-instruction-bootstrap`、`prompt-engineering`、`control-plane-auditor`、`repo-entropy-audit`，以及 stellarlink pack 的 `architecture-design`、`to-spec`、`implement`、`code-migration`、`eng-init`、`self-evolution`、`reverse-skill`、`visual-design`（该 pack 仅 `tdd`、`vdd` 保持模型可调）。
 
 > 维护约定：新增、改名、删除任何 skill，或改动上述任何流的走向时，必须回查本地图并更新——路由器撒谎比没有路由器更糟。校验器会检查每个 user-invoked skill 都出现在本地图中。

@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08-28
+
+### Added
+
+- Route for `visual-design` (stellarlink `design`, renamed on import), with an explicit boundary against `architecture-design` so visual work and software architecture do not get confused.
+- `visual-design` added to the user-invoked list.
+
 ## [0.5.0] - 2026-08-28
 
 ### Added
