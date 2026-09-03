@@ -15,6 +15,11 @@ version 0.28.0):
   by themselves.
 - R5 loud failure (exit 2) on a missing log or a malformed line, with the
   line number.
+- R6 catch compliance (0.31.1): a catch without a non-negative integer
+  `round` or a non-empty string `lens` is unattributable - it is counted in
+  `skipped`, never as core or rotated, reported as a NOTE with its PR
+  number, and scanned on every entry (including entries with no
+  `round_lenses` key). The NOTE alone does not change the exit code.
 """
 
 from __future__ import annotations
@@ -106,8 +111,9 @@ def test_rotation_decidable_at_threshold_with_attribution(tmp_path, capsys):
     assert run(log) == 2
     out = capsys.readouterr().out
     # per entry: round-1 catch ignored, one core (correctness) + one rotated (security)
-    assert "core=8 rotated=8" in out
+    assert "core=8 rotated=8 skipped=0" in out
     assert "DECIDABLE lens-rotation" in out
+    assert "non-compliant catches" not in out
 
 
 def test_rotation_below_threshold_informational(tmp_path, capsys):
@@ -123,10 +129,12 @@ def test_rotation_tolerates_legacy_string_catches(tmp_path, capsys):
     entry["catches"] = ["round3-p0-some-legacy-string", "phase7-p1-another"]
     lines = [rotation_entry(i) for i in range(8)] + [entry]
     # The 8 clean multi-round entries still drive the decision; the legacy
-    # string-catch row contributes no attribution and does not crash the audit.
+    # string-catch row contributes no attribution and does not crash the audit -
+    # but it is now counted and named instead of vanishing.
     assert run(write_log(tmp_path, lines)) == 2
     out = capsys.readouterr().out
-    assert "core=8 rotated=8" in out
+    assert "core=8 rotated=8 skipped=2" in out
+    assert "NOTE non-compliant catches skipped: 2 in 1 entry(ies) (pr 160)" in out
 
 
 # --- R3 off-vocabulary labels ----------------------------------------------
@@ -162,3 +170,65 @@ def test_malformed_line_fails_with_lineno(tmp_path, capsys):
     path.write_text(json.dumps(merged(1)) + "\n{bad json\n", encoding="utf-8")
     assert run(path) == 2
     assert ":2: invalid JSON" in capsys.readouterr().err
+
+
+# --- R6 catch compliance ----------------------------------------------------
+
+
+def test_lens_less_later_round_catch_is_skipped_not_rotated(tmp_path, capsys):
+    """A round-2 catch with no `lens` used to score as rotated (None is not in
+    the core set), inflating the rotation case with unattributable catches."""
+    def entry(issue: int) -> dict:
+        return merged(issue, catch=2, rounds=2,
+                      lenses=[["correctness"], ["security"]],
+                      catches=[{"round": 2, "lens": "correctness", "class": "c", "severity": "minor"},
+                               {"round": 2, "class": "c", "severity": "minor"}])
+    assert run(write_log(tmp_path, [entry(i) for i in range(8)])) == 2
+    out = capsys.readouterr().out
+    assert "core=8 rotated=0 skipped=8" in out
+    assert "NOTE non-compliant catches skipped: 8 in 8 entry(ies)" in out
+
+
+def test_round_less_catch_is_counted_not_silently_defaulted(tmp_path, capsys):
+    """A catch with no `round` used to default to round 1 and vanish."""
+    line = merged(40, catch=1, rounds=3, lenses=[["correctness"], ["security"]],
+                  catches=[{"lens": "security", "class": "c", "severity": "major"}])
+    assert run(write_log(tmp_path, [line])) == 0
+    out = capsys.readouterr().out
+    assert "NOTE non-compliant catches skipped: 1 in 1 entry(ies) (pr 140)" in out
+    assert "core=0 rotated=0 skipped=1" in out
+
+
+def test_entry_without_round_lenses_is_still_scanned(tmp_path, capsys):
+    """The attribution block never sees this entry; the compliance scan must."""
+    line = merged(70, catch=2, rounds=4,
+                  catches=[{"round": 1, "class": "exception-safety", "severity": "major"},
+                           {"round": 3, "class": "no-operator-entry-point", "severity": "critical"}])
+    assert "round_lenses" not in line
+    assert run(write_log(tmp_path, [line])) == 0  # a NOTE alone is not decidable
+    out = capsys.readouterr().out
+    assert "NOTE non-compliant catches skipped: 2 in 1 entry(ies) (pr 170)" in out
+    assert "rotation attribution" not in out
+
+
+def test_non_compliant_shapes_all_counted(tmp_path, capsys):
+    line = merged(80, catch=5, rounds=2, lenses=[["correctness"], ["security"]],
+                  catches=[{"round": 2, "lens": "security", "class": "c"},   # compliant
+                           {"round": "2", "lens": "security", "class": "c"},  # string round
+                           {"round": -1, "lens": "security", "class": "c"},   # negative round
+                           {"round": True, "lens": "security", "class": "c"}, # bool round
+                           {"round": 2, "lens": "", "class": "c"},            # empty lens
+                           "round2-p1-legacy-string"])                        # not an object
+    assert run(write_log(tmp_path, [line])) == 0
+    out = capsys.readouterr().out
+    assert "NOTE non-compliant catches skipped: 5 in 1 entry(ies) (pr 180)" in out
+    assert "core=0 rotated=1 skipped=5" in out
+
+
+def test_round_zero_fixture_review_catch_is_compliant(tmp_path, capsys):
+    line = merged(90, catch=1, rounds=2, lenses=[["correctness"], ["security"]],
+                  catches=[{"round": 0, "lens": "fixture-review", "class": "c", "severity": "P2"}])
+    assert run(write_log(tmp_path, [line])) == 0
+    out = capsys.readouterr().out
+    assert "non-compliant catches" not in out
+    assert "core=0 rotated=0 skipped=0" in out

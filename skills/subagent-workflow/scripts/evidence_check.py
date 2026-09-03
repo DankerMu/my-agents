@@ -33,7 +33,11 @@ Checks:
                 single canonical token (none|compact|expanded|high|
                 broad-expanded - composites like `expanded/high` and ad-hoc
                 labels like `standard` fragment the keep/cut sample), outcome
-                vocabulary, date format.
+                vocabulary, date format, and - on a merged line - the schema
+                of every `catches[i]`: a `round` (non-negative integer, `0` =
+                the fixture-review round) and a non-empty `lens`. A catch
+                missing either key is unattributable, so it silently distorts
+                the lens-rotation figures loop_log_audit.py reports.
 
 Scanned files: every --file target (all checks) plus *.md/*.txt/*.log under
 the review dir from .review-gate.json or --evidence-dir (head-sha and
@@ -69,6 +73,31 @@ FIXTURE_LEVELS = ("none", "compact", "expanded", "high", "broad-expanded")
 OUTCOMES = ("merged", "ceiling-split", "abandoned", "descoped")
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 ENTRY_REQUIRED_KEYS = ("issue", "pr", "date", "fixture", "rounds")
+
+
+def check_catch(raw_path: str, index: int, catch: object, findings: list[str]) -> None:
+    """One finding per violation of the compliant-catch schema.
+
+    A catch is attributable only when it carries a non-negative integer
+    `round` (`0` is the fixture-review round; bool is not an integer) and a
+    non-empty string `lens`. Same definition as loop_log_audit.py.
+    """
+    where = f"{raw_path}:1: [loop-log] catches[{index}]"
+    if not isinstance(catch, dict):
+        findings.append(f"{where} must be an object")
+        return
+    if "round" not in catch:
+        findings.append(f"{where} missing `round`")
+    else:
+        value = catch["round"]
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            findings.append(f"{where} round must be a non-negative integer")
+    if "lens" not in catch:
+        findings.append(f"{where} missing `lens`")
+    else:
+        lens = catch["lens"]
+        if not isinstance(lens, str) or not lens:
+            findings.append(f"{where} lens must be a non-empty string")
 
 
 def check_loop_log_entry(raw_path: str, findings: list[str]) -> None:
@@ -109,6 +138,13 @@ def check_loop_log_entry(raw_path: str, findings: list[str]) -> None:
             if key not in entry:
                 findings.append(f"{raw_path}:1: [loop-log] merged line missing `{key}` "
                                 "(terminal outcomes are exempt)")
+        catches = entry.get("catches")
+        if catches is not None:
+            if not isinstance(catches, list):
+                findings.append(f"{raw_path}:1: [loop-log] catches must be a list")
+            else:
+                for index, catch in enumerate(catches):
+                    check_catch(raw_path, index, catch, findings)
 
 
 def resolve_head(root: Path, head: str | None) -> str | None:

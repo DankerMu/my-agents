@@ -20,6 +20,10 @@ Reported:
   NOTE off-vocabulary    fixture labels outside none|compact|expanded|high|
                          broad-expanded fragment the keep/cut sample (they are
                          excluded from the buckets above).
+  NOTE non-compliant   catches missing an integer `round` or a non-empty
+        catches          `lens` cannot be attributed to a lens; they are
+                         excluded from the rotation figures and reported with
+                         their PR numbers instead of vanishing silently.
   NOTE terminal outcomes ceiling-split/abandoned/descoped lines - each one
                          obligates an upstream sizing-retro when the issue
                          came from stage-change-pipeline.
@@ -60,19 +64,47 @@ def parse_log(path: Path) -> list[dict] | None:
     return entries
 
 
-def rotation_attribution(entry: dict) -> tuple[int, int]:
-    """Catches in rounds >= 2 attributed to (pinned core, rotated-in) lenses."""
+def is_compliant_catch(catch: object) -> bool:
+    """A catch is attributable only with a non-negative integer `round`
+    (`0` is the fixture-review round; bool is not an integer) and a non-empty
+    string `lens`. Same definition as evidence_check.py's --loop-log-entry.
+    """
+    if not isinstance(catch, dict):
+        return False
+    value = catch.get("round")
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        return False
+    lens = catch.get("lens")
+    return isinstance(lens, str) and bool(lens)
+
+
+def non_compliant_catches(entry: dict) -> int:
+    return sum(1 for catch in entry.get("catches") or [] if not is_compliant_catch(catch))
+
+
+def rotation_attribution(entry: dict) -> tuple[int, int, int]:
+    """Catches in rounds >= 2 attributed to (pinned core, rotated-in) lenses,
+    plus the count of catches skipped as non-compliant.
+
+    A non-compliant catch is never counted as core or rotated: a missing
+    `lens` must not become a free rotated-in credit (it is not in the round-1
+    lens set, so it used to score as rotated), and a missing `round` must not
+    silently default to round 1 and disappear. Both are reported instead.
+    """
     lenses = entry.get("round_lenses") or []
     core_lenses = set(lenses[0]) if lenses else set()
-    core = rotated = 0
+    core = rotated = skipped = 0
     for catch in entry.get("catches") or []:
-        if catch.get("round", 1) < 2:
+        if not is_compliant_catch(catch):
+            skipped += 1
             continue
-        if catch.get("lens") in core_lenses:
+        if catch["round"] < 2:
+            continue
+        if catch["lens"] in core_lenses:
             core += 1
         else:
             rotated += 1
-    return core, rotated
+    return core, rotated, skipped
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -121,15 +153,31 @@ def main(argv: list[str] | None = None) -> int:
         print(f"NOTE off-vocabulary fixture labels excluded from keep/cut buckets: {labels} - "
               "future lines are rejected by evidence_check --loop-log-entry")
 
+    # Scan every entry, not just the multi-round subset: a line without a
+    # `round_lenses` key never reaches the attribution block, so its
+    # unattributable catches would otherwise never be seen at all.
+    skipped_total = 0
+    skipped_prs: list[str] = []
+    for e in entries:
+        n = non_compliant_catches(e)
+        if n:
+            skipped_total += n
+            skipped_prs.append(str(e.get("pr", "<missing>")))
+    if skipped_total:
+        print(f"NOTE non-compliant catches skipped: {skipped_total} in {len(skipped_prs)} entry(ies) "
+              f"(pr {', '.join(skipped_prs)}) - a catch needs `round` (non-negative integer, 0 = "
+              "fixture review) and a non-empty `lens` to be attributable; these are excluded from "
+              "the rotation figures")
+
     multiround = [e for e in merged if e.get("rounds", 0) >= 2 and e.get("round_lenses")]
     if multiround:
         core = rotated = 0
         for e in multiround:
-            c, r = rotation_attribution(e)
+            c, r, _ = rotation_attribution(e)
             core += c
             rotated += r
         line = (f"rotation attribution: {len(multiround)} multi-round merged PR(s), "
-                f"later-round catches core={core} rotated={rotated}")
+                f"later-round catches core={core} rotated={rotated} skipped={skipped_total}")
         if len(multiround) >= args.min_multiround:
             decidable += 1
             print(f"DECIDABLE lens-rotation: {line} - decide keep (catches concentrate in rotated-in "

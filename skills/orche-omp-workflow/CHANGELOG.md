@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-09-02
+
+### Fixed
+
+- **`scripts/loop_log_audit.py`：不合规的 loop-log catch 被计数上报，不再静默污染轮转归因**（与 `subagent-workflow` 0.31.1 同批，动机 NWM #1764）。`rotation_attribution` 新增第三个返回值 `skipped`：缺 `round`（此前 `catch.get("round", 1)` 默认成 1 后跳过，低估）或缺 `lens`（此前 `None not in core_lenses` 恒真，被**算成 rotated**，高估）的 catch 一律计入 `skipped`，绝不计 core/rotated；旧的"容忍字符串 catch"分支由统一的 `is_compliant_catch` 覆盖，行为不变但不再无声。`main` 对**每一个** entry 做合规扫描（没有 `round_lenses` 键的行进不了归因块，此前其不合规 catch 永不可见），`n > 0` 时打印 `NOTE non-compliant catches skipped: <n> in <k> entry(ies) (pr …)`，归因行恒带 `skipped=<n>`。退出码语义不变。
+- 本 skill 的 `scripts/evidence_check.py` 未同步 `subagent-workflow` 0.31.1 的 `catches[i]` schema 校验（本次改动的授权范围只覆盖姊妹 auditor 脚本），属已知不一致。
+
 ## [0.2.1] - 2026-08-09
 
 ### Changed
