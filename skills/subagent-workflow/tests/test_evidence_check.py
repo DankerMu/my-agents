@@ -19,6 +19,9 @@ evidence checklist, version 0.24.0):
   and ad-hoc labels rejected), outcome vocabulary, date format, required keys;
   merged lines need gate_net_catch/verdicts, terminal outcomes are exempt;
   works standalone without --file.
+- R7 catch schema (0.31.1): on a merged line every `catches[i]` must carry a
+  non-negative integer `round` (`0` = fixture review, bool rejected) and a
+  non-empty string `lens`; each violation is one finding naming `catches[i]`.
 """
 
 from __future__ import annotations
@@ -235,3 +238,84 @@ def test_malformed_or_missing_entry_file_fails(tmp_path):
     bad = write(tmp_path / "pending-line.json", "{not json\n")
     assert run(tmp_path, "--loop-log-entry", str(bad)) == 2
     assert run(tmp_path, "--loop-log-entry", str(tmp_path / "absent.json")) == 2
+
+
+# --- R7 catch schema ------------------------------------------------------------
+
+
+GOOD_CATCH = {"round": 2, "lens": "correctness", "class": "spec-drift", "severity": "major"}
+
+
+def catch_findings(tmp_path, capsys, catch: object) -> list[str]:
+    """Run one entry whose catches[1] is `catch`; return the [loop-log] findings."""
+    path = entry(tmp_path, catches=[GOOD_CATCH, catch])
+    assert run(tmp_path, "--loop-log-entry", str(path)) == 2
+    return [line for line in capsys.readouterr().out.splitlines() if "[loop-log]" in line]
+
+
+def assert_single_catch_finding(tmp_path, capsys, catch: object, expected: str) -> None:
+    found = catch_findings(tmp_path, capsys, catch)
+    assert len(found) == 1, found
+    assert "catches[1]" in found[0], found[0]
+    assert expected in found[0], found[0]
+
+
+def test_compliant_catches_pass(tmp_path):
+    catches = [{"round": 0, "lens": "fixture-review", "class": "test-semantics", "severity": "P2"},
+               GOOD_CATCH]
+    assert run(tmp_path, "--loop-log-entry", str(entry(tmp_path, catches=catches))) == 0
+
+
+def test_catch_missing_round_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"lens": "correctness", "class": "c", "severity": "minor"},
+                                "missing `round`")
+
+
+def test_catch_missing_lens_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"round": 2, "class": "c", "severity": "minor"},
+                                "missing `lens`")
+
+
+def test_catch_string_round_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"round": "2", "lens": "correctness", "class": "c"},
+                                "round must be a non-negative integer")
+
+
+def test_catch_negative_round_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"round": -1, "lens": "correctness", "class": "c"},
+                                "round must be a non-negative integer")
+
+
+def test_catch_bool_round_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"round": True, "lens": "correctness", "class": "c"},
+                                "round must be a non-negative integer")
+
+
+def test_catch_empty_lens_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"round": 2, "lens": "", "class": "c"},
+                                "lens must be a non-empty string")
+
+
+def test_non_mapping_catch_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys, "round3-p0-legacy-string",
+                                "must be an object")
+
+
+def test_catches_must_be_a_list(tmp_path, capsys):
+    path = entry(tmp_path, catches={"round": 2, "lens": "correctness"})
+    assert run(tmp_path, "--loop-log-entry", str(path)) == 2
+    assert "catches must be a list" in capsys.readouterr().out
+
+
+def test_terminal_outcome_catches_not_schema_checked(tmp_path):
+    """Terminal lines are exempt from the merged-line keys and from this schema."""
+    line = entry(tmp_path, outcome="abandoned", gate_net_catch=None, verdicts=None,
+                 residual_deferred=None, premerge_skip_blocks=None,
+                 catches=[{"phase": "cross-review", "class": "c"}])
+    assert run(tmp_path, "--loop-log-entry", str(line)) == 0
