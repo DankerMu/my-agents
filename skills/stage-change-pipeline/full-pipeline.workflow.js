@@ -18,7 +18,8 @@ export const meta = {
 
 // args: { changeName: string, designDocs?: string[], stageLabel?: string,
 //   grillGate: { status: "passed", branches: [{ branch, decision, decidedBy: "user"|"fact-check" }],
-//                openItems?: string[], userConfirmed: true } | "skipped:<reason>" }
+//                openItems?: string[], userConfirmed: true }
+//              | { status: "skipped", reason: string, approvedBy: "user", userConfirmed: true } }
 // Defensive: handle args passed as JSON string (caller-side serialization bug)
 const _args = typeof args === "string" ? JSON.parse(args) : args || {};
 const changeName = _args.changeName;
@@ -39,11 +40,23 @@ if (!changeName) {
 // the user's explicit shared-understanding confirmation (grill-me non-negotiable
 // #7). The old bare "passed" string was trivially satisfiable and produced
 // perfunctory few-question runs under pipeline-advancement pressure; it is no
-// longer accepted.
+// longer accepted. Skipping is the USER's decision, not the agent's: a gate
+// whose exemption the gated party writes for itself is not a gate. The bare
+// "skipped:<reason>" string was exactly that shape, so it is rejected too; the
+// skip credential must carry the user's explicit approval from the main
+// conversation, the same standard the "passed" credential already meets.
 const rawGrillGate = _args.grillGate;
 let grillGate = "";
-if (typeof rawGrillGate === "string" && /^skipped:.+/.test(rawGrillGate)) {
-  grillGate = rawGrillGate;
+if (
+  rawGrillGate &&
+  typeof rawGrillGate === "object" &&
+  rawGrillGate.status === "skipped" &&
+  typeof rawGrillGate.reason === "string" &&
+  rawGrillGate.reason.trim() &&
+  rawGrillGate.approvedBy === "user" &&
+  rawGrillGate.userConfirmed === true
+) {
+  grillGate = `skipped:${rawGrillGate.reason.trim()}`;
 } else if (
   rawGrillGate &&
   typeof rawGrillGate === "object" &&
@@ -66,20 +79,21 @@ if (typeof rawGrillGate === "string" && /^skipped:.+/.test(rawGrillGate)) {
   log(
     "FATAL: grillGate missing or invalid — run grill-me in the main conversation first and pass its per-branch ledger " +
       '(grillGate: { status: "passed", branches: [{ branch, decision, decidedBy: "user"|"fact-check" }], openItems: [...], userConfirmed: true }), ' +
-      'or record an explicit skip (grillGate: "skipped:<reason>"). A bare "passed" is assertion, not evidence, and is rejected.'
+      'or record a USER-APPROVED skip (grillGate: { status: "skipped", reason, approvedBy: "user", userConfirmed: true }). ' +
+      'A bare "passed" or "skipped:<reason>" string is assertion, not evidence, and is rejected.'
   );
   return {
     verdict: "error",
     reason:
-      'grillGate must be a per-branch evidence object ({ status: "passed", branches: [...], userConfirmed: true }) or "skipped:<reason>" — decide the Stage 1→2 grill gate before Stage 3 starts'
+      'grillGate must be a per-branch evidence object ({ status: "passed", branches: [...], userConfirmed: true }) or a user-approved skip object ({ status: "skipped", reason, approvedBy: "user", userConfirmed: true }) — decide the Stage 1→2 grill gate with the user before Stage 3 starts'
   };
 }
 
 // Render the grill ledger for reviewer consumption: the Stage 2 artifacts must
 // honor the Stage 1 stress-test decisions, and open items must not silently
-// vanish. Empty for "skipped:<reason>" runs.
+// vanish. Empty for skipped runs.
 const grillLedgerBlock =
-  rawGrillGate && typeof rawGrillGate === "object"
+  rawGrillGate.status === "passed"
     ? "\nGrill ledger (Stage 1 stress-test outcomes — the artifacts must honor these):\n" +
       rawGrillGate.branches
         .map((b) => `- [decided:${b.decidedBy}] ${b.branch} -> ${b.decision}`)
@@ -87,7 +101,7 @@ const grillLedgerBlock =
       ((rawGrillGate.openItems || []).length
         ? "\n" + rawGrillGate.openItems.map((o) => `- [open] ${o}`).join("\n")
         : "") +
-      "\nCheck: every decided branch is reflected in proposal/design/specs (drift or contradiction = finding); every [open] item is either resolved by the artifacts or explicitly recorded as an open question / non-goal (silent disappearance = finding).\n"
+      "\nCheck: every decided branch is reflected in proposal/design/specs (drift or contradiction = finding); every [open] item lands in exactly one of: resolved by the artifacts, an explicit open question, design.md `## Not yet specified`, or proposal.md `## Non-goals` (silent disappearance = finding).\n"
     : "";
 
 // Count of subagent (agent()) invocations across the whole run — for the accountability log.
@@ -275,6 +289,7 @@ const REVIEWERS = [
 Design docs: ${designDocs}
 ${grillLedgerBlock}
 Focus: table/field/ENUM naming consistency across proposal, design, specs, tasks; API endpoint coverage; ID spec compliance; manifest field alignment.
+Fog sections: design.md must contain a \`## Not yet specified\` section (in-scope work the design can see coming but cannot yet state sharply; "none" is a valid entry) and proposal.md a \`## Non-goals\` section (work ruled out of this change). A missing section is P1. Anything listed in either section that also appears as a spec requirement or a tasks.md task is a finding: fog pre-sliced into work, or out-of-scope work smuggled in.
 
 Return P0/P1 findings with IDs prefixed "DC-". Each finding needs: id, severity, title, failureClass (from the risk-adaptive-cross-review finding-contract Failure-Class Vocabulary — commonly design-consistency / spec-completeness / task-executability), evidence (quote the inconsistency with file paths), impact (what breaks if left unfixed), fixDirection.
 Reject vague or style-only observations — only concrete, anchored issues with file-level evidence.`
@@ -297,6 +312,7 @@ Design docs: ${designDocs}
 Focus: every spec requirement maps to a task; task granularity (single-session); dependency ordering; no orphan tasks; verification methods clear; design decisions reflected.
 Contract lines: every task group in tasks.md must end with two contract lines — \`Suggested fixture level: <none|compact|expanded> - <reason>\` and \`Minimal mergeable slice: <first-slice or atomic: reason>\`. Missing lines are P0. Audit their credibility: fixture level proportionate to the actual risk surface (not inflated because the work feels important); the declared first slice genuinely mergeable and green on its own; \`atomic\` claims backed by a concrete reason, not a convenience default.
 Coarse tasks: a single task that spans multiple independent verification paths or contains an independently deliverable subset is a tasks.md granularity defect — flag it here; Stage 5 must not absorb it via the "1-3 tasks" ceiling.
+Fog: no task may implement an item listed in design.md \`## Not yet specified\` or proposal.md \`## Non-goals\` — such a task is P1 (waterfall: work resting on decisions not yet made).
 
 Return P0/P1 findings with IDs prefixed "TE-". Each finding needs: id, severity, title, failureClass (from the risk-adaptive-cross-review finding-contract Failure-Class Vocabulary — commonly design-consistency / spec-completeness / task-executability), evidence (quote the gap with file paths), impact (what breaks if left unfixed), fixDirection.
 Reject vague or style-only observations — only concrete, anchored issues.`

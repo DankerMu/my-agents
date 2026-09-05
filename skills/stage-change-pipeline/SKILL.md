@@ -9,7 +9,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.19.1"
+  version: "0.20.0"
 ---
 
 # Stage Change Pipeline
@@ -55,8 +55,8 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
 
 完整语义在 `stage-flow.md` 对应节；本索引只保证触发时可见，不替代阅读。
 
-- **Stage 1 压测门禁（EITHER/OR，必须留痕）**：进 Stage 2 前要么用 `grill-me` 逐分支压测并形成凭证，要么 `skipped:<理由>` 留痕跳过。凭证必须在**主会话、启动脚本之前**备好（Workflow 子代理无法与用户交互，脚本内无法补跑）；`full-pipeline.workflow.js` 对缺失/格式不符/裸 `"passed"` 直接拒绝启动。
-- **Stage 2**：grill 已拍板分支必须落入 artifact（Stage 3 会拿凭证逐条核对，漂移即 finding）；design.md 必须含 **Sketch seams under test** 清单；tasks.md 每个 task 组尾部必须带 `Suggested fixture level` 与 `Minimal mergeable slice` 两行契约声明（Stage 5 宽度门禁的输入，Review 3 审可信度、Stage 5 只消费不发明）；收尾 `openspec status` 4/4 complete。
+- **Stage 1 压测门禁（EITHER/OR，必须留痕）**：进 Stage 2 前要么用 `grill-me` 逐分支压测并形成凭证，要么由**用户拍板**跳过并留痕（`{ status: "skipped", reason, approvedBy: "user", userConfirmed: true }`；agent 不得自行决定跳过）。凭证必须在**主会话、启动脚本之前**备好（Workflow 子代理无法与用户交互，脚本内无法补跑）；`full-pipeline.workflow.js` 对缺失/格式不符/裸 `"passed"`/裸 `"skipped:<理由>"` 直接拒绝启动。
+- **Stage 2**：grill 已拍板分支必须落入 artifact（Stage 3 会拿凭证逐条核对，漂移即 finding）；fog 两节必须有——design.md `## Not yet specified`（说不清的范围内工作，不预切进 tasks）、proposal.md `## Non-goals`（范围外）；design.md 必须含 **Sketch seams under test** 清单；tasks.md 每个 task 组尾部必须带 `Suggested fixture level` 与 `Minimal mergeable slice` 两行契约声明（Stage 5 宽度门禁的输入，Review 3 审可信度、Stage 5 只消费不发明）；收尾 `openspec status` 4/4 complete。
 - **Stage 3**：三路并行只读 `reviewer`（设计一致性 / Spec 完整性 / Tasks 可执行性），finding 取 `finding-contract.md` 失败类词表，含糊无锚点条目直接拒收。
 - **Stage 4 / 4.5**：P0 + P1 均为阻塞带；每轮修复必过独立验证门（验证者不参与修复、每条 finding 默认未解决、oracle 不可篡改、ack 两行凭据缺失即视为门被跳过）；回环 ≤3 轮由 workflow 脚本硬编码，触顶残留如实标 `needs-followup`。
 - **Stage 5 实现就绪契约**：每个子 issue 满足全字段才允许 `Implementation Ready: yes`——单一模块范围、In/Out of Scope、任务清单、验收标准、必读文档与 change 引用、逐行 `Depends on #<dep>`、预期 PR 边界、`Suggested fixture level`、`Minimal mergeable slice`；不得把需求澄清留到实现阶段。
@@ -78,7 +78,8 @@ Workflow({
     changeName: "<name>",
     designDocs: ["path/to/doc.md"],
     stageLabel: "<optional-stage-label>",
-    grillGate: {          // 或 "skipped:<理由>"；缺失/格式不符/裸 "passed" 均拒绝启动
+    grillGate: {          // 或用户批准的跳过 { status: "skipped", reason, approvedBy: "user", userConfirmed: true }；
+                          // 缺失/格式不符/裸 "passed"/裸 "skipped:<理由>" 均拒绝启动
       status: "passed",
       branches: [{ branch: "<决策分支>", decision: "<结论>", decidedBy: "user" }],
       openItems: [],
