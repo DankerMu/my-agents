@@ -198,7 +198,7 @@ skill owns the gate at the boundary:
 - the handoff's pressure-test record covers the scientific contract only; it
   does not satisfy the pipeline's own Stage-1 grill gate (`grillGate`). Decide
   that gate on the engineering design package in its own right — run it, or
-  skip with a recorded reason.
+  have the user approve a recorded skip (the agent never skips it alone).
 
 The resulting OpenSpec change must:
 

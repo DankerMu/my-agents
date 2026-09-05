@@ -7,7 +7,7 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [0.2.2] - 2026-09-05
 
-- Pressure-test gate wording follows `grill-me` 0.6.0: a delegated grill is interactive because the user answers each round (frontier rounds replaced one-question-at-a-time); the gate contract itself is unchanged.
+- Pressure-test gate wording follows `grill-me` 0.6.0: a delegated grill is interactive because the user answers each round (frontier rounds replaced one-question-at-a-time); the gate contract itself is unchanged. Step 9's pointer at the pipeline `grillGate` now says a skip needs the user's approval (`stage-change-pipeline` 0.20.0 rejects agent-decided skips).
 
 ## [0.2.1] - 2026-07-11
 - Tighten the description to a lean identity + explicit-invocation clause (slimming batch 2): this skill is reached by name — by the user or an orchestrating skill — so trigger vocabulary and negative boundary lists move out of standing context into the body/router. Body and behavior unchanged.
