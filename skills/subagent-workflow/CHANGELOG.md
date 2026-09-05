@@ -5,6 +5,18 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.32.0] - 2026-09-05
+
+### Added
+
+- **`review_gate.py correct-round --round <N> --sha <sha> --reason <text>`：轮次 SHA 的受支持、保留审计历史的更正入口**（动机：DankerMu/my-agents#1，原始场景 SHUD-NWM PR #1793 把 Round 4 记到修复后的 SHA，reviewer 实际审核的是前一个）。旧 SHA、新 SHA、理由追加到该 round 的 `shaCorrections`，有效 `sha` 更新（`status` 与后续证据消费新值），ledger **只追加**一条 `CORRECTION | sha <old> -> <new> | reason: <text> | round <N>` 行，原 round 行不改写。更正不增轮次、不改 `clean/verified/highest/classes/repeats`、不动 lock 与 retro budget——SHA 本来就不进任何 gate 数学，这是结构事实而非需要维护的约束。轮次不存在、理由为空、SHA 相同均 exit 2 且 state/ledger 不变；locked 状态下允许更正（记账不是 review 动作）。`round <N>` 放在行尾，是为了让自由文本不落进 `evidence_check.py` 的 `round N … pending` 40 字符窗口——ledger 行不可编辑，一条自触发的误报会把编排器卡死；`test_evidence_check.py` 用以 `pending` 开头的理由证明这一点。
+
+### Fixed
+
+- **`record-round --clean` 不再静默吞掉显式 finding 参数**（同 #1）。`--clean` 与显式 `--verified`（含 0）、非 `none` 的 `--highest`、非空 `--classes` 任一组合 exit 2、不写 state/ledger，错误信息说明 clean 只代表零个 FIX_NOW finding、已路由 P2 在 loop-log `residual_deferred`。裸 `--clean` 仍记录 `0 / none / []`，现有 clean gate 行为不变。
+- **Phase 2 是唯一的独立本地验证重跑；reviewer / verifier leaf brief 明确禁止跑套件与 CI-equivalent 命令**（动机：DankerMu/my-agents#2。一次 NWM 高风险 cross-review 里多个 leaf 各自重跑 gateway/journal/retry pytest suite，共享的 `$TMPDIR/pytest-of-<user>` 冲到 306 GiB，并发清理产生数百个 `garbage-*`）。`phase-flow.md` Phase 2：matrix 行彼此及与默认 build+test 行去重后**串行跑一次**，下游不再重跑；leaf 报告证据不足时由编排器在 Phase 2 重跑那一行并重新 brief。`phase-4-cross-review.md` reviewer 与 verifier brief 的 `Rules:` 各加一条：禁止 verification matrix、默认 build+test 行、整套 suite、`-k`/目录扫描与任何 CI-equivalent 命令，证据不足时报出精确的 verification gap；`Inputs:` 新增 `Phase 2 verification evidence` 行，leaf 才有东西可查。同一约束进入 canonical `reviewer` 2.6.0 / `verifier` 0.7.0 契约，由 `sync-agent-contracts --check` 保证投影不漂移。之前口头建议的"允许跑单个 test node"**撤回**：两个 agent 的 Codex 投影 `sandbox_mode = "read-only"`、Claude Code 投影 `Bash(readonly)`，契约里写允许执行会与包声明的工具授权冲突。
+- `gates.md` 的 CLI 段落同步记录 clean 参数拒绝与 `correct-round` 语义。`orche-omp-workflow` 0.3.0 携带同一份 `review_gate.py`、`test_review_gate.py`、`gates.md` 与等价的 Phase 2 / brief 改动。
+
 ## [0.31.1] - 2026-09-02
 
 ### Fixed

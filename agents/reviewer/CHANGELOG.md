@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.6.0] - 2026-09-05
+
+### Changed
+
+- 契约第 7 条加入验证边界：**永不运行 test suite、verification-matrix 行或 CI-equivalent 命令**，只依据提供的验证证据判断，证据不足时报出精确的 verification gap（动机：DankerMu/my-agents#2，多个 leaf reviewer 各自重跑昂贵 pytest suite 把共享临时目录冲到 306 GiB）。折进现有 bullet 而非新增，因为契约已满 8 条预算。与两个投影声明的工具授权一致：Codex `sandbox_mode = "read-only"`，Claude Code `Bash(readonly)`。
+
 ## [2.5.2] - 2026-08-09
 
 ### Changed

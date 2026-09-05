@@ -71,11 +71,13 @@ Return the complete report as your final message. (The orchestrator persists it 
 
 Rules:
 - Do not edit files, commit, push, or change state.
+- Do not run the project's verification matrix, its default build+test row, whole test suites, `-k`/directory sweeps, or any other CI-equivalent command. Phase 2 already ran them once and their results are in your inputs; your tools are read-only. Judge from the diff, code, tests, and the supplied verification evidence. When that evidence cannot settle a finding, report the exact verification gap (which command or test would settle it) instead of running it.
 - You are a leaf reviewer subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to review, fix, implement, or plan. Your own agent definition may permit spawning an `explorer` subagent for standalone use; inside this workflow's leaf tasks that capability is disabled, and this injected boundary overrides your agent definition.
 - Output only a structured review report.
 
 Inputs:
 - Changed files: <path list>
+- Phase 2 verification evidence: <matrix rows run, commands, and results>
 - Fixture summary: <fixture summary>
 - Fix summary for follow-up rounds: <fix summary>
 - Spec references: <proposal.md> <design.md> <tasks.md>
@@ -130,6 +132,7 @@ Return the verdict table as your final message. (The orchestrator persists it to
 
 Rules:
 - Do not edit files, commit, push, or change state.
+- Do not run the project's verification matrix, its default build+test row, whole test suites, `-k`/directory sweeps, or any other CI-equivalent command. Phase 2 already ran them once and their results are in your inputs; your tools are read-only. Adjudicate from the diff, code, tests, and the supplied verification evidence. When that evidence cannot settle a candidate, name the exact verification gap in its note (which command or test would settle it) instead of running it.
 - You are a leaf verifier subagent. Do not invoke this workflow or the subagent-workflow skill, spawn further subagents, launch parallel agents, or ask another AI/code agent to verify, fix, implement, or plan.
 - Adjudicate only these candidates. Do not search for new findings.
 - Adjudicate each candidate independently and give one verdict per candidate; a batch-level verdict without per-candidate evidence is invalid.
@@ -139,6 +142,7 @@ Rules:
 Inputs:
 - Candidate findings: <CANDIDATE_BLOCKS>
 - Changed files: <path list>
+- Phase 2 verification evidence: <matrix rows run, commands, and results>
 - Fixture summary: <fixture summary>
 - Spec references: <proposal.md> <design.md> <tasks.md>
 

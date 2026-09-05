@@ -29,6 +29,17 @@ Phase 4/5/6.5, versions 0.20.0/0.21.0):
   records how each PR ended. Without --issue, legacy behavior is unchanged.
 - Bookkeeping: every round appends a ledger line; state file is created by
   `open`, removed by `close`.
+- Clean-round argument conflicts (0.32.0): `record-round --clean` combined
+  with an explicit `--verified`, a non-`none` `--highest`, or a non-empty
+  `--classes` is refused (exit 2) with state and ledger untouched; a bare
+  `--clean` still records 0 / none / [].
+- Round SHA correction (0.32.0): `correct-round --round N --sha S --reason R`
+  keeps the old SHA, new SHA, and reason under the round's `shaCorrections`,
+  updates the effective SHA (visible in `status`), appends one structured
+  `CORRECTION` ledger line without rewriting the original round line, and
+  leaves round count, metrics, repeats, lock state, and retro budget
+  untouched. Unknown round, empty reason, or identical SHA are refused with
+  no state change. Corrections are bookkeeping and stay allowed while locked.
 """
 
 from __future__ import annotations
@@ -428,3 +439,132 @@ def test_gate_entries_counted_per_issue(tmp_path):
     assert retro(tmp_path, "breadth") == 0
     assert history(tmp_path)["issues"]["8"]["gateEntries"] == 1
     assert history(tmp_path)["issues"]["8"]["ceilingPrs"] == []
+
+
+# --- clean-round argument conflicts (0.32.0) ---------------------------------
+
+
+def _ledger_or_none(root: Path) -> str | None:
+    path = root / ".workplans/pr-7/review/round-ledger.log"
+    return path.read_text(encoding="utf-8") if path.is_file() else None
+
+
+def test_clean_with_explicit_verified_zero_is_refused(tmp_path, capsys):
+    open_gate(tmp_path)
+    assert run(tmp_path, "record-round", "--sha", "a", "--clean", "--verified", "0") == 2
+    assert state(tmp_path)["rounds"] == []
+    assert _ledger_or_none(tmp_path) is None
+    err = capsys.readouterr().err
+    assert "--verified" in err and "zero FIX_NOW findings" in err
+
+
+def test_clean_with_highest_is_refused(tmp_path, capsys):
+    open_gate(tmp_path)
+    assert run(tmp_path, "record-round", "--sha", "a", "--clean", "--highest", "minor") == 2
+    assert state(tmp_path)["rounds"] == []
+    assert _ledger_or_none(tmp_path) is None
+    assert "--highest" in capsys.readouterr().err
+
+
+def test_clean_with_classes_is_refused(tmp_path, capsys):
+    open_gate(tmp_path)
+    assert run(tmp_path, "record-round", "--sha", "a", "--clean", "--classes", "doc-citation-accuracy") == 2
+    assert state(tmp_path)["rounds"] == []
+    assert _ledger_or_none(tmp_path) is None
+    assert "--classes" in capsys.readouterr().err
+
+
+def test_clean_conflict_after_prior_rounds_leaves_state_and_ledger_untouched(tmp_path):
+    open_gate(tmp_path)
+    assert record(tmp_path, "a", classes="c1") == 0
+    before_state, before_ledger = state(tmp_path), ledger(tmp_path)
+    assert run(tmp_path, "record-round", "--sha", "b", "--clean",
+               "--verified", "8", "--highest", "minor", "--classes", "c9") == 2
+    assert state(tmp_path) == before_state
+    assert ledger(tmp_path) == before_ledger
+
+
+def test_bare_clean_still_records_neutral_fields(tmp_path):
+    open_gate(tmp_path)
+    assert run(tmp_path, "record-round", "--sha", "a", "--clean") == 0
+    rd = state(tmp_path)["rounds"][0]
+    assert (rd["clean"], rd["verified"], rd["highest"], rd["classes"], rd["repeats"]) == (True, 0, "none", [], [])
+    assert "Round 1 | a | clean | verified findings: 0 | highest severity: none | failure classes: none" in ledger(tmp_path)
+
+
+# --- round SHA correction (0.32.0) --------------------------------------------
+
+
+def _without_sha(rd: dict) -> dict:
+    return {k: v for k, v in rd.items() if k not in ("sha", "shaCorrections")}
+
+
+def test_correct_round_updates_sha_and_appends_audit_line(tmp_path, capsys):
+    open_gate(tmp_path)
+    assert record(tmp_path, "aaa1", classes="c1") == 0
+    assert record(tmp_path, "bbb2", classes="c2") == 0
+    before_state, before_ledger = state(tmp_path), ledger(tmp_path)
+    assert run(tmp_path, "correct-round", "--round", "2", "--sha", "ccc3",
+               "--reason", "reviewers reviewed the pre-fix head") == 0
+    after = state(tmp_path)
+    rd = after["rounds"][1]
+    assert rd["sha"] == "ccc3"
+    assert rd["shaCorrections"] == [{"from": "bbb2", "to": "ccc3", "reason": "reviewers reviewed the pre-fix head"}]
+    # nothing else moved: round 1 identical, round 2 identical apart from the corrected fields,
+    # lock/retro/issue fields identical
+    assert after["rounds"][0] == before_state["rounds"][0]
+    assert _without_sha(rd) == _without_sha(before_state["rounds"][1])
+    assert {k: v for k, v in after.items() if k != "rounds"} == {k: v for k, v in before_state.items() if k != "rounds"}
+    # ledger: original lines preserved verbatim, exactly one structured correction appended
+    after_ledger = ledger(tmp_path)
+    assert after_ledger.startswith(before_ledger)
+    added = after_ledger[len(before_ledger):].splitlines()
+    assert added == ["CORRECTION | sha bbb2 -> ccc3 | reason: reviewers reviewed the pre-fix head | round 2"]
+    assert "Round 2 | bbb2 |" in after_ledger
+    # status reports the corrected SHA
+    capsys.readouterr()
+    assert run(tmp_path, "status") == 0
+    assert "Round 2 | ccc3 |" in capsys.readouterr().out
+
+
+def test_correct_round_repeated_corrections_keep_full_history(tmp_path):
+    open_gate(tmp_path)
+    assert record(tmp_path, "a", classes="c1") == 0
+    assert run(tmp_path, "correct-round", "--round", "1", "--sha", "b", "--reason", "first fix") == 0
+    assert run(tmp_path, "correct-round", "--round", "1", "--sha", "c", "--reason", "second fix") == 0
+    rd = state(tmp_path)["rounds"][0]
+    assert rd["sha"] == "c"
+    assert [(x["from"], x["to"]) for x in rd["shaCorrections"]] == [("a", "b"), ("b", "c")]
+    assert ledger(tmp_path).count("CORRECTION |") == 2
+
+
+def test_correct_round_does_not_change_gate_math(tmp_path):
+    open_gate(tmp_path)
+    for sha, cls in (("a", "c1"), ("b", "c2"), ("c", "c3")):
+        record(tmp_path, sha, classes=cls)
+    assert state(tmp_path)["locked"] is True  # three-round hard gate
+    before = state(tmp_path)
+    assert run(tmp_path, "correct-round", "--round", "3", "--sha", "c-prime", "--reason", "misrecorded head") == 0
+    after = state(tmp_path)
+    assert after["locked"] is True and after["lockReason"] == before["lockReason"]
+    assert len(after["rounds"]) == 3
+    # a retro registers exactly as it would have, with the same budget
+    assert retro(tmp_path, "noise") == 0
+    assert state(tmp_path)["retros"][-1]["budget"] == 1
+    assert state(tmp_path)["locked"] is False
+    # repeats still computed from classes, unaffected by SHA edits
+    assert record(tmp_path, "d", classes="c1") == 2  # budget exhausted -> relock
+    assert state(tmp_path)["rounds"][-1]["repeats"] == ["c1 (also round 1)"]
+
+
+def test_correct_round_refuses_unknown_round_empty_reason_and_same_sha(tmp_path):
+    open_gate(tmp_path)
+    assert record(tmp_path, "a", classes="c1") == 0
+    before_state, before_ledger = state(tmp_path), ledger(tmp_path)
+    assert run(tmp_path, "correct-round", "--round", "2", "--sha", "b", "--reason", "r") == 2
+    assert run(tmp_path, "correct-round", "--round", "0", "--sha", "b", "--reason", "r") == 2
+    assert run(tmp_path, "correct-round", "--round", "1", "--sha", "b", "--reason", "   ") == 2
+    assert run(tmp_path, "correct-round", "--round", "1", "--sha", "a", "--reason", "r") == 2
+    assert state(tmp_path) == before_state
+    assert ledger(tmp_path) == before_ledger
+    assert "shaCorrections" not in state(tmp_path)["rounds"][0]

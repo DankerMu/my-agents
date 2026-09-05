@@ -556,7 +556,7 @@
       "path": "skills/orche-omp-workflow",
       "displayName": "Orchestrated omp Issue Workflow",
       "description": "GitHub issue → verified PR workflow where Claude Code / Codex orchestrates and omp (oh-my-pi) executes: codebase exploration, implementation, cross-review, and finding verification are delegated to omp explorer/implementer/reviewer/verifier sessions through codeagent-wrapper, while Phase 7 final review stays a native subagent. Mandatory OpenSpec fixtures, risk-adaptive review, CI, human-gated merge. Use when the issue loop should run on omp (\"用 omp 跑这个 issue\", \"omp 实现 #XX\"). Not for docs/spec-only work, hotfixes that skip review, or all-native runs (use subagent-workflow).",
-      "version": "0.2.2",
+      "version": "0.3.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -996,7 +996,7 @@
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
       "description": "GitHub issue → verified PR workflow: the orchestrator delegates implementation, cross-review, and finding verification to the implementer/reviewer/verifier subagents, with mandatory OpenSpec fixtures, risk-adaptive review, CI, and human-gated merge. Use to implement a GitHub issue or process the next DAG issue (\"implement #XX\", \"处理下一个issue\"). Not for docs/spec-only work, hotfixes that skip review, or Codex-implements-under-Claude-orchestration (use cc-cx-workflow).",
-      "version": "0.31.1",
+      "version": "0.32.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1335,7 +1335,7 @@
       "path": "agents/reviewer",
       "displayName": "Reviewer",
       "description": "Code review agent that performs structured, severity-graded reviews on PRs, diffs, and code changes.",
-      "version": "2.5.2",
+      "version": "2.6.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1362,7 +1362,7 @@
       "path": "agents/verifier",
       "displayName": "Verifier",
       "description": "Independent finding-verification agent. Adjudicates one failure-class batch of candidate review findings (at most 5) with exactly one verdict per candidate — CONFIRMED, PLAUSIBLE, or REFUTED — using only diff/spec/code/test evidence. Read-only; never a reviewer that produced any candidate in its batch.",
-      "version": "0.6.3",
+      "version": "0.7.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1677,5 +1677,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-09-03T00:55:32.050Z"
+  "generatedAt": "2026-09-05T16:07:46.515Z"
 }

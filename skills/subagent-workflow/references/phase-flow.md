@@ -111,6 +111,8 @@ Run the local CI-equivalent pipeline for the project as recorded in the active p
 - R package: focused tests plus package check command appropriate to repo
 - SHUD solver: build plus smallest relevant example/smoke run
 
+Phase 2 owns the **only** independent local verification rerun in this workflow. Deduplicate the selected matrix rows against each other and against the default build+test row (a command listed by two rows runs once), then execute the remaining rows serially — never in parallel, and never again downstream. Phase 4 reviewers and Phase 4.5 verifiers inspect this phase's evidence (their briefs carry it as an input); they do not rerun suites, matrix rows, or CI-equivalent commands. When a leaf reports that the evidence is insufficient for a finding or verdict, the orchestrator reruns that one row here and re-briefs — duplicate runs across parallel leaves multiply expensive fixtures and race the shared pytest temp root (`$TMPDIR/pytest-of-<user>` reached hundreds of GiB from overlapping suites in one high-risk cross-review).
+
 Then do a read-only audit against the OpenSpec fixture:
 
 - Error/failure paths have tests.
