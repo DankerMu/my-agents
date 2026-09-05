@@ -3,7 +3,7 @@ name: study-design
 description: >
   Design a reviewable scientific study protocol: units, baselines, controls, observables, uncertainty, evidence oracles, stop gates, and protocol freeze. Invoked by research-lifecycle after framing, or explicitly by the user.
 invocation_posture: manual-first
-version: 0.1.3
+version: 0.1.4
 ---
 
 # Study Design
@@ -167,7 +167,7 @@ Record one explicit gate decision on the protocol: `grill-me` when terminology
 is stable, `grill-me` docs mode when terms, process boundaries or durable
 decisions must persist to `openspec/glossary.md` / `docs/adr/`, or
 `skipped:<reason>` — only for genuinely narrow, low-impact work. A delegated
-grill stays interactive (one question at a time) and must not be simulated.
+grill stays interactive (the user answers each round) and must not be simulated.
 The canonical gate contract lives in `research-lifecycle`
 (`references/pressure-test-contract.md`).
 

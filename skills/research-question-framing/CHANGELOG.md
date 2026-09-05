@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-09-05
+
+- Pressure-test gate wording follows `grill-me` 0.6.0: a delegated grill is interactive because the user answers each round (frontier rounds replaced one-question-at-a-time); the gate contract itself is unchanged.
+
 ## [0.1.3] - 2026-07-11
 
 - Tighten the hybrid trigger description from 439 to 376 characters (slimming batch 6), eval-gated by the new cross-skill routing suite (`skill-lifecycle-manager/eval/cross-skill-routing-cases.json`): three A/B runs, zero per-case routing regressions, candidate 27/27 on the final run (deepseek-v4-pro-guan judge via dmxapi). All negative redirects preserved.

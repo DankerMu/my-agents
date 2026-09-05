@@ -19,7 +19,7 @@
 
 **压测门禁（EITHER/OR，必须留痕）**：进入 Stage 2 之前，对设计压测做出显式决策，二选一：
 
-- **跑**：用 `grill-me` 沿决策树逐分支压测（多轮、一次一问），把未言明假设、隐藏依赖和模糊边界逼清，再创建 OpenSpec change。**收敛判据与单独使用 grill-me 完全一致**：每个关键分支要么用户拍板、要么显式列为开放项，且用户明确确认共同理解（grill-me 铁律 7）——压测轮数由决策树的分支数决定，不由管道推进压力决定，"问了几个问题"不是 passed 的判据。启动 `full-pipeline.workflow.js` 时传逐分支凭证：`grillGate: { status: "passed", branches: [{ branch, decision, decidedBy: "user"|"fact-check" }], openItems: [...], userConfirmed: true }`。
+- **跑**：用 `grill-me` 沿决策树按前沿逐轮压测（每轮问完当前前沿、答完再算下一轮），把未言明假设、隐藏依赖和模糊边界逼清，再创建 OpenSpec change。**收敛判据与单独使用 grill-me 完全一致**：每个关键分支要么用户拍板、要么显式列为开放项，且用户明确确认共同理解（grill-me 铁律 7）——压测轮数由决策树的分支数决定，不由管道推进压力决定，"问了几个问题"不是 passed 的判据。启动 `full-pipeline.workflow.js` 时传逐分支凭证：`grillGate: { status: "passed", branches: [{ branch, decision, decidedBy: "user"|"fact-check" }], openItems: [...], userConfirmed: true }`。
 - **跳过**：阶段计划确实简单清晰时可以跳过，但必须写明理由，传 `grillGate: "skipped:<理由>"`。
 
 `full-pipeline.workflow.js` 校验该参数：缺失、格式不符或裸 `"passed"` 字符串**直接拒绝启动**——声明不是证据，逐分支清单才是；"忘了"和"敷衍跑两问"都不再是合法状态。注意时序：grill-me 的多轮盘问只能发生在主会话（Workflow 子代理无法与用户交互），必须在启动脚本之前完成，脚本内无法补跑。该决策以 `passed:branches=<n>,open=<n>` 或 `skipped:<理由>` 形态随 `logEntry.grill_gate` 落入 `docs/stage-pipeline-log.jsonl`，跳过率与压测深度均可审计。

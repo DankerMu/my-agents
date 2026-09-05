@@ -5,6 +5,15 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-05
+
+### Changed
+
+- **访谈节奏从"一次一问"改为"按前沿逐轮"**（同步 `mattpocock/skills` v1.2.x `grilling`）：前沿 = 前置决策都已定、现在就能问而不必猜的决策；一轮问完整个前沿，每题编号、固定格式（`❓ **Qn** - **标题**` / `➡️ 推荐答案`），用户答完后重算前沿再问下一轮；答案依赖本轮未答问题的留到后面的轮次。前沿为空才算问完。动机：一次一问在分支多的计划上轮次爆炸，且互不依赖的问题串行问是在浪费用户等待；逐轮前沿把并行度交还给决策树的依赖结构，收敛判据（铁律 7/8、逐分支清单）不变。
+- 铁律 3 补充：环境事实可派子 agent 查且**不阻塞本轮**——只有依赖该事实的问题等结果。
+- 铁律 4 由"逐分支推进"改为"每轮重算前沿"；流程第 3/4 步与"输出"节同步改写。tag `one-question-at-a-time` → `frontier-rounds`。
+- 已知同步点：`architecture-design` 引用的"design tree / frontier / question format"访谈协议自此与本 skill 一致；`stage-change-pipeline` 的 `grillGate` 凭证与研究流的委托压测措辞同批更新。`eng-init` 的 Stage 2 grill 是它自己的问题库协议（带问题预算、`AskUserQuestion` 优先），不随本变更。
+
 ## [0.5.0] - 2026-07-29
 
 ### Added

@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-05
+
+### Changed
+
+- **定位收窄为可携带性**（同步 `mattpocock/skills` v1.2.x `PHASE-BOUNDARIES.md`）：description 与开篇不再把"上下文将满"列为触发条件——那是原生压缩的领地；只在有东西要随身带走时用：换 harness、换目录/仓库、交给同事、中途分叉 side task，以及本仓库特有的 issue 工作流跨会话续跑（工作流计数器只在会话记忆里，会话结束后新会话必须靠它恢复）。Non-goals 同步；完整决策树指向 `ask-danker` 跨会话节。模板与硬规则不变。
+
 ## [0.1.0] - 2026-07-16
 
 ### Added

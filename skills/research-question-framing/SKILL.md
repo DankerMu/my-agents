@@ -7,7 +7,7 @@ description: >
   problem is not yet decision-ready. Not for hypothesis-only templating or ordinary
   implementation requirements.
 invocation_posture: hybrid
-version: 0.1.3
+version: 0.1.4
 ---
 
 # Research Question Framing
@@ -144,7 +144,7 @@ Record one explicit gate decision on the draft contract: `grill-me` when
 terminology is stable, `grill-me` docs mode when terms, process boundaries or
 durable decisions must persist to `openspec/glossary.md` / `docs/adr/`, or
 `skipped:<reason>` — only for genuinely narrow, low-impact work. A delegated
-grill stays interactive (one question at a time) and must not be simulated.
+grill stays interactive (the user answers each round) and must not be simulated.
 The canonical gate contract lives in `research-lifecycle`
 (`references/pressure-test-contract.md`).
 

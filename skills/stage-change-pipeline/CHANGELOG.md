@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.19.1] - 2026-09-05
+
+- `references/stage-flow.md` 压测门禁措辞跟随 `grill-me` 0.6.0：由"多轮、一次一问"改为"按前沿逐轮"；`grillGate` 凭证结构与收敛判据不变。
+
 ## [0.19.0] - 2026-08-09
 
 ### Changed

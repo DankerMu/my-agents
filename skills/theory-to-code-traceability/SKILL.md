@@ -3,7 +3,7 @@ name: theory-to-code-traceability
 description: >
   Build or review a traceability contract from scientific assumptions, equations, units, and invariants to code surfaces and verification cases. Invoke explicitly, typically from research-lifecycle for scientific model changes.
 invocation_posture: manual-first
-version: 0.1.2
+version: 0.1.3
 ---
 
 # Theory to Code Traceability
@@ -203,7 +203,7 @@ Before approval, record one explicit gate decision: `grill-me` when
 terminology is stable, `grill-me` docs mode when terms, process boundaries or
 durable decisions must persist to `openspec/glossary.md` / `docs/adr/`, or
 `skipped:<reason>` — only for genuinely narrow, low-impact work. A delegated
-grill stays interactive (one question at a time) and must not be simulated.
+grill stays interactive (the user answers each round) and must not be simulated.
 The canonical gate contract lives in `research-lifecycle`
 (`references/pressure-test-contract.md`).
 
