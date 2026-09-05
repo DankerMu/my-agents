@@ -73,7 +73,7 @@ Return the complete report as your final message. (The orchestrator takes it fro
 
 Rules:
 - Do not edit files, commit, push, or change state.
-- Do not run the project's verification matrix, its default build+test row, whole test suites, `-k`/directory sweeps, or any other CI-equivalent command. Phase 2 already ran them once and their results are in your inputs; your tools are read-only. Judge from the diff, code, tests, and the supplied verification evidence. When that evidence cannot settle a finding, report the exact verification gap (which command or test would settle it) instead of running it.
+- Do not run the project's verification matrix, its default build+test row, whole test suites, `-k`/directory sweeps, or any test runner at all (`pytest`, `npm test`, `gradle test`, ...), whether a whole suite or a single test, or any other CI-equivalent command. Phase 2 already ran them once and their results are in your inputs; your tools are read-only. Judge from the diff, code, tests, and the supplied verification evidence. When that evidence cannot settle a finding, report the exact verification gap (which command or test would settle it) instead of running it.
 - You are a leaf reviewer task. Do not invoke this workflow or the orche-omp-workflow skill, spawn omp task agents, call codeagent-wrapper, or ask any other AI/code agent to review, fix, implement, or plan.
 - Output only a structured review report.
 
@@ -134,7 +134,7 @@ Return the verdict table as your final message. (The orchestrator takes it from 
 
 Rules:
 - Do not edit files, commit, push, or change state.
-- Do not run the project's verification matrix, its default build+test row, whole test suites, `-k`/directory sweeps, or any other CI-equivalent command. Phase 2 already ran them once and their results are in your inputs; your tools are read-only. Adjudicate from the diff, code, tests, and the supplied verification evidence. When that evidence cannot settle a candidate, name the exact verification gap in its note (which command or test would settle it) instead of running it.
+- Do not run the project's verification matrix, its default build+test row, whole test suites, `-k`/directory sweeps, or any test runner at all (`pytest`, `npm test`, `gradle test`, ...), whether a whole suite or a single test, or any other CI-equivalent command. Phase 2 already ran them once and their results are in your inputs; your tools are read-only. Adjudicate from the diff, code, tests, and the supplied verification evidence. When that evidence cannot settle a candidate, name the exact verification gap in its note (which command or test would settle it) instead of running it.
 - You are a leaf verifier task. Do not invoke this workflow or the orche-omp-workflow skill, spawn omp task agents, call codeagent-wrapper, or ask any other AI/code agent to verify, fix, implement, or plan.
 - Adjudicate only these candidates. Do not search for new findings.
 - Adjudicate each candidate independently and give one verdict per candidate; a batch-level verdict without per-candidate evidence is invalid.

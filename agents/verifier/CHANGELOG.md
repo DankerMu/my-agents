@@ -4,7 +4,7 @@
 
 ### Changed
 
-- 新增契约第 3 条：**永不运行 test suite、verification-matrix 行或 CI-equivalent 命令**，只依据提供的验证证据裁决，证据无法定案时在 note 里写明精确的 verification gap 而不是自己去跑（动机：DankerMu/my-agents#2）。与两个投影声明的工具授权一致：Codex `sandbox_mode = "read-only"`，Claude Code `Bash(readonly)`。契约 7 → 8 条，仍在预算内。
+- 新增契约第 3 条：**永不运行测试（任何 test runner，整套 suite 或单个测试都算）、verification-matrix 行或 CI-equivalent 命令**，只依据提供的验证证据裁决，证据无法定案时在 note 里写明精确的 verification gap 而不是自己去跑（动机：DankerMu/my-agents#2）。与两个投影声明的工具授权一致：Codex `sandbox_mode = "read-only"`，Claude Code `Bash(readonly)`。契约 7 → 8 条，仍在预算内。
 
 ## [0.6.3] - 2026-08-09
 
