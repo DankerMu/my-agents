@@ -3,7 +3,7 @@
   "name": "study-design",
   "displayName": "Study Design",
   "description": "Design a reviewable scientific study protocol: units, baselines, controls, observables, uncertainty, evidence oracles, stop gates, and protocol freeze. Invoked by research-lifecycle after framing, or explicitly by the user.",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "maturity": "experimental",
   "categories": ["research", "design", "workflow"],
   "tags": [

@@ -3,7 +3,7 @@ name: ask-danker
 description: 本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。
 disable-model-invocation: true
 invocation_posture: manual
-version: 0.6.0
+version: 0.7.0
 ---
 
 # Ask Danker
@@ -66,9 +66,17 @@ version: 0.6.0
 - `agentic-development` — 多 agent 系统的运行时调试与开发方法。
 - `git-worktree-workflows` — worktree 并行开发的手动指引与恢复。
 
-## 跨会话
+## 跨会话 / 阶段边界
 
-上下文将满时：同一会话内的阶段过渡用原生 compact；**要开新会话/换 agent 续跑 → `/handoff`**——把会话独有状态（已定决策、工作流计数器、已排除路径、下一步）压成交接文档，issue 工作流中写到 `.workplans/` 证据束旁，新会话第一条消息加载接续。并行实现用 `git-worktree-workflows` 隔离工作区。
+上下文怎么处理只在**阶段边界**（"这一块干完了"的那一刻）决定，中途不决定——中途压缩会让 agent 丢线。到了边界按序自问，第一个"是"即停：
+
+1. **能在本会话继续吗？** 下一阶段要把这一阶段当一手材料（压测 → 实现是标准情形：实现要的是推理原文，不是摘要），或剩余上下文够下一阶段用 → **继续**。零成本零损失，先排除它。
+2. **这段上下文对下一步完全无关吗？** 探索、决策、死胡同都可弃 → **清空上下文**（Claude Code `/clear`，Codex `/new`）。最便宜的一步，但单向：清掉相关上下文就丢了"为什么"，读 diff 找不回来。
+3. **有东西要随身带走吗？** 换 harness（Claude → Codex）、换目录/仓库、交给同事、把中途发现的 side task 分叉出去而不打断当前工作，以及 issue / 流水线工作流跨会话续跑（本会话结束后由新会话接手；round counter、gate 状态、尚未启动脚本的 grill 凭证只在会话记忆里）→ **`/handoff`**：把会话独有状态（已定决策、工作流计数器、已排除路径、下一步）压成可携带的交接文档，issue 工作流中写到 `.workplans/` 证据束旁，新会话第一条消息加载接续。没有东西在移动，就不需要它。
+4. **任务能 AFK 跑吗？** 范围收得够紧、不需要你盯着 → 交给**子 agent**（自动评审是标准情形），本会话不动。
+5. **其余情况 → 原生压缩**（Claude Code / Codex `/compact`，带一句指令说明下一阶段要保留什么）。它是默认项而非首选项：上面四问都更便宜或更精确；从它起手的失败模式是新会话对被摘要抹平的决策"自信地错"。
+
+除"继续"外每一步都把一手材料换成二手摘要（信息有损、噪声更少、空间更多），所以第 1 问永远最先问。并行实现用 `git-worktree-workflows` 隔离工作区。
 
 **要从一个主会话调度多个 issue、每个 issue 开独立子会话并行跑**（桌面端；子会话在 worktree 里跑 `subagent-workflow` 等，决策全部上行主会话仲裁，chip 点击即审批）→ `session-orchestrator`。单 issue 不必进——直接跑 `subagent-workflow`。
 

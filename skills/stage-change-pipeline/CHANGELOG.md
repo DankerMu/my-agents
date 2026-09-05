@@ -5,6 +5,18 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-09-05
+
+### Changed
+
+- **压测门禁的跳过豁免改由用户拍板（breaking：`grillGate` 跳过形态变更）**。`"skipped:<理由>"` 字符串是 agent 自己写给自己的豁免——门禁和豁免由被门的一方一手写就，与 `mattpocock/skills` wayfinder 的 Notes 自我授权是同一失效类，也是 0.15.0 拒绝裸 `"passed"` 时漏掉的另一半。现在 `full-pipeline.workflow.js` 只接受 `{ status: "skipped", reason, approvedBy: "user", userConfirmed: true }`；裸字符串拒绝启动。跳过提议在提供 `AskUserQuestion` 的 harness 上必须经该工具提出，让用户同意留下工具调用记录。审计日志 `grill_gate` 改记 `skipped:user:<理由>`（`loop-accountability.md` 同步），与 0.20 之前的 agent 自决跳过可区分。跳过理由有了消费者：注入 Stage 3 Review 1 prompt，审核者核对 artifact 里没有该理由罩不住的隐含决策。诚实声明：与 `passed` 凭证的 `userConfirmed` 一样，这是对话里的用户确认被编码进参数，脚本校验的是"agent 必须显式断言用户批准"，不是用户签名。
+- 门禁校验补齐 `openItems`：缺省或字符串数组才放行（原先非数组值能过门禁、随后在 ledger 渲染处抛异常，审计日志来不及写）。
+- `references/stage-flow.md` 压测门禁措辞跟随 `grill-me` 0.6.0：由"多轮、一次一问"改为"按前沿逐轮"；凭证结构与收敛判据不变。
+
+### Added
+
+- **fog 两节**（adapted from wayfinder 的 fog of war / out of scope，反瀑布装置），都落在 design.md：`## Not yet specified`——范围内、能看见要来但问题本身还说不清的工作，判据是"能否精确提问"而非"能否回答"，比 task 粗、一律不预切进 specs/tasks，等后续 change 的前沿推到再毕业；OpenSpec 模板自带的 `## Goals / Non-Goals` 的 Non-Goals 半必须填实——出了本 change 目的地的工作（不另开 proposal.md 节：模板里 proposal 没有 non-goals 位，design.md 有，两处并存会漂）。open question / Not yet specified / Non-Goals 三者分工写在 stage-2-artifacts.md，stage-flow.md 只留指针。Stage 2 收尾多一条 grep 硬停（两节缺失不进 Stage 3）；Stage 3 Review 1 核对两节存在（缺失 P1）、条目未切成 spec；Review 3 核对没有 task 在实现两节条目（有即 P1），一项检查一个审核者。`full-pipeline` 与 `review-loop` 的审核 prompt 同步。**对存量 change 的影响**：0.20 之前生成的 change 缺两节，重跑 `review-loop` 会先吃一个 P1，补两节即可。
+
 ## [0.19.0] - 2026-08-09
 
 ### Changed

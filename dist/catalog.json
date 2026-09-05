@@ -90,7 +90,7 @@
       "path": "skills/ask-danker",
       "displayName": "Ask Danker",
       "description": "本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "maturity": "experimental",
       "categories": [
         "productivity",
@@ -279,7 +279,7 @@
       "path": "skills/diagnosing-bugs",
       "displayName": "Diagnosing Bugs",
       "description": "因未知失败的诊断纪律：先建红色反馈回路，后假设。适用于难缠 bug 与性能回归—— 症状明确但原因不明、修了又复发、CI 挂但本地复现不了。核心闸门：没有一条已跑过、 能红的命令，禁止读代码编理论。难缠 bug 可选多代理扇出模式（回路构建与假设生成并行化）。 触发词：\"diagnose\"、\"debug\"、\"诊断这个 bug\"、\"为什么一直挂\"、\"复现不了\"、 \"性能回归\"、\"查根因\"。不用于原因已确诊只差动手的修复（直接修）， 或\"该做什么/怎么设计\"的问题（用 grill/prototype 类）。",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "maturity": "experimental",
       "categories": [
         "debugging",
@@ -409,8 +409,8 @@
       "name": "grill-me",
       "path": "skills/grill-me",
       "displayName": "Grill Me",
-      "description": "对一个已有的 plan、design 或任何待定决策/想法做对抗式压测（不限软件）：沿决策树逐个分支追问，直到与用户达成共同理解。 一次只问一个问题，每个问题都给出你的推荐答案；事实能从环境（codebase、文档、数据）查到的就去查，决策必须交给用户拍板。 触发词：\"grill me\"、\"拷问我\"、\"压测这个计划\"、\"挑战我的设计\"、\"stress-test the plan\"。 需要同时对齐项目术语、沉淀 glossary/ADR 时用 docs 模式（触发词：\"grill with docs\"、\"对齐术语\"）。 不用于开放式头脑风暴、方向选型，或已经明确、无歧义的任务。",
-      "version": "0.5.0",
+      "description": "对一个已有的 plan、design 或任何待定决策/想法做对抗式压测（不限软件）：把计划展开成决策树、按前沿逐轮追问，直到与用户达成共同理解。 每轮问完当前前沿的全部问题，每个问题编号并给出你的推荐答案；事实能从环境（codebase、文档、数据）查到的就去查，决策必须交给用户拍板。 触发词：\"grill me\"、\"拷问我\"、\"压测这个计划\"、\"挑战我的设计\"、\"stress-test the plan\"。 需要同时对齐项目术语、沉淀 glossary/ADR 时用 docs 模式（触发词：\"grill with docs\"、\"对齐术语\"）。 不用于开放式头脑风暴、方向选型，或已经明确、无歧义的任务。",
+      "version": "0.6.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -423,7 +423,7 @@
         "design-review",
         "planning",
         "clarification",
-        "one-question-at-a-time",
+        "frontier-rounds",
         "glossary",
         "adr",
         "domain-model"
@@ -433,8 +433,8 @@
       "name": "handoff",
       "path": "skills/handoff",
       "displayName": "Handoff",
-      "description": "把当前会话压缩成一份交接文档（handoff.md），让新会话或另一个 agent 无缝接续工作。 适用：上下文将满要开新会话、任务干到一半换 agent/换机器、issue 工作流跨会话续跑。 手动调用（/handoff），可带参数说明下个会话的重点。模型不会自动触发。",
-      "version": "0.1.0",
+      "description": "把当前会话压缩成一份交接文档（handoff.md），让新会话或另一个 agent 无缝接续工作。 只在有东西要随身带走时用：换 harness/换目录/交给同事、把中途发现的 side task 分叉出去、issue 工作流跨会话续跑；同会话同目录的阶段过渡走原生压缩，不用它。 手动调用（/handoff），可带参数说明下个会话的重点。模型不会自动触发。",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "productivity",
@@ -708,7 +708,7 @@
       "path": "skills/research-engineering-handoff",
       "displayName": "Research Engineering Handoff",
       "description": "Convert an approved research decision into a bounded engineering handoff preserving scientific intent, invariants, evidence oracles, and human decision authority. Invoke explicitly, typically from research-lifecycle before stage-change-pipeline.",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -729,7 +729,7 @@
       "path": "skills/research-lifecycle",
       "displayName": "Research Lifecycle",
       "description": "Research control-plane router: frames a phenomenon, capability gap, or decision need, then orchestrates question framing, study design, evidence synthesis, traceability, and engineering handoff. Invoke explicitly for substantive scientific work.",
-      "version": "0.3.1",
+      "version": "0.3.2",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -771,7 +771,7 @@
       "path": "skills/research-question-framing",
       "displayName": "Research Question Framing",
       "description": "Turn a phenomenon, scientific uncertainty, capability gap, method idea, data problem, or operational decision into a bounded research contract — objects, intended claims, alternatives, evidence needs, scope, risks, downstream route. Use before study design when the problem is not yet decision-ready. Not for hypothesis-only templating or ordinary implementation requirements.",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -915,7 +915,7 @@
       "path": "skills/skill-lifecycle-manager",
       "displayName": "Skill Lifecycle Manager",
       "description": "Manage the lifecycle of agent skills: discover patterns, create or update a skill, validate it, evaluate it, project or install it, or audit a skill library. Use only when the request is explicitly about skills or skill libraries, not for general code tasks or agent management.",
-      "version": "0.12.0",
+      "version": "0.13.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -955,7 +955,7 @@
       "path": "skills/stage-change-pipeline",
       "displayName": "Stage Change Pipeline",
       "description": "设计文档 → OpenSpec change → subagent 并行审核 → 修复 → 实现就绪 GitHub issue 全流水线， tasks 拆为模块边界清晰、适合小 PR 审核的细粒度 issue。用于把设计/阶段文档变成审核过的 OpenSpec change 加 implementation-ready issues——\"开始下一个阶段\"、\"设计到issue\"、 \"run the stage pipeline\"。单个 issue 的实现/修复/合并走 subagent-workflow，不需要 OpenSpec change 与并行审核的普通 issue 不用本流水线。",
-      "version": "0.19.0",
+      "version": "0.20.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -975,7 +975,7 @@
       "path": "skills/study-design",
       "displayName": "Study Design",
       "description": "Design a reviewable scientific study protocol: units, baselines, controls, observables, uncertainty, evidence oracles, stop gates, and protocol freeze. Invoked by research-lifecycle after framing, or explicitly by the user.",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -1033,7 +1033,7 @@
       "path": "skills/theory-to-code-traceability",
       "displayName": "Theory to Code Traceability",
       "description": "Build or review a traceability contract from scientific assumptions, equations, units, and invariants to code surfaces and verification cases. Invoke explicitly, typically from research-lifecycle for scientific model changes.",
-      "version": "0.1.2",
+      "version": "0.1.3",
       "maturity": "experimental",
       "categories": [
         "research",
@@ -1677,5 +1677,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-09-05T16:07:46.515Z"
+  "generatedAt": "2026-09-05T16:50:00.502Z"
 }

@@ -3,6 +3,8 @@
 # The agent runs this script; the user follows the prompts in their terminal.
 # The human is inside the loop, but the loop still feeds the agent: every
 # captured value prints as a KEY=VALUE line at the end for the agent to parse.
+# capture() echoes whatever the user typed, secrets included: redact those
+# KEY=VALUE lines (write <REDACTED>) before quoting them anywhere.
 #
 # The agent customizes ONLY the region between the "edit below/above" markers.
 set -euo pipefail

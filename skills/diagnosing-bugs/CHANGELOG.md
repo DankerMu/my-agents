@@ -5,6 +5,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-09-05
+
+### Added
+- **脱敏节**（同步 `mattpocock/skills` v1.2.x）：贴命令/输出/捕获物之前先以 `<REDACTED>` 替换 secret；回路对着环境变量构建，凭证不进展示内容；捕获物只引用承载信号的行；脱敏后不足以诊断则向用户要。Phase 1 的"建不出回路"（b）项与完成判据同步标注脱敏；`hitl-loop.template.sh` 头注提醒 `capture` 会原样回显用户输入。
+
 ## [0.2.0] - 2026-07-14
 
 ### Added

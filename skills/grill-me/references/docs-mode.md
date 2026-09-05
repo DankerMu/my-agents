@@ -41,7 +41,7 @@
 流程与默认模式一致，仅第 1 步和第 5-6 步不同：
 
 - **锚定靶子**时额外读 `openspec/glossary.md`、`docs/adr/` 建立术语基线。
-- **逐分支追问**中执行上面"四件事"；术语一解决就写 glossary，够三门槛的决策当场落 ADR。
+- **按前沿逐轮追问**中执行上面"四件事"；术语一解决就写 glossary，够三门槛的决策当场落 ADR。
 - **收敛输出**的小结额外附**本轮新增/修订的 glossary 术语与 ADR 列表**。嵌入 `stage-change-pipeline` Stage 2 时，该小结是 `design.md`/`specs/` 定稿与 Stage 3 审核的输入；用户确认前不进入定稿。
 
 ---

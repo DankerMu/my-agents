@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-09-05
+
+### Added
+
+- `references/authoring-craft.md` Pruning discipline 新增 **Cache** 规则（adapted from `mattpocock/skills` v1.2.3 `writing-for-agents`）：环境（`package.json` scripts、配置、目录布局、`--help`）本身是事实来源，复述它的文档只是缓存，只有查询昂贵时才值得付上下文；该缓存的是查不到的东西——未成文约定、决策理由、配置不会坦白的坑。Phase 3 exit sweep 与 Phase 8 audit 据此多一条"这行是缓存还是真相"的判据。
+
 ## [0.12.0] - 2026-07-29
 
 ### Changed

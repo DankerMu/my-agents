@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-09-05
+
+- `references/pressure-test-contract.md` (the canonical gate the research leaves point at): delegated conduct follows `grill-me` 0.6.0 frontier rounds; `skipped:<reason>` now requires the user's approval — the agent proposes with a reason and never records a skip on its own (same self-exemption class `stage-change-pipeline` 0.20.0 closed for `grillGate`).
+
 ## [0.3.1] - 2026-07-11
 - Tighten the description to a lean identity + explicit-invocation clause (slimming batch 2): this skill is reached by name — by the user or an orchestrating skill — so trigger vocabulary and negative boundary lists move out of standing context into the body/router. Body and behavior unchanged.
 

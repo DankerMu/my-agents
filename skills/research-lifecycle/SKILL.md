@@ -3,7 +3,7 @@ name: research-lifecycle
 description: >
   Research control-plane router: frames a phenomenon, capability gap, or decision need, then orchestrates question framing, study design, evidence synthesis, traceability, and engineering handoff. Invoke explicitly for substantive scientific work.
 invocation_posture: manual-first
-version: 0.3.1
+version: 0.3.2
 ---
 
 # Research Lifecycle

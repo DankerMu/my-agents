@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-05
+
+### Changed
+
+- 跨会话节改为**阶段边界决策树**（adapted from `mattpocock/skills` v1.2.x `ask-matt/PHASE-BOUNDARIES.md`）：只在阶段边界决策，按序五问、第一个"是"即停——继续 → 清空上下文 → `/handoff` → 子 agent → 原生压缩。原生压缩是默认项而非首选项；`/handoff` 收窄为"有东西要随身带走"（换 harness/换目录/交给同事/中途分叉 side task），并保留本仓库特有的 issue 工作流跨会话续跑（会话结束后新会话接手、工作流计数器只在会话记忆里）。命令名以 Claude Code 为例，动作本身 harness 无关。`session-orchestrator` 路由不变。
+
 ## [0.6.0] - 2026-08-28
 
 ### Added

@@ -15,8 +15,9 @@ approved, or handed off:
   or long-lived decisions must be reconciled and persisted to
   `openspec/glossary.md` and `docs/adr/` (see the terminology and decision
   ledger rules in [artifact-model.md](artifact-model.md)).
-- `skipped:<reason>` — allowed only for genuinely narrow, low-impact work.
-  Medium/high-impact artifacts (physical equations, process representation,
+- `skipped:<reason>` — allowed only for genuinely narrow, low-impact work, and
+  only when the user approves the skip: the agent proposes it with the reason,
+  the user decides; an agent never records a skip on its own. Medium/high-impact artifacts (physical equations, process representation,
   scientific state, data semantics, benchmark authority, operational claims)
   must not skip.
 
@@ -32,8 +33,9 @@ Open questions:
 
 ## Delegated Conduct
 
-A delegated grill keeps its own contract: it is interactive, asks one material
-question at a time, and offers a recommended answer per question. Do not
+A delegated grill keeps its own contract: it is interactive, works the design
+tree in frontier rounds that the user answers, and offers a recommended answer
+per question. Do not
 simulate the dialogue; if the conversation did not happen, the gate did not
 pass. Answers that resolve project-wide terms are persisted inline by
 `grill-me` docs mode, not batched to the end.

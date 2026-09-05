@@ -1,7 +1,8 @@
 # Authoring Craft: The Predictability Vocabulary
 
 Writing-quality bar for Phase 3 (Create Or Update) and diagnostic vocabulary for Phase 8 (Audit).
-Condensed and adapted from `mattpocock/skills` `writing-great-skills` + `GLOSSARY.md` (v1.1.0).
+Condensed and adapted from `mattpocock/skills` `writing-great-skills` + `GLOSSARY.md` (v1.1.0);
+the cache rule from its `writing-for-agents` (v1.2.3).
 
 A skill exists to wrangle determinism out of a stochastic system. The root virtue is
 **predictability** — the agent taking the same *process* every run, not producing the same
@@ -50,6 +51,11 @@ renaming the same branch are duplication); cut identity the body already states.
 
 - **Single source of truth**: one authoritative place per meaning; changing behaviour is a
   one-place edit.
+- **Cache**: the environment is a source of truth too — `package.json` scripts, config files,
+  the directory layout, `--help` output — and a document restating it is a cache of a lookup,
+  earning its load only when the lookup is expensive. Cache what the agent cannot find by
+  looking: the unwritten convention, the reason behind a choice, the gotcha no config confesses.
+  Leave one-file, one-command lookups to the environment, where they cannot go stale.
 - **Relevance**: every line must still bear on what the skill does.
 - **No-op test, per sentence**: does this sentence change behaviour versus the agent's default?
   When a sentence fails, delete the whole sentence — don't trim words from it. "Be thorough" is a

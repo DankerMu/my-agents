@@ -19,10 +19,10 @@
 
 **压测门禁（EITHER/OR，必须留痕）**：进入 Stage 2 之前，对设计压测做出显式决策，二选一：
 
-- **跑**：用 `grill-me` 沿决策树逐分支压测（多轮、一次一问），把未言明假设、隐藏依赖和模糊边界逼清，再创建 OpenSpec change。**收敛判据与单独使用 grill-me 完全一致**：每个关键分支要么用户拍板、要么显式列为开放项，且用户明确确认共同理解（grill-me 铁律 7）——压测轮数由决策树的分支数决定，不由管道推进压力决定，"问了几个问题"不是 passed 的判据。启动 `full-pipeline.workflow.js` 时传逐分支凭证：`grillGate: { status: "passed", branches: [{ branch, decision, decidedBy: "user"|"fact-check" }], openItems: [...], userConfirmed: true }`。
-- **跳过**：阶段计划确实简单清晰时可以跳过，但必须写明理由，传 `grillGate: "skipped:<理由>"`。
+- **跑**：用 `grill-me` 沿决策树按前沿逐轮压测（每轮问完当前前沿、答完再算下一轮），把未言明假设、隐藏依赖和模糊边界逼清，再创建 OpenSpec change。**收敛判据与单独使用 grill-me 完全一致**：每个关键分支要么用户拍板、要么显式列为开放项，且用户明确确认共同理解（grill-me 铁律 7）——压测轮数由决策树的分支数决定，不由管道推进压力决定，"问了几个问题"不是 passed 的判据。启动 `full-pipeline.workflow.js` 时传逐分支凭证：`grillGate: { status: "passed", branches: [{ branch, decision, decidedBy: "user"|"fact-check" }], openItems: [...], userConfirmed: true }`。
+- **跳过**：阶段计划确实简单清晰时可以跳过，但**跳过是用户的决策，不是 agent 的**：agent 提议跳过并说明理由，用户在主会话明确同意后，才传 `grillGate: { status: "skipped", reason: "<理由>", approvedBy: "user", userConfirmed: true }`。agent 不得替用户填这个对象——门禁和豁免都由被门的一方一手写就，门就不存在。harness 提供 `AskUserQuestion` 类工具时，跳过提议必须经该工具提出，让"用户同意"留下工具调用记录而不只是对话散文。
 
-`full-pipeline.workflow.js` 校验该参数：缺失、格式不符或裸 `"passed"` 字符串**直接拒绝启动**——声明不是证据，逐分支清单才是；"忘了"和"敷衍跑两问"都不再是合法状态。注意时序：grill-me 的多轮盘问只能发生在主会话（Workflow 子代理无法与用户交互），必须在启动脚本之前完成，脚本内无法补跑。该决策以 `passed:branches=<n>,open=<n>` 或 `skipped:<理由>` 形态随 `logEntry.grill_gate` 落入 `docs/stage-pipeline-log.jsonl`，跳过率与压测深度均可审计。
+`full-pipeline.workflow.js` 校验该参数：缺失、格式不符、裸 `"passed"` 或裸 `"skipped:<理由>"` 字符串**直接拒绝启动**——声明不是证据，逐分支清单或用户批准的跳过对象才是；"忘了"、"敷衍跑两问"和"agent 自己决定不跑"都不再是合法状态。注意时序：grill-me 的多轮盘问只能发生在主会话（Workflow 子代理无法与用户交互），必须在启动脚本之前完成，脚本内无法补跑。该决策以 `passed:branches=<n>,open=<n>` 或 `skipped:user:<理由>` 形态随 `logEntry.grill_gate` 落入 `docs/stage-pipeline-log.jsonl`，跳过率与压测深度均可审计。
 
 **判断切入点**：如果 `openspec/changes/<name>/` 已存在且 `openspec status` 显示 artifacts complete，跳到 Stage 3。
 
@@ -32,11 +32,11 @@
 
 **目标**：生成 proposal → design → specs → tasks 四个 artifact。
 
-**Grill 清单是强制输入**（Stage 1 压测跑过时）：每个已拍板分支的结论必须落入对应 artifact——设计决策进 design.md 的技术决策，范围/边界类结论进 proposal 的 What Changes 或 Non-goals；每个开放项要么在 Stage 2 被解决，要么显式写成 proposal/design 的 open question 或 non-goal。压测结论不靠对话记忆传导：`full-pipeline` 会把 `grillGate` 凭证里的逐分支清单注入 Stage 3 审核 prompt，逐条核对——漂移、矛盾或开放项静默消失都是 finding。凭证以**启动时点**的最终共识为准：Stage 2 期间经用户确认的决策变更，先更新凭证里对应分支再启动——ledger 核对的是最终共识，不是 grill 时点的快照。
+**Grill 清单是强制输入**（Stage 1 压测跑过时）：每个已拍板分支的结论必须落入对应 artifact——设计决策进 design.md 的技术决策，范围/边界类结论进 proposal 的 What Changes 或 design.md 的 Non-Goals；每个开放项要么在 Stage 2 被解决，要么显式写成 design.md 的 open question 或 Non-Goals。压测结论不靠对话记忆传导：`full-pipeline` 会把 `grillGate` 凭证里的逐分支清单注入 Stage 3 审核 prompt，逐条核对——漂移、矛盾或开放项静默消失都是 finding。凭证以**启动时点**的最终共识为准：Stage 2 期间经用户确认的决策变更，先更新凭证里对应分支再启动——ledger 核对的是最终共识，不是 grill 时点的快照。
 
 **前置**：确认 `openspec` CLI 可用（`which openspec`），项目已初始化（`openspec/` 目录存在，否则执行 `openspec init --tools claude`）。
 
-**不可协商项**：按依赖顺序生成 proposal → design/specs → tasks，每个 artifact 撰写前先取 `openspec instructions <artifact> --change "<name>" --json`；design.md 必须含 **Sketch seams under test** 清单（自动、不设交互停点——优先已有 seam、用最高的 seam、越少越好，每个 seam 附一行理由；Stage 3 与下游 fixture review 检查它，清单随 fixture 流入 `subagent-workflow` 的 `Seams under test` 字段，实现期只消费不再谈判）；tasks.md 每个 task 组尾部必须带 `Suggested fixture level` 与 `Minimal mergeable slice` 两行契约声明（Stage 5 宽度门禁的输入，Review 3 审核其可信度）；收尾 `openspec status --change "<name>"` 确认 4/4 complete。
+**不可协商项**：按依赖顺序生成 proposal → design/specs → tasks，每个 artifact 撰写前先取 `openspec instructions <artifact> --change "<name>" --json`；**fog 两节**——design.md 必须含 `## Not yet specified` 与填实的 `## Goals / Non-Goals`（定义、open question / Not yet specified / Non-Goals 三者分工与"无"的写法见 stage-2-artifacts.md；Stage 3 核对两节存在且条目未被切成 spec/task）；design.md 必须含 **Sketch seams under test** 清单（自动、不设交互停点——优先已有 seam、用最高的 seam、越少越好，每个 seam 附一行理由；Stage 3 与下游 fixture review 检查它，清单随 fixture 流入 `subagent-workflow` 的 `Seams under test` 字段，实现期只消费不再谈判）；tasks.md 每个 task 组尾部必须带 `Suggested fixture level` 与 `Minimal mergeable slice` 两行契约声明（Stage 5 宽度门禁的输入，Review 3 审核其可信度）；收尾 `openspec status --change "<name>"` 确认 4/4 complete。
 
 逐 artifact 写法、命令骨架与支撑 skill 挂点（`future-aware-architecture`、`grill-me` docs 模式、`implementation-planning`）见 [stage-2-artifacts.md](stage-2-artifacts.md)。
 
@@ -58,9 +58,9 @@
 
    | 审核 | 视角 | 核心检查项 |
    |---|---|---|
-   | Review 1: 设计一致性 | change 文件 vs 设计文档 | 表名/字段/ENUM 拼写一致性、API 端点覆盖完整性、ID 规范合规、manifest 字段对齐 |
+   | Review 1: 设计一致性 | change 文件 vs 设计文档 | 表名/字段/ENUM 拼写一致性、API 端点覆盖完整性、ID 规范合规、manifest 字段对齐；fog 两节存在（design.md `## Not yet specified`、`## Goals / Non-Goals`，缺失 P1）且其条目未出现在 spec 中；`full-pipeline` 注入 grill 凭证时：passed 则核对每个开放项有唯一落点，skipped 则核对没有跳过理由罩不住的隐含决策 |
    | Review 2: Spec 完整性 | 各 spec 之间 + 对照实施计划 | Requirement-Scenario 完备性、WHEN/THEN 可测试性、边界条件覆盖、跨 spec 一致性、功能点遗漏 |
-   | Review 3: Tasks 可执行性 | tasks.md vs design + specs | 任务粒度、依赖顺序、spec 覆盖率、多余任务、验证方法明确性、技术决策落地；tasks.md 各 task 组契约声明的可信度——`Suggested fixture level` 与风险面相称（不因重要就抬档）、`Minimal mergeable slice` 声明的首刀真能独立合并保绿（`atomic` 声明有具体理由，不是省事默认）、两行声明缺失即 P0；**task 粒度过粗**——单个 task 跨越多条独立验证路径、或本身含可独立交付的子集，是 tasks.md 的粒度缺陷，在此修，不得留到 Stage 5 靠"1-3 个 tasks"的计数上限糊过去 |
+   | Review 3: Tasks 可执行性 | tasks.md vs design + specs | 任务粒度、依赖顺序、spec 覆盖率、多余任务、验证方法明确性、技术决策落地；**没有 task 在实现 design.md `## Not yet specified` 或 Non-Goals 里的条目**（有即 P1）；tasks.md 各 task 组契约声明的可信度——`Suggested fixture level` 与风险面相称（不因重要就抬档）、`Minimal mergeable slice` 声明的首刀真能独立合并保绿（`atomic` 声明有具体理由，不是省事默认）、两行声明缺失即 P0；**task 粒度过粗**——单个 task 跨越多条独立验证路径、或本身含可独立交付的子集，是 tasks.md 的粒度缺陷，在此修，不得留到 Stage 5 靠"1-3 个 tasks"的计数上限糊过去 |
 
 3. 并行 spawn 3 个 `reviewer` subagent（每路一个 brief），互不通信；每个都是只读 leaf——只审核、不改 change 文件、不嵌套发起本流水线。建议 task id：`review-design-consistency` / `review-spec-completeness` / `review-tasks-executability`。
 

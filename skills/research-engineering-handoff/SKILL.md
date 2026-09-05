@@ -3,7 +3,7 @@ name: research-engineering-handoff
 description: >
   Convert an approved research decision into a bounded engineering handoff preserving scientific intent, invariants, evidence oracles, and human decision authority. Invoke explicitly, typically from research-lifecycle before stage-change-pipeline.
 invocation_posture: manual-first
-version: 0.2.1
+version: 0.2.2
 ---
 
 # Research Engineering Handoff
@@ -156,7 +156,7 @@ Record one explicit gate decision on the handoff: `grill-me` when terminology
 is stable, `grill-me` docs mode when terms, process boundaries or durable
 decisions must persist to `openspec/glossary.md` / `docs/adr/`, or
 `skipped:<reason>` — only for genuinely narrow, low-impact work. A delegated
-grill stays interactive (one question at a time) and must not be simulated.
+grill stays interactive (the user answers each round) and must not be simulated.
 The canonical gate contract lives in `research-lifecycle`
 (`references/pressure-test-contract.md`).
 
@@ -198,7 +198,7 @@ skill owns the gate at the boundary:
 - the handoff's pressure-test record covers the scientific contract only; it
   does not satisfy the pipeline's own Stage-1 grill gate (`grillGate`). Decide
   that gate on the engineering design package in its own right — run it, or
-  skip with a recorded reason.
+  have the user approve a recorded skip (the agent never skips it alone).
 
 The resulting OpenSpec change must:
 

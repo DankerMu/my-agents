@@ -3,7 +3,7 @@
   "name": "research-engineering-handoff",
   "displayName": "Research Engineering Handoff",
   "description": "Convert an approved research decision into a bounded engineering handoff preserving scientific intent, invariants, evidence oracles, and human decision authority. Invoke explicitly, typically from research-lifecycle before stage-change-pipeline.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "maturity": "experimental",
   "categories": ["research", "workflow", "coding"],
   "tags": [

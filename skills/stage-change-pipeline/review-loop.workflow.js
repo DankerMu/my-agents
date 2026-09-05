@@ -125,6 +125,7 @@ const REVIEWERS = [
 Design docs: ${designDocs}
 
 Focus: table/field/ENUM naming consistency across proposal, design, specs, tasks; API endpoint coverage; ID spec compliance; manifest field alignment.
+Fog sections: design.md must contain \`## Not yet specified\` (in-scope work the design can see coming but cannot yet state sharply) and \`## Goals / Non-Goals\` with its Non-Goals part filled in (work ruled out of this change); "none"/"无" is a valid entry for either. A missing section is P1. Anything listed in either section that also appears as a spec requirement is a finding.
 
 Return P0/P1 findings with IDs prefixed "DC-". Each finding needs: id, severity, title, failureClass (from the risk-adaptive-cross-review finding-contract Failure-Class Vocabulary — commonly design-consistency / spec-completeness / task-executability), evidence (quote the inconsistency with file paths), impact (what breaks if left unfixed), fixDirection.
 Reject vague or style-only observations — only concrete, anchored issues with file-level evidence.`
@@ -147,6 +148,7 @@ Design docs: ${designDocs}
 Focus: every spec requirement maps to a task; task granularity (single-session); dependency ordering; no orphan tasks; verification methods clear; design decisions reflected.
 Contract lines: every task group in tasks.md must end with two contract lines — \`Suggested fixture level: <none|compact|expanded> - <reason>\` and \`Minimal mergeable slice: <first-slice or atomic: reason>\`. Missing lines are P0. Audit their credibility: fixture level proportionate to the actual risk surface (not inflated because the work feels important); the declared first slice genuinely mergeable and green on its own; \`atomic\` claims backed by a concrete reason, not a convenience default.
 Coarse tasks: a single task that spans multiple independent verification paths or contains an independently deliverable subset is a tasks.md granularity defect — flag it here; Stage 5 must not absorb it via the "1-3 tasks" ceiling.
+Fog: no task may implement an item listed in design.md \`## Not yet specified\` or its Non-Goals — such a task is P1.
 
 Return P0/P1 findings with IDs prefixed "TE-". Each finding needs: id, severity, title, failureClass (from the risk-adaptive-cross-review finding-contract Failure-Class Vocabulary — commonly design-consistency / spec-completeness / task-executability), evidence (quote the gap with file paths), impact (what breaks if left unfixed), fixDirection.
 Reject vague or style-only observations — only concrete, anchored issues.`
