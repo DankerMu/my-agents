@@ -137,6 +137,20 @@ def test_future_round_pending_passes(tmp_path):
     assert run(tmp_path, "--file", str(body)) == 0
 
 
+def test_correction_ledger_line_with_status_like_reason_passes(tmp_path):
+    # The CORRECTION line keeps free text ahead of its `round N` field, so a reason that
+    # starts with a round-status trigger word cannot land inside the round-status window.
+    open_gate_with_rounds(tmp_path, 2)
+    assert review_gate.main([
+        "--root", str(tmp_path), "correct-round", "--round", "2", "--sha", "sha2-fixed",
+        "--reason", "pending re-review: reviewers read the pre-fix head, not yet the fixed one",
+    ]) == 0
+    text = (review_dir(tmp_path) / review_gate.LEDGER_NAME).read_text(encoding="utf-8")
+    assert "CORRECTION |" in text and "round 2" in text
+    body = write(tmp_path / "pr-body.md", "Round 3 pending on the corrected head.\n")
+    assert run(tmp_path, "--file", str(body)) == 0
+
+
 def test_no_state_file_skips_round_check_but_runs_others(tmp_path):
     body = write(tmp_path / "pr-body.md", "Round 1 pending.\nManifest: <command>\n")
     assert run(tmp_path, "--file", str(body)) == 2  # placeholder still caught

@@ -27,15 +27,27 @@ the anchor (a prior ceiling) derives from not-clean rounds and cannot be
 label-gamed, and the escape hatch keeps a genuinely recurring invariant from
 being forced into a forbidden split without a human in the loop.
 
+Round SHA correction (0.32.0): a round's SHA is audit-only (no gate math
+reads it), but the ledger is the accountability trail, so a misrecorded SHA
+gets a supported, append-only fix: `correct-round --round N --sha SHA
+--reason TEXT` keeps the old value under the round's `shaCorrections`,
+updates the effective `sha`, and appends one `CORRECTION` ledger line. It
+never rewrites an existing ledger line and never touches counters, metrics,
+repeats, locks, or budgets. `record-round --clean` refuses any explicit
+finding argument (`--verified`, `--highest`, `--classes`) instead of silently
+discarding it: clean means zero FIX_NOW findings, so those values have no
+place to go.
+
 Commands:
-  open         --pr N [--issue N] [--review-dir PATH]
-  record-round --sha SHA (--clean | --not-clean) [--verified N]
-               [--highest critical|major|minor|none] [--classes a,b]
-  record-retro --path FILE --shape breadth|depth|noise|converging
+  open          --pr N [--issue N] [--review-dir PATH]
+  record-round  --sha SHA (--clean | --not-clean) [--verified N]
+                [--highest critical|major|minor|none] [--classes a,b]
+  correct-round --round N --sha SHA --reason TEXT
+  record-retro  --path FILE --shape breadth|depth|noise|converging
                [--user-approved TEXT]
-  lock         --reason TEXT        (working-day / same-invariant triggers)
-  status       [--assert-unlocked]
-  close        [--outcome merged|superseded-by-split|abandoned|descoped]
+  lock          --reason TEXT        (working-day / same-invariant triggers)
+  status        [--assert-unlocked]
+  close         [--outcome merged|superseded-by-split|abandoned|descoped]
 
 Exit codes: 0 = ok/unlocked, 2 = refused or locked (attention required).
 """
@@ -284,6 +296,15 @@ def cmd_record_round(args) -> int:
         print("review_gate: --not-clean requires --verified >= 1, --highest, and --classes "
               "(a not-clean round has at least one actionable finding)", file=sys.stderr)
         return 2
+    if clean and (args.verified is not None or args.highest != "none" or classes):
+        given = [flag for flag, present in (("--verified", args.verified is not None),
+                                            ("--highest", args.highest != "none"),
+                                            ("--classes", bool(classes))) if present]
+        print(f"review_gate: refused - --clean conflicts with {', '.join(given)}. A clean round means "
+              "zero FIX_NOW findings (0 / none / []); routed P2 deferrals live in the loop-log "
+              "residual_deferred and the evidence bundle, not in these fields. Nothing was recorded: "
+              "drop the finding arguments or record the round --not-clean.", file=sys.stderr)
+        return 2
     rd = {
         "n": (state["rounds"][-1]["n"] + 1) if state["rounds"] else 1,
         "sha": args.sha,
@@ -320,6 +341,36 @@ def cmd_record_round(args) -> int:
     if locked:
         print(f"review_gate: GATE LOCKED - {reason}", file=sys.stderr)
         return 2
+    return 0
+
+
+def cmd_correct_round(args) -> int:
+    state = load_state(args.root)
+    reason = (args.reason or "").strip()
+    rounds = state["rounds"]
+    if not any(rd["n"] == args.round for rd in rounds):
+        recorded = ", ".join(str(rd["n"]) for rd in rounds) or "none"
+        print(f"review_gate: refused - round {args.round} is not recorded (recorded rounds: {recorded})",
+              file=sys.stderr)
+        return 2
+    if not reason:
+        print("review_gate: refused - --reason must explain the correction (it is appended to the ledger "
+              "for audit)", file=sys.stderr)
+        return 2
+    rd = next(rd for rd in rounds if rd["n"] == args.round)
+    old_sha = rd["sha"]
+    if args.sha == old_sha:
+        print(f"review_gate: refused - round {args.round} already records sha {old_sha}; nothing to correct",
+              file=sys.stderr)
+        return 2
+    rd.setdefault("shaCorrections", []).append({"from": old_sha, "to": args.sha, "reason": reason})
+    rd["sha"] = args.sha
+    save_state(args.root, state)
+    # Free text stays ahead of the round field so a status-like reason cannot land inside
+    # evidence_check's `round N ... pending` window; the line never starts with `Round`.
+    line = f"CORRECTION | sha {old_sha} -> {args.sha} | reason: {reason} | round {rd['n']}"
+    append_ledger(args.root, state, line)
+    print(line)
     return 0
 
 
@@ -460,6 +511,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--highest", choices=SEVERITIES, default="none")
     p.add_argument("--classes", default="", help="comma-separated failure classes")
     p.set_defaults(fn=cmd_record_round)
+
+    p = sub.add_parser("correct-round", help="correct a misrecorded round SHA (append-only, audit-preserving)")
+    p.add_argument("--round", type=int, required=True, help="round number as recorded in the ledger")
+    p.add_argument("--sha", required=True, help="the SHA the reviewers actually reviewed")
+    p.add_argument("--reason", required=True, help="why the recorded SHA was wrong; appended to the ledger")
+    p.set_defaults(fn=cmd_correct_round)
 
     p = sub.add_parser("record-retro", help="register a persisted Review Failure Retro")
     p.add_argument("--path", required=True)

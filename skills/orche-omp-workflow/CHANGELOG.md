@@ -5,6 +5,17 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-05
+
+### Added
+
+- `scripts/review_gate.py correct-round --round <N> --sha <sha> --reason <text>`：与 `subagent-workflow` 0.32.0 同批（动机 DankerMu/my-agents#1）。轮次 SHA 的 append-only 更正：旧值/新值/理由进该 round 的 `shaCorrections`，有效 `sha` 更新，ledger 追加一条 `CORRECTION | sha <old> -> <new> | reason: <text> | round <N>` 行，不改写原 round 行，不动轮次、metrics、repeats、lock、budget。轮次不存在、理由为空、SHA 相同均 exit 2 且状态不变。脚本与 `tests/test_review_gate.py` 仍与 `subagent-workflow` 逐字节相同；`tests/test_evidence_check.py` 新增 CORRECTION 行不触发 round-status 误报的用例。
+
+### Fixed
+
+- `record-round --clean` 与显式 `--verified` / 非 `none` 的 `--highest` / 非空 `--classes` 组合时 exit 2、不写 state/ledger（同 #1）。裸 `--clean` 行为不变。
+- Phase 2 是唯一的独立本地验证重跑；omp reviewer / verifier task brief 禁止跑套件与 CI-equivalent 命令（同 `subagent-workflow` 0.32.0，动机 DankerMu/my-agents#2）。`phase-flow.md` Phase 2 去重后串行跑一次；`phase-4-cross-review.md` 两个 brief 的 `Rules:` 各加一条禁止规则，`Inputs:` 新增 `Phase 2 verification evidence`。`gates.md` 同步 CLI 段落。
+
 ## [0.2.2] - 2026-09-02
 
 ### Fixed
