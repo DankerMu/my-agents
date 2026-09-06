@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-09-05
+
+### Fixed
+
+- 路由残留：`entropy-review` 已于 `review` 0.8.0 并入其 consistency 模式，When-not-to-use 与 Related 两处改为 `repo-entropy-audit`（全仓库广度）/ `review` consistency 模式（变更集级）。
+
 ## [0.5.0] - 2026-07-16
 
 ### Changed

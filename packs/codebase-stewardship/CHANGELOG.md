@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-09-05
+
+### Fixed
+
+- README 与实际成员对齐：与 `agentic-issue-delivery` 的重叠改为按两份 `pack.json` 实算（`future-aware-architecture`、`grill-me`、`blind-spot-pass`、`clarify`、`gh-create-issue`、`explorer`），`repo-entropy-audit` 自 AID 0.12.0 起不再重叠。`review` consistency 模式标注"不在本包"（两个 pack 都不捆绑它）；"搭配 agentic-issue-delivery"一节改写：交付内一致性守门是 Phase 4 cross-review 经 `risk-adaptive-cross-review` finding contract 的 crosswalk，而非 `review`。
+
 ## [0.6.0] - 2026-09-05
 
 ### Changed

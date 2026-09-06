@@ -8,7 +8,7 @@ description: >
   不用于纯需求澄清（用 clarify）或纯方向选型（用 future-aware-architecture）。
 disable-model-invocation: true
 invocation_posture: manual
-version: 0.5.0
+version: 0.5.1
 ---
 
 # Improve Codebase Architecture
@@ -42,7 +42,7 @@ version: 0.5.0
 
 - 纯需求澄清（把模糊需求变 actionable scope）→ `clarify`
 - 纯架构方向 / 技术选型 → `future-aware-architecture`
-- 全仓库的乱与冗余清理（广度扫描）→ `repo-entropy-audit` / `entropy-review`；本 skill 专攻模块深浅这条轴
+- 全仓库的乱与冗余清理（广度扫描）→ `repo-entropy-audit`；本 skill 专攻模块深浅这条轴
 
 ## Process
 
@@ -120,7 +120,7 @@ Grilling 落定、用户要执行时，不要在本 skill 内实现——本 ski
 
 - `grill-me`（docs 模式）：本 skill 复用其 `openspec/glossary.md` / `docs/adr/` 落点与术语/ADR 纪律；grilling loop 与它同源。
 - `future-aware-architecture`：定架构方向与可逆性；本 skill 在既定方向内找模块深化机会。
-- `repo-entropy-audit` / `entropy-review`：治全仓库的乱与冗余（广度）；本 skill 深化模块、提升可测试性（深度）。
+- `repo-entropy-audit`（全仓库广度）/ `review` consistency 模式（变更集级）：治乱与冗余；本 skill 深化模块、提升可测试性（深度）。
 - `gh-create-issue` / `stage-change-pipeline`：第 4 步 Handoff 的出口，把落定的 deepening 变成可追踪的交付工作项。
 - `explorer` subagent：第 1 步 codebase 遍历的执行者。
 

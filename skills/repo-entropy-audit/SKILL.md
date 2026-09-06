@@ -12,7 +12,7 @@ description: >-
   or control-plane audit (use eng-init).
 disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.5.0
+version: 0.5.1
 ---
 
 # Repo Entropy Audit
@@ -172,8 +172,8 @@ Rank cleanup targets by (impact × inverse effort):
 For each target, suggest which tool or skill can help:
 - Naming unification → refactoring task
 - Error model → `review` + architecture decision
-- Structural issues → `implementation-planning` for phased refactor
-- Doc gaps → `project-documentation` or `eng-init`
+- Structural issues → `implementation-planning` for phased refactor (installed with `agentic-issue-delivery`, not this pack)
+- Doc gaps → `project-documentation` (installed with `agentic-issue-delivery`) or `eng-init`
 
 After the user confirms the priority list, offer to make the top targets trackable instead of leaving them as report-only recommendations: `gh-create-issue` for direct cleanup issues (epic + sub-issues for multi-module efforts), or `stage-change-pipeline` when a target needs a reviewed OpenSpec change and design review before implementation. Do not start implementing cleanups inside the audit. Sequence this after Phase 4: record the baseline snapshot first, then create the issues or route to the pipeline, so every tracked item points back to a committed audit trail.
 

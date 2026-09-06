@@ -28,12 +28,12 @@ agentic-issue-delivery（把改进落成 reviewed PR）
    `improve-codebase-architecture` 的 grilling loop 与 `stage-change-pipeline` 的 Stage 1 压测门禁 / Stage 2 领域建模是同一套 grill 机制。治理阶段 grill 出的 deepening 决策，可以无缝变成交付阶段的 design 输入。
 
 3. **熵守门分内外两层。**
-   - `review` consistency 模式（per-change）内嵌在 `subagent-workflow` 里，交付每次变更时实时守门。
+   - per-change 守门是 `subagent-workflow` Phase 4 cross-review 本身：`risk-adaptive-cross-review` 的 finding contract 把一致性轴（命名漂移 / 错误模型分叉 / 状态分裂 / 重复 / 依赖方向）crosswalk 成 `conventions` / `contract` / `state-transition` / `reuse` / `altitude` 失效类，reviewer 席位直接报出。独立的 `review` consistency 模式不在流水线里，也不在任一 pack 中，由 `ask-danker` 按需路由。
    - `repo-entropy-audit`（全仓库）在交付之外周期性跑，产出下一轮治理 backlog。
 
 ## 什么时候用哪个
 
-- **有明确任务**（实现某 feature / fix）→ 直接走 `agentic-issue-delivery`，治理只在内部（`review` consistency 模式）守门。
+- **有明确任务**（实现某 feature / fix）→ 直接走 `agentic-issue-delivery`，治理只在内部（Phase 4 cross-review 的一致性 crosswalk）守门。
 - **没有具体任务**（技术债盘点 / 发布前体检 /"这块架构该改了"）→ 先用 `codebase-stewardship` 产出改进 backlog + 沉淀 glossary/ADR，再转 `agentic-issue-delivery` 落地。
 
 ## 端到端示例：一处架构债的闭环
@@ -41,11 +41,11 @@ agentic-issue-delivery（把改进落成 reviewed PR）
 1. **体检**：`repo-entropy-audit` 周期扫描，热力图标出某模块为熵热点。
 2. **诊断 + 定方案**：`improve-codebase-architecture` Step 1 用 `explorer` 扫描，`deletion test` 确认它是 shallow module；产出 HTML 评审，进入 grilling loop 定下 deepening 决策；新模块命名写入 `openspec/glossary.md`，被否决的替代方案（够三门槛）落 `docs/adr/`。
 3. **转交付**：把 deepening 决策作为设计输入进 `stage-change-pipeline` Stage 1-2 → 生成遵守 glossary/ADR 的 OpenSpec change → 拆成细粒度、小 PR 边界的 issue。
-4. **执行**：`subagent-workflow` 跑每个 issue —— `implementer` 实现 → Phase 4 cross-review（`reviewer` spawn `explorer` 深挖调用链）→ Phase 4.5 `verifier` 裁定 → `review` consistency 模式守门 → verified PR。
+4. **执行**：`subagent-workflow` 跑每个 issue —— `implementer` 实现 → Phase 4 cross-review（`reviewer` spawn `explorer` 深挖调用链）→ Phase 4.5 `verifier` 裁定 → verified PR；一致性漂移在 Phase 4 以 `conventions` / `reuse` 等失效类报出，不另起一遍。
 5. **回流**：合并后的代码变化进入下一轮 `repo-entropy-audit`，闭环继续。
 
 ## 成员重叠说明
 
-`entropy-review`、`repo-entropy-audit`、`future-aware-architecture`、`grill-me`、`clarify` 同时出现在两个 pack：在 `agentic-issue-delivery` 里作交付支撑，在 `codebase-stewardship` 里作治理核心。skill 在 my-agents 里是**引用而非拷贝**，重叠维护成本≈0，且保证两条线共用同一套定义。
+`future-aware-architecture`、`grill-me`、`blind-spot-pass`、`clarify`、`gh-create-issue` 与 `explorer` agent 同时出现在两个 pack（`repo-entropy-audit` 与 `improve-codebase-architecture` 只在 stewardship）：在 `agentic-issue-delivery` 里作交付支撑，在 `codebase-stewardship` 里作治理核心。skill 在 my-agents 里是**引用而非拷贝**，重叠维护成本≈0，且保证两条线共用同一套定义。
 
 一句话：**stewardship 出"该改什么"和"健康基线"，delivery 出"reviewed PR"，`openspec/glossary.md` + `docs/adr/` 是它们之间的合同。**

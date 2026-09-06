@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.15.1] - 2026-09-05
+
+### Fixed
+
+- Pack docs re-aligned with the actual membership and workflow: `review` is in neither this pack (removed at 0.12.0) nor `codebase-stewardship`, and `subagent-workflow` never invokes it — the in-delivery consistency gate is Phase 4 cross-review through `risk-adaptive-cross-review`'s finding-contract crosswalk, so the "Pairs With" section now says so and points `review` consistency mode at `ask-danker` routing. `pack.json` description drops "whole-repo entropy governance" (`repo-entropy-audit` left this pack at 0.12.0). Hooks section lists `review-gate` (a member since 0.14.0, missing from the README).
+
 ## [0.15.0] - 2026-07-29
 
 ### Changed
