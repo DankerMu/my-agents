@@ -19,6 +19,15 @@ evidence checklist, version 0.24.0):
   and ad-hoc labels rejected), outcome vocabulary, date format, required keys;
   merged lines need gate_net_catch/verdicts, terminal outcomes are exempt;
   works standalone without --file.
+- R7 catch schema (0.31.1): on a merged line every `catches[i]` must carry a
+  non-negative integer `round` (`0` = fixture review, bool rejected) and a
+  non-empty string `lens`; each violation is one finding naming `catches[i]`.
+- R8 lens vocabulary and seat caps (0.33.0): `catches[i].lens` is exactly one
+  canonical lens id - a seat lens or a phase lens - never an `a+b` pair; when
+  `round_lenses` is present each seat is a canonical id or `a+b` pair, no lens
+  sits in two seats of one round, round 1 is within the fixture level's cap
+  (none 1, compact 2, expanded 3, high/broad-expanded 4), later rounds within
+  3, and the list length equals `rounds`.
 """
 
 from __future__ import annotations
@@ -48,8 +57,8 @@ def open_gate_with_rounds(root: Path, n: int) -> None:
     assert review_gate.main(["--root", str(root), "open", "--pr", "7"]) == 0
     for i in range(n):
         assert review_gate.main([
-            "--root", str(root), "record-round", "--sha", f"sha{i}", "--not-clean",
-            "--verified", "1", "--highest", "minor", "--classes", f"c{i}",
+            "--root", str(root), "record-round", "--sha", f"sha{i}", "--lenses", "correctness",
+            "--not-clean", "--verified", "1", "--highest", "minor", "--classes", f"c{i}",
         ]) == 0
 
 
@@ -178,7 +187,7 @@ def lock_gate(root: Path) -> None:
     """Three not-clean rounds; the third locks the gate (its exit code 2 is the lock signal)."""
     open_gate_with_rounds(root, 2)
     assert review_gate.main([
-        "--root", str(root), "record-round", "--sha", "sha2", "--not-clean",
+        "--root", str(root), "record-round", "--sha", "sha2", "--lenses", "correctness", "--not-clean",
         "--verified", "1", "--highest", "minor", "--classes", "c2",
     ]) == 2
 
@@ -249,3 +258,177 @@ def test_malformed_or_missing_entry_file_fails(tmp_path):
     bad = write(tmp_path / "pending-line.json", "{not json\n")
     assert run(tmp_path, "--loop-log-entry", str(bad)) == 2
     assert run(tmp_path, "--loop-log-entry", str(tmp_path / "absent.json")) == 2
+
+
+# --- R7 catch schema ------------------------------------------------------------
+
+
+GOOD_CATCH = {"round": 2, "lens": "correctness", "class": "spec-drift", "severity": "major"}
+
+
+def catch_findings(tmp_path, capsys, catch: object) -> list[str]:
+    """Run one entry whose catches[1] is `catch`; return the [loop-log] findings."""
+    path = entry(tmp_path, catches=[GOOD_CATCH, catch])
+    assert run(tmp_path, "--loop-log-entry", str(path)) == 2
+    return [line for line in capsys.readouterr().out.splitlines() if "[loop-log]" in line]
+
+
+def assert_single_catch_finding(tmp_path, capsys, catch: object, expected: str) -> None:
+    found = catch_findings(tmp_path, capsys, catch)
+    assert len(found) == 1, found
+    assert "catches[1]" in found[0], found[0]
+    assert expected in found[0], found[0]
+
+
+def test_compliant_catches_pass(tmp_path):
+    catches = [{"round": 0, "lens": "fixture-review", "class": "test-semantics", "severity": "P2"},
+               GOOD_CATCH]
+    assert run(tmp_path, "--loop-log-entry", str(entry(tmp_path, catches=catches))) == 0
+
+
+def test_catch_missing_round_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"lens": "correctness", "class": "c", "severity": "minor"},
+                                "missing `round`")
+
+
+def test_catch_missing_lens_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"round": 2, "class": "c", "severity": "minor"},
+                                "missing `lens`")
+
+
+def test_catch_string_round_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"round": "2", "lens": "correctness", "class": "c"},
+                                "round must be a non-negative integer")
+
+
+def test_catch_negative_round_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"round": -1, "lens": "correctness", "class": "c"},
+                                "round must be a non-negative integer")
+
+
+def test_catch_bool_round_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"round": True, "lens": "correctness", "class": "c"},
+                                "round must be a non-negative integer")
+
+
+def test_catch_empty_lens_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"round": 2, "lens": "", "class": "c"},
+                                "lens must be a non-empty string")
+
+
+def test_non_mapping_catch_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys, "round3-p0-legacy-string",
+                                "must be an object")
+
+
+def test_catches_must_be_a_list(tmp_path, capsys):
+    path = entry(tmp_path, catches={"round": 2, "lens": "correctness"})
+    assert run(tmp_path, "--loop-log-entry", str(path)) == 2
+    assert "catches must be a list" in capsys.readouterr().out
+
+
+def test_catch_lens_off_vocabulary_fails(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"round": 2, "lens": "security", "class": "c"},
+                                "off-vocabulary")
+
+
+def test_catch_lens_pair_is_rejected(tmp_path, capsys):
+    assert_single_catch_finding(tmp_path, capsys,
+                                {"round": 2, "lens": "test-evidence+spec-compliance", "class": "c"},
+                                "never to an `a+b` seat pair")
+
+
+def test_catch_phase_lenses_pass(tmp_path):
+    catches = [{"round": 0, "lens": "fixture-review", "class": "c", "severity": "P2"},
+               {"round": 2, "lens": "final-review", "class": "c", "severity": "P1"},
+               {"round": 2, "lens": "gap-sweep", "class": "c", "severity": "P1"},
+               {"round": 1, "lens": "invariant-audit", "class": "c", "severity": "P1"}]
+    assert run(tmp_path, "--loop-log-entry", str(entry(tmp_path, catches=catches))) == 0
+
+
+# --- R8 round_lenses seat caps ------------------------------------------------
+
+
+HIGH_SEATS = ["correctness", "invariant-state", "test-evidence+spec-compliance", "security-perf+integration"]
+
+
+def lens_findings(tmp_path, capsys, **overrides) -> list[str]:
+    path = entry(tmp_path, **overrides)
+    rc = run(tmp_path, "--loop-log-entry", str(path))
+    found = [line for line in capsys.readouterr().out.splitlines() if "round_lenses" in line]
+    assert (rc == 2) == bool(found), (rc, found)
+    return found
+
+
+def test_valid_seat_plan_passes(tmp_path, capsys):
+    assert lens_findings(tmp_path, capsys, fixture="high", rounds=3,
+                         round_lenses=[HIGH_SEATS, ["correctness", "invariant-state"], ["correctness"]]) == []
+
+
+def test_round1_over_fixture_cap_fails(tmp_path, capsys):
+    five = HIGH_SEATS[:3] + ["security-perf", "integration"]
+    found = lens_findings(tmp_path, capsys, fixture="high", rounds=1, round_lenses=[five])
+    assert len(found) == 1 and "ran 5 seats; the round-1 cap for `high` is 4" in found[0]
+    found = lens_findings(tmp_path, capsys, fixture="expanded", rounds=1, round_lenses=[HIGH_SEATS])
+    assert len(found) == 1 and "cap for `expanded` is 3" in found[0]
+
+
+def test_review_prefix_and_long_alias_accepted_in_round_lenses(tmp_path, capsys):
+    assert lens_findings(tmp_path, capsys, fixture="high", rounds=1, round_lenses=[[
+        "review-correctness", "review-invariant-state", "review-test-evidence+review-spec-compliance",
+        "security-performance+integration"]]) == []
+    found = lens_findings(tmp_path, capsys, fixture="high", rounds=1,
+                          round_lenses=[["review-correctness", "review-correctness"]])
+    assert len(found) == 1 and "more than one seat" in found[0]
+
+
+def test_none_level_allows_one_seat(tmp_path, capsys):
+    assert lens_findings(tmp_path, capsys, fixture="none", rounds=1, round_lenses=[["correctness+test-evidence"]]) == []
+    found = lens_findings(tmp_path, capsys, fixture="none", rounds=1, round_lenses=[["correctness", "integration"]])
+    assert len(found) == 1 and "cap for `none` is 1" in found[0]
+
+
+def test_later_round_over_three_fails(tmp_path, capsys):
+    found = lens_findings(tmp_path, capsys, fixture="high", rounds=2, round_lenses=[HIGH_SEATS, HIGH_SEATS])
+    assert len(found) == 1 and "[1] (round 2) ran 4 seats; post-fix rounds are capped at 3" in found[0]
+
+
+def test_seat_off_vocabulary_and_duplicate_lens_fail(tmp_path, capsys):
+    found = lens_findings(tmp_path, capsys, fixture="expanded", rounds=1,
+                          round_lenses=[["correctness", "security", "test-evidence+correctness"]])
+    assert any("off-vocabulary lens id `security`" in f for f in found)
+    assert any("lens `correctness` sits in more than one seat" in f for f in found)
+
+
+def test_round_lenses_length_must_match_rounds(tmp_path, capsys):
+    found = lens_findings(tmp_path, capsys, fixture="high", rounds=3, round_lenses=[HIGH_SEATS])
+    assert len(found) == 1 and "lists 1 round(s) but `rounds` is 3" in found[0]
+
+
+def test_round_lenses_shape_errors(tmp_path, capsys):
+    assert lens_findings(tmp_path, capsys, rounds=1, round_lenses="correctness")[0].endswith(
+        "must be a list of per-round seat lists")
+    found = lens_findings(tmp_path, capsys, rounds=1, round_lenses=["correctness"])
+    assert "must be a list of non-empty seat strings" in found[0]
+
+
+def test_round_lenses_checked_on_terminal_lines_too(tmp_path, capsys):
+    found = lens_findings(tmp_path, capsys, outcome="ceiling-split", gate_net_catch=None, verdicts=None,
+                          residual_deferred=None, premerge_skip_blocks=None, fixture="compact", rounds=5,
+                          round_lenses=[HIGH_SEATS] + [["correctness"]] * 4)
+    assert len(found) == 1 and "cap for `compact` is 2" in found[0]
+
+
+def test_terminal_outcome_catches_not_schema_checked(tmp_path):
+    """Terminal lines are exempt from the merged-line keys and from this schema."""
+    line = entry(tmp_path, outcome="abandoned", gate_net_catch=None, verdicts=None,
+                 residual_deferred=None, premerge_skip_blocks=None,
+                 catches=[{"phase": "cross-review", "class": "c"}])
+    assert run(tmp_path, "--loop-log-entry", str(line)) == 0

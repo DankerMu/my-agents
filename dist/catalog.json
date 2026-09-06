@@ -533,7 +533,7 @@
       "path": "skills/orche-omp-workflow",
       "displayName": "Orchestrated omp Issue Workflow",
       "description": "GitHub issue → verified PR workflow where Claude Code / Codex orchestrates and omp (oh-my-pi) executes: codebase exploration, implementation, cross-review, and finding verification are delegated to omp explorer/implementer/reviewer/verifier sessions through codeagent-wrapper, while Phase 7 final review stays a native subagent. Mandatory OpenSpec fixtures, risk-adaptive review, CI, human-gated merge. Use when the issue loop should run on omp (\"用 omp 跑这个 issue\", \"omp 实现 #XX\"). Not for docs/spec-only work, hotfixes that skip review, or all-native runs (use subagent-workflow).",
-      "version": "0.3.1",
+      "version": "0.4.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -812,7 +812,7 @@
       "path": "skills/risk-adaptive-cross-review",
       "displayName": "Risk-Adaptive Cross Review",
       "description": "Multi-perspective, risk-adaptive review for PRs, diffs, branches, OpenSpec changes, or stage artifacts — reviewers split across correctness, integration, security/performance, test evidence, spec compliance, or invariant/state-machine compatibility. Use on explicit asks for risk-adaptive, multi-perspective, parallel, cross-review, or high-risk PR review. Not for ordinary quick review.",
-      "version": "0.4.2",
+      "version": "0.5.0",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -973,7 +973,7 @@
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
       "description": "GitHub issue → verified PR workflow: the orchestrator delegates implementation, cross-review, and finding verification to the implementer/reviewer/verifier subagents, with mandatory OpenSpec fixtures, risk-adaptive review, CI, and human-gated merge. Use to implement a GitHub issue or process the next DAG issue (\"implement #XX\", \"处理下一个issue\"). Not for docs/spec-only work, hotfixes that skip review, or Codex-implements-under-Claude-orchestration (use cc-cx-workflow).",
-      "version": "0.32.1",
+      "version": "0.33.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1654,5 +1654,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-09-06T00:23:12.023Z"
+  "generatedAt": "2026-09-06T01:50:12.253Z"
 }

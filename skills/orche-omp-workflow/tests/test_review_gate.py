@@ -40,6 +40,14 @@ Phase 4/5/6.5, versions 0.20.0/0.21.0):
   leaves round count, metrics, repeats, lock state, and retro budget
   untouched. Unknown round, empty reason, or identical SHA are refused with
   no state change. Corrections are bookkeeping and stay allowed while locked.
+- Reviewer seat caps (0.33.0): `record-round --lenses a,b+c` is required; an
+  off-vocabulary lens id, a lens seated twice, or an empty list is refused
+  with nothing recorded (paperwork). A round with more seats than its cap
+  (round 1: fixture level from `open --fixture` - none 1, compact 2,
+  expanded 3, high/broad-expanded 4, or 4 when omitted; later rounds 3) is
+  recorded, tagged `seatCapExceeded`, appends a VIOLATION ledger line, and
+  exits 2 - the round already spent its tokens. The ledger line carries the
+  seat list.
 """
 
 from __future__ import annotations
@@ -65,15 +73,16 @@ def ledger(root: Path) -> str:
     return (root / ".workplans/pr-7/review/round-ledger.log").read_text(encoding="utf-8")
 
 
-def open_gate(root: Path) -> None:
-    assert run(root, "open", "--pr", "7") == 0
+def open_gate(root: Path, fixture: str | None = None) -> None:
+    extra = ["--fixture", fixture] if fixture else []
+    assert run(root, "open", "--pr", "7", *extra) == 0
 
 
 def record(root: Path, sha: str, *, clean: bool = False, verified: int = 1,
-           highest: str = "major", classes: str = "misc") -> int:
+           highest: str = "major", classes: str = "misc", lenses: str = "correctness") -> int:
     if clean:
-        return run(root, "record-round", "--sha", sha, "--clean")
-    return run(root, "record-round", "--sha", sha, "--not-clean",
+        return run(root, "record-round", "--sha", sha, "--lenses", lenses, "--clean")
+    return run(root, "record-round", "--sha", sha, "--lenses", lenses, "--not-clean",
                "--verified", str(verified), "--highest", highest, "--classes", classes)
 
 
@@ -342,7 +351,7 @@ def test_manual_lock_blocks_until_retro(tmp_path):
 
 def test_not_clean_requires_finding_fields(tmp_path):
     open_gate(tmp_path)
-    assert run(tmp_path, "record-round", "--sha", "a", "--not-clean") == 2
+    assert run(tmp_path, "record-round", "--sha", "a", "--lenses", "correctness", "--not-clean") == 2
     assert state(tmp_path)["rounds"] == []
 
 
@@ -451,7 +460,7 @@ def _ledger_or_none(root: Path) -> str | None:
 
 def test_clean_with_explicit_verified_zero_is_refused(tmp_path, capsys):
     open_gate(tmp_path)
-    assert run(tmp_path, "record-round", "--sha", "a", "--clean", "--verified", "0") == 2
+    assert run(tmp_path, "record-round", "--sha", "a", "--lenses", "correctness", "--clean", "--verified", "0") == 2
     assert state(tmp_path)["rounds"] == []
     assert _ledger_or_none(tmp_path) is None
     err = capsys.readouterr().err
@@ -460,7 +469,7 @@ def test_clean_with_explicit_verified_zero_is_refused(tmp_path, capsys):
 
 def test_clean_with_highest_is_refused(tmp_path, capsys):
     open_gate(tmp_path)
-    assert run(tmp_path, "record-round", "--sha", "a", "--clean", "--highest", "minor") == 2
+    assert run(tmp_path, "record-round", "--sha", "a", "--lenses", "correctness", "--clean", "--highest", "minor") == 2
     assert state(tmp_path)["rounds"] == []
     assert _ledger_or_none(tmp_path) is None
     assert "--highest" in capsys.readouterr().err
@@ -468,7 +477,7 @@ def test_clean_with_highest_is_refused(tmp_path, capsys):
 
 def test_clean_with_classes_is_refused(tmp_path, capsys):
     open_gate(tmp_path)
-    assert run(tmp_path, "record-round", "--sha", "a", "--clean", "--classes", "doc-citation-accuracy") == 2
+    assert run(tmp_path, "record-round", "--sha", "a", "--lenses", "correctness", "--clean", "--classes", "doc-citation-accuracy") == 2
     assert state(tmp_path)["rounds"] == []
     assert _ledger_or_none(tmp_path) is None
     assert "--classes" in capsys.readouterr().err
@@ -478,7 +487,7 @@ def test_clean_conflict_after_prior_rounds_leaves_state_and_ledger_untouched(tmp
     open_gate(tmp_path)
     assert record(tmp_path, "a", classes="c1") == 0
     before_state, before_ledger = state(tmp_path), ledger(tmp_path)
-    assert run(tmp_path, "record-round", "--sha", "b", "--clean",
+    assert run(tmp_path, "record-round", "--sha", "b", "--lenses", "correctness", "--clean",
                "--verified", "8", "--highest", "minor", "--classes", "c9") == 2
     assert state(tmp_path) == before_state
     assert ledger(tmp_path) == before_ledger
@@ -486,10 +495,132 @@ def test_clean_conflict_after_prior_rounds_leaves_state_and_ledger_untouched(tmp
 
 def test_bare_clean_still_records_neutral_fields(tmp_path):
     open_gate(tmp_path)
-    assert run(tmp_path, "record-round", "--sha", "a", "--clean") == 0
+    assert run(tmp_path, "record-round", "--sha", "a", "--lenses", "correctness", "--clean") == 0
     rd = state(tmp_path)["rounds"][0]
     assert (rd["clean"], rd["verified"], rd["highest"], rd["classes"], rd["repeats"]) == (True, 0, "none", [], [])
     assert "Round 1 | a | clean | verified findings: 0 | highest severity: none | failure classes: none" in ledger(tmp_path)
+
+
+# --- reviewer seat caps (0.33.0) ------------------------------------------------
+
+HIGH_SEATS = "correctness,invariant-state,test-evidence+spec-compliance,security-perf+integration"
+
+
+def test_lenses_is_required(tmp_path, capsys):
+    open_gate(tmp_path)
+    try:
+        run(tmp_path, "record-round", "--sha", "a", "--clean")
+    except SystemExit as exc:  # argparse usage error
+        assert exc.code == 2
+    else:
+        raise AssertionError("record-round without --lenses must fail")
+    assert state(tmp_path)["rounds"] == []
+
+
+def test_off_vocabulary_lens_is_refused_with_nothing_recorded(tmp_path, capsys):
+    open_gate(tmp_path)
+    assert run(tmp_path, "record-round", "--sha", "a", "--lenses", "correctness,security", "--clean") == 2
+    assert state(tmp_path)["rounds"] == []
+    assert _ledger_or_none(tmp_path) is None
+    err = capsys.readouterr().err
+    assert "non-canonical lens id(s) security" in err
+
+
+def test_duplicate_lens_across_seats_is_refused(tmp_path, capsys):
+    open_gate(tmp_path)
+    assert run(tmp_path, "record-round", "--sha", "a", "--lenses",
+               "correctness,test-evidence+correctness", "--clean") == 2
+    assert state(tmp_path)["rounds"] == []
+    assert "more than one seat" in capsys.readouterr().err
+
+
+def test_empty_lens_list_is_refused(tmp_path):
+    open_gate(tmp_path)
+    assert run(tmp_path, "record-round", "--sha", "a", "--lenses", " , ", "--clean") == 2
+    assert state(tmp_path)["rounds"] == []
+
+
+def test_paired_seats_recorded_and_in_ledger(tmp_path):
+    open_gate(tmp_path, "high")
+    assert record(tmp_path, "a", clean=True, lenses=HIGH_SEATS) == 0
+    rd = state(tmp_path)["rounds"][0]
+    assert rd["lenses"] == HIGH_SEATS.split(",")
+    assert (rd["seatCap"], rd["seatCapExceeded"], rd["violation"]) == (4, False, None)
+    assert "| seats: correctness, invariant-state, test-evidence+spec-compliance, security-perf+integration | gate: none" in ledger(tmp_path)
+    assert state(tmp_path)["fixture"] == "high"
+
+
+def test_review_prefix_and_long_alias_are_canonicalised(tmp_path):
+    open_gate(tmp_path, "high")
+    assert record(tmp_path, "a", clean=True,
+                  lenses="review-correctness,review-invariant-state,review-test-evidence+spec-compliance,security-performance+integration") == 0
+    assert state(tmp_path)["rounds"][0]["lenses"] == HIGH_SEATS.split(",")
+
+
+def test_round1_over_cap_is_recorded_as_violation(tmp_path, capsys):
+    open_gate(tmp_path, "high")
+    five = HIGH_SEATS.replace("security-perf+integration", "security-perf,integration")
+    assert record(tmp_path, "a", clean=True, lenses=five) == 2
+    rd = state(tmp_path)["rounds"][0]
+    assert (rd["n"], rd["seatCap"], rd["seatCapExceeded"], rd["violation"]) == (1, 4, True, "seat-cap-exceeded")
+    assert state(tmp_path)["locked"] is False
+    text = ledger(tmp_path)
+    assert "Round 1 | a | clean" in text
+    assert "VIOLATION | round 1 ran with 5 seats (cap 4 for high, round 1)" in text
+    assert "VIOLATION - round 1 ran with 5 reviewer seats" in capsys.readouterr().err
+    # the round still counts: the next one is round 2
+    assert record(tmp_path, "b", clean=True, lenses="correctness,invariant-state") == 0
+    assert state(tmp_path)["rounds"][-1]["n"] == 2
+
+
+def test_round1_cap_follows_fixture_level(tmp_path):
+    open_gate(tmp_path, "compact")
+    assert record(tmp_path, "a", clean=True, lenses="correctness+test-evidence,integration,security-perf") == 2
+    assert state(tmp_path)["rounds"][0]["seatCap"] == 2
+    assert "cap 2 for compact" in ledger(tmp_path)
+
+
+def test_none_level_buys_one_seat_when_phase2_flags_risk(tmp_path):
+    open_gate(tmp_path, "none")
+    assert record(tmp_path, "a", clean=True, lenses="correctness+test-evidence") == 0
+    assert state(tmp_path)["rounds"][0]["seatCap"] == 1
+    assert run(tmp_path, "close") == 0
+    open_gate(tmp_path, "none")
+    assert record(tmp_path, "a", clean=True, lenses="correctness,integration") == 2
+    assert "cap 1 for none" in ledger(tmp_path)
+
+
+def test_round1_cap_without_fixture_is_four(tmp_path):
+    open_gate(tmp_path)
+    assert record(tmp_path, "a", clean=True, lenses=HIGH_SEATS) == 0
+    five = HIGH_SEATS.replace("security-perf+integration", "security-perf,integration")
+    assert run(tmp_path, "close") == 0
+    open_gate(tmp_path)
+    assert record(tmp_path, "a", clean=True, lenses=five) == 2
+    assert "cap 4 for unspecified fixture" in ledger(tmp_path)
+
+
+def test_later_rounds_capped_at_three(tmp_path):
+    open_gate(tmp_path, "high")
+    assert record(tmp_path, "a", lenses=HIGH_SEATS) == 0
+    assert record(tmp_path, "b", clean=True, lenses=HIGH_SEATS) == 2
+    rd = state(tmp_path)["rounds"][1]
+    assert (rd["n"], rd["seatCap"], rd["seatCapExceeded"]) == (2, 3, True)
+    assert "VIOLATION | round 2 ran with 4 seats (cap 3 for high, round 2)" in ledger(tmp_path)
+    assert record(tmp_path, "c", clean=True, lenses="correctness,invariant-state,test-evidence") == 0
+
+
+def test_over_cap_round_while_locked_keeps_lock_violation(tmp_path):
+    open_gate(tmp_path, "high")
+    for sha in "abc":
+        assert record(tmp_path, sha, classes="c1", lenses=HIGH_SEATS) in (0, 2)
+    assert state(tmp_path)["locked"] is True
+    assert record(tmp_path, "d", classes="c1", lenses=HIGH_SEATS) == 2
+    rd = state(tmp_path)["rounds"][-1]
+    assert rd["violation"] == "recorded-while-locked"
+    assert rd["seatCapExceeded"] is True
+    text = ledger(tmp_path)
+    assert "VIOLATION | round 4 ran with 4 seats" in text and "VIOLATION | round 4 ran while locked" in text
 
 
 # --- round SHA correction (0.32.0) --------------------------------------------

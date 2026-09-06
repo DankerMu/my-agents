@@ -187,7 +187,7 @@ OMPBATCH
   block; the global `--backend` default is `codex`, and an omitted effort silently becomes `high`.
 - Independent tasks at the same level run concurrently; `dependencies: <id>,<id>` serialises
   where a real dependency exists. A failed parent skips its dependents.
-- Set `CODEAGENT_MAX_PARALLEL_WORKERS` (8 is a sane ceiling) so a six-reviewer round plus
+- Set `CODEAGENT_MAX_PARALLEL_WORKERS` (8 is a sane ceiling) so a four-seat round plus
   verifier batches cannot exhaust the machine.
 - Default summary output gives one block per task; pass `--full-output` only when debugging a
   specific failure. Take the authoritative per-task text from `--output` JSON, not the summary.
