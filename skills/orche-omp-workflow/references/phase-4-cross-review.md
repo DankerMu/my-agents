@@ -21,16 +21,14 @@ Required variables:
 - `<fix summary>`: Required for follow-up rounds; summarize Phase 6 changes and prior findings.
 - `<proposal.md> <design.md> <tasks.md>`: OpenSpec change references. These are required.
 
-Risk-adaptive selection:
+Seat selection (the seat plan is defined once in `phase-flow.md` Phase 4; lens ids in `risk-adaptive-cross-review` `reviewer-packages.md`):
 
 - `none`: normally skip Phase 4.
-- `compact`: run correctness plus whichever of integration or security/performance matches selected risk packs.
-- `expanded`: run all relevant reviewers; use all 4 for shared entrypoints, file/schema/publish behavior, solver/runtime behavior, or legacy compatibility.
-- `high` or `broad-expanded`: run the 4 standard reviewers by default (Correctness, Integration, Security/Performance, Test & Evidence Coverage). Use 6 reviewers when the PR touches DB-backed state, retry/cancellation, publish/delete/rollback, schema/evidence contracts, security boundaries, production config, or shared helper/state-machine roots. The extra reviewers are:
-  - `review-spec-compliance`: checks the implementation against OpenSpec/design/issue acceptance criteria.
-  - `review-invariant-state`: traces the governing invariant across state machines, stale-state boundaries, retry/cancel transitions, and backward compatibility.
-- Follow-up rounds after fixes: run the same risk-adaptive reviewer count as a fresh Phase 4 review of the current head, with the pinned-core + rotating-free-slots mix (risk-pack lenses pinned every round, free slots rotated to not-yet-used packs — see `phase-flow.md` Phase 4 review rounds). Do not downgrade to targeted-only reviewers, because the prior round may have missed unrelated issues.
-- Initial round only: if a repository policy requires a fixed number of evidence comments, follow it only when it does not conflict with the six-reviewer high-risk escalation defined in `phase-flow.md` Phase 4; otherwise post a consolidated evidence bundle rather than reducing reviewer coverage.
+- `compact`: 1-2 seats — `correctness+test-evidence`, plus `integration` or `security-perf` only when a selected risk pack names it.
+- `expanded`: 2-3 seats, cap 3 — `correctness`; `test-evidence+spec-compliance`; plus the one risk-pack lens (`integration`, `security-perf`, or `invariant-state`).
+- `high` or `broad-expanded`: exactly 4 seats — `correctness`; `invariant-state`; `test-evidence+spec-compliance`; `security-perf+integration`.
+- Follow-up rounds after fixes: a fresh review of the current head with the pinned risk-pack core (2 seats, cap 3): risk-pack lenses pinned every round, the one free seat rotated to a not-yet-used lens only when the ledger signals it — see `phase-flow.md` Phase 4 review rounds. Do not downgrade to targeted-only reviewers, because the prior round may have missed unrelated issues; do not exceed the cap either.
+- Pass the seat list of every round to `review_gate.py record-round --lenses` (off-vocabulary seats are refused; over-cap rounds are recorded as `VIOLATION`).
 - High or broad-expanded PRs: the brief must include the OpenSpec `Invariant Matrix`. Each reviewer must evaluate the matrix rows, not just the touched lines. If a reviewer cannot map a row to evidence, it should report that as missing evidence or explain why the row is out of scope under the fixture.
 - Launch the selected reviewer set as one `codeagent-wrapper --parallel` batch, one `---TASK---` block per reviewer, each with `backend: omp`, the reviewer model pin, and `workdir: <absolute repo path>` (read-only tasks share the PR worktree — no worktrees). A failed no-report invocation is not a review round.
 
@@ -48,18 +46,16 @@ Reviewer invariant rule:
 
 ## Reviewer Task Brief (assembly)
 
-Do not maintain per-reviewer checklists here. Build one brief per selected reviewer from the template below, inlining that reviewer's checklist from `risk-adaptive-cross-review` (`reviewer-packages.md` → Reviewer Checklists) plus any diff-triggered cross-cutting lens (removed-behavior, wrapper/proxy, altitude) that reviewer owns. Prepend the role header, the `reviewer` contract bullets, the operating-guide pointer, and the omp delegation boundary (`omp-delegation.md`) — the omp session loads no agent definition, no skills, and no project rules on its own. Launch the selected set as one parallel batch; each task's `workdir` is `<absolute repo path>`.
+Do not maintain per-reviewer checklists here. Build one brief per selected seat from the template below, inlining the checklist of every lens the seat carries from `risk-adaptive-cross-review` (`reviewer-packages.md` → Reviewer Checklists) plus any diff-triggered cross-cutting lens (removed-behavior, wrapper/proxy, altitude) that seat owns. A paired seat is one reviewer with two checklists — the cost of a reviewer is re-reading the diff, code, and fixture, not checklist length. Prepend the role header, the `reviewer` contract bullets, the operating-guide pointer, and the omp delegation boundary (`omp-delegation.md`) — the omp session loads no agent definition, no skills, and no project rules on its own. Launch the selected set as one parallel batch; each task's `workdir` is `<absolute repo path>`.
 
-Reviewer roles and report files:
+Seats and report files (the report file is named after the seat's leading lens; the reviewer role is `review-<leading lens>`):
 
-| Reviewer role | Report file | Escalation |
+| Seat | Report file | Fixture levels |
 | --- | --- | --- |
-| `review-correctness` | `<REVIEW_DIR>/correctness.md` | standard |
-| `review-integration` | `<REVIEW_DIR>/integration.md` | standard |
-| `review-security-perf` | `<REVIEW_DIR>/security-perf.md` | standard |
-| `review-test-evidence` | `<REVIEW_DIR>/test-evidence.md` | standard |
-| `review-spec-compliance` | `<REVIEW_DIR>/spec-compliance.md` | 6-reviewer only |
-| `review-invariant-state` | `<REVIEW_DIR>/invariant-state.md` | 6-reviewer only |
+| `correctness` (`correctness+test-evidence` at compact) | `<REVIEW_DIR>/correctness.md` | every level that runs Phase 4 |
+| `test-evidence+spec-compliance` | `<REVIEW_DIR>/test-evidence.md` | expanded, high, broad-expanded |
+| `invariant-state` | `<REVIEW_DIR>/invariant-state.md` | high, broad-expanded; expanded when a risk pack names state/compatibility |
+| `security-perf+integration` (single lens below high) | `<REVIEW_DIR>/security-perf.md` or `integration.md` | high, broad-expanded always; compact/expanded per selected risk packs |
 
 Brief template (fill the bracketed slots per reviewer):
 
@@ -85,8 +81,8 @@ Inputs:
 - Spec references: <proposal.md> <design.md> <tasks.md>
 
 Checklist:
-- <inline this reviewer's checklist from reviewer-packages.md -> Reviewer Checklists>
-- <plus any diff-triggered cross-cutting lens owned by this reviewer (removed-behavior, wrapper/proxy, altitude)>
+- <inline the checklist of every lens this seat carries from reviewer-packages.md -> Reviewer Checklists; a paired seat gets both>
+- <plus any diff-triggered cross-cutting lens owned by this seat (removed-behavior, wrapper/proxy, altitude)>
 - For high or broad-expanded fixtures, cross-check every Invariant Matrix row against code and tests.
 
 Output:
@@ -97,7 +93,7 @@ Summary: <one-line conclusion>
 Invariant Matrix Coverage:        # high / broad-expanded only
 - <row>: covered|missing|out-of-scope - <evidence or rationale>
 Findings:
-- <one per finding in the finding-contract.md field shape: Severity / Failure class / Contract or invariant / Scenario or repro / Required test or evidence / Sibling surfaces / Blocks merge / Impact / Requested fix>
+- <one per finding in the finding-contract.md field shape: Severity / Failure class / Contract or invariant / Scenario or repro / Required test or evidence / Sibling surfaces / Blocks merge / Impact / Requested fix / Lens (the single lens id whose checklist produced it)>
 - ...or "None." if clean
 Non-blocking notes:
 - <items without concrete scenario/test, or "None.">

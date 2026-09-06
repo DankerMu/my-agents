@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-05
+
+### Changed
+
+- Mirrors `subagent-workflow` 0.33.0 (same phases and gates, omp execution base): Phase 4 reviewer set becomes the capped seat plan from `risk-adaptive-cross-review` 0.5.0 — compact 1-2 seats, expanded 2-3 (cap 3), high/broad-expanded exactly 4 (`correctness`; `invariant-state`; `test-evidence+spec-compliance`; `security-perf+integration`); post-fix rounds pinned core 2, cap 3; the six-reviewer escalation and the stale "follow-up rounds run the same reviewer count" template line are gone. Motivation and four-repo loop-log evidence in the `subagent-workflow` 0.33.0 entry; `omp-delegation.md` sizes `CODEAGENT_MAX_PARALLEL_WORKERS` around a four-seat round.
+- `scripts/review_gate.py`, `scripts/evidence_check.py`, `scripts/loop_log_audit.py` and their tests are byte-identical copies of `subagent-workflow` 0.33.0 again: `open --fixture`, `record-round --lenses` with mechanical seat caps and `VIOLATION` ledger lines, loop-log lens vocabulary and `round_lenses` cap checks, paired-seat core attribution with a `phase=` bucket. This also catches up the R7 catch-schema check (`subagent-workflow` 0.31.1) that this copy of `evidence_check.py` had missed.
+
 ## [0.3.1] - 2026-09-05
 
 ### Changed

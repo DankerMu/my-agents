@@ -14,7 +14,9 @@ Reported:
                          PRs with zero total gate_net_catch: the review loop
                          never caught anything there - decide keep/narrow/cut.
   DECIDABLE lens-rotation >= --min-multiround merged multi-round PRs carry
-                         round_lenses/catches attribution: decide whether
+                         round_lenses/catches attribution (a round-1 seat
+                         `a+b` pins both lens ids; phase-lens catches such as
+                         final-review are reported apart): decide whether
                          free-slot rotation earns its keep (catches from
                          rotated-in lenses) or reverts to the round-1 mix.
   NOTE off-vocabulary    fixture labels outside none|compact|expanded|high|
@@ -82,29 +84,47 @@ def non_compliant_catches(entry: dict) -> int:
     return sum(1 for catch in entry.get("catches") or [] if not is_compliant_catch(catch))
 
 
-def rotation_attribution(entry: dict) -> tuple[int, int, int]:
+# Lenses that log catches from phases that are not comprehensive rounds
+# (fixture review, Phase 7 final review, gap sweep, Phase 6.2 invariant audit).
+# They are neither pinned core nor rotated-in, so they get their own bucket.
+PHASE_LENS_IDS = ("fixture-review", "final-review", "gap-sweep", "invariant-audit")
+
+
+def core_lens_set(round_lenses: list) -> set[str]:
+    """Lens ids seated in round 1. A paired seat `a+b` contributes both ids."""
+    if not round_lenses:
+        return set()
+    return {part for seat in round_lenses[0] for part in str(seat).split("+")}
+
+
+def rotation_attribution(entry: dict) -> tuple[int, int, int, int]:
     """Catches in rounds >= 2 attributed to (pinned core, rotated-in) lenses,
-    plus the count of catches skipped as non-compliant.
+    plus the count of catches from phase lenses (neither core nor rotated) and
+    the count skipped as non-compliant.
+
+    Seats are split on `+` before the membership test: a catch attributed to
+    `spec-compliance` is core when round 1 seated `test-evidence+spec-compliance`.
 
     A non-compliant catch is never counted as core or rotated: a missing
     `lens` must not become a free rotated-in credit (it is not in the round-1
     lens set, so it used to score as rotated), and a missing `round` must not
     silently default to round 1 and disappear. Both are reported instead.
     """
-    lenses = entry.get("round_lenses") or []
-    core_lenses = set(lenses[0]) if lenses else set()
-    core = rotated = skipped = 0
+    core_lenses = core_lens_set(entry.get("round_lenses") or [])
+    core = rotated = phase = skipped = 0
     for catch in entry.get("catches") or []:
         if not is_compliant_catch(catch):
             skipped += 1
             continue
         if catch["round"] < 2:
             continue
-        if catch["lens"] in core_lenses:
+        if catch["lens"] in PHASE_LENS_IDS:
+            phase += 1
+        elif catch["lens"] in core_lenses:
             core += 1
         else:
             rotated += 1
-    return core, rotated, skipped
+    return core, rotated, phase, skipped
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -171,13 +191,14 @@ def main(argv: list[str] | None = None) -> int:
 
     multiround = [e for e in merged if e.get("rounds", 0) >= 2 and e.get("round_lenses")]
     if multiround:
-        core = rotated = 0
+        core = rotated = phase = 0
         for e in multiround:
-            c, r, _ = rotation_attribution(e)
+            c, r, p, _ = rotation_attribution(e)
             core += c
             rotated += r
+            phase += p
         line = (f"rotation attribution: {len(multiround)} multi-round merged PR(s), "
-                f"later-round catches core={core} rotated={rotated} skipped={skipped_total}")
+                f"later-round catches core={core} rotated={rotated} phase={phase} skipped={skipped_total}")
         if len(multiround) >= args.min_multiround:
             decidable += 1
             print(f"DECIDABLE lens-rotation: {line} - decide keep (catches concentrate in rotated-in "

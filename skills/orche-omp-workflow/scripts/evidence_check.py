@@ -33,7 +33,18 @@ Checks:
                 single canonical token (none|compact|expanded|high|
                 broad-expanded - composites like `expanded/high` and ad-hoc
                 labels like `standard` fragment the keep/cut sample), outcome
-                vocabulary, date format.
+                vocabulary, date format, and - on a merged line - the schema
+                of every `catches[i]`: a `round` (non-negative integer, `0` =
+                the fixture-review round) and a `lens` that is exactly one
+                canonical lens id (a seat lens or a phase lens, never an
+                `a+b` pair). A catch missing either key is unattributable, so
+                it silently distorts the lens-rotation figures
+                loop_log_audit.py reports. When `round_lenses` is present it
+                is checked too: each seat is a canonical lens id or `a+b`
+                pair, no lens sits in two seats of one round, round 1 is
+                within the fixture level's seat cap (none 0, compact 2,
+                expanded 3, high/broad-expanded 4), every later round within
+                3, and the number of rounds listed equals `rounds`.
 
 Scanned files: every --file target (all checks) plus *.md/*.txt/*.log under
 the review dir from .review-gate.json or --evidence-dir (head-sha and
@@ -69,6 +80,80 @@ FIXTURE_LEVELS = ("none", "compact", "expanded", "high", "broad-expanded")
 OUTCOMES = ("merged", "ceiling-split", "abandoned", "descoped")
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 ENTRY_REQUIRED_KEYS = ("issue", "pr", "date", "fixture", "rounds")
+# Canonical lens ids: risk-adaptive-cross-review references/reviewer-packages.md.
+SEAT_LENS_IDS = ("correctness", "integration", "security-perf", "test-evidence",
+                 "spec-compliance", "invariant-state")
+# Lenses that log catches from phases that are not comprehensive rounds.
+PHASE_LENS_IDS = ("fixture-review", "final-review", "gap-sweep", "invariant-audit")
+ROUND1_SEAT_CAP = {"none": 0, "compact": 2, "expanded": 3, "high": 4, "broad-expanded": 4}
+LATER_ROUND_SEAT_CAP = 3
+
+
+def check_catch(raw_path: str, index: int, catch: object, findings: list[str]) -> None:
+    """One finding per violation of the compliant-catch schema.
+
+    A catch is attributable only when it carries a non-negative integer
+    `round` (`0` is the fixture-review round; bool is not an integer) and a
+    non-empty string `lens`. Same definition as loop_log_audit.py.
+    """
+    where = f"{raw_path}:1: [loop-log] catches[{index}]"
+    if not isinstance(catch, dict):
+        findings.append(f"{where} must be an object")
+        return
+    if "round" not in catch:
+        findings.append(f"{where} missing `round`")
+    else:
+        value = catch["round"]
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            findings.append(f"{where} round must be a non-negative integer")
+    if "lens" not in catch:
+        findings.append(f"{where} missing `lens`")
+    else:
+        lens = catch["lens"]
+        if not isinstance(lens, str) or not lens:
+            findings.append(f"{where} lens must be a non-empty string")
+        elif lens not in SEAT_LENS_IDS and lens not in PHASE_LENS_IDS:
+            findings.append(f"{where} lens `{lens}` is off-vocabulary - exactly one lens id: a seat lens "
+                            f"({'|'.join(SEAT_LENS_IDS)}) or a phase lens ({'|'.join(PHASE_LENS_IDS)}); "
+                            "a finding is attributed to the lens whose checklist produced it, never to an "
+                            "`a+b` seat pair")
+
+
+def check_round_lenses(raw_path: str, entry: dict, findings: list[str]) -> None:
+    """Seat-list checks for `round_lenses` (index 0 = round 1), when present."""
+    rounds_listed = entry.get("round_lenses")
+    if rounds_listed is None:
+        return
+    where = f"{raw_path}:1: [loop-log] round_lenses"
+    if not isinstance(rounds_listed, list):
+        findings.append(f"{where} must be a list of per-round seat lists")
+        return
+    fixture = entry.get("fixture")
+    for index, seats in enumerate(rounds_listed):
+        label = f"{where}[{index}] (round {index + 1})"
+        if not isinstance(seats, list) or not all(isinstance(s, str) and s for s in seats):
+            findings.append(f"{label} must be a list of non-empty seat strings")
+            continue
+        seen: set[str] = set()
+        for seat in seats:
+            for part in seat.split("+"):
+                if part not in SEAT_LENS_IDS:
+                    findings.append(f"{label} seat `{seat}` uses off-vocabulary lens id `{part}` "
+                                    f"(canonical: {'|'.join(SEAT_LENS_IDS)}; a paired seat is `a+b`)")
+                elif part in seen:
+                    findings.append(f"{label} lens `{part}` sits in more than one seat")
+                seen.add(part)
+        if index == 0:
+            cap = ROUND1_SEAT_CAP.get(fixture) if isinstance(fixture, str) else None
+            if cap is not None and len(seats) > cap:
+                findings.append(f"{label} ran {len(seats)} seats; the round-1 cap for `{fixture}` is {cap}")
+        elif len(seats) > LATER_ROUND_SEAT_CAP:
+            findings.append(f"{label} ran {len(seats)} seats; post-fix rounds are capped at "
+                            f"{LATER_ROUND_SEAT_CAP} (pinned core plus at most one rotated-in seat)")
+    rounds = entry.get("rounds")
+    if isinstance(rounds, int) and not isinstance(rounds, bool) and rounds >= 0 and len(rounds_listed) != rounds:
+        findings.append(f"{where} lists {len(rounds_listed)} round(s) but `rounds` is {rounds} - both count "
+                        "comprehensive rounds (index 0 = round 1)")
 
 
 def check_loop_log_entry(raw_path: str, findings: list[str]) -> None:
@@ -104,11 +189,19 @@ def check_loop_log_entry(raw_path: str, findings: list[str]) -> None:
     rounds = entry.get("rounds")
     if rounds is not None and not (isinstance(rounds, int) and rounds >= 0):
         findings.append(f"{raw_path}:1: [loop-log] rounds must be a non-negative integer")
+    check_round_lenses(raw_path, entry, findings)
     if outcome == "merged":
         for key in ("gate_net_catch", "verdicts"):
             if key not in entry:
                 findings.append(f"{raw_path}:1: [loop-log] merged line missing `{key}` "
                                 "(terminal outcomes are exempt)")
+        catches = entry.get("catches")
+        if catches is not None:
+            if not isinstance(catches, list):
+                findings.append(f"{raw_path}:1: [loop-log] catches must be a list")
+            else:
+                for index, catch in enumerate(catches):
+                    check_catch(raw_path, index, catch, findings)
 
 
 def resolve_head(root: Path, head: str | None) -> str | None:

@@ -38,9 +38,21 @@ finding argument (`--verified`, `--highest`, `--classes`) instead of silently
 discarding it: clean means zero FIX_NOW findings, so those values have no
 place to go.
 
+Reviewer seat caps (0.33.0): every round records its seat list with
+`record-round --lenses a,b+c` (a seat is one parallel reviewer carrying one
+canonical lens id or an `a+b` pair; ids are defined by
+risk-adaptive-cross-review `reviewer-packages.md`). An off-vocabulary or
+duplicated lens is orchestrator paperwork and is refused with nothing
+recorded. A round that ran with more seats than its cap already spent its
+tokens, so it is recorded, tagged `seatCapExceeded`, given a `VIOLATION`
+ledger line, and exits 2 - the same shape as a round recorded while locked.
+Caps: round 1 by the fixture level given to `open --fixture` (none 0,
+compact 2, expanded 3, high/broad-expanded 4; 4 when no level was given),
+every later round 3.
+
 Commands:
-  open          --pr N [--issue N] [--review-dir PATH]
-  record-round  --sha SHA (--clean | --not-clean) [--verified N]
+  open          --pr N [--issue N] [--review-dir PATH] [--fixture LEVEL]
+  record-round  --sha SHA --lenses a,b+c (--clean | --not-clean) [--verified N]
                 [--highest critical|major|minor|none] [--classes a,b]
   correct-round --round N --sha SHA --reason TEXT
   record-retro  --path FILE --shape breadth|depth|noise|converging
@@ -69,6 +81,13 @@ SEVERITIES = ["none", "minor", "major", "critical"]
 SHAPES = ["breadth", "depth", "noise", "converging"]
 OUTCOMES = ["merged", "superseded-by-split", "abandoned", "descoped"]
 DEFAULT_BLOCKED = ["implementer", "reviewer"]
+FIXTURE_LEVELS = ["none", "compact", "expanded", "high", "broad-expanded"]
+# Canonical lens ids: risk-adaptive-cross-review references/reviewer-packages.md.
+SEAT_LENS_IDS = ("correctness", "integration", "security-perf", "test-evidence",
+                 "spec-compliance", "invariant-state")
+ROUND1_SEAT_CAP = {"none": 0, "compact": 2, "expanded": 3, "high": 4, "broad-expanded": 4}
+MAX_SEATS = 4              # round-1 cap when `open` recorded no fixture level
+LATER_ROUND_SEAT_CAP = 3   # post-fix rounds: pinned core (2) plus at most one rotated-in seat
 
 
 def state_path(root: str) -> Path:
@@ -238,13 +257,40 @@ def split_rebuttal_present(text: str) -> bool:
     return bool(_bullets_after(text, "Split rebuttal"))
 
 
+def parse_seats(raw: str) -> tuple[list[str], str | None]:
+    """Parse `--lenses a,b+c` into a seat list; return (seats, error)."""
+    seats = [s.strip() for s in (raw or "").split(",") if s.strip()]
+    if not seats:
+        return [], "--lenses must list at least one seat (comma-separated; a paired seat is `a+b`)"
+    seen: set[str] = set()
+    for seat in seats:
+        parts = seat.split("+")
+        bad = [p for p in parts if p not in SEAT_LENS_IDS]
+        if bad:
+            return [], (f"seat `{seat}` uses non-canonical lens id(s) {', '.join(bad)}; "
+                        f"canonical ids: {', '.join(SEAT_LENS_IDS)}")
+        for p in parts:
+            if p in seen:
+                return [], f"lens `{p}` appears in more than one seat"
+            seen.add(p)
+    return seats, None
+
+
+def seat_cap(state: dict, n: int) -> int:
+    if n >= 2:
+        return LATER_ROUND_SEAT_CAP
+    fixture = state.get("fixture")
+    return ROUND1_SEAT_CAP[fixture] if fixture in ROUND1_SEAT_CAP else MAX_SEATS
+
+
 def ledger_line(rd: dict, gate: str) -> str:
     classes = ", ".join(rd["classes"]) if rd["classes"] else "none"
     repeats = f"yes ({'; '.join(rd['repeats'])})" if rd["repeats"] else "no"
+    seats = ", ".join(rd.get("lenses") or []) or "none"
     return (
         f"Round {rd['n']} | {rd['sha']} | {'clean' if rd['clean'] else 'not-clean'} | "
         f"verified findings: {rd['verified']} | highest severity: {rd['highest']} | "
-        f"failure classes: {classes} | repeats prior class: {repeats} | gate: {gate}"
+        f"failure classes: {classes} | repeats prior class: {repeats} | seats: {seats} | gate: {gate}"
     )
 
 
@@ -266,6 +312,7 @@ def cmd_open(args) -> int:
         "pr": args.pr,
         "issue": args.issue,
         "issueEscalated": escalated,
+        "fixture": args.fixture,
         "reviewDir": args.review_dir,
         "rounds": [],
         "retros": [],
@@ -305,15 +352,26 @@ def cmd_record_round(args) -> int:
               "residual_deferred and the evidence bundle, not in these fields. Nothing was recorded: "
               "drop the finding arguments or record the round --not-clean.", file=sys.stderr)
         return 2
+    seats, seat_error = parse_seats(args.lenses)
+    if seat_error:
+        print(f"review_gate: refused - {seat_error}. Nothing was recorded: fix the seat list "
+              "(risk-adaptive-cross-review reviewer-packages.md defines the lens ids).", file=sys.stderr)
+        return 2
+    n = (state["rounds"][-1]["n"] + 1) if state["rounds"] else 1
+    cap = seat_cap(state, n)
+    over_cap = len(seats) > cap
     rd = {
-        "n": (state["rounds"][-1]["n"] + 1) if state["rounds"] else 1,
+        "n": n,
         "sha": args.sha,
         "clean": clean,
         "verified": 0 if clean else args.verified,
         "highest": "none" if clean else args.highest,
         "classes": [] if clean else classes,
         "repeats": [] if clean else compute_repeats(state["rounds"], classes),
-        "violation": "recorded-while-locked" if was_locked else None,
+        "lenses": seats,
+        "seatCap": cap,
+        "seatCapExceeded": over_cap,
+        "violation": "recorded-while-locked" if was_locked else ("seat-cap-exceeded" if over_cap else None),
     }
     state["rounds"].append(rd)
     save_state(args.root, state)
@@ -333,6 +391,14 @@ def cmd_record_round(args) -> int:
     line = ledger_line(rd, gate)
     append_ledger(args.root, state, line)
     print(line)
+    if over_cap:
+        level = state.get("fixture") or "unspecified fixture"
+        append_ledger(args.root, state,
+                      f"VIOLATION | round {rd['n']} ran with {len(seats)} seats (cap {cap} for {level}, "
+                      f"round {rd['n']}): {', '.join(seats)}")
+        print(f"review_gate: VIOLATION - round {rd['n']} ran with {len(seats)} reviewer seats; the cap is "
+              f"{cap} ({level}, round {rd['n']}). The round is recorded because its tokens are already "
+              "spent; the violation is in the ledger for the accountability log.", file=sys.stderr)
     if was_locked:
         append_ledger(args.root, state, f"VIOLATION | round {rd['n']} ran while locked: {prior_reason}")
         print(f"review_gate: VIOLATION - this round ran while the gate was locked ({prior_reason}). "
@@ -341,7 +407,7 @@ def cmd_record_round(args) -> int:
     if locked:
         print(f"review_gate: GATE LOCKED - {reason}", file=sys.stderr)
         return 2
-    return 0
+    return 2 if over_cap else 0
 
 
 def cmd_correct_round(args) -> int:
@@ -500,10 +566,16 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--issue", type=int, default=None,
                    help="source issue number - enables cross-PR ceiling memory in %s" % HISTORY_NAME)
     p.add_argument("--review-dir", default=None)
+    p.add_argument("--fixture", choices=FIXTURE_LEVELS, default=None,
+                   help="effective fixture level; arms the per-level round-1 seat cap "
+                        "(none 0, compact 2, expanded 3, high/broad-expanded 4; 4 when omitted)")
     p.set_defaults(fn=cmd_open)
 
     p = sub.add_parser("record-round", help="record a comprehensive cross-review round")
     p.add_argument("--sha", required=True)
+    p.add_argument("--lenses", required=True,
+                   help="reviewer seats this round actually ran, comma-separated; a paired seat is "
+                        "`a+b` (lens ids per risk-adaptive-cross-review reviewer-packages.md)")
     group = p.add_mutually_exclusive_group(required=True)
     group.add_argument("--clean", action="store_true")
     group.add_argument("--not-clean", dest="clean", action="store_false")
