@@ -241,7 +241,8 @@ def test_per_lens_yield_counts_paired_seats_once_per_round(tmp_path, capsys):
                   lenses=[["correctness", "test-evidence+spec-compliance"], ["correctness"]],
                   catches=[{"round": 1, "lens": "spec-compliance", "class": "c", "severity": "P1"},
                            {"round": 2, "lens": "correctness", "class": "c", "severity": "minor"},
-                           {"round": 0, "lens": "fixture-review", "class": "c", "severity": "P0"}])
+                           {"round": 0, "lens": "fixture-review", "class": "c", "severity": "P0"},
+                           {"round": 0, "lens": "correctness", "class": "c", "severity": "P0"}])
     assert run(write_log(tmp_path, [line])) == 0
     note = [l for l in capsys.readouterr().out.splitlines() if l.startswith("NOTE per-lens yield")]
     assert len(note) == 1

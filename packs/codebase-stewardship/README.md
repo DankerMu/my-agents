@@ -36,7 +36,7 @@ npx my-agents install pack codebase-stewardship --platform codex --scope project
 
 ## Notes
 
-- 与 `agentic-issue-delivery` **刻意重叠**：`future-aware-architecture`、`grill-me`、`blind-spot-pass`、`clarify`、`gh-create-issue` 与 `explorer` agent 同时服务交付流水线（作支撑）与本包（作核心）；`repo-entropy-audit`、`improve-codebase-architecture`、`eng-init` 只在本包；与 `stellarlink` 重叠 `eng-init`。skill 在 my-agents 里是引用而非拷贝，重叠维护成本≈0。
+- 与 `agentic-issue-delivery` **刻意重叠**：`future-aware-architecture`、`grill-me`、`blind-spot-pass`、`clarify`、`gh-create-issue` 与 `explorer` agent 同时服务交付流水线（作支撑）与本包（作核心）；`repo-entropy-audit`、`improve-codebase-architecture` 只在本包；与 `stellarlink` 重叠 `eng-init`。skill 在 my-agents 里是引用而非拷贝，重叠维护成本≈0。
 - 沉淀落点统一为本仓库约定：领域术语 → `openspec/glossary.md`，长期决策 → `docs/adr/`（格式见 `grill-me` 的 `references/GLOSSARY-FORMAT.md` / `references/ADR-FORMAT.md`）。`grill-me`（docs 模式）、`improve-codebase-architecture` 直接读写两处；`future-aware-architecture` 的 ADR seed 默认落 `docs/adr/`；熵套件认 `openspec/glossary.md` 为术语权威，量化基线另落 `.entropy-baseline/`（只读快照，不属领域沉淀）。
 - 审计发现不止步于报告：`improve-codebase-architecture` 与 `repo-entropy-audit` 在用户确认后主动提议 `gh-create-issue`（本包内）或 `stage-change-pipeline`（随 `agentic-issue-delivery` 安装）把目标变成交付工作项。
 - `improve-codebase-architecture` 会把 HTML 报告写到系统临时目录，不落进 repo；其 grilling loop 需要一个支持原生 subagent 的编排器（Claude Code Task subagents 或 Codex subagents）。

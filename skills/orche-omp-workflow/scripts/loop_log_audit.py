@@ -117,8 +117,10 @@ def per_lens_yield(entries: list[dict]) -> dict[str, dict[str, int]]:
     """Per canonical seat lens: rounds it was seated in, compliant catches
     attributed to it, and how many of those were P0/P1 (critical/major).
     Phase lenses have no seats and are excluded; a paired seat counts each
-    of its lenses once per round; severity spellings are bucketed, never
-    rejected (the live logs carry P3/Note/none/medium/nit alongside P0-P2)."""
+    of its lenses once per round; round-0 (fixture-review) catches have no
+    seat and are excluded even when labeled with a seat lens; severity
+    spellings are bucketed, never rejected (the live logs carry
+    P3/Note/none/medium/nit alongside P0-P2)."""
     stats = {lens: {"seated": 0, "catches": 0, "high": 0} for lens in SEAT_LENS_IDS}
     for entry in entries:
         for seats in entry.get("round_lenses") or []:
@@ -128,7 +130,7 @@ def per_lens_yield(entries: list[dict]) -> dict[str, dict[str, int]]:
                 if lens in stats:
                     stats[lens]["seated"] += 1
         for catch in entry.get("catches") or []:
-            if not is_compliant_catch(catch):
+            if not is_compliant_catch(catch) or catch["round"] < 1:
                 continue
             lens = canonical_lens(catch["lens"])
             if lens in stats:

@@ -9,7 +9,7 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ### Added
 
-- `scripts/loop_log_audit.py` prints a `NOTE per-lens yield (merged PRs)` line: per canonical seat lens, the rounds it was seated in (`round_lenses`, paired seats counted once per lens per round, `review-` prefix and `security-performance` canonicalised), the compliant catches attributed to it, and how many were P0/P1 (`critical`/`major`; other severity spellings are bucketed, never rejected). Phase lenses have no seats and are excluded. Informational only — no DECIDABLE, no exit-code change — it is the per-seat cost signal the 0.33.0 seat plan was derived from by hand.
+- `scripts/loop_log_audit.py` prints a `NOTE per-lens yield (merged PRs)` line: per canonical seat lens, the rounds it was seated in (`round_lenses`, paired seats counted once per lens per round, `review-` prefix and `security-performance` canonicalised), the compliant round >= 1 catches attributed to it (round-0 fixture-review catches have no seat and are excluded), and how many were P0/P1 (`critical`/`major`; other severity spellings are bucketed, never rejected). Phase lenses have no seats and are excluded. Informational only — no DECIDABLE, no exit-code change — it is the per-seat cost signal the 0.33.0 seat plan was derived from by hand.
 
 ### Changed
 
