@@ -800,9 +800,9 @@ Other-tool equivalents: `.cursorrules` must **point back to AGENTS.md, not dupli
 
 ```
 Read AGENTS.md at the repo root before any work. It is the single source of
-truth for commands, boundaries, validation, and constraints. openspec/glossary.md
-holds the domain terms, CONTEXT.md the bounded contexts and invariants. Do not
-add rules here; propose changes to AGENTS.md.
+truth for commands, boundaries, validation, and constraints. CONTEXT.md holds
+the bounded contexts and invariants, openspec/glossary.md the domain terms once
+any exist. Do not add rules here; propose changes to AGENTS.md.
 ```
 
 List `.claude/settings.json` hooks and denies in the AGENTS.md Enforcement Index at level `block` with scope noted ("Claude Code sessions only").
