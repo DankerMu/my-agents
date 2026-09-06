@@ -34,7 +34,7 @@
 - `grill-me` — `architecture-design` 的访谈协议来源（模型可调，已满足）。
 - `review` — `implement` 的完成后评审出口。
 - `diagnosing-bugs` — `code-migration` 有界工作单元内的修复方法。
-- `implementation-planning` / `improve-codebase-architecture` — `architecture-design` 的下游分流目标。
+- `stage-change-pipeline` / `improve-codebase-architecture` — `architecture-design` 的下游分流目标（上游 `/wayfinder` 槽位本仓库暂无对应，改走 `stage-change-pipeline` 的 fog 两节）。
 - `project-instruction-bootstrap` — `eng-init` 在生成型项目里的根指令写入机制（可选，同一项目两者按上述分工并存）。
 
 ## Install

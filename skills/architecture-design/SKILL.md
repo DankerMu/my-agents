@@ -71,13 +71,11 @@ This document is the deliverable — it feeds the build flow next.
 Prose pointers, to the human:
 
 - Greenfield → next run `/to-spec` with this document.
-- Huge or foggy effort, too big for one session → use `/implementation-planning` instead.
+- Huge or foggy effort, too big for one session → this repo has no multi-session navigator for it yet; take the document through `/stage-change-pipeline` and leave what you cannot specify in its design.md `## Not yet specified` and Non-Goals sections instead of pre-slicing it (`/implementation-planning` is a single-session deep plan for a settled direction, not this).
 - Brownfield, once a candidate is picked → run `/improve-codebase-architecture` for the deepening deep-dive, then `/to-spec`.
 
 ## Boundaries — not this skill
 
-- A single module's interface → the `codebase-design` skill.
 - A deepening survey with an HTML report → `improve-codebase-architecture`.
-- A huge foggy multi-session effort → `implementation-planning`.
+- A huge foggy multi-session effort → `stage-change-pipeline` with its fog sections (no wayfinder-style skill here yet).
 - Already have a spec → `to-spec`.
-- Validating a design question with throwaway code → `prototype`.
