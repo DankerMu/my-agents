@@ -6,10 +6,7 @@ skill, break exactly one invariant in the copy, and require a non-zero exit.
 
 import shutil
 import subprocess
-import sys
 from pathlib import Path
-
-import pytest
 
 SKILL_ROOT = Path(__file__).resolve().parents[2]
 SELFCHECK = SKILL_ROOT / "scripts" / "selfcheck.sh"
@@ -83,22 +80,17 @@ def test_selfcheck_fails_when_the_registry_breaks(tmp_path):
     assert result.returncode == 1, result.stdout + result.stderr
 
 
-@pytest.mark.parametrize("missing", ["pytest"])
-def test_missing_prerequisite_exits_127_not_green(tmp_path, missing):
-    """A gate that cannot run has not passed."""
+def test_missing_prerequisite_exits_127_not_green(tmp_path):
+    """A gate that cannot run has not passed.
+
+    selfcheck runs every Python gate through `uv run --with pytest --with
+    pyyaml`, so uv is the one prerequisite. A PATH without uv must exit 127
+    with the prerequisite named, never fall through to a green report.
+    """
     clone = clone_skill(tmp_path)
     shim = tmp_path / "bin"
     shim.mkdir()
-    # A python3 that refuses to import pytest, so the prerequisite probe fails.
-    # The shim execs the real interpreter by absolute path: resolving through
-    # PATH would find the shim again and loop forever.
-    (shim / "python3").write_text(
-        "#!/usr/bin/env bash\n"
-        'if [ "$1" = "-c" ] && [[ "$2" == *"import pytest"* ]]; then exit 1; fi\n'
-        f'exec {sys.executable} "$@"\n',
-        encoding="utf-8",
-    )
-    (shim / "python3").chmod(0o755)
+    # Only bash's own helpers are reachable; no uv anywhere on this PATH.
     env = {"PATH": f"{shim}:/usr/bin:/bin", "HOME": str(tmp_path)}
     result = subprocess.run(
         ["bash", str(clone / "scripts" / "selfcheck.sh")],
@@ -107,4 +99,4 @@ def test_missing_prerequisite_exits_127_not_green(tmp_path, missing):
         env=env,
     )
     assert result.returncode == 127, result.stdout + result.stderr
-    assert "missing prerequisite" in result.stdout
+    assert "missing prerequisite: uv" in result.stdout

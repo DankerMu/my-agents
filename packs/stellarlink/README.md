@@ -19,7 +19,7 @@
 ### 重型工作流
 
 - `code-migration` — 代码库级迁移：语言移植、同栈升级、strangler 重写的分类、领域工件、阶段闸门与交接；验收委托给 `vdd`（Equivalence / `large_equivalence`），局部实现与修复委托给 `tdd` / `diagnosing-bugs`。执行运行时假定外部 Missions 系统，无 Missions 时按 SKILL.md 的降级路径征询用户。
-- `eng-init` — Agent Engineering Readiness Control Plane：bootstrap / audit / repair 仓库级 agent 控制面（AGENTS.md、CONTEXT.md、统一命令入口、验证分层、决策记录生命周期、机械 guardrails）。与本仓 `project-instruction-bootstrap` / `control-plane-auditor` 职能有重叠，装到同一目标项目时二选一，避免竞争性事实源。
+- `eng-init` — Agent Engineering Readiness Control Plane：bootstrap / audit / repair 仓库级 agent 控制面（AGENTS.md、CONTEXT.md、统一命令入口、验证分层、决策记录生命周期、机械 guardrails）。控制面审计（七层 / AGENTS.md 约束维度）也归它。与本仓 `project-instruction-bootstrap` 分工固定：项目用后者的生成模式（有 `instructions/agents/` 源）时 eng-init 把段落写进源再重生成；否则 eng-init 直接写 `AGENTS.md`，后者只增量补段并为 Claude Code 桥接 `CLAUDE.md`（一行 `@AGENTS.md`）。
 - `self-evolution` — 可度量工件（prompt、skill、代码、配置、实验）的变异-评估-门控自主进化循环，支持 GT 用例集、标量指标循环与成对偏好循环。eval 工作区放 `workspaces/self-evolution/`。
 
 ### 独立工具
@@ -34,7 +34,8 @@
 - `grill-me` — `architecture-design` 的访谈协议来源（模型可调，已满足）。
 - `review` — `implement` 的完成后评审出口。
 - `diagnosing-bugs` — `code-migration` 有界工作单元内的修复方法。
-- `implementation-planning` / `improve-codebase-architecture` — `architecture-design` 的下游分流目标。
+- `stage-change-pipeline` / `improve-codebase-architecture` — `architecture-design` 的下游分流目标（上游 `/wayfinder` 槽位本仓库暂无对应，改走 `stage-change-pipeline` 的 fog 两节）。
+- `project-instruction-bootstrap` — `eng-init` 在生成型项目里的根指令写入机制（可选，同一项目两者按上述分工并存）。
 
 ## Install
 

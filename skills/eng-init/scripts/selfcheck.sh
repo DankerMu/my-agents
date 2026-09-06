@@ -41,29 +41,29 @@ require() {
 # pass on code that is no longer there is the failure this skill exists to catch.
 find "$SKILL_ROOT" -name '__pycache__' -type d -prune -exec rm -rf {} + 2>/dev/null || true
 
-require python3 "install Python 3.10+"
-python3 -c 'import pytest' 2>/dev/null || {
-  printf '::error::missing prerequisite: pytest (pip install pytest) — the verifier suite cannot run, so this check cannot report green\n'
-  exit 127
-}
+# Every Python invocation goes through uv with the suite's two dependencies
+# attached, so the only prerequisite is uv itself (the monorepo convention:
+# `uv run`, never a bare interpreter or pip). A gate that cannot find uv has not run.
+require uv "install uv — https://docs.astral.sh/uv/getting-started/installation/"
+PY=(uv run --with pytest --with pyyaml python)
 
 # --criteria-reference is load-bearing: without it the registry can drift out of
 # sync with the markdown criteria table (a criterion in one and not the other).
 run_gate "readiness registry contract + criteria cross-reference" \
-  python3 scripts/check_readiness_registry.py references/readiness-registry.yaml \
+  "${PY[@]}" scripts/check_readiness_registry.py references/readiness-registry.yaml \
     --criteria-reference references/agent-readiness-criteria.md
 run_gate "readiness registry parses as standard YAML" \
-  python3 -c 'import yaml,sys; yaml.safe_load(open("references/readiness-registry.yaml")); print("standard YAML OK")'
+  "${PY[@]}" -c 'import yaml,sys; yaml.safe_load(open("references/readiness-registry.yaml")); print("standard YAML OK")'
 run_gate "skill content invariants" \
-  python3 scripts/check_skill_content.py
+  "${PY[@]}" scripts/check_skill_content.py
 run_gate "verifier fixture tests" \
-  python3 -m pytest scripts/tests -q
+  "${PY[@]}" -m pytest scripts/tests -q
 
 # Prose asserts things the repository can disprove: a section was synced, a count
 # is N, a named mechanism exists. Nothing checked those until a "fix" commit
 # reported an edit that had silently not applied (postmortem 0002 instance 9).
 run_gate "documented claims match the artifacts" \
-  python3 scripts/check_doc_claims.py
+  "${PY[@]}" scripts/check_doc_claims.py
 
 # The two readiness validators are named in SKILL.md's reference index as the
 # Audit and Repair pipeline verifiers. Until 2026-08-10 nothing executed them and
@@ -77,7 +77,7 @@ smoke_rejects() {
   tmp="$(mktemp "${TMPDIR:-/tmp}/selfcheck.XXXXXX.json")"
   printf '%s' "$payload" > "$tmp"
   local out
-  out="$(python3 "$script" "$tmp" --registry references/readiness-registry.yaml 2>&1)"
+  out="$("${PY[@]}" "$script" "$tmp" --registry references/readiness-registry.yaml 2>&1)"
   local rc=$?
   rm -f "$tmp"
   if [ "$rc" -eq 0 ]; then

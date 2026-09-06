@@ -11,5 +11,5 @@
 - `npm run sync-instructions -- --check` 验证生成的根指令文件是否为最新。
 - `npm run new -- my-skill`、`npm run new -- --agent my-agent`、`npm run new -- --hook my-hook` 和 `npm run new -- --pack my-pack` 搭建规范包脚手架。
 - `npm run build` 重新生成 `dist/catalog.json`、`docs/catalog/skills.md`、`docs/catalog/agents.md`、`docs/catalog/hooks.md` 和 `docs/catalog/packs.md`。
-- `npm test`（`npm run validate` 的别名）运行完整验证流水线：lint、格式检查、指令同步检查、schema/约定验证、Node.js 单元测试（`test:node`）以及通过 `uv` 运行的 `skill-lifecycle-manager` 和 `agent-lifecycle-manager` Python 单元测试。
+- `npm test`（`npm run validate` 的别名）运行完整验证流水线：lint、格式检查、指令同步检查、schema/约定验证、Node.js 单元测试（`test:node`）以及通过 `uv` 运行的各包 Python 单元测试（`test:skill-lifecycle-manager`、`test:agent-lifecycle-manager`、`test:research-lifecycle`、`test:subagent-workflow`、`test:orche-omp-workflow`、`test:eng-init`）。
 - `npx my-agents install <skill|agent|hook|pack> <name>`（`add` 是 `install` 的别名）、`npx my-agents uninstall <skill|agent|hook|pack> <name>`、`npx my-agents project sync` 和 `npx my-agents references <command>` 是规范的运行时命令。仓库内的 `npm run install-*`、`npm run uninstall-*`、`npm run sync-project` 和 `npm run sync-references` 别名保留以兼容。运行时命令支持 `--platform claude|codex|all`、`--scope user|project` 和 `--manifest <path>`（视场景而定）。

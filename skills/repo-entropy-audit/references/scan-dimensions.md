@@ -2,7 +2,7 @@
 
 Detailed methods for each entropy axis scan. Used during Phase 2 of repo-entropy-audit.
 
-For theoretical background, see [Six Entropy Axes](../../control-plane-auditor/references/methodology/six-entropy-axes.md).
+For theoretical background, see [Six Entropy Axes](methodology/six-entropy-axes.md).
 
 **Agent-era calibration:** Traditional proxy metrics (file line count, function length, nesting depth) have been replaced or recalibrated. We measure the actual underlying problems (mixed responsibilities, implicit dependencies, uncovered branches) rather than human cognitive proxies. See `docs/decisions/agent-era-metric-recalibration.md` (repo-level doc; not shipped with standalone skill installs).
 
@@ -113,7 +113,7 @@ Flag: modules with > 3 mutable state declarations or side-effect imports.
 
 ### Naming diversity analysis
 
-For core domain concepts, count how many distinct identifier names are used. The [Six Entropy Axes](../../control-plane-auditor/references/methodology/six-entropy-axes.md) framework phrases this as "cluster all exported identifiers by embedding similarity" — but a single agent session has no embedding-clustering step. The practical method is the grep-based variant below: enumerate candidate identifiers and group them by hand against the glossary.
+For core domain concepts, count how many distinct identifier names are used. The [Six Entropy Axes](methodology/six-entropy-axes.md) framework phrases this as "cluster all exported identifiers by embedding similarity" — but a single agent session has no embedding-clustering step. The practical method is the grep-based variant below: enumerate candidate identifiers and group them by hand against the glossary.
 
 ```bash
 # Example: find all identifiers containing "user" or "member" (adjust per project glossary)

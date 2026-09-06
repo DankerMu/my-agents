@@ -743,7 +743,7 @@
     },
     {
       "id": "FIELD-rerun-retires-obsolete-sections",
-      "desc": "re-running at a newer version presents four diff classes, including sections the older version generated that the current one no longer does \u2014 never silently kept, never silently deleted",
+      "desc": "re-running at a newer version presents four diff classes, including sections the older version generated that the current one no longer does — never silently kept, never silently deleted",
       "checks": [
         {
           "file": "SKILL.md",
@@ -823,7 +823,7 @@
     },
     {
       "id": "REGRESSION-husky-v9-no-sourcing",
-      "desc": "hook templates carry no `. .../_/husky.sh` sourcing line \u2014 deprecated in husky v9 (the skeleton's own pin) and removed in v10 (field defect, round 4)",
+      "desc": "hook templates carry no `. .../_/husky.sh` sourcing line — deprecated in husky v9 (the skeleton's own pin) and removed in v10 (field defect, round 4)",
       "checks": [
         {
           "file": "references/aux-file-templates.md",
@@ -949,7 +949,7 @@
     },
     {
       "id": "R39-repo-skill-layer",
-      "desc": "v3.4.0: repo-local skill layer as conditional artifact \u2014 placement decision tree, judgment-skill four elements, empty-shell rule; Q6.10; eval case-53",
+      "desc": "v3.4.0: repo-local skill layer as conditional artifact — placement decision tree, judgment-skill four elements, empty-shell rule; Q6.10; eval case-53",
       "checks": [
         {
           "file": "references/repo-skill-templates.md",
@@ -1199,7 +1199,7 @@
         {
           "file": "docs/postmortem/README.md",
           "type": "regex",
-          "pattern": "two or more incidents converge|\u22652 incidents converge",
+          "pattern": "two or more incidents converge|≥2 incidents converge",
           "flags": "i"
         },
         {
@@ -1319,7 +1319,7 @@
     },
     {
       "id": "R47-no-gate-escapes-the-inventory",
-      "desc": "Three hand-maintained gate lists went stale the moment a gate was added (exit-2 conformance missed check_skill_content, the mutation inventory missed check_doc_claims, and check_doc_claims shipped with ten unproven branches). Deriving each list fixed each instance; these two assertions fix the property \u2014 a gate cannot enter the repository without entering the machinery that proves it rejects anything.",
+      "desc": "Three hand-maintained gate lists went stale the moment a gate was added (exit-2 conformance missed check_skill_content, the mutation inventory missed check_doc_claims, and check_doc_claims shipped with ten unproven branches). Deriving each list fixed each instance; these two assertions fix the property — a gate cannot enter the repository without entering the machinery that proves it rejects anything.",
       "checks": [
         {
           "file": "scripts/mutation_sweep.py",
@@ -1376,7 +1376,7 @@
     },
     {
       "id": "R49-ungateable-judgement-is-declared-not-implied",
-      "desc": "incident_pipeline's validator was existence-only and asserted that 'lessons recurring across >=2 incidents are promoted' \u2014 a semantic judgement no deterministic gate can make, stated as though a check covered it (contract rule 5). The recipe now carries three rejection samples, and the promotion decision is declared a human call in all four places that state the rule, with only its mechanical half gated: a danger-patterns doc must link two or more distinct postmortems.",
+      "desc": "incident_pipeline's validator was existence-only and asserted that 'lessons recurring across >=2 incidents are promoted' — a semantic judgement no deterministic gate can make, stated as though a check covered it (contract rule 5). The recipe now carries three rejection samples, and the promotion decision is declared a human call in all four places that state the rule, with only its mechanical half gated: a danger-patterns doc must link two or more distinct postmortems.",
       "checks": [
         {
           "file": "references/readiness-fix-recipes.md",
@@ -1503,7 +1503,7 @@
         {
           "file": "references/agent-harness-architecture.md",
           "type": "contains",
-          "pattern": "Model-visible \u27fa logged"
+          "pattern": "Model-visible ⟺ logged"
         },
         {
           "file": "SKILL.md",
@@ -1573,6 +1573,81 @@
           "file": "references/readiness-registry.yaml",
           "type": "contains",
           "pattern": "built_artifact_smokes"
+        }
+      ]
+    },
+    {
+      "id": "R58-claude-md-bridge",
+      "desc": "v3.6.0: claude_md_bridge criterion in criteria + registry; SKILL.md ownership rule names the @AGENTS.md import; question-bank Q1.5 carries the trigger",
+      "checks": [
+        {
+          "file": "references/agent-readiness-criteria.md",
+          "type": "contains",
+          "pattern": "claude_md_bridge"
+        },
+        {
+          "file": "references/readiness-registry.yaml",
+          "type": "contains",
+          "pattern": "claude_md_bridge"
+        },
+        {
+          "file": "references/readiness-fix-recipes.md",
+          "type": "contains",
+          "pattern": "### `claude_md_bridge`"
+        },
+        {
+          "file": "SKILL.md",
+          "type": "contains",
+          "pattern": "Root instruction files — ownership"
+        },
+        {
+          "file": "SKILL.md",
+          "type": "regex",
+          "pattern": "Claude Code loads `CLAUDE\\.md`, not `AGENTS\\.md`",
+          "flags": ""
+        },
+        {
+          "file": "references/question-bank.md",
+          "type": "contains",
+          "pattern": "@AGENTS.md"
+        }
+      ]
+    },
+    {
+      "id": "R59-glossary-home",
+      "desc": "v3.6.0: domain-term definitions live in openspec/glossary.md (repo-wide home); CONTEXT.md links to it and no longer carries a term table",
+      "checks": [
+        {
+          "file": "SKILL.md",
+          "type": "contains",
+          "pattern": "openspec/glossary.md"
+        },
+        {
+          "file": "references/context-md-template.md",
+          "type": "contains",
+          "pattern": "openspec/glossary.md"
+        },
+        {
+          "file": "references/context-md-template.md",
+          "type": "not_regex",
+          "pattern": "\\| Term \\| Meaning \\|",
+          "flags": ""
+        },
+        {
+          "file": "references/question-bank.md",
+          "type": "contains",
+          "pattern": "openspec/glossary.md"
+        },
+        {
+          "file": "references/readiness-registry.yaml",
+          "type": "regex",
+          "pattern": "id: context_md\\n(?:.*\\n){6}.*openspec/glossary\\.md",
+          "flags": ""
+        },
+        {
+          "file": "references/ddd-tdd-clauses.md",
+          "type": "contains",
+          "pattern": "update `openspec/glossary.md` inline"
         }
       ]
     }

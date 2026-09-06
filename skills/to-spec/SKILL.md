@@ -2,7 +2,7 @@
 name: to-spec
 disable-model-invocation: true
 description: Turn conversation context, repo facts, or a feature idea into a compact PRD plus execution spec by default, with independently-grabbable issue slices when requested, or a questionnaire for someone else to fill in. Use when the user asks for a PRD, feature spec, implementation spec, mission handoff, issue breakdown, task slicing, a questionnaire, or to convert requirements into agent-ready work.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # To Spec
@@ -15,7 +15,7 @@ Core rule: **clarity before ceremony**. Ask only blocking questions. If the answ
 
 Use existing context first:
 - Conversation constraints and decisions.
-- Project memory: `AGENTS.md`, `CONTEXT.md`, ADRs, manifests, existing specs/issues.
+- Project memory: `AGENTS.md`, `openspec/glossary.md` (domain terms), `CONTEXT.md` (bounded contexts, invariants), ADRs, manifests, existing specs/issues.
 - Relevant source/tests only when needed to name real seams or validators.
 - Issue tracker labels/templates only when publishing issues.
 

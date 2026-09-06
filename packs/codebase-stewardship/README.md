@@ -5,14 +5,14 @@
 把代码健康治理的几条轴打成一个可安装单元，用于**周期性或按需的代码健康审查与改进**——区别于 `agentic-issue-delivery` 的"issue → PR 一次性交付流水线"。三条轴共用同一套对抗式对话（grill）与领域沉淀（`openspec/glossary.md` + `docs/adr/`）：
 
 - **深化模块**：`improve-codebase-architecture` 基于"深模块"哲学找出 shallow modules，产出可视化 HTML 评审并 grill 落地。
-- **治乱删冗**：`repo-entropy-audit`（全仓库六轴扫描）、`entropy-review`（每次变更）、`control-plane-auditor`（控制面/自动化熵）。
+- **治乱删冗**：`repo-entropy-audit`（全仓库六轴扫描）、`review` consistency 模式（每次变更）、`eng-init`（控制面熵：七层审计、AGENTS.md 约束维度、bootstrap/repair）。
 - **定方向**：`future-aware-architecture` 形成可逆性与长期演进的架构决策输入。
 
 ## Included Skills
 
 - `improve-codebase-architecture` — 深模块架构评审：explorer 扫描 → deletion test → HTML 报告 → grilling loop。
 - `repo-entropy-audit` — 全仓库熵治理：六轴扫描、模块热力图、基线趋势、优先级清理。
-- `control-plane-auditor` — 控制面 / 配置 / 自动化的熵审计。
+- `eng-init` — 控制面引擎：AGENTS.md / CONTEXT.md / 统一命令入口 / 验证分层 / 机械 guardrails 的 bootstrap、七层审计与修复；与 `stellarlink` pack 共用（引用非拷贝）。根指令文件的写入机制归 `project-instruction-bootstrap`（不在本包；分工见 `ask-danker`）。
 - `future-aware-architecture` — 架构方向、技术选型、可逆性与长期演进决策。
 - `grill-me` — 轻量对抗式计划/设计压测。
 - `blind-spot-pass` — 动手前的盲区侦察：对陌生模块做代码库考古（历史/范式/隐形约定/危险区/邻接面），挖 unknown unknowns 并产出更好的任务 prompt；grill-me 的反向箭头。
@@ -36,7 +36,7 @@ npx my-agents install pack codebase-stewardship --platform codex --scope project
 
 ## Notes
 
-- 与 `agentic-issue-delivery` **刻意重叠**：`entropy-review`、`repo-entropy-audit`、`future-aware-architecture`、`grill-me` 同时服务交付流水线（作支撑）与本包（作核心）。skill 在 my-agents 里是引用而非拷贝，重叠维护成本≈0。
+- 与 `agentic-issue-delivery` **刻意重叠**：`repo-entropy-audit`、`future-aware-architecture`、`grill-me` 同时服务交付流水线（作支撑）与本包（作核心）；与 `stellarlink` 重叠 `eng-init`。skill 在 my-agents 里是引用而非拷贝，重叠维护成本≈0。
 - 沉淀落点统一为本仓库约定：领域术语 → `openspec/glossary.md`，长期决策 → `docs/adr/`（格式见 `grill-me` 的 `references/GLOSSARY-FORMAT.md` / `references/ADR-FORMAT.md`）。`grill-me`（docs 模式）、`improve-codebase-architecture` 直接读写两处；`future-aware-architecture` 的 ADR seed 默认落 `docs/adr/`；熵套件认 `openspec/glossary.md` 为术语权威，量化基线另落 `.entropy-baseline/`（只读快照，不属领域沉淀）。
 - 审计发现不止步于报告：`improve-codebase-architecture` 与 `repo-entropy-audit` 在用户确认后主动提议 `gh-create-issue`（本包内）或 `stage-change-pipeline`（随 `agentic-issue-delivery` 安装）把目标变成交付工作项。
 - `improve-codebase-architecture` 会把 HTML 报告写到系统临时目录，不落进 repo；其 grilling loop 需要一个支持原生 subagent 的编排器（Claude Code Task subagents 或 Codex subagents）。

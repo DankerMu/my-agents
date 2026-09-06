@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-05
+
+### Changed
+
+- `control-plane-auditor` 退役，位置由 `eng-init` 接任（其七层控制面审计与 AGENTS.md 约束维度早已并入 `eng-init` 的就绪准则）。熵套件的六轴方法论文件迁入 `repo-entropy-audit/references/methodology/`。README 中残留的 `entropy-review` 引用改为 `review` consistency 模式。skills 数量不变（8）。
+
 ## [0.5.0] - 2026-07-29
 
 ### Changed

@@ -8,7 +8,7 @@ Six pillars distilled from real high-velocity engineering practices (notably the
 
 | # | Pillar | Produces | Why |
 |---|--------|----------|-----|
-| 1 | Repo Memory & Rules | `AGENTS.md` + `CONTEXT.md` | Turns recurring review debates and terminology drift into defaults |
+| 1 | Repo Memory & Rules | `AGENTS.md` + `CONTEXT.md` + `openspec/glossary.md` | Turns recurring review debates and terminology drift into defaults |
 | 2 | Dev Entry Point | `justfile` / `Makefile` | "Run standard checks" means the same thing for everyone |
 | 3 | Custom Lints | Lint config + custom scripts | If a review comment appears 3+ times, automate it |
 | 4 | Contract Testing | Schema fixtures + snapshots | Protocol/UI changes leave reviewable, testable evidence |
@@ -21,7 +21,7 @@ Pillar 1 is always included — that is the point of this skill. Pillars 2–6 d
 
 ## Pillar 1 — Repo Memory & Rules
 
-**Output**: The `AGENTS.md` this skill is generating, plus `CONTEXT.md` for domain language. Optional module-level `AGENTS.md` files are used for monorepos / DDD bounded contexts.
+**Output**: The `AGENTS.md` this skill is generating, plus `CONTEXT.md` for bounded contexts and invariants and `openspec/glossary.md` for domain terms. Optional module-level `AGENTS.md` files are used for monorepos / DDD bounded contexts.
 
 **Why**: Without authoritative project memory, every agent invents its own conventions and terminology, every PR review re-debates the same questions, and new contributors (human or AI) bootstrap from whatever code they grep first.
 
@@ -235,7 +235,7 @@ Enforced by the stack-appropriate commit checker in `aux-file-templates.md` § "
 
 For monorepos and DDD codebases:
 - Root `AGENTS.md` — universal project memory/rules (code canonicality, stack, conventions, validation, agent operating rules).
-- Root `CONTEXT.md` — project identity, domain language, bounded contexts, invariants, and terminology questions.
+- Root `CONTEXT.md` — project identity, bounded contexts, invariants, and terminology questions; domain terms in `openspec/glossary.md`.
 - Module-level `AGENTS.md` (same filename, never `CLAUDE.md`) — module-specific concerns. State-machine modules require documentation of state transitions. UI modules carry style guides. API modules carry protocol conventions.
 
 A module's AGENTS.md inherits the root by default; only call out overrides.

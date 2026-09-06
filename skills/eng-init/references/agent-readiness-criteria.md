@@ -1,6 +1,6 @@
 # Agent-Readiness Criteria
 
-Source: distilled from the Factory.ai Agent Readiness Droid static auditor (82 criteria, derived 2026-03 cycle), extended with 7 eng-init runtime-verification criteria and the `control-plane-auditor` seven-layer / AGENTS.md constraint-dimension taxonomy. Cleaned of session noise.
+Source: distilled from the Factory.ai Agent Readiness Droid static auditor (82 criteria, derived 2026-03 cycle), extended with 7 eng-init runtime-verification criteria and the seven-layer / AGENTS.md constraint-dimension taxonomy that the retired `control-plane-auditor` skill used to host — this file is that taxonomy's home now. Cleaned of session noise.
 
 This file powers two modes and stays paired with `references/readiness-registry.yaml`, the machine-readable contract for criteria that have executable repair metadata:
 
@@ -52,7 +52,7 @@ Audit-only and incremental scans also classify the same raw evidence into seven 
 
 | Layer | Problem answered | Standing evidence | Typical readiness criteria |
 |-------|------------------|-------------------|----------------------------|
-| Memory | Where do authoritative facts live? | Concise root `AGENTS.md`, `CONTEXT.md`, module instructions when needed, architecture docs, plans, runbooks | `agents_md`, `context_md`, `service_flow_documented`, `runbooks_documented` |
+| Memory | Where do authoritative facts live? | Concise root `AGENTS.md`, `CONTEXT.md`, module instructions when needed, architecture docs, plans, runbooks | `agents_md`, `context_md`, `claude_md_bridge`, `service_flow_documented`, `runbooks_documented` |
 | Invariant | What must not drift? | Dependency guards, schema validation, meaningful typing, unified error model, naming and doc-freshness rules | `code_modularization`, `type_check`, `strict_typing`, `naming_consistency`, `documentation_freshness`, `agents_md_validation` |
 | Protocol | How does work flow? | Plan templates, reusable runbooks/skills, isolated work, status/work-unit artifacts | `skills`, `issue_templates`, `pr_templates`, `task_ownership_protocol`, `runtime_evidence_in_pr_template` |
 | Permission | What is readonly or high risk? | Generated/secret path guards, migration/deploy gates, explicit trust boundaries, scoped agent permissions | `secret_scanning`, `secrets_management`, `branch_protection`, `guardrail_self_test`, `anti_cheat_rules_concrete` |
@@ -73,7 +73,7 @@ Audit root and module-level instruction files for entropy-reducing constraints. 
 
 | Dimension | Minimum viable evidence | Primary artifact |
 |-----------|-------------------------|------------------|
-| Glossary | Canonical terms for core concepts plus prohibited aliases | `CONTEXT.md` and/or `AGENTS.md` |
+| Glossary | Canonical terms for core concepts plus prohibited aliases | `openspec/glossary.md` (linked from `CONTEXT.md` / `AGENTS.md`) |
 | Dependency Rules | Allowed import directions plus explicit prohibited imports | `AGENTS.md`, module `AGENTS.md`, architecture guard config |
 | Error Model | Standard error envelope, code taxonomy, and boundary conventions | `AGENTS.md`, API docs, shared error module |
 | Naming Conventions | Case, verb, file, API/event naming rules by layer | `AGENTS.md`, lint config, `constraints.yaml` |
@@ -88,7 +88,7 @@ Every failing or partial criterion should be labeled with one fixability class. 
 
 | Class | Name | Repair authority | Examples |
 |-------|------|------------------|----------|
-| A | Skill-owned | `eng-init` may directly create or repair the artifact when the target repo facts are sufficient. | `agents_md`, `context_md`, `verification_matrix`, `guardrail_self_test`, `runtime_evidence_in_pr_template`, `pr_templates`, `gitignore_comprehensive`, `smoke_tests_exist`, `dev_server_lifecycle_documented` |
+| A | Skill-owned | `eng-init` may directly create or repair the artifact when the target repo facts are sufficient. | `agents_md`, `context_md`, `claude_md_bridge`, `verification_matrix`, `guardrail_self_test`, `runtime_evidence_in_pr_template`, `pr_templates`, `gitignore_comprehensive`, `smoke_tests_exist`, `dev_server_lifecycle_documented` |
 | B | Stack-owned but safe | `eng-init` may repair when stack evidence is clear and the selected entry point can run a validator; otherwise report the missing prerequisite. | `lint_config`, `formatter`, `type_check`, `test_naming_conventions`, `unit_tests_runnable`, `test_coverage_thresholds`, `dead_code_detection`, `duplicate_code_detection` |
 | C | Repo/product-specific | `eng-init` may scaffold local support or document the gap, but cannot claim full completion without real product implementation and validator evidence. | `structured_logging`, `health_checks`, `secrets_management`, `database_schema`, `api_schema_docs`, `feature_flag_infrastructure` |
 | D | External/governance | Audit and recommend only unless authenticated external access plus explicit user permission are available. Local docs or placeholders do not complete the criterion. | `branch_protection`, `deployment_frequency`, `backlog_health`, `privacy_compliance`, `progressive_rollout`, `product_analytics_instrumentation` |
@@ -147,7 +147,7 @@ Applications:
 
 ---
 
-## Repository-scope criteria (62, denominator = 1)
+## Repository-scope criteria (63, denominator = 1)
 
 | ID | Lvl | Skip | Check | Maps to artifact / section |
 |----|-----|------|-------|----------------------------|
@@ -171,7 +171,8 @@ Applications:
 | `release_automation` | 3 | no | Automated release/deploy pipeline (CD on merge, release-please, ArgoCD, etc.) | Enforcement Index |
 | `dead_feature_flag_detection` | 3 | yes | Stale-flag detector (depends on `feature_flag_infrastructure`) | Architecture Discipline |
 | `agents_md` | 2 | no | AGENTS.md exists at repo root, ≥100 characters, documents scripts/commands | (this skill's primary output) |
-| `context_md` | 2 | no | CONTEXT.md exists at repo root, defines project identity and either domain terms or explicitly says no domain glossary is needed yet | CONTEXT.md |
+| `context_md` | 2 | no | CONTEXT.md exists at repo root, defines project identity and either links to `openspec/glossary.md` (which then defines at least one term) or explicitly says no domain glossary is needed yet | CONTEXT.md, `openspec/glossary.md` |
+| `claude_md_bridge` | 2 | yes | When Claude Code is among the repo's AI tools, CLAUDE.md exists at repo root and contains the import line `@AGENTS.md` outside any code span — Claude Code loads CLAUDE.md, not AGENTS.md, so without it the control plane is invisible to that harness; skippable when Claude Code is not in use | CLAUDE.md |
 | `readme` | 1 | no | README.md exists at repo root with setup/usage | out of scope |
 | `automated_doc_generation` | 2 | no | Swagger/JSDoc/Sphinx/agent-driven doc updates | Enforcement Index |
 | `generated_docs_check_mode` | 3 | yes | Every generated doc has a generator with a `--check` mode wired into CI that fails on drift (derivation-equality strong form; `documentation_freshness` mtime is the weak form); generated outputs are never hand-edited; skippable when no doc is a code projection | Enforcement Index |
@@ -269,7 +270,7 @@ Applications:
 
 When in `incremental` mode, the audit runs first. If `constraints.yaml` is missing or has no `strictness_profile` (repos initialized before profiles existed), ask question-bank Q1.4 before anything else — failing criteria cannot be prioritized without knowing the target strictness. For each criterion that **fails**, generate a grill question based on its "Maps to AGENTS.md section" column:
 
-- Missing `agents_md` or `context_md` becomes P0: without project memory and domain language, agents will guess.
+- Missing `agents_md` or `context_md` becomes P0: without project memory and domain language, agents will guess. A failing `claude_md_bridge` on a Claude Code repo is P0 for the same reason: the memory exists but that harness never loads it.
 - All failing criteria in **Code Canonicality** become P0 questions ("This repo lacks dead-code detection — do you want `knip` / `cargo-udeps` / equivalent wired up?"). These are not optional.
 - All failing criteria in **Conventions** / **Enforcement Index** become P1 questions.
 - All failing criteria in scope sections (Architecture Discipline, etc.) become P2 questions ("Want me to add a section requiring `structured_logging` with `pino redact`?").
