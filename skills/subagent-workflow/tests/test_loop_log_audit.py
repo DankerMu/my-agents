@@ -20,6 +20,11 @@ version 0.28.0):
   `skipped`, never as core or rotated, reported as a NOTE with its PR
   number, and scanned on every entry (including entries with no
   `round_lenses` key). The NOTE alone does not change the exit code.
+- R7 seat pairs and phase lenses (0.33.0): a round-1 seat `a+b` seats both
+  lens ids in the pinned core, so a later-round catch attributed to either
+  id scores core; catches from phase lenses (`fixture-review`,
+  `final-review`, `gap-sweep`, `invariant-audit`) are neither core nor
+  rotated and are reported in their own `phase=` bucket.
 """
 
 from __future__ import annotations
@@ -111,7 +116,7 @@ def test_rotation_decidable_at_threshold_with_attribution(tmp_path, capsys):
     assert run(log) == 2
     out = capsys.readouterr().out
     # per entry: round-1 catch ignored, one core (correctness) + one rotated (security)
-    assert "core=8 rotated=8 skipped=0" in out
+    assert "core=8 rotated=8 phase=0 skipped=0" in out
     assert "DECIDABLE lens-rotation" in out
     assert "non-compliant catches" not in out
 
@@ -170,7 +175,7 @@ def test_lens_less_later_round_catch_is_skipped_not_rotated(tmp_path, capsys):
                                {"round": 2, "class": "c", "severity": "minor"}])
     assert run(write_log(tmp_path, [entry(i) for i in range(8)])) == 2
     out = capsys.readouterr().out
-    assert "core=8 rotated=0 skipped=8" in out
+    assert "core=8 rotated=0 phase=0 skipped=8" in out
     assert "NOTE non-compliant catches skipped: 8 in 8 entry(ies)" in out
 
 
@@ -181,7 +186,7 @@ def test_round_less_catch_is_counted_not_silently_defaulted(tmp_path, capsys):
     assert run(write_log(tmp_path, [line])) == 0
     out = capsys.readouterr().out
     assert "NOTE non-compliant catches skipped: 1 in 1 entry(ies) (pr 140)" in out
-    assert "core=0 rotated=0 skipped=1" in out
+    assert "core=0 rotated=0 phase=0 skipped=1" in out
 
 
 def test_entry_without_round_lenses_is_still_scanned(tmp_path, capsys):
@@ -207,7 +212,7 @@ def test_non_compliant_shapes_all_counted(tmp_path, capsys):
     assert run(write_log(tmp_path, [line])) == 0
     out = capsys.readouterr().out
     assert "NOTE non-compliant catches skipped: 5 in 1 entry(ies) (pr 180)" in out
-    assert "core=0 rotated=1 skipped=5" in out
+    assert "core=0 rotated=1 phase=0 skipped=5" in out
 
 
 def test_round_zero_fixture_review_catch_is_compliant(tmp_path, capsys):
@@ -216,4 +221,26 @@ def test_round_zero_fixture_review_catch_is_compliant(tmp_path, capsys):
     assert run(write_log(tmp_path, [line])) == 0
     out = capsys.readouterr().out
     assert "non-compliant catches" not in out
-    assert "core=0 rotated=0 skipped=0" in out
+    assert "core=0 rotated=0 phase=0 skipped=0" in out
+
+
+# --- R7 seat pairs and phase lenses ------------------------------------------
+
+
+def test_paired_seat_seats_both_lenses_in_core(tmp_path, capsys):
+    line = merged(95, catch=3, rounds=2,
+                  lenses=[["correctness", "test-evidence+spec-compliance"], ["test-evidence+spec-compliance"]],
+                  catches=[{"round": 2, "lens": "spec-compliance", "class": "c", "severity": "minor"},
+                           {"round": 2, "lens": "test-evidence", "class": "c", "severity": "minor"},
+                           {"round": 2, "lens": "integration", "class": "c", "severity": "minor"}])
+    assert run(write_log(tmp_path, [line])) == 0
+    assert "core=2 rotated=1 phase=0 skipped=0" in capsys.readouterr().out
+
+
+def test_phase_lens_catches_are_neither_core_nor_rotated(tmp_path, capsys):
+    line = merged(96, catch=3, rounds=2, lenses=[["correctness"], ["correctness"]],
+                  catches=[{"round": 2, "lens": "final-review", "class": "c", "severity": "major"},
+                           {"round": 3, "lens": "gap-sweep", "class": "c", "severity": "major"},
+                           {"round": 2, "lens": "correctness", "class": "c", "severity": "minor"}])
+    assert run(write_log(tmp_path, [line])) == 0
+    assert "core=1 rotated=0 phase=2 skipped=0" in capsys.readouterr().out
