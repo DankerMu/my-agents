@@ -5,6 +5,16 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.34.0] - 2026-09-05
+
+### Added
+
+- `scripts/loop_log_audit.py` prints a `NOTE per-lens yield (merged PRs)` line: per canonical seat lens, the rounds it was seated in (`round_lenses`, paired seats counted once per lens per round, `review-` prefix and `security-performance` canonicalised), the compliant catches attributed to it, and how many were P0/P1 (`critical`/`major`; other severity spellings are bucketed, never rejected). Phase lenses have no seats and are excluded. Informational only — no DECIDABLE, no exit-code change — it is the per-seat cost signal the 0.33.0 seat plan was derived from by hand.
+
+### Changed
+
+- `phase-4-cross-review.md` brief: the hand-copied finding field list (already drifted from the contract — no Evidence, `Impact` for Consequence, `Requested fix` for Fix direction) is replaced by a pointer to `risk-adaptive-cross-review` `finding-contract.md`, whose 0.6.0 now carries `Lens` as a contract field.
+
 ## [0.33.0] - 2026-09-05
 
 ### Changed
