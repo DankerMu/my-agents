@@ -1,6 +1,6 @@
 # Agent-Readiness Criteria
 
-Source: distilled from the Factory.ai Agent Readiness Droid static auditor (82 criteria, derived 2026-03 cycle), extended with 7 eng-init runtime-verification criteria and the `control-plane-auditor` seven-layer / AGENTS.md constraint-dimension taxonomy. Cleaned of session noise.
+Source: distilled from the Factory.ai Agent Readiness Droid static auditor (82 criteria, derived 2026-03 cycle), extended with 7 eng-init runtime-verification criteria and the seven-layer / AGENTS.md constraint-dimension taxonomy that the retired `control-plane-auditor` skill used to host — this file is that taxonomy's home now. Cleaned of session noise.
 
 This file powers two modes and stays paired with `references/readiness-registry.yaml`, the machine-readable contract for criteria that have executable repair metadata:
 

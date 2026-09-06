@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.2.1] - 2026-09-05
+
+- `eng-init` 与本仓 `project-instruction-bootstrap` 的关系由"二选一"改为固定分工（`control-plane-auditor` 退役）；README 相应更新。
+
 ## [0.2.0] - 2026-08-28
 
 - Added `visual-design` (stellarlink `design`), a visual design-engineering methodology: page-shape routing, task-local design contract, state completeness, and four-layer evidence before delivery.

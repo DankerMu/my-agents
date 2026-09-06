@@ -5,6 +5,17 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-05
+
+### Added
+
+- 与 `eng-init` 的分工节（`control-plane-auditor` 退役后，其"内容 vs 写机制"的所有权分工移到这里）：生成型项目 eng-init 写 `instructions/agents/shared.md` 再由本 skill 重生成；非生成型项目 eng-init 直接写 `AGENTS.md`，本 skill 只增量补段、绝不覆盖 `generated_sections.agents_md` 登记的段落，Claude Code 的 `CLAUDE.md` 用一行 `@AGENTS.md` 导入而非复制共享段。
+
+### Changed
+
+- 探测步骤区分"本 skill 的生成物"与 `eng-init` 写的 `AGENTS.md`：后者按手写处理，走增量兼容模式，杜绝生成模式把它当作自己的产物覆盖。
+
+
 ## [0.3.0] - 2026-07-29
 
 ### Changed

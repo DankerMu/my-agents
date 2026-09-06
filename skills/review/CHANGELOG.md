@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-09-05
+
+### Changed
+
+- Control-plane / instruction-file audit routes (`When Not To Use`, consistency-checklist Protocol axis and Constraint Gaps) point at `eng-init` (Audit mode) instead of the retired `control-plane-auditor`; the six-axes vocabulary link now resolves to `repo-entropy-audit`, its new methodology home.
+
+
 ## [0.8.0] - 2026-07-29
 
 ### Added

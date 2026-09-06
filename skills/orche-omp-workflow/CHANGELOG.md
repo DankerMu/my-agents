@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-09-05
+
+### Changed
+
+- `references/skill-map.md` upstream entry: `control-plane-auditor` (retired) → `eng-init`, whose Initialize pipeline scaffolds the command entry points and verification matrix Phase 0.0 records.
+
+
 ## [0.3.0] - 2026-09-05
 
 ### Added

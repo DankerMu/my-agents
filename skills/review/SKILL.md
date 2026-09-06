@@ -9,7 +9,7 @@ description: >
   severity-graded findings with fix directions. Do NOT activate for brainstorming, open-ended
   design feedback, governance/library audits, or whether-an-approach-seems-good conversations.
 invocation_posture: hybrid
-version: 0.8.0
+version: 0.8.1
 ---
 
 # Review
@@ -31,7 +31,7 @@ Unified review skill for agent-performed reviews. Auto-detects content types in 
 - Teaching review culture, reviewer communication, or mentoring practices
 - General quality feedback without a concrete artifact or change set to inspect
 - Multi-perspective, high-risk, or risk-adaptive-depth reviews (parallel reviewer packs, invariant/state-machine focus) → `risk-adaptive-cross-review`
-- Full repository entropy scan → `repo-entropy-audit`; control-plane/instruction-file audit → `control-plane-auditor`
+- Full repository entropy scan → `repo-entropy-audit`; control-plane/instruction-file audit → `eng-init` (Audit mode)
 
 ## Review Modes
 

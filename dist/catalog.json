@@ -90,7 +90,7 @@
       "path": "skills/ask-danker",
       "displayName": "Ask Danker",
       "description": "本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "maturity": "experimental",
       "categories": [
         "productivity",
@@ -230,29 +230,6 @@
         "opencode",
         "omp",
         "parallel"
-      ]
-    },
-    {
-      "name": "control-plane-auditor",
-      "path": "skills/control-plane-auditor",
-      "displayName": "Control Plane Auditor",
-      "description": "Audit a repository's control-plane health and produce an actionable improvement report. Use when the user asks to \"audit the repo\", \"check repo health\", \"assess control plane\", \"entropy audit for the control system\", \"check what's missing for agents\", or wants to know what's missing in their instruction files, rules, and verification infrastructure. Also use for the write modes: \"bootstrap the control plane\", \"set up this repo for agents\", \"init AGENTS.md and guardrails\", or fixing gaps from a prior audit (bootstrap/repair). Do NOT use for code review (use review), full-repo code/entropy scan (use repo-entropy-audit), general documentation work (use project-documentation), or reviewing a specific PR or diff (use review).",
-      "version": "0.4.0",
-      "maturity": "experimental",
-      "categories": [
-        "workflow",
-        "documentation",
-        "review"
-      ],
-      "tags": [
-        "entropy",
-        "control-plane",
-        "audit",
-        "agents-md",
-        "repo-health",
-        "invariant",
-        "governance",
-        "bootstrap"
       ]
     },
     {
@@ -556,7 +533,7 @@
       "path": "skills/orche-omp-workflow",
       "displayName": "Orchestrated omp Issue Workflow",
       "description": "GitHub issue → verified PR workflow where Claude Code / Codex orchestrates and omp (oh-my-pi) executes: codebase exploration, implementation, cross-review, and finding verification are delegated to omp explorer/implementer/reviewer/verifier sessions through codeagent-wrapper, while Phase 7 final review stays a native subagent. Mandatory OpenSpec fixtures, risk-adaptive review, CI, human-gated merge. Use when the issue loop should run on omp (\"用 omp 跑这个 issue\", \"omp 实现 #XX\"). Not for docs/spec-only work, hotfixes that skip review, or all-native runs (use subagent-workflow).",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -621,7 +598,7 @@
       "path": "skills/project-instruction-bootstrap",
       "displayName": "Project Instruction Bootstrap",
       "description": "为目标项目安装 pack 之后，扫描项目并补全/对齐它自己的 CLAUDE.md 与 AGENTS.md。 默认用 shared 源生成模式：项目维护 instructions/agents/{shared,claude,codex}.md， 本 skill 充当生成器拼接出两文件（shared 段单一事实源、零漂移），不给项目装脚本或 hook。 只写会话推导不出的内容：项目用途、非标准命令、禁区/gotchas、能力路由纠偏； 可推导的技术栈/目录/标准命令一律不写。增量、绝不覆盖、写前出 diff。 触发词：\"补全项目指令\"、\"装完 pack 初始化 CLAUDE.md/AGENTS.md\"、\"bootstrap project instructions\"。 不用于 my-agents 仓库自身的根指令（那是 instructions/root 生成的）。",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -685,8 +662,8 @@
       "name": "repo-entropy-audit",
       "path": "skills/repo-entropy-audit",
       "displayName": "Repo Entropy Audit",
-      "description": "Full-repository entropy scan across six axes: structure (dependency graph, layering, cycles), semantics (naming diversity, state model fragmentation), behavior (error model variants, boundary handling), context (doc freshness, instruction-file coverage), protocol (instruction-file consistency), and control (rule enforcement gaps). Produces a module-level heatmap, trend comparison, and prioritized cleanup targets. Activate when the user asks for \"entropy audit\", \"repo health scan\", \"heatmap\", \"tech debt scan\", or \"full entropy report\". Do NOT use for PR-level review (use review) or control-plane audit (use control-plane-auditor).",
-      "version": "0.4.1",
+      "description": "Full-repository entropy scan across six axes: structure (dependency graph, layering, cycles), semantics (naming diversity, state model fragmentation), behavior (error model variants, boundary handling), context (doc freshness, instruction-file coverage), protocol (instruction-file consistency), and control (rule enforcement gaps). Produces a module-level heatmap, trend comparison, and prioritized cleanup targets. Activate when the user asks for \"entropy audit\", \"repo health scan\", \"heatmap\", \"tech debt scan\", or \"full entropy report\". Do NOT use for PR-level review (use review) or control-plane audit (use eng-init).",
+      "version": "0.5.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -810,7 +787,7 @@
       "path": "skills/review",
       "displayName": "Review",
       "description": "Structured review of concrete artifacts: PRs, diffs, commits, branches, staged changes, named files, docs, API specs, database migrations, or infrastructure config. Activate on explicit, artifact-scoped review requests — \"code review\", \"review my changes\", \"find bugs in\", \"security review\" — and on consistency/drift requests (\"is this consistent with our conventions?\", naming drift, pattern duplication), which run consistency mode. Produces severity-graded findings with fix directions. Do NOT activate for brainstorming, open-ended design feedback, governance/library audits, or whether-an-approach-seems-good conversations.",
-      "version": "0.8.0",
+      "version": "0.8.1",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -996,7 +973,7 @@
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
       "description": "GitHub issue → verified PR workflow: the orchestrator delegates implementation, cross-review, and finding verification to the implementer/reviewer/verifier subagents, with mandatory OpenSpec fixtures, risk-adaptive review, CI, and human-gated merge. Use to implement a GitHub issue or process the next DAG issue (\"implement #XX\", \"处理下一个issue\"). Not for docs/spec-only work, hotfixes that skip review, or Codex-implements-under-Claude-orchestration (use cc-cx-workflow).",
-      "version": "0.32.0",
+      "version": "0.32.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1389,7 +1366,7 @@
       "path": "hooks/large-file-guard",
       "displayName": "Large File Guard",
       "description": "PreToolUse hook that blocks `git commit` when the commit includes text files over a line-count threshold (default 1000). Incremental ratchet: only files touched by the commit are checked; legacy large files do not block until modified. Configurable via .large-file-guard.json.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1518,7 +1495,7 @@
       "path": "packs/codebase-stewardship",
       "displayName": "Codebase Stewardship Pack",
       "description": "周期性/按需的代码健康治理：深化模块、治乱删冗、定架构方向，共用 grill 对抗式对话与 openspec/glossary.md + docs/adr/ 领域沉淀。区别于 agentic-issue-delivery 的一次性 issue 交付流水线。",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "codebase-steward",
@@ -1538,7 +1515,7 @@
       "skills": [
         "improve-codebase-architecture",
         "repo-entropy-audit",
-        "control-plane-auditor",
+        "eng-init",
         "future-aware-architecture",
         "grill-me",
         "blind-spot-pass",
@@ -1641,7 +1618,7 @@
       "path": "packs/stellarlink",
       "displayName": "Stellarlink Pack",
       "description": "从 stellarlink-skills 吸收的工程方法论组合：证据驱动交付（tdd/vdd/implement）、代码库级迁移（code-migration）、架构设计与 spec 化（architecture-design/to-spec）、视觉设计工程（visual-design）、仓库就绪控制面（eng-init）、可度量工件进化（self-evolution）与逆向工程路由（reverse-skill）。除 tdd/vdd（被其他 skill 运行中调用，保持模型可调）外全部手动调用。",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "maturity": "experimental",
       "packType": "role-pack",
       "categories": [
@@ -1677,5 +1654,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-09-05T16:50:00.502Z"
+  "generatedAt": "2026-09-06T00:18:06.928Z"
 }

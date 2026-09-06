@@ -10,7 +10,7 @@ Routing guide for skills adjacent to this workflow. Consult when deciding whethe
 ## Upstream
 
 - `stage-change-pipeline`: turns design-stage documents into reviewed OpenSpec changes and fine-grained GitHub issues before implementation begins. Owns scope clarity, acceptance criteria, and PR boundary (see Upstream Contract in `SKILL.md`).
-- `control-plane-auditor` (from the `codebase-stewardship` pack): further upstream when the host repo lacks a control plane — instruction files, unified command entry points, verification infrastructure. Its bootstrap scaffolds the command entry points and verification matrix that Phase 0.0 records in the project profile.
+- `eng-init` (from the `stellarlink` pack; also in `codebase-stewardship`): further upstream when the host repo lacks a control plane — instruction files, unified command entry points, verification infrastructure. Its Initialize pipeline scaffolds the command entry points and verification matrix that Phase 0.0 records in the project profile.
 
 ## Alongside
 

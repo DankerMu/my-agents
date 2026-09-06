@@ -9,17 +9,17 @@ description: >-
   comparison, and prioritized cleanup targets. Activate when the user asks for
   "entropy audit", "repo health scan", "heatmap", "tech debt scan", or
   "full entropy report". Do NOT use for PR-level review (use review)
-  or control-plane audit (use control-plane-auditor).
+  or control-plane audit (use eng-init).
 disable-model-invocation: true
 invocation_posture: manual-first
-version: 0.4.1
+version: 0.5.0
 ---
 
 # Repo Entropy Audit
 
 Scan an entire repository for entropy across six axes and produce a module-level heatmap, trend comparison against a stored baseline, and prioritized cleanup targets.
 
-This skill examines the **code itself** for entropy patterns. For auditing the control system (instruction files, rules, guards), use `control-plane-auditor`. For PR-level consistency checks, use `review` (consistency mode).
+This skill examines the **code itself** for entropy patterns. For auditing the control system (instruction files, rules, guards), use `eng-init` in Audit mode — it hosts the seven-layer control-plane checklist and the AGENTS.md constraint-dimension audit. For PR-level consistency checks, use `review` (consistency mode).
 
 ## When To Use
 
@@ -31,7 +31,7 @@ This skill examines the **code itself** for entropy patterns. For auditing the c
 ## When Not To Use
 
 - Reviewing a specific PR or diff → `review`（consistency 模式）
-- Auditing instruction files and control infrastructure → `control-plane-auditor`
+- Auditing instruction files and control infrastructure → `eng-init` (Audit mode)
 - Reviewing code for correctness → `review`
 
 ---
@@ -173,7 +173,7 @@ For each target, suggest which tool or skill can help:
 - Naming unification → refactoring task
 - Error model → `review` + architecture decision
 - Structural issues → `implementation-planning` for phased refactor
-- Doc gaps → `project-documentation` or `control-plane-auditor`
+- Doc gaps → `project-documentation` or `eng-init`
 
 After the user confirms the priority list, offer to make the top targets trackable instead of leaving them as report-only recommendations: `gh-create-issue` for direct cleanup issues (epic + sub-issues for multi-module efforts), or `stage-change-pipeline` when a target needs a reviewed OpenSpec change and design review before implementation. Do not start implementing cleanups inside the audit. Sequence this after Phase 4: record the baseline snapshot first, then create the issues or route to the pipeline, so every tracked item points back to a committed audit trail.
 
@@ -203,8 +203,8 @@ Proceed only with user confirmation.
 - [Scan Dimensions](references/scan-dimensions.md) — detection methods per axis
 - [Heatmap Format](references/heatmap-format.md) — output table format and scoring
 - [Baseline Format](references/baseline-format.md) — snapshot JSON schema and trend comparison
-- [Six Entropy Axes](../control-plane-auditor/references/methodology/six-entropy-axes.md) — theoretical framework
-- [Metric Definitions](../control-plane-auditor/references/methodology/metric-definitions.md) — proxy metrics
+- [Six Entropy Axes](references/methodology/six-entropy-axes.md) — the entropy suite's shared vocabulary; this skill is its methodology home, `review` consistency mode and `eng-init` consume it
+- [Metric Definitions](references/methodology/metric-definitions.md) — proxy metrics
 
 ## Caveats
 

@@ -11,7 +11,7 @@ PreToolUse hook：拦截 `git commit`，当本次提交包含超过行数阈值�
 1. 只在工具调用命令里含 `git commit` 时激活，其余 shell 命令零开销放行。
 2. 检查**本次提交会带入的文件**：暂存区文件按暂存内容计行；命令带 `-a`/`--all` 时，已跟踪且有改动的文件按工作区内容计行。二进制文件（numstat 标记）自动跳过。
 3. 任一文件超过 `maxLines` → 拒绝提交，stderr 列出 `文件 (行数)` 清单和处置建议，模型可据此先拆分再提交。
-4. **增量棘轮语义**：只检查本次提交触碰的文件。仓库里既有的大文件不会阻塞无关提交——直到某次提交改到它，才要求处理。这与 `control-plane-auditor` 的 metric 口径（1000+ 行是 informational 信号，单独不构成 red flag）不冲突：hook 不判定"这个文件是坏的"，只在**继续加码**的时刻强制一次显式决策（拆分或 allowlist）。
+4. **增量棘轮语义**：只检查本次提交触碰的文件。仓库里既有的大文件不会阻塞无关提交——直到某次提交改到它，才要求处理。这与熵套件的 metric 口径（`repo-entropy-audit` 的 `references/methodology/metric-definitions.md`：1000+ 行是 informational 信号，单独不构成 red flag）不冲突：hook 不判定"这个文件是坏的"，只在**继续加码**的时刻强制一次显式决策（拆分或 allowlist）。
 
 ## 配置
 
@@ -43,7 +43,7 @@ omp 平台没有 hooks 配置文件：安装时把 `omp.ts` 工厂拷到 `<proje
 
 ## 与熵治理的配合
 
-- `repo-entropy-audit` / `control-plane-auditor` 负责**存量**：找出已经过大的模块并出治理清单。
+- `repo-entropy-audit` / `eng-init` 负责**存量**：找出已经过大的模块并出治理清单。
 - 本 hook 负责**增量**：新债务在提交时就被拦住，存量治理的成果不被回填。
 - 被拦后的两条正路：拆分文件（模型收到 stderr 后可直接执行），或确认合法大文件（生成物/数据/vendored）加入 `exclude`——第二条路要求显式改配置文件，留下可审计的决策痕迹。
 

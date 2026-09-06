@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-05
+
+### Changed
+
+- Becomes the methodology home of the entropy suite: `references/methodology/six-entropy-axes.md` and `metric-definitions.md` move here from the retired `control-plane-auditor` skill (its seven-layer control-plane audit and AGENTS.md constraint-dimension audit already lived in `eng-init`'s readiness criteria, so the skill was a duplicate). Control-plane audit routes now point at `eng-init` (Audit mode); the six-axes vocabulary keeps serving `review` consistency mode and `eng-init` from this package.
+
+
 ## [0.4.1] - 2026-07-11
 
 - Remove the body `## Example Prompts` section — dead weight once the skill is already invoked; git history keeps the prompts as trigger-eval candidates.

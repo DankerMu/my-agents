@@ -2,7 +2,7 @@
 
 Detailed checks for the consistency/drift axis of `review` (formerly the standalone `entropy-review` skill). Use in consistency mode, or when a change set warrants drift analysis alongside correctness review.
 
-These dimensions are the diff-granularity instantiation of the entropy suite's shared six-axes vocabulary (`control-plane-auditor` `references/methodology/six-entropy-axes.md`). Mapping:
+These dimensions are the diff-granularity instantiation of the entropy suite's shared six-axes vocabulary (`repo-entropy-audit` `references/methodology/six-entropy-axes.md`). Mapping:
 
 | Dimension | Six-axes vocabulary |
 |---|---|
@@ -17,7 +17,7 @@ These dimensions are the diff-granularity instantiation of the entropy suite's s
 
 The names differ because the object differs: axes describe where a *repository* loses order; these dimensions describe what a *single change* is about to make worse. Keep using the dimension names in findings; use the axes when aggregating across changes or comparing with `repo-entropy-audit` output.
 
-No diff-level dimension maps to the **Protocol** axis: changes to instruction files, CI, or agent protocols are control-plane concerns and should route to `control-plane-auditor` rather than an entropy review.
+No diff-level dimension maps to the **Protocol** axis: changes to instruction files, CI, or agent protocols are control-plane concerns and should route to `eng-init` (Audit mode) rather than an entropy review.
 
 ---
 
@@ -216,7 +216,7 @@ The core question is not "is this code duplicated?" but "if an agent sees this P
 
 Effectiveness depends on constraint information in the target repo's instruction files. For each affected module: read the nearest and root AGENTS.md; extract glossary, dependency rules, error model, naming conventions, doc freshness rules, state model references. When `openspec/glossary.md` exists, treat it as the canonical domain glossary (the convention maintained by `grill-me` docs mode); AGENTS.md-level constraints supplement it. If none found, note "no formal constraints available; reviewing against surrounding code patterns" and assess against surrounding code.
 
-If constraints are missing or thin, list them at the end under "Constraint Gaps" and suggest running `control-plane-auditor` to establish them first:
+If constraints are missing or thin, list them at the end under "Constraint Gaps" and suggest running `eng-init` (Audit mode, then Repair) to establish them first:
 
 ```
 ## Constraint Gaps
@@ -224,7 +224,7 @@ If constraints are missing or thin, list them at the end under "Constraint Gaps"
 - [ ] Glossary (no canonical terms defined)
 - [ ] Error Model (no standard envelope documented)
 
-→ Run `control-plane-auditor` for a full gap analysis and improvement plan.
+→ Run `eng-init` (Audit mode) for a full gap analysis; its Repair pipeline fixes the named gaps.
 ```
 
 ## E-Severity (consistency axis grading)

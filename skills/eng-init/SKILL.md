@@ -69,6 +69,15 @@ Every repair must require semantic signal matching, a substantive fix, a validat
 
 **Never by default:** `CLAUDE.md`, global Claude config, README, PRD, spec, ADR, unrelated documentation, production application code, or broad refactors. When the honest route to a green oracle is a product-code fix (a real behavior difference behind a failing compare, not a harness problem), eng-init names the fix and hands it off as a claimed work unit; it edits production code itself only on the user's explicit request.
 
+### Root instruction files — ownership
+
+eng-init owns the control-plane **content** — every `AGENTS.md` section it renders. `project-instruction-bootstrap` owns the root instruction files' **write mechanics** for projects that generate them. The Stage 0 scan decides which case applies; the two skills coexist in one project, never "pick one":
+
+- **The project generates its root instruction files** (`instructions/agents/` sources exist, or `AGENTS.md` carries `project-instruction-bootstrap`'s do-not-edit header) → eng-init writes its sections into `instructions/agents/shared.md` and regenerates through `project-instruction-bootstrap`. It never edits the generated file directly.
+- **Otherwise** → eng-init writes `AGENTS.md` directly. When Claude Code is named at Q1.5, `CLAUDE.md` must contain the import line `@AGENTS.md`: Claude Code loads `CLAUDE.md`, not `AGENTS.md`, so without the import the whole control plane is invisible to it. Create a one-line `CLAUDE.md` when none exists; when one exists without the import, put the one-line addition in the Stage 3 spec and record a readiness gap (`claude_md_bridge`) if the user declines. Nothing else eng-init produces ever goes into `CLAUDE.md`.
+
+In both cases the sections eng-init owns are tracked in `constraints.yaml` `generated_sections.agents_md`; `project-instruction-bootstrap`'s incremental mode never overwrites them, and it treats an eng-init-written `AGENTS.md` as hand-written (incremental), never as its own generated output.
+
 ## Initialize pipeline — six-stage flow
 
 ```text
@@ -88,6 +97,7 @@ Gather repo facts silently:
 
 - Git state and repository root.
 - Existing project truth files: `AGENTS.md`, `CONTEXT.md`, module-level `AGENTS.md` files, and any legacy/conflicting rule files.
+- **Root instruction file ownership**: does the project generate its root instruction files through `project-instruction-bootstrap` — `instructions/agents/{shared,claude,codex}.md` sources present, or `AGENTS.md` carrying that skill's do-not-edit header? Record the answer; it fixes the AGENTS.md write target (see *Root instruction files — ownership* below). Also record whether `CLAUDE.md` exists and whether it contains the `@AGENTS.md` import line.
 - Stack markers: `package.json`, lockfiles, `pyproject.toml`, `go.mod`, `Cargo.toml`, `pom.xml`, `build.gradle*`, framework configs.
 - **Tool availability**: for each detected stack, check that core tools are on PATH: Node → `node`, `pnpm`/`npm`/`yarn`; Python → `python3`, `uv`/`poetry`; Go → `go`, `golangci-lint`; Rust → `cargo`, `rustc`; Java → `java`, `gradlew`/`mvn`. Missing tools are not blockers — record them as "missing prerequisites" for the Stage 3 spec. Do not silently write commands that reference an unavailable tool.
 - Existing command surface: `justfile`, `Makefile`, package scripts, task runners.

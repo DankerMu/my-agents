@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-05
+
+### Changed
+
+- `control-plane-auditor` 退役（其七层审计与 AGENTS.md 约束维度早已并入 `eng-init` 的就绪准则，三个 skill 审同一块面是路由税）：仓库健康节与 user-invoked 清单移除该条；`eng-init` 路由改写为控制面引擎，并固定与 `project-instruction-bootstrap` 的分工——生成型项目 eng-init 写源再重生成，否则直接写 `AGENTS.md`、后者只增量补段并为 Claude Code 桥接 `CLAUDE.md`。"二选一"措辞删除。
+
+
 ## [0.7.0] - 2026-09-05
 
 ### Changed
