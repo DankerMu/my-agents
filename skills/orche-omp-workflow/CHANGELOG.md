@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-05
+
+### Added
+
+- `scripts/loop_log_audit.py` and its tests stay byte-identical with `subagent-workflow` 0.34.0: informational `NOTE per-lens yield (merged PRs)` line (seated rounds / catches / P0-P1 per canonical seat lens). `phase-4-cross-review.md` brief points at `risk-adaptive-cross-review` `finding-contract.md` (0.6.0, `Lens` field) instead of a hand-copied field list.
+
 ## [0.4.0] - 2026-09-05
 
 ### Changed

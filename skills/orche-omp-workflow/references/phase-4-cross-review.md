@@ -93,7 +93,7 @@ Summary: <one-line conclusion>
 Invariant Matrix Coverage:        # high / broad-expanded only
 - <row>: covered|missing|out-of-scope - <evidence or rationale>
 Findings:
-- <one per finding in the finding-contract.md field shape: Severity / Failure class / Contract or invariant / Scenario or repro / Required test or evidence / Sibling surfaces / Blocks merge / Impact / Requested fix / Lens (the single lens id whose checklist produced it)>
+- <one per finding, every `finding-contract.md` field (`risk-adaptive-cross-review`), including `Lens`: the single lens id whose checklist produced it, never the seat pair>
 - ...or "None." if clean
 Non-blocking notes:
 - <items without concrete scenario/test, or "None.">

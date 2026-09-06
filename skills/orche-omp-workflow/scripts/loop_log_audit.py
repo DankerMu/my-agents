@@ -109,6 +109,35 @@ def core_lens_set(round_lenses: list) -> set[str]:
     return {canonical_lens(part) for seat in round_lenses[0] for part in str(seat).split("+")}
 
 
+SEAT_LENS_IDS = ("correctness", "integration", "security-perf", "test-evidence", "spec-compliance", "invariant-state")
+HIGH_SEVERITIES = ("p0", "p1", "critical", "major")
+
+
+def per_lens_yield(entries: list[dict]) -> dict[str, dict[str, int]]:
+    """Per canonical seat lens: rounds it was seated in, compliant catches
+    attributed to it, and how many of those were P0/P1 (critical/major).
+    Phase lenses have no seats and are excluded; a paired seat counts each
+    of its lenses once per round; severity spellings are bucketed, never
+    rejected (the live logs carry P3/Note/none/medium/nit alongside P0-P2)."""
+    stats = {lens: {"seated": 0, "catches": 0, "high": 0} for lens in SEAT_LENS_IDS}
+    for entry in entries:
+        for seats in entry.get("round_lenses") or []:
+            seats = seats if isinstance(seats, list) else [seats]
+            seated = {canonical_lens(part) for seat in seats for part in str(seat).split("+")}
+            for lens in seated:
+                if lens in stats:
+                    stats[lens]["seated"] += 1
+        for catch in entry.get("catches") or []:
+            if not is_compliant_catch(catch):
+                continue
+            lens = canonical_lens(catch["lens"])
+            if lens in stats:
+                stats[lens]["catches"] += 1
+                if str(catch.get("severity", "")).lower() in HIGH_SEVERITIES:
+                    stats[lens]["high"] += 1
+    return stats
+
+
 def rotation_attribution(entry: dict) -> tuple[int, int, int, int]:
     """Catches in rounds >= 2 attributed to (pinned core, rotated-in) lenses,
     plus the count of catches from phase lenses (neither core nor rotated) and
@@ -217,6 +246,14 @@ def main(argv: list[str] | None = None) -> int:
                   "lenses) or revert to the round-1 mix, and record it in docs/adr/")
         else:
             print(line)
+
+    lens_yield = per_lens_yield(merged)
+    if any(v["seated"] for v in lens_yield.values()):
+        ranked = sorted(lens_yield.items(), key=lambda kv: (-kv[1]["catches"], kv[0]))
+        cells = "; ".join(f"{lens} seated={v['seated']} catches={v['catches']} high={v['high']}"
+                          for lens, v in ranked)
+        print(f"NOTE per-lens yield (merged PRs): {cells} - catches per seated round is the cost "
+              "signal for the next seat-plan revision; informational, no ADR owed")
 
     if terminal:
         outcomes = {}
