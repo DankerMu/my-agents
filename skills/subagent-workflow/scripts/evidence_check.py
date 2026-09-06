@@ -42,7 +42,7 @@ Checks:
                 loop_log_audit.py reports. When `round_lenses` is present it
                 is checked too: each seat is a canonical lens id or `a+b`
                 pair, no lens sits in two seats of one round, round 1 is
-                within the fixture level's seat cap (none 0, compact 2,
+                within the fixture level's seat cap (none 1, compact 2,
                 expanded 3, high/broad-expanded 4), every later round within
                 3, and the number of rounds listed equals `rounds`.
 
@@ -85,8 +85,20 @@ SEAT_LENS_IDS = ("correctness", "integration", "security-perf", "test-evidence",
                  "spec-compliance", "invariant-state")
 # Lenses that log catches from phases that are not comprehensive rounds.
 PHASE_LENS_IDS = ("fixture-review", "final-review", "gap-sweep", "invariant-audit")
-ROUND1_SEAT_CAP = {"none": 0, "compact": 2, "expanded": 3, "high": 4, "broad-expanded": 4}
+ROUND1_SEAT_CAP = {"none": 1, "compact": 2, "expanded": 3, "high": 4, "broad-expanded": 4}
 LATER_ROUND_SEAT_CAP = 3
+
+LENS_ALIASES = {"security-performance": "security-perf"}
+
+
+def canonical_lens(lens: str) -> str:
+    """Normalise the spellings the live orchestrators actually emit: a
+    `review-` task-id prefix and the `security-performance` long form."""
+    lens = lens.strip()
+    if lens.startswith("review-"):
+        lens = lens[len("review-"):]
+    return LENS_ALIASES.get(lens, lens)
+
 
 
 def check_catch(raw_path: str, index: int, catch: object, findings: list[str]) -> None:
@@ -112,7 +124,7 @@ def check_catch(raw_path: str, index: int, catch: object, findings: list[str]) -
         lens = catch["lens"]
         if not isinstance(lens, str) or not lens:
             findings.append(f"{where} lens must be a non-empty string")
-        elif lens not in SEAT_LENS_IDS and lens not in PHASE_LENS_IDS:
+        elif canonical_lens(lens) not in SEAT_LENS_IDS and lens not in PHASE_LENS_IDS:
             findings.append(f"{where} lens `{lens}` is off-vocabulary - exactly one lens id: a seat lens "
                             f"({'|'.join(SEAT_LENS_IDS)}) or a phase lens ({'|'.join(PHASE_LENS_IDS)}); "
                             "a finding is attributed to the lens whose checklist produced it, never to an "
@@ -137,6 +149,7 @@ def check_round_lenses(raw_path: str, entry: dict, findings: list[str]) -> None:
         seen: set[str] = set()
         for seat in seats:
             for part in seat.split("+"):
+                part = canonical_lens(part)
                 if part not in SEAT_LENS_IDS:
                     findings.append(f"{label} seat `{seat}` uses off-vocabulary lens id `{part}` "
                                     f"(canonical: {'|'.join(SEAT_LENS_IDS)}; a paired seat is `a+b`)")

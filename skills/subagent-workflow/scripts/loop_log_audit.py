@@ -90,11 +90,23 @@ def non_compliant_catches(entry: dict) -> int:
 PHASE_LENS_IDS = ("fixture-review", "final-review", "gap-sweep", "invariant-audit")
 
 
+LENS_ALIASES = {"security-performance": "security-perf"}
+
+
+def canonical_lens(lens: str) -> str:
+    """Normalise the spellings the live orchestrators actually emit: a
+    `review-` task-id prefix and the `security-performance` long form."""
+    lens = lens.strip()
+    if lens.startswith("review-"):
+        lens = lens[len("review-"):]
+    return LENS_ALIASES.get(lens, lens)
+
+
 def core_lens_set(round_lenses: list) -> set[str]:
     """Lens ids seated in round 1. A paired seat `a+b` contributes both ids."""
     if not round_lenses:
         return set()
-    return {part for seat in round_lenses[0] for part in str(seat).split("+")}
+    return {canonical_lens(part) for seat in round_lenses[0] for part in str(seat).split("+")}
 
 
 def rotation_attribution(entry: dict) -> tuple[int, int, int, int]:
@@ -120,7 +132,7 @@ def rotation_attribution(entry: dict) -> tuple[int, int, int, int]:
             continue
         if catch["lens"] in PHASE_LENS_IDS:
             phase += 1
-        elif catch["lens"] in core_lenses:
+        elif canonical_lens(catch["lens"]) in core_lenses:
             core += 1
         else:
             rotated += 1

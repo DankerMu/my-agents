@@ -46,9 +46,9 @@ duplicated lens is orchestrator paperwork and is refused with nothing
 recorded. A round that ran with more seats than its cap already spent its
 tokens, so it is recorded, tagged `seatCapExceeded`, given a `VIOLATION`
 ledger line, and exits 2 - the same shape as a round recorded while locked.
-Caps: round 1 by the fixture level given to `open --fixture` (none 0,
-compact 2, expanded 3, high/broad-expanded 4; 4 when no level was given),
-every later round 3.
+Caps: round 1 by the fixture level given to `open --fixture` (none 1 - the
+single seat a Phase 2 risk flag buys, compact 2, expanded 3,
+high/broad-expanded 4; 4 when no level was given), every later round 3.
 
 Commands:
   open          --pr N [--issue N] [--review-dir PATH] [--fixture LEVEL]
@@ -85,9 +85,20 @@ FIXTURE_LEVELS = ["none", "compact", "expanded", "high", "broad-expanded"]
 # Canonical lens ids: risk-adaptive-cross-review references/reviewer-packages.md.
 SEAT_LENS_IDS = ("correctness", "integration", "security-perf", "test-evidence",
                  "spec-compliance", "invariant-state")
-ROUND1_SEAT_CAP = {"none": 0, "compact": 2, "expanded": 3, "high": 4, "broad-expanded": 4}
+ROUND1_SEAT_CAP = {"none": 1, "compact": 2, "expanded": 3, "high": 4, "broad-expanded": 4}
 MAX_SEATS = 4              # round-1 cap when `open` recorded no fixture level
 LATER_ROUND_SEAT_CAP = 3   # post-fix rounds: pinned core (2) plus at most one rotated-in seat
+
+LENS_ALIASES = {"security-performance": "security-perf"}
+
+
+def canonical_lens(lens: str) -> str:
+    """Normalise the spellings the live orchestrators actually emit: a
+    `review-` task-id prefix and the `security-performance` long form."""
+    lens = lens.strip()
+    if lens.startswith("review-"):
+        lens = lens[len("review-"):]
+    return LENS_ALIASES.get(lens, lens)
 
 
 def state_path(root: str) -> Path:
@@ -259,7 +270,7 @@ def split_rebuttal_present(text: str) -> bool:
 
 def parse_seats(raw: str) -> tuple[list[str], str | None]:
     """Parse `--lenses a,b+c` into a seat list; return (seats, error)."""
-    seats = [s.strip() for s in (raw or "").split(",") if s.strip()]
+    seats = ["+".join(canonical_lens(p) for p in s.split("+")) for s in (raw or "").split(",") if s.strip()]
     if not seats:
         return [], "--lenses must list at least one seat (comma-separated; a paired seat is `a+b`)"
     seen: set[str] = set()
@@ -568,7 +579,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--review-dir", default=None)
     p.add_argument("--fixture", choices=FIXTURE_LEVELS, default=None,
                    help="effective fixture level; arms the per-level round-1 seat cap "
-                        "(none 0, compact 2, expanded 3, high/broad-expanded 4; 4 when omitted)")
+                        "(none 1, compact 2, expanded 3, high/broad-expanded 4; 4 when omitted)")
     p.set_defaults(fn=cmd_open)
 
     p = sub.add_parser("record-round", help="record a comprehensive cross-review round")

@@ -26,7 +26,7 @@ evidence checklist, version 0.24.0):
   canonical lens id - a seat lens or a phase lens - never an `a+b` pair; when
   `round_lenses` is present each seat is a canonical id or `a+b` pair, no lens
   sits in two seats of one round, round 1 is within the fixture level's cap
-  (none 0, compact 2, expanded 3, high/broad-expanded 4), later rounds within
+  (none 1, compact 2, expanded 3, high/broad-expanded 4), later rounds within
   3, and the list length equals `rounds`.
 """
 
@@ -378,6 +378,21 @@ def test_round1_over_fixture_cap_fails(tmp_path, capsys):
     assert len(found) == 1 and "ran 5 seats; the round-1 cap for `high` is 4" in found[0]
     found = lens_findings(tmp_path, capsys, fixture="expanded", rounds=1, round_lenses=[HIGH_SEATS])
     assert len(found) == 1 and "cap for `expanded` is 3" in found[0]
+
+
+def test_review_prefix_and_long_alias_accepted_in_round_lenses(tmp_path, capsys):
+    assert lens_findings(tmp_path, capsys, fixture="high", rounds=1, round_lenses=[[
+        "review-correctness", "review-invariant-state", "review-test-evidence+review-spec-compliance",
+        "security-performance+integration"]]) == []
+    found = lens_findings(tmp_path, capsys, fixture="high", rounds=1,
+                          round_lenses=[["review-correctness", "review-correctness"]])
+    assert len(found) == 1 and "more than one seat" in found[0]
+
+
+def test_none_level_allows_one_seat(tmp_path, capsys):
+    assert lens_findings(tmp_path, capsys, fixture="none", rounds=1, round_lenses=[["correctness+test-evidence"]]) == []
+    found = lens_findings(tmp_path, capsys, fixture="none", rounds=1, round_lenses=[["correctness", "integration"]])
+    assert len(found) == 1 and "cap for `none` is 1" in found[0]
 
 
 def test_later_round_over_three_fails(tmp_path, capsys):

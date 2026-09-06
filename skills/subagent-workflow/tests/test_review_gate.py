@@ -43,7 +43,7 @@ Phase 4/5/6.5, versions 0.20.0/0.21.0):
 - Reviewer seat caps (0.33.0): `record-round --lenses a,b+c` is required; an
   off-vocabulary lens id, a lens seated twice, or an empty list is refused
   with nothing recorded (paperwork). A round with more seats than its cap
-  (round 1: fixture level from `open --fixture` - none 0, compact 2,
+  (round 1: fixture level from `open --fixture` - none 1, compact 2,
   expanded 3, high/broad-expanded 4, or 4 when omitted; later rounds 3) is
   recorded, tagged `seatCapExceeded`, appends a VIOLATION ledger line, and
   exits 2 - the round already spent its tokens. The ledger line carries the
@@ -550,6 +550,13 @@ def test_paired_seats_recorded_and_in_ledger(tmp_path):
     assert state(tmp_path)["fixture"] == "high"
 
 
+def test_review_prefix_and_long_alias_are_canonicalised(tmp_path):
+    open_gate(tmp_path, "high")
+    assert record(tmp_path, "a", clean=True,
+                  lenses="review-correctness,review-invariant-state,review-test-evidence+spec-compliance,security-performance+integration") == 0
+    assert state(tmp_path)["rounds"][0]["lenses"] == HIGH_SEATS.split(",")
+
+
 def test_round1_over_cap_is_recorded_as_violation(tmp_path, capsys):
     open_gate(tmp_path, "high")
     five = HIGH_SEATS.replace("security-perf+integration", "security-perf,integration")
@@ -571,6 +578,16 @@ def test_round1_cap_follows_fixture_level(tmp_path):
     assert record(tmp_path, "a", clean=True, lenses="correctness+test-evidence,integration,security-perf") == 2
     assert state(tmp_path)["rounds"][0]["seatCap"] == 2
     assert "cap 2 for compact" in ledger(tmp_path)
+
+
+def test_none_level_buys_one_seat_when_phase2_flags_risk(tmp_path):
+    open_gate(tmp_path, "none")
+    assert record(tmp_path, "a", clean=True, lenses="correctness+test-evidence") == 0
+    assert state(tmp_path)["rounds"][0]["seatCap"] == 1
+    assert run(tmp_path, "close") == 0
+    open_gate(tmp_path, "none")
+    assert record(tmp_path, "a", clean=True, lenses="correctness,integration") == 2
+    assert "cap 1 for none" in ledger(tmp_path)
 
 
 def test_round1_cap_without_fixture_is_four(tmp_path):

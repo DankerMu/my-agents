@@ -48,7 +48,7 @@ Reviewer invariant rule:
 
 Do not maintain per-reviewer checklists here. Build one brief per selected seat from the template below, inlining the checklist of every lens the seat carries from `risk-adaptive-cross-review` (`reviewer-packages.md` → Reviewer Checklists) plus any diff-triggered cross-cutting lens (removed-behavior, wrapper/proxy, altitude) that seat owns. A paired seat is one reviewer with two checklists — the cost of a reviewer is re-reading the diff, code, and fixture, not checklist length. Prepend the role header, the `reviewer` contract bullets, the operating-guide pointer, and the omp delegation boundary (`omp-delegation.md`) — the omp session loads no agent definition, no skills, and no project rules on its own. Launch the selected set as one parallel batch; each task's `workdir` is `<absolute repo path>`.
 
-Seats and report files (the report file is named after the seat's leading lens; the reviewer role is `review-<leading lens>`):
+Seats and report files (the report file is named after the seat's leading lens; the reviewer task id is `review-<leading lens>`; seat lists and `record-round --lenses` use bare lens ids, and the CLI strips a `review-` prefix and maps `security-performance` to `security-perf`):
 
 | Seat | Report file | Fixture levels |
 | --- | --- | --- |

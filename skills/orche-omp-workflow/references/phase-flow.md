@@ -151,7 +151,7 @@ A verification failure whose cause is not evident from the failing output is not
 
 Select reviewer seats from fixture level. A seat is one parallel reviewer carrying one lens or two paired lenses (`a+b`, checklists inlined together); the seat plan and lens ids are canonical in `risk-adaptive-cross-review` (`reviewer-packages.md`):
 
-- `none`: skip unless Phase 2 audit finds risk.
+- `none`: skip unless the Phase 2 audit finds risk; when it does, one seat (`correctness+test-evidence`).
 - `compact`: 1-2 seats — `correctness+test-evidence`; a second seat (`integration` or `security-perf`) only when a selected risk pack names that surface.
 - `expanded`: 2-3 seats, hard cap 3 — `correctness`; `test-evidence+spec-compliance`; plus `integration`, `security-perf`, or `invariant-state` when a selected risk pack names it.
 - `high` or `broad-expanded`: exactly 4 seats — `correctness`; `invariant-state`; `test-evidence+spec-compliance`; `security-perf+integration`. Nothing escalates beyond 4: every seat already cross-checks the `Invariant Matrix`, and the fixture is an input to every brief.

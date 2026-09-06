@@ -227,6 +227,15 @@ def test_round_zero_fixture_review_catch_is_compliant(tmp_path, capsys):
 # --- R7 seat pairs and phase lenses ------------------------------------------
 
 
+def test_review_prefix_and_long_alias_attribute_to_core(tmp_path, capsys):
+    line = merged(97, catch=2, rounds=2,
+                  lenses=[["review-correctness", "review-test-evidence+security-performance"], ["correctness"]],
+                  catches=[{"round": 2, "lens": "review-security-perf", "class": "c", "severity": "major"},
+                           {"round": 2, "lens": "integration", "class": "c", "severity": "minor"}])
+    assert run(write_log(tmp_path, [line])) == 0
+    assert "core=1 rotated=1 phase=0 skipped=0" in capsys.readouterr().out
+
+
 def test_paired_seat_seats_both_lenses_in_core(tmp_path, capsys):
     line = merged(95, catch=3, rounds=2,
                   lenses=[["correctness", "test-evidence+spec-compliance"], ["test-evidence+spec-compliance"]],

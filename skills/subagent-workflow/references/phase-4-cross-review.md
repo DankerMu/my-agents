@@ -46,7 +46,7 @@ Reviewer invariant rule:
 
 Do not maintain per-reviewer checklists here. Build one brief per selected seat from the template below, inlining the checklist of every lens the seat carries from `risk-adaptive-cross-review` (`reviewer-packages.md` → Reviewer Checklists) plus any diff-triggered cross-cutting lens (removed-behavior, wrapper/proxy, altitude) that seat owns. A paired seat is one reviewer with two checklists — the cost of a reviewer is re-reading the diff, code, and fixture, not checklist length. Spawn the selected set as parallel subagents in one batch; each subagent's working directory is `<absolute repo path>`.
 
-Seats and report files (the report file is named after the seat's leading lens; the reviewer role is `review-<leading lens>`):
+Seats and report files (the report file is named after the seat's leading lens; the reviewer task id is `review-<leading lens>`; seat lists and `record-round --lenses` use bare lens ids, and the CLI strips a `review-` prefix and maps `security-performance` to `security-perf`):
 
 | Seat | Report file | Fixture levels |
 | --- | --- | --- |
