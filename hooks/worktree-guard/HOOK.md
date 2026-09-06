@@ -29,7 +29,7 @@ npx my-agents install hook worktree-guard --platform claude
 npx my-agents install hook worktree-guard --platform omp
 ```
 
-安装动作 = 拷贝脚本到 `<project>/.claude/hooks/worktree-guard/`（及 `.codex/hooks/…`）+ 把配置片段幂等 merge 进 `<project>/.claude/settings.json`（及 `.codex/hooks.json`）。卸载按 deep-equal 摘除本包写入的条目，不碰用户手写的 hooks。
+安装动作 = 拷贝脚本到 `<project>/.claude/hooks/worktree-guard/`（及 `.codex/hooks/…`）+ 把配置片段幂等 merge 进 `<project>/.claude/settings.json`（及 `.codex/hooks.json`）。merge 以 hook 命令为单位：同 `matcher` 的既有块里只补缺失的 `command`，不新建重复块；卸载只从同 `matcher` 块摘除本包的 `command`，用户手写的 hooks 原样保留。
 
 omp 平台没有 hooks 配置文件：安装时把 `omp.ts` 工厂拷到 `<project>/.omp/hooks/pre/worktree-guard.ts`（脚本拷到 `.omp/hooks/worktree-guard/`），omp 启动时将其作为扩展模块加载，在 `tool_call` 事件里调用同一份 shell 脚本；退出码 2 翻译为 `{ block, reason }`。卸载删除这两处文件。
 

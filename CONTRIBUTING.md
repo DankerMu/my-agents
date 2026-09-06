@@ -74,7 +74,7 @@ Conventions:
 
 - Required files: `hook.json`, `HOOK.md`, `CHANGELOG.md`, and at least one platform fragment (`claude-code.json` or `codex.json`)
 - Shared executable logic belongs in `scripts/`; fragments must declare only events listed in `hook.json.events`
-- Install and uninstall must preserve unrelated user configuration and remove only deep-equal managed entries
+- Install and uninstall must preserve unrelated user configuration and remove only the managed hook commands (matched per `command` inside the same `matcher` block)
 - Packs and project manifests reference hooks by the `hook.json.name` value
 
 ## Adding a New Pack

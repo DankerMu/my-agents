@@ -4,7 +4,7 @@
 
 - 技能包应包含 `skill.json`、`SKILL.md` 和 `CHANGELOG.md`；`eval/`、`references/`、`scripts/`、`projection.json` 和 `tests/` 为可选项。
 - Agent 包应包含 `agent.json`、一个精简的 canonical `AGENT.md`、至少一个生成的平台定义文件（`claude-code.md` 或 `codex.toml`）、可选且会随安装复制的 `references/`，以及 `CHANGELOG.md`。修改 `AGENT.md` 后运行 `npm run sync-agents`，不要手改平台文件中的生成行为区域。
-- 钩子包应包含 `hook.json`、`HOOK.md`、至少一个平台片段（`claude-code.json` 对应 `.claude/settings.json`，`codex.json` 对应 `.codex/hooks.json`）和 `CHANGELOG.md`；共享 shell 脚本放在 `scripts/`。安装时将 `scripts/` 拷贝到目标项目的 `.claude/hooks/<name>/`（或 `.codex/hooks/<name>/`），并把片段中的 `hooks` 对象幂等 merge 进平台配置；卸载只按 deep-equal 摘除托管条目。
+- 钩子包应包含 `hook.json`、`HOOK.md`、至少一个平台片段（`claude-code.json` 对应 `.claude/settings.json`，`codex.json` 对应 `.codex/hooks.json`）和 `CHANGELOG.md`；共享 shell 脚本放在 `scripts/`。安装时将 `scripts/` 拷贝到目标项目的 `.claude/hooks/<name>/`（或 `.codex/hooks/<name>/`），并把片段中的 `hooks` 对象幂等 merge 进平台配置；条目以同 `matcher` 块内的 hook `command` 为单位匹配（用户在同一块里手写的 hook 不会导致重复块）；卸载只摘除托管的 `command`，块内其余 hook 保留。
 - Pack 包应包含 `pack.json`、`README.md` 和 `CHANGELOG.md`；pack 可以捆绑 skills、agents 和 hooks。
 - 共享 schema 放在 `schemas/`；创作工具放在 `scripts/`；生成的目录放在 `docs/catalog/` 和 `dist/catalog.json`；较长的研究笔记放在 `research/`。
 - 跨包竞争式评估放在 `eval/routing/`；与单包 eval 不同，它使用不点名候选 Skill 的 prompt，并声明预期胜者、禁止路由、允许后续流程和合理工作流深度。

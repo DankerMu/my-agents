@@ -64,7 +64,7 @@ test("merge preserves unrelated user settings and hook entries", async () => {
   assert.deepEqual(config.hooks.PreToolUse[0], USER_ENTRY);
 });
 
-test("remove deletes only deep-equal managed entries and cleans empty keys", async () => {
+test("remove deletes only managed entries and cleans empty keys", async () => {
   const configPath = await makeTmpConfigPath();
   await fs.writeFile(
     configPath,
@@ -106,4 +106,102 @@ test("entries with reordered keys still match on removal", async () => {
   };
   const removed = await removeHooksConfig(configPath, reordered);
   assert.equal(removed, 1);
+});
+
+const HAND_ADDED_HOOK = { type: "command", command: "bash uv-python-guard.sh", timeout: 5 };
+
+function fragmentWithHandAddedHook() {
+  return {
+    hooks: {
+      PreToolUse: [
+        {
+          matcher: "Edit|Write",
+          hooks: [{ type: "command", command: "bash guard.sh", timeout: 15 }, HAND_ADDED_HOOK]
+        }
+      ]
+    }
+  };
+}
+
+test("merge does not duplicate a block that carries a hand-added hook", async () => {
+  const configPath = await makeTmpConfigPath();
+  await fs.writeFile(configPath, JSON.stringify(fragmentWithHandAddedHook()));
+
+  const added = await mergeHooksConfig(configPath, FRAGMENT);
+
+  assert.equal(added, 0);
+  const config = await readConfig(configPath);
+  assert.equal(config.hooks.PreToolUse.length, 1);
+  assert.deepEqual(
+    config.hooks.PreToolUse[0].hooks,
+    fragmentWithHandAddedHook().hooks.PreToolUse[0].hooks
+  );
+});
+
+test("merge appends the managed command into an existing same-matcher block", async () => {
+  const configPath = await makeTmpConfigPath();
+  await fs.writeFile(
+    configPath,
+    JSON.stringify({ hooks: { PreToolUse: [{ matcher: "Edit|Write", hooks: [HAND_ADDED_HOOK] }] } })
+  );
+
+  const added = await mergeHooksConfig(configPath, FRAGMENT);
+  assert.equal(added, 1);
+
+  const config = await readConfig(configPath);
+  assert.equal(config.hooks.PreToolUse.length, 1);
+  assert.deepEqual(config.hooks.PreToolUse[0].hooks, [
+    HAND_ADDED_HOOK,
+    FRAGMENT.PreToolUse[0].hooks[0]
+  ]);
+
+  const addedAgain = await mergeHooksConfig(configPath, FRAGMENT);
+  assert.equal(addedAgain, 0);
+  assert.equal((await readConfig(configPath)).hooks.PreToolUse.length, 1);
+});
+
+test("remove strips only the managed command and keeps the hand-added hook in its block", async () => {
+  const configPath = await makeTmpConfigPath();
+  await fs.writeFile(configPath, JSON.stringify(fragmentWithHandAddedHook()));
+
+  const removed = await removeHooksConfig(configPath, FRAGMENT);
+
+  assert.equal(removed, 1);
+  const config = await readConfig(configPath);
+  assert.deepEqual(config.hooks.PreToolUse, [{ matcher: "Edit|Write", hooks: [HAND_ADDED_HOOK] }]);
+});
+
+test("remove cleans legacy duplicated blocks left by block-level merging", async () => {
+  const configPath = await makeTmpConfigPath();
+  await fs.writeFile(
+    configPath,
+    JSON.stringify({
+      hooks: {
+        PreToolUse: [
+          fragmentWithHandAddedHook().hooks.PreToolUse[0],
+          FRAGMENT.PreToolUse[0],
+          USER_ENTRY
+        ]
+      }
+    })
+  );
+
+  const removed = await removeHooksConfig(configPath, FRAGMENT);
+
+  assert.equal(removed, 2);
+  const config = await readConfig(configPath);
+  assert.deepEqual(config.hooks.PreToolUse, [
+    { matcher: "Edit|Write", hooks: [HAND_ADDED_HOOK] },
+    USER_ENTRY
+  ]);
+});
+
+test("entries without a hooks array still merge and remove by deep equality", async () => {
+  const configPath = await makeTmpConfigPath();
+  const opaque = { PreToolUse: [{ matcher: "Bash", command: "legacy-shape" }] };
+
+  assert.equal(await mergeHooksConfig(configPath, opaque), 1);
+  assert.equal(await mergeHooksConfig(configPath, opaque), 0);
+  assert.equal(await removeHooksConfig(configPath, opaque), 1);
+  assert.equal((await readConfig(configPath)).hooks, undefined);
 });
