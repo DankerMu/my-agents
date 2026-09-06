@@ -5,6 +5,14 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-05
+
+### Changed
+
+- **Reviewer set becomes a seat plan with hard caps; the six-reviewer high-risk set is gone.** A seat is one parallel reviewer carrying one lens or a `a+b` lens pair whose checklists are inlined together. Defaults: low 1-2 seats (`correctness+test-evidence`, plus `integration`/`security-perf` only when touched); medium 2-3 seats, cap 3; high exactly 4 seats — `correctness`, `invariant-state`, `test-evidence+spec-compliance`, `security-perf+integration`. Hybrid Review no longer adds seats for the fixture. Motivation, from four repos' `review-loop-log.jsonl` (NWM 523 lines, xagent 138, yd-viewer 22, open-workbuddy-web 14; 2026-08/09): the "escalate to 6" trigger list was the definition of `high`, so 6 was the de facto default (NWM 45/58 high PRs, xagent 28/29, owb-web 11/11); in six-seat round 1 at least one lens produced a P0/P1 in only 30/48 (NWM) and 15/31 (xagent) rounds; `integration` had the lowest catch-per-run in all four repos (0.25/0.09/0.17/0.17 at high); `spec-compliance` catches were mostly P2 (NWM 22/124 P0/P1) and near-zero outside spec-heavy projects; `invariant-state` was low-volume but carried the highest P0/P1 share (NWM 19/29, owb-web 9/13). Expanded-level rounds were also running 6 seats against a written cap of 4 (xagent 17/34, yd-viewer 8/16), which is why the cap is now mechanical downstream (`subagent-workflow` 0.33.0 `review_gate.py record-round --lenses`).
+- `reviewer-packages.md` gains the canonical **lens id** table (`correctness`, `integration`, `security-perf`, `test-evidence`, `spec-compliance`, `invariant-state`) — the vocabulary loop logs, gate ledgers, and seat lists must use. A finding is attributed to the single lens whose checklist produced it, never to a pair.
+- Frontmatter description unchanged (eval-tuned in 0.4.1); the lens names it lists are still the lens names.
+
 ## [0.4.2] - 2026-07-23
 
 - Severity Crosswalk 补上自家下游的词表映射：`subagent-workflow` ledger/CLI（`review_gate.py --highest`、round-ledger、gate 规则）的 `critical|major|minor|none` ↔ 本契约 P0/P1/P2/Note（Note 无 ledger 表示，`none` 表示 clean 轮而非 Note）。此前该映射只是隐式约定——外来词表（review/entropy-review）都有 crosswalk，唯独最重的消费方没有；0.29.0 的 P2 延期默认规则以严重度分流修复经济学，映射从此是承重的，写死在 canonical 处，工作流侧只指针引用。

@@ -5,21 +5,37 @@ for risk, not for ceremony.
 
 ## PR Review
 
-Low or medium implementation reviews use four reviewers:
+Implementation reviews draw from six lenses. The **lens id** is the vocabulary
+that loop logs, gate ledgers, and seat lists use:
 
-| Reviewer | Scope |
-| --- | --- |
-| Correctness | Behavior, edge cases, regression risk, error handling |
-| Integration | Callers, contracts, module boundaries, deployment/runtime fit |
-| Security/Performance | Auth, input handling, data exposure, path safety, complexity, resource use |
-| Test & Evidence Coverage | Tests, verification commands, fixtures, observability, proof quality |
+| Lens | Lens id | Scope |
+| --- | --- | --- |
+| Correctness | `correctness` | Behavior, edge cases, regression risk, error handling |
+| Integration | `integration` | Callers, contracts, module boundaries, deployment/runtime fit |
+| Security/Performance | `security-perf` | Auth, input handling, data exposure, path safety, complexity, resource use |
+| Test & Evidence Coverage | `test-evidence` | Tests, verification commands, fixtures, observability, proof quality |
+| Spec Compliance | `spec-compliance` | Implementation against OpenSpec/design/issue acceptance criteria |
+| Invariant/State-Machine/Compatibility | `invariant-state` | End-to-end identity, state transitions, sibling surfaces, backward compatibility |
 
-High-risk implementation reviews add:
+A **seat** is one parallel reviewer. A seat carries one lens or two paired
+lenses, written `a+b`; the paired checklists are inlined into one brief. A
+finding is always attributed to the single lens whose checklist produced it,
+never to the pair.
 
-| Reviewer | Scope |
-| --- | --- |
-| Spec Compliance | Checks implementation against OpenSpec/design/issue acceptance criteria |
-| Invariant/State-Machine/Compatibility | Checks end-to-end identity, state transitions, sibling surfaces, backward compatibility |
+Seat plan by risk level:
+
+| Risk | Seats | Composition |
+| --- | --- | --- |
+| Low | 1-2 | `correctness+test-evidence`; `integration` or `security-perf` only when that surface is touched |
+| Medium | 2-3 (cap 3) | `correctness`; `test-evidence` (`+spec-compliance` when a fixture exists); one of `integration` / `security-perf` / `invariant-state` per the risk surface |
+| High | 4 (cap 4) | `correctness`; `invariant-state`; `test-evidence+spec-compliance`; `security-perf+integration` |
+
+Why these pairs: across four repos' review-loop logs (NWM, xagent, yd-viewer,
+open-workbuddy-web, 2026-08/09) `integration` had the lowest catch-per-run of
+any lens everywhere, and `spec-compliance` findings were mostly P2 (routed, not
+fixed) outside spec-heavy projects, so neither earns a seat of its own.
+`invariant-state` is low-volume but carries the highest P0/P1 share of any
+lens, so at high risk it keeps its own seat.
 
 ## OpenSpec Review
 
@@ -33,21 +49,17 @@ Stage-change and OpenSpec reviews use three reviewers:
 
 ## Hybrid Review
 
-When reviewing a PR against OpenSpec, combine:
-
-- Spec Compliance
-- Correctness
-- Integration
-- Security/Performance
-- Test & Evidence Coverage
-- Invariant/State-Machine/Compatibility for high-risk surfaces
+When reviewing a PR against OpenSpec, use the PR Review seat plan for the
+PR's risk level with `spec-compliance` riding on the `test-evidence` seat (the
+fixture is an input to every brief, so acceptance-criteria checks need no seat
+of their own). The fixture never adds a seat.
 
 ## Reviewer Checklists
 
-Canonical per-reviewer scope. Workflows that run these reviewers (e.g.
+Canonical per-lens scope. Workflows that run these reviewers (e.g.
 `subagent-workflow` Phase 4) inline the relevant checklist into each subagent
-brief instead of restating it. Apply only the checklist for the reviewer's role
-plus any triggered cross-cutting lens below. Findings follow
+brief instead of restating it. Apply only the checklist(s) of the lens or lens
+pair the seat carries, plus any triggered cross-cutting lens below. Findings follow
 [finding-contract.md](finding-contract.md).
 
 ### Correctness

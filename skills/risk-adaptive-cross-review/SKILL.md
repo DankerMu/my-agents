@@ -7,7 +7,7 @@ description: >
   risk-adaptive, multi-perspective, parallel, cross-review, or high-risk PR review. Not for
   ordinary quick review.
 invocation_posture: hybrid
-version: 0.4.2
+version: 0.5.0
 ---
 
 # Risk-Adaptive Cross Review
@@ -59,13 +59,23 @@ safe just because each cited line looks fixable.
 ## Reviewer Packs
 
 Read [reviewer-packages.md](references/reviewer-packages.md) to select the
-reviewer set. Defaults:
+reviewer set. A **seat** is one parallel reviewer; a seat carries one lens or two
+paired lenses whose checklists are inlined together (what a reviewer costs is
+re-reading the diff, code, and fixture, not checklist length). Defaults:
 
-- PR Review low/medium: Correctness, Integration, Security/Performance, Test &
-  Evidence Coverage.
-- PR Review high: add Spec Compliance when a fixture exists, plus
-  Invariant/State-Machine/Compatibility.
+- PR Review low: 1-2 seats — `correctness+test-evidence`; a second seat
+  (`integration` or `security-perf`) only when the change touches that surface.
+- PR Review medium: 2-3 seats, cap 3 — `correctness`; `test-evidence`
+  (`+spec-compliance` when a fixture exists); plus `integration`,
+  `security-perf`, or `invariant-state`, whichever the risk surface names.
+- PR Review high: exactly 4 seats — `correctness`; `invariant-state`;
+  `test-evidence+spec-compliance`; `security-perf+integration`. There is no
+  fifth seat: a project whose loop log shows a paired lens out-yielding its
+  seat-mate may swap which lens leads the seat, never add one.
 - OpenSpec Review: Design Consistency, Spec Completeness, Tasks Executability.
+
+Seat caps are hard (4 at high, 3 otherwise). Inside `subagent-workflow` they are
+checked at ledger time by `review_gate.py record-round --lenses`.
 
 Beyond pack scope, every reviewer also applies the change-triggered **cross-cutting
 lenses** in `reviewer-packages.md` — removed-behavior audit, wrapper/proxy
