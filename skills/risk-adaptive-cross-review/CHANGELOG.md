@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-05
+
+### Added
+
+- `finding-contract.md` gains a conditional **Lens** field: cross-review seats name the single lens id whose checklist produced the finding (a paired `a+b` seat still names one lens). `subagent-workflow` 0.33.0 already asked reviewers for it in the brief; making it a contract field means the loop-log `catches[i].lens` attribution has a canonical source instead of a workflow-local extension. Design reviews and `review` runs have no seats and omit it; the `reviewer` agent's operating guide lists it as item 11.
+
 ## [0.5.0] - 2026-09-05
 
 ### Changed

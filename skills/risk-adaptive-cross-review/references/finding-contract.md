@@ -26,6 +26,7 @@ P0/P1/P2 findings must include:
 - **Required verification**: test, command, spec change, or evidence update
 - **Sibling surfaces to audit**, if any
 - **Blocking status**
+- **Lens** (cross-review seats only): the single lens id whose checklist produced the finding; a paired seat (`a+b`) still names one lens, never the pair. Design reviews and `review` runs have no seats and omit it.
 
 ## Failure-Class Vocabulary
 

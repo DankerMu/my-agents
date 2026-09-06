@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.6.1] - 2026-09-05
+
+### Changed
+
+- Operating guide: the finding field list follows `risk-adaptive-cross-review` 0.6.0 — item 11 **Lens** (cross-review seats only, one lens id per finding, never the seat pair); "all ten" wording dropped so the count no longer drifts from the contract. Contract bullets unchanged (budget full; bullet 10 already points at the guide).
+
 ## [2.6.0] - 2026-09-05
 
 ### Changed
