@@ -203,7 +203,7 @@ async function installHook(repoRoot, name, platforms, scope) {
 
     const added = await mergeHooksConfig(target.configPath, fragment.hooks);
     console.log(
-      `Installed (${target.platform}, ${scope}): hook ${name} -> ${target.configPath} (${added} new entries)`
+      `Installed (${target.platform}, ${scope}): hook ${name} -> ${target.configPath} (${added} new hook commands)`
     );
     installed += 1;
   }
@@ -243,7 +243,7 @@ async function uninstallHook(repoRoot, name, platforms, scope) {
         const removed = await removeHooksConfig(target.configPath, fragment.hooks);
         if (removed > 0) {
           console.log(
-            `Uninstalled (${target.platform}, ${scope}): hook ${name} (${removed} entries from ${target.configPath})`
+            `Uninstalled (${target.platform}, ${scope}): hook ${name} (${removed} hook commands from ${target.configPath})`
           );
         } else {
           console.log(`Not installed (${target.platform}, ${scope}): hook ${name}`);

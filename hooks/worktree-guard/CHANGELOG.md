@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.2.1] - 2026-09-05
+
+- 文档：安装/卸载说明改为 hook 命令级 merge 语义（同 `matcher` 块内按 `command` 增删，`scripts/lib/settings-merge.js`）。脚本行为不变。
+
 ## [0.2.0] - 2026-07-18
 
 - 新增 omp 平台支持：`omp.ts` 扩展工厂安装到 `.omp/hooks/pre/worktree-guard.ts`，匹配 `edit`/`write` 工具，调用同一份 shell 脚本；退出码 2 翻译为 `{ block, reason }`，其余退出码放行。
