@@ -203,8 +203,17 @@ criteria:
     fixability: A
     layer: Memory
     artifact: CONTEXT.md
-    validator: CONTEXT.md exists at repo root, defines project identity and either domain terms or explicitly says no domain glossary is needed yet
+    validator: CONTEXT.md exists at repo root, defines project identity and either links to openspec/glossary.md (which then defines at least one term) or explicitly says no domain glossary is needed yet
     rescore_evidence: context_md=1/1 when evidence satisfies the criterion; 0/1 when missing; null only if skippable and not applicable
+  - id: claude_md_bridge
+    level: 2
+    scope: repository
+    skippable: true
+    fixability: A
+    layer: Memory
+    artifact: CLAUDE.md
+    validator: When Claude Code is among the repo's AI tools, CLAUDE.md exists at repo root and contains the import line `@AGENTS.md` outside any code span (Claude Code loads CLAUDE.md, not AGENTS.md); skippable when Claude Code is not in use
+    rescore_evidence: claude_md_bridge=1/1 when the import line is present; 0/1 when CLAUDE.md is missing or lacks it; null only when Claude Code is not in use
   - id: readme
     level: 1
     scope: repository

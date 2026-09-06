@@ -1,14 +1,14 @@
 # CONTEXT.md Template
 
-Use this template when Stage 3/4 creates or repairs `CONTEXT.md`. Keep it concise: this file is the domain-language anchor, not a general README.
+Use this template when Stage 3/4 creates or repairs `CONTEXT.md`. Keep it concise: this file anchors project identity, bounded contexts, and invariants. Domain-term **definitions** do not live here — they live in `openspec/glossary.md` (the repo-wide glossary home shared with `grill-me` docs mode, `architecture-design`, `improve-codebase-architecture`, and `review`; format in `grill-me`'s `references/GLOSSARY-FORMAT.md`). `CONTEXT.md` links to it.
 
 ## File header
 
 ```markdown
 # CONTEXT.md
 
-> Domain language and business invariants for this repository.
-> `AGENTS.md` is the operating contract; this file defines the vocabulary and domain boundaries that agents must use when applying it.
+> Project identity, bounded contexts, and business invariants for this repository.
+> `AGENTS.md` is the operating contract; `openspec/glossary.md` defines the domain vocabulary; this file defines the domain boundaries and invariants that agents must respect when applying both.
 ```
 
 ## Project identity
@@ -23,21 +23,19 @@ Use this template when Stage 3/4 creates or repairs `CONTEXT.md`. Keep it concis
 - **Lifecycle**: {{LIFECYCLE}}
 ```
 
-## Domain language
+## Domain language (link only)
 
 ```markdown
 ## Domain Language
 
-| Term | Meaning | Not the same as | Source / owner |
-|------|---------|-----------------|----------------|
-| {{TERM_1}} | {{MEANING_1}} | {{NON_EQUIVALENT_1}} | {{SOURCE_1}} |
-| {{TERM_2}} | {{MEANING_2}} | {{NON_EQUIVALENT_2}} | {{SOURCE_2}} |
+Canonical terms and their prohibited aliases live in `openspec/glossary.md`. Read it before naming a domain concept; never define a term here.
 ```
 
 Rules:
 
-- Capture the user's wording verbatim when they define a term.
-- If two names appear to mean the same thing, list them under "Open terminology questions" instead of choosing silently.
+- The confirmed terms from Q1.6 render into `openspec/glossary.md` (`## Language`; one `## Context Map` plus per-context sections when the repo has several bounded contexts — one file, never one per context). Capture the user's wording verbatim when they define a term; list the other names under `_Avoid_:`.
+- Create `openspec/glossary.md` only when at least one term is confirmed. With no terms yet, this section says so ("no domain glossary needed yet") and the file is not created.
+- If two names appear to mean the same thing, list them under "Open terminology questions" below instead of choosing silently.
 - Prefer domain terms over technical synonyms in business logic.
 
 ## Bounded contexts
@@ -47,7 +45,7 @@ Use this section for DDD systems, monorepos with multiple domains, or any repo w
 ```markdown
 ## Bounded Contexts
 
-| Context | Owns | Key terms | Forbidden logic | Integration boundary |
+| Context | Owns | Key terms (defined in `openspec/glossary.md`) | Forbidden logic | Integration boundary |
 |---------|------|-----------|-----------------|----------------------|
 | {{CTX_1}} | {{RESPONSIBILITY_1}} | {{TERMS_1}} | {{FORBIDDEN_1}} | {{BOUNDARY_1}} |
 | {{CTX_2}} | {{RESPONSIBILITY_2}} | {{TERMS_2}} | {{FORBIDDEN_2}} | {{BOUNDARY_2}} |
@@ -105,6 +103,6 @@ Captured verbatim from grilling (Q6.6 out-of-bounds operations and architecture 
 ## Rendering rules
 
 - Do not invent domain facts. If unsure, write an open question.
-- Keep implementation rules out of `CONTEXT.md`; they belong in `AGENTS.md`.
+- Keep term definitions out of `CONTEXT.md`; they belong in `openspec/glossary.md`. Keep implementation rules out of `CONTEXT.md`; they belong in `AGENTS.md`.
 - Keep setup commands out of `CONTEXT.md`; they belong in `AGENTS.md` and the command entry point.
 - Link from `AGENTS.md` to this file anywhere terminology, bounded contexts, or invariants affect implementation.

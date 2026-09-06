@@ -9,7 +9,7 @@ Deepening a module pays off by making future changes to it easier, so put extra 
 - If the user named a direction — a module, a subsystem, a pain point — take it, and skip the inference below.
 - Otherwise, walk back a good stretch of the commit history (`git log --oneline`) to find the hot spots — the files and areas that keep coming up — and let those paths pull your attention first. If the changes are scattered with no clear hot spot, widen the net.
 
-Read the project's domain glossary (`CONTEXT.md`) and any ADRs in the area first.
+Read the project's domain glossary (`openspec/glossary.md`), `CONTEXT.md` if present (bounded contexts, invariants), and any ADRs in the area first.
 
 ## Explore organically
 
@@ -35,7 +35,7 @@ Work the audit through these lenses, then merge and prioritize the findings:
 
 ## Findings format
 
-Every finding carries exactly three fields, written in the project's domain language from `CONTEXT.md`:
+Every finding carries exactly three fields, written in the project's domain language from `openspec/glossary.md`:
 
 - **What** — the module or area, named by its domain concept ("the Order intake module"), not an invented class name
 - **Why** — the friction, explained in terms of locality and leverage, or the pattern violation

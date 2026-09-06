@@ -70,7 +70,7 @@ Implements a port                     → adapter (in infrastructure)
 
 ## Implementation order
 
-1. Ubiquitous language — glossary in `CONTEXT.md`; class names = glossary terms.
+1. Ubiquitous language — glossary in `openspec/glossary.md`; class names = glossary terms.
 2. Domain model — entities, value objects, aggregates; no infrastructure imports.
 3. Ports — repository interfaces, external-service interfaces.
 4. Use cases — application services; the transaction boundary.

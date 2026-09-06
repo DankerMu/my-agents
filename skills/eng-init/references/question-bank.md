@@ -2,7 +2,7 @@
 
 This bank powers Stage 2 of the eng-init skill. Eight dimensions, ordered to minimize backtracking. Each question has: prompt, recommended default, skip condition, branches, and decision impact.
 
-Core mapping: project operating rules and validation decisions render into `AGENTS.md`; domain language, bounded contexts, invariants, and terminology conflicts render into `CONTEXT.md`. Do not route project memory through `CLAUDE.md`.
+Core mapping: project operating rules and validation decisions render into `AGENTS.md`; bounded contexts, invariants, and terminology conflicts render into `CONTEXT.md`; domain-term definitions render into `openspec/glossary.md` (the repo-wide glossary home, `grill-me` GLOSSARY-FORMAT), which `CONTEXT.md` links to. Do not route project memory through `CLAUDE.md`; when Claude Code is in use, `CLAUDE.md` carries the one-line `@AGENTS.md` import and nothing else of eng-init's.
 
 ## Rules of engagement
 
@@ -126,17 +126,18 @@ Enforcement vocabulary used above and in the Enforcement Index: `advice` (prose 
 
 - **Default**: assume Claude Code and Cursor at minimum.
 - **No branches** — answer determines which agent-rules files might co-exist. The skill always writes `AGENTS.md`; if the user mentions Cursor specifically, note in AGENTS.md that `.cursorrules` should point back to AGENTS.md, not duplicate it.
+- **Claude Code named** → `CLAUDE.md` must contain the import line `@AGENTS.md` (Claude Code loads `CLAUDE.md`, not `AGENTS.md`). Missing file → a one-line `CLAUDE.md` joins the write set; existing file without the import → the one-line addition joins the Stage 3 spec; declined → readiness gap `claude_md_bridge`.
 
 ### Q1.6 — Domain language seed
 
 > "What are the 3–5 core domain terms this repo must use consistently? If you're unsure, name the concepts that agents often confuse."
 
 - **Default**: if README/source reveals obvious terms, propose them and ask for confirmation.
-- **Capture**: render confirmed terms into `CONTEXT.md` `## Domain Language`; render uncertain terms into `## Open Terminology Questions`.
+- **Capture**: render confirmed terms into `openspec/glossary.md` (`## Language`, GLOSSARY-FORMAT) and make sure `CONTEXT.md` links to it; render uncertain terms into `CONTEXT.md` `## Open Terminology Questions`.
 - **Branches**:
   - User gives terms + meanings → write them verbatim.
   - User gives concepts without definitions → ask one follow-up for the highest-risk term only; mark the rest open.
-  - User says "none / technical repo" → create a minimal `CONTEXT.md` with Project Identity and note that no domain glossary is required yet.
+  - User says "none / technical repo" → create a minimal `CONTEXT.md` with Project Identity and note that no domain glossary is required yet; do not create `openspec/glossary.md`.
 
 ---
 

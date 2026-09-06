@@ -2,7 +2,7 @@
 name: architecture-design
 description: Design a new project's architecture — module decomposition, seams, and directory structure — or audit an existing one for refactoring recommendations, recording load-bearing decisions as ADRs.
 disable-model-invocation: true
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Architecture Design
@@ -19,7 +19,7 @@ Ask one question: is this a **new** project, an **existing** project, or a **red
 
 ### 1. Grounding
 
-Read `CONTEXT.md` and `docs/adr/` for the domain language and the decisions you must not re-litigate, and `AGENTS.md`/`CLAUDE.md` for constraints. In brownfield mode, also read the code around the user's named scope. Facts are the agent's job: dispatch sub-agents for exploration — never ask the user for anything you can look up yourself.
+Read `openspec/glossary.md` (domain language), `CONTEXT.md` if present (bounded contexts and invariants, written by `eng-init`), and `docs/adr/` (decisions you must not re-litigate), and `AGENTS.md`/`CLAUDE.md` for constraints. In brownfield mode, also read the code around the user's named scope. Facts are the agent's job: dispatch sub-agents for exploration — never ask the user for anything you can look up yourself.
 
 ### 2. Interview
 
@@ -34,7 +34,7 @@ Work the design tree in rounds using the interview protocol in the `/grill-me` s
 
 Settle the frontier until it is empty, and don't act until the user confirms shared understanding.
 
-**The frontier is a lock.** While any frontier question is unanswered, your entire output is the questions: no files, no documents, no ADRs, no scaffolds, no `CONTEXT.md` edits — nothing written anywhere. A document produced before the user answers is a decision made on the user's behalf. Only when the frontier is empty AND the user has confirmed shared understanding do you proceed to decomposition and writing.
+**The frontier is a lock.** While any frontier question is unanswered, your entire output is the questions: no files, no documents, no ADRs, no scaffolds, no `openspec/glossary.md` edits — nothing written anywhere. A document produced before the user answers is a decision made on the user's behalf. Only when the frontier is empty AND the user has confirmed shared understanding do you proceed to decomposition and writing.
 
 ### 3. Greenfield: decompose
 
@@ -48,13 +48,13 @@ Then the **directory structure**: a concrete folder tree following the complexit
 
 ### 3'. Brownfield: audit
 
-Read `references/survey.md` and `references/ddd-layers.md`. Send sub-agents to survey the scope: hot spots from `git log --oneline`, module structure, dependency direction, untested areas, and where code names drift from `CONTEXT.md` terms.
+Read `references/survey.md` and `references/ddd-layers.md`. Send sub-agents to survey the scope: hot spots from `git log --oneline`, module structure, dependency direction, untested areas, and where code names drift from `openspec/glossary.md` terms.
 
 Then work the five lenses from `survey.md` — depth/shallowness, directory structure vs the complexity ladder, dependency direction and seams, DDD anti-patterns, duplication and dead code — and prioritize what you find. Every finding carries **what, why, effort (low/medium/high)**, written in the project's domain language.
 
 ### 4. Record decisions
 
-Read `references/adr-discipline.md`. Record decisions that meet all three ADR criteria (hard to reverse, surprising without context, a real trade-off) as ADRs **as they settle** — don't batch them at the end. Sharpen new domain terms in `CONTEXT.md` inline as they appear (the docs mode of `/grill-me`).
+Read `references/adr-discipline.md`. Record decisions that meet all three ADR criteria (hard to reverse, surprising without context, a real trade-off) as ADRs **as they settle** — don't batch them at the end. Sharpen new domain terms in `openspec/glossary.md` inline as they appear — the same file and format the docs mode of `/grill-me` maintains (`references/GLOSSARY-FORMAT.md` there).
 
 ### 5. Write the document
 

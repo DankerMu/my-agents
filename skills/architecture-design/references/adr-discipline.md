@@ -1,13 +1,13 @@
-# ADR and CONTEXT.md Discipline
+# ADR and Glossary Discipline
 
 Record decisions the moment they crystallise — never batch them at the end. A decision that isn't written down will be re-litigated by the next session.
 
-## CONTEXT.md — a glossary and nothing else
+## `openspec/glossary.md` — a glossary and nothing else
 
-`CONTEXT.md` is the project's glossary. It is **devoid of implementation details** — never a spec, a scratch pad, or a home for implementation decisions.
+`openspec/glossary.md` is the project's glossary — the one this repo's `grill-me` docs mode, `improve-codebase-architecture`, `review`, and `eng-init` all share (format: `grill-me`'s `references/GLOSSARY-FORMAT.md`). It is **devoid of implementation details** — never a spec, a scratch pad, or a home for implementation decisions. Bounded-context ownership and invariants, when a project records them, live in `CONTEXT.md` (`eng-init`'s file), not here.
 
 - Create it lazily — only when the first term is resolved.
-- Single root file for most repos. If a `CONTEXT-MAP.md` exists at the root, the repo has multiple contexts; the map lists each context's `CONTEXT.md` and how the contexts relate. Infer which context the current topic relates to; ask if unclear.
+- One file, always. A repo with several bounded contexts adds a `## Context Map` section listing each context and how they relate, then one second-level section per context with its own terms — never one glossary file per context. Infer which context the current topic relates to; ask if unclear.
 
 ### Glossary rules
 
@@ -22,7 +22,7 @@ Record decisions the moment they crystallise — never batch them at the end. A 
 - **Sharpen fuzzy language** — propose a precise canonical term for vague or overloaded words ("you're saying 'account' — do you mean the Customer or the User?").
 - **Stress-test with scenarios** — invent edge-case scenarios that force precision about the boundaries between concepts.
 - **Cross-reference with code** — check that stated behavior matches the code; surface contradictions.
-- **Update `CONTEXT.md` right there** as each term resolves. Never batch these up.
+- **Update `openspec/glossary.md` right there** as each term resolves. Never batch these up.
 
 ## ADRs — when and how
 

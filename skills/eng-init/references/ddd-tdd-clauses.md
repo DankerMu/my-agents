@@ -19,9 +19,9 @@ This codebase uses Domain-Driven Design to keep business logic and infrastructur
 
 #### Ubiquitous language
 
-The canonical vocabulary for this domain lives in `{{CONTEXT_MD_PATH}}` (or in each bounded-context directory's `CONTEXT.md` for multi-context repos). When the user uses a term that conflicts with the glossary, surface the conflict. Do not silently introduce a new synonym.
+The canonical vocabulary for this domain lives in `openspec/glossary.md` (one file; multi-context repos use its `## Context Map` and per-context sections). Bounded-context ownership and invariants live in `{{CONTEXT_MD_PATH}}` (or each bounded-context directory's `CONTEXT.md`). When the user uses a term that conflicts with the glossary, surface the conflict. Do not silently introduce a new synonym.
 
-When a domain term is resolved during a conversation, update `CONTEXT.md` inline — do not batch glossary updates.
+When a domain term is resolved during a conversation, update `openspec/glossary.md` inline — do not batch glossary updates.
 
 #### Layering
 

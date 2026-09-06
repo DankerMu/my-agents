@@ -12,6 +12,7 @@ Profile gating (canonical table: question-bank Q1.4):
 - Evidence protocol (fresh command output, screenshots, PR `## Runtime evidence`): **all profiles**.
 - Violation baseline + ratchet: bootstrap/incremental when Stage 0 found violations and Q1.4b = `freeze-baseline`.
 - `.claude/settings.json`: conditional — only when Claude Code is among the AI tools (Q1.5).
+- `CLAUDE.md` = the single line `@AGENTS.md`: conditional — same trigger. Claude Code loads `CLAUDE.md`, not `AGENTS.md`; readiness `claude_md_bridge`.
 
 `{{HEALTH_URL}}`, `{{DEV_PORT}}`, `{{KEY_API_ROUTES}}`, `{{KEY_UI_PATHS}}` resolve from `constraints.yaml` top-level `verification` key (populated from Q7.1–Q7.3; see `constraints-yaml-template.md`). Do not hardcode duplicates.
 
@@ -26,6 +27,7 @@ Profile gating (canonical table: question-bank Q1.4):
 | agent-browser walk protocol (rendered into AGENTS.md Verification Matrix notes) | § agent-browser route walk | UI exists and Q7.5 UI tool includes agent-browser (or Playwright refused) |
 | `scripts/test-guardrails.sh` | § Guardrail self-test | Always at L2+ (write set); wired as `{{TEST_GUARDRAILS_CMD}}` |
 | `.claude/settings.json`, `.claude/hooks/pre-write-naming.sh` | § Agent-native enforcement | Claude Code among AI tools (Q1.5) |
+| `CLAUDE.md` (`@AGENTS.md` import line only) | § Agent-native enforcement | Claude Code among AI tools (Q1.5); readiness `claude_md_bridge` |
 | `constraints.yaml` `baseline` key + per-stack baseline configs | § Violation baseline & ratchet | Bootstrap/incremental, Q1.4b = freeze-baseline |
 | `.github/workflows/agents-md-liveness.yml` | § AGENTS.md liveness check | CI selected (Pillar 5); addresses readiness `agents_md_validation` |
 | Lockfile–manifest CI job (standalone job in `ci.yml`) | § Lockfile–manifest consistency | CI selected and lockfile committed (Q2.2) |
@@ -798,8 +800,9 @@ Other-tool equivalents: `.cursorrules` must **point back to AGENTS.md, not dupli
 
 ```
 Read AGENTS.md at the repo root before any work. It is the single source of
-truth for commands, boundaries, validation, and constraints. CONTEXT.md holds
-the domain language. Do not add rules here; propose changes to AGENTS.md.
+truth for commands, boundaries, validation, and constraints. openspec/glossary.md
+holds the domain terms, CONTEXT.md the bounded contexts and invariants. Do not
+add rules here; propose changes to AGENTS.md.
 ```
 
 List `.claude/settings.json` hooks and denies in the AGENTS.md Enforcement Index at level `block` with scope noted ("Claude Code sessions only").
