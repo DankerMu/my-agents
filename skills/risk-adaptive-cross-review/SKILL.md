@@ -7,7 +7,7 @@ description: >
   risk-adaptive, multi-perspective, parallel, cross-review, or high-risk PR review. Not for
   ordinary quick review.
 invocation_posture: hybrid
-version: 0.5.0
+version: 0.6.0
 ---
 
 # Risk-Adaptive Cross Review
@@ -144,10 +144,10 @@ Return concise structured output:
 **verdict**: approve | request-changes | needs-discussion
 
 ### Findings
-- **P0/P1/P2** `<failure-class>`: per finding, all ten finding-contract fields —
+- **P0/P1/P2** `<failure-class>`: per finding, every finding-contract field —
   severity, failure class, violated invariant/contract, concrete scenario,
   evidence, consequence, fix direction, required test/proof, sibling surfaces,
-  blocking status
+  blocking status, and lens when the finding came from a cross-review seat
 
 ### Fix Groups
 - `<failure-class>`: <class-level closure task and verification>

@@ -37,6 +37,7 @@ This pack installs the worker subagents that `subagent-workflow` delegates to:
 ## Included Hooks
 
 - `worktree-guard` — PreToolUse path guard that mechanically enforces the parallel-worktree write discipline `subagent-workflow` relies on. Installed everywhere but inert until the orchestrator declares `.worktree-guard.json` at the project root when entering worktree-delegation mode; blocked writes are denied with the reason fed back to the model.
+- `review-gate` — PreToolUse spawn fence for `subagent-workflow`'s review-round gates: while `.review-gate.json` says `locked`, implementer/reviewer subagent spawns are denied until `review_gate.py record-retro` runs. Inert without that state file.
 
 ## Install
 
@@ -71,6 +72,6 @@ See [Research Engineering flow](../../docs/architecture/research-engineering-flo
 
 ## Pairs With: `codebase-stewardship`
 
-This pack and [`codebase-stewardship`](../codebase-stewardship/README.md) form a loop: stewardship decides _what to improve_ and holds the code-health baseline; this pack turns those decisions into reviewed PRs, and the new code it produces flows back into the next stewardship pass. They share `openspec/glossary.md` + `docs/adr/` as the single source of truth, the grill skills as a common decision base, and `review`'s consistency mode as the in-delivery health gate.
+This pack and [`codebase-stewardship`](../codebase-stewardship/README.md) form a loop: stewardship decides _what to improve_ and holds the code-health baseline; this pack turns those decisions into reviewed PRs, and the new code it produces flows back into the next stewardship pass. They share `openspec/glossary.md` + `docs/adr/` as the single source of truth and the grill skills as a common decision base. The in-delivery consistency gate is Phase 4 cross-review itself: `risk-adaptive-cross-review`'s finding contract carries the consistency-axis crosswalk (`conventions` / `contract` / `state-transition` / `reuse` / `altitude` failure classes), so drift is caught by the reviewer seats without a separate pass. `review` (consistency mode) is a standalone per-change check that neither pack bundles; `ask-danker` routes to it.
 
 Full workflow: [Delivery + Stewardship pairing](../../docs/architecture/delivery-and-stewardship.md).

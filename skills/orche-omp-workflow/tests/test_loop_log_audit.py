@@ -236,6 +236,40 @@ def test_review_prefix_and_long_alias_attribute_to_core(tmp_path, capsys):
     assert "core=1 rotated=1 phase=0 skipped=0" in capsys.readouterr().out
 
 
+def test_per_lens_yield_counts_paired_seats_once_per_round(tmp_path, capsys):
+    line = merged(98, catch=3, rounds=2,
+                  lenses=[["correctness", "test-evidence+spec-compliance"], ["correctness"]],
+                  catches=[{"round": 1, "lens": "spec-compliance", "class": "c", "severity": "P1"},
+                           {"round": 2, "lens": "correctness", "class": "c", "severity": "minor"},
+                           {"round": 0, "lens": "fixture-review", "class": "c", "severity": "P0"},
+                           {"round": 0, "lens": "correctness", "class": "c", "severity": "P0"}])
+    assert run(write_log(tmp_path, [line])) == 0
+    note = [l for l in capsys.readouterr().out.splitlines() if l.startswith("NOTE per-lens yield")]
+    assert len(note) == 1
+    assert "spec-compliance seated=1 catches=1 high=1" in note[0]
+    assert "correctness seated=2 catches=1 high=0" in note[0]
+    assert "test-evidence seated=1 catches=0 high=0" in note[0]
+    assert "fixture-review" not in note[0]
+
+
+def test_per_lens_yield_merges_prefix_and_alias_and_buckets_severity(tmp_path, capsys):
+    line = merged(99, catch=2, rounds=1, lenses=[["review-correctness", "security-performance"]],
+                  catches=[{"round": 1, "lens": "review-security-perf", "class": "c", "severity": "major"},
+                           {"round": 1, "lens": "security-performance", "class": "c", "severity": "Note"},
+                           {"round": 1, "lens": "correctness", "class": "c", "severity": "critical"},
+                           {"round": 1, "class": "c", "severity": "P0"}])
+    assert run(write_log(tmp_path, [line])) == 0
+    out = capsys.readouterr().out
+    assert "security-perf seated=1 catches=2 high=1" in out
+    assert "correctness seated=1 catches=1 high=1" in out
+    assert "NOTE non-compliant catches skipped: 1" in out
+
+
+def test_per_lens_yield_absent_without_seat_data(tmp_path, capsys):
+    assert run(write_log(tmp_path, [merged(1, catch=1)])) == 0
+    assert "per-lens yield" not in capsys.readouterr().out
+
+
 def test_paired_seat_seats_both_lenses_in_core(tmp_path, capsys):
     line = merged(95, catch=3, rounds=2,
                   lenses=[["correctness", "test-evidence+spec-compliance"], ["test-evidence+spec-compliance"]],

@@ -92,7 +92,7 @@ Out of scope regardless of severity label:
 
 Every finding is a **candidate finding** — written so a downstream verifier/orchestrator can adjudicate it without another round of interpretation. Do NOT emit an APPROVE / REQUEST-CHANGES verdict and do not make the merge decision; that belongs to the orchestrator/verifier. When an orchestrator-injected brief supplies its own output contract, that brief takes precedence over this default format.
 
-Each P0/P1/P2 finding must carry all ten contract fields:
+Each P0/P1/P2 finding must carry every contract field:
 
 1. **Severity** — P0 / P1 / P2.
 2. **Failure class** — one label from the finding contract's Failure-Class Vocabulary.
@@ -104,6 +104,7 @@ Each P0/P1/P2 finding must carry all ten contract fields:
 8. **Required test/proof** — the test, command, or evidence that would confirm the fix.
 9. **Sibling surfaces** — other files/helpers/consumers the same pattern may affect, or "None".
 10. **Blocking status** — whether this blocks merge.
+11. **Lens** — cross-review seats only: the single lens id whose checklist produced the finding (a paired seat still names one lens, never the pair). Omit outside a seated cross-review round.
 
 Keep Note-level items that lack a concrete scenario or required test in a separate Non-blocking notes bucket.
 
