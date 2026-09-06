@@ -1365,8 +1365,8 @@
       "name": "large-file-guard",
       "path": "hooks/large-file-guard",
       "displayName": "Large File Guard",
-      "description": "PreToolUse hook that blocks `git commit` when the commit includes text files over a line-count threshold (default 1000). Incremental ratchet: only files touched by the commit are checked; legacy large files do not block until modified. Configurable via .large-file-guard.json.",
-      "version": "0.2.1",
+      "description": "PreToolUse hook that blocks `git commit` and `git merge --continue` when the commit would include text files over a line-count threshold (default 1000). Incremental ratchet: only files touched by the commit are checked (merge conclusions count only content that differs from every parent); legacy large files do not block until modified. Resolves the tool-call cwd to its git top level; configurable via .large-file-guard.json there.",
+      "version": "0.3.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1393,7 +1393,7 @@
       "path": "hooks/review-gate",
       "displayName": "Review Gate",
       "description": "PreToolUse hook that denies implementer/reviewer subagent spawns while the subagent-workflow three-round hard gate is locked. No-op until the project has a .review-gate.json state file (maintained by the skill's review_gate.py CLI), so it is safe to install everywhere.",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1419,7 +1419,7 @@
       "path": "hooks/worktree-guard",
       "displayName": "Worktree Guard",
       "description": "PreToolUse hook that blocks file writes outside declared worktree roots. No-op until the project declares .worktree-guard.json, so it is safe to install everywhere.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "maturity": "experimental",
       "categories": [
         "security",
@@ -1654,5 +1654,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-09-06T02:07:50.097Z"
+  "generatedAt": "2026-09-06T02:32:47.261Z"
 }
