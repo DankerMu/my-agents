@@ -5,7 +5,7 @@ description: >
   Performs structured, severity-graded reviews covering correctness, security, performance,
   and maintainability. Can spawn explorer for deeper codebase investigation.
 tools: read, glob, grep, bash, task
-model: "openai-codex/terra:max"
+model: "sub-omp/k3-256k:max, sub-grok/grok-4.6:high"
 spawns: explorer
 ---
 

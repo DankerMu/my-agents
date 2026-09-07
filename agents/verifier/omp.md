@@ -7,7 +7,7 @@ description: >
   Read-only. Must not be a reviewer that produced any candidate in the batch, and must not
   search for new findings.
 tools: read, glob, grep, bash
-model: "sub-claude/claude-opus-4-8:max"
+model: "sub-gpt/gpt-5.6-terra:max, sub-grok/grok-4.6:high"
 ---
 
 # verifier Contract

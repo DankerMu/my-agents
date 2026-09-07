@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.2] - 2026-09-07
+
+### Changed
+
+- omp 投影主 `sub-gpt/deepseek-v4-flash-vision-exp-guan:max`,副 `openai-codex/terra:max`(原单一 `openai-codex/terra:high`)。高频只读侦察走廉价档,额度墙时回退到 Codex。
+
 ## [1.5.1] - 2026-08-09
 
 ### Changed

@@ -11,7 +11,7 @@ description: >
   requirements/PRDs (use gh-create-issue) or for splitting an existing issue
   (use splitter).
 tools: read, glob, grep, bash, web_search
-model: "openai-codex/terra:max"
+model: "sub-gpt/gpt-5.6-luna:max, sub-gpt/deepseek-v4-flash-vision-exp-guan:max"
 ---
 
 # issue-scribe Contract

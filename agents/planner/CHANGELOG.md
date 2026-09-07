@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.1] - 2026-09-07
+
+### Changed
+
+- omp 投影主 `openai-codex/gpt-6-astra:high`,副 `sub-grok/grok-4.6:xhigh`(原单一 `openai-codex/terra:max`)。低频高权重的规划环节配最强模型。
+
 ## [1.4.0] - 2026-07-30
 
 ### Changed
