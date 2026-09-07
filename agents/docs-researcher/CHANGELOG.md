@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.2] - 2026-09-07
+
+### Changed
+
+- omp 投影主 `sub-gpt/deepseek-v4-flash-vision-exp-guan:high`,副 `sub-omp/k3-256k:max`(原单一 `openai-codex/terra:max`)。文档查证属低推理活,与 omp 内置 librarian 同档。
+
 ## [1.2.1] - 2026-08-09
 
 ### Changed

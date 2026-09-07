@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.1] - 2026-09-07
+
+### Changed
+
+- omp 投影主 `sub-grok/grok-4.6:high`,副 `sub-omp/k3-256k:max`(原单一 `openai-codex/terra:max`)。深度调研需要联网与大上下文,多源综合质量优先。
+
 ## [1.3.0] - 2026-07-30
 
 ### Changed

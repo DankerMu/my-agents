@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.8.4] - 2026-09-07
+
+### Changed
+
+- 主 `sub-grok/grok-4.6:high`,副 `openai-codex/gpt-5.6-terra:max`(原 `sub-claude/claude-opus-4-8:max`,该渠道已删除,agent 指向不存在的 provider)。
+
 ## [1.8.3] - 2026-08-09
 
 ### Changed

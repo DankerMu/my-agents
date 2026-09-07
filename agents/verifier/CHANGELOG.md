@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.1] - 2026-09-07
+
+### Changed
+
+- 主 `sub-gpt/gpt-5.6-terra:max`,副 `sub-grok/grok-4.6:high`(原 `sub-claude/claude-opus-4-8:max`,该渠道已删除)。与 implementer 主模型错开,写代码的与验证的不是同一个模型。
+
 ## [0.7.0] - 2026-09-05
 
 ### Changed

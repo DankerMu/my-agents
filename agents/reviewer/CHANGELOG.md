@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.6.3] - 2026-09-07
+
+### Changed
+
+- omp 投影主 `sub-omp/k3-256k:max`,副 `sub-grok/grok-4.6:high`(原 `openai-codex/terra:max`)。多席位并发审查改吃 K3 订阅额度,Codex 让给别处。
+
+## [2.6.2] - 2026-09-06
+
+### Changed
+
+- Claude Code 投影的 `model` 由 `opus[1m]` 降为 `sonnet[1m]`；仍是 1M 上下文变体，只换模型档位。契约、工具授权（`Bash(readonly)`）与另外两个投影（Codex 未声明 `model`、omp `openai-codex/terra:max`）均不变。
+
 ## [2.6.1] - 2026-09-05
 
 ### Changed

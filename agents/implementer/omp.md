@@ -5,7 +5,7 @@ description: >
   refactoring, and applying plans. Takes specs or planner output and produces working code
   with tests. Can spawn explorer to gather context before making changes.
 tools: read, glob, grep, bash, edit, write, task
-model: "sub-claude/claude-opus-4-8:max"
+model: "sub-grok/grok-4.6:high, openai-codex/gpt-5.6-terra:max"
 spawns: explorer
 ---
 

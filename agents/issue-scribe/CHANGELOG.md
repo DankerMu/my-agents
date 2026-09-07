@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.3] - 2026-09-07
+
+### Changed
+
+- omp 投影主 `sub-gpt/gpt-5.6-luna:max`,副 `sub-gpt/deepseek-v4-flash-vision-exp-guan:max`(原单一 `openai-codex/terra:max`)。格式固定的归档写作降档,不再占一线额度。
+
 ## [0.4.2] - 2026-08-09
 
 ### Changed

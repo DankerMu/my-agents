@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.1] - 2026-09-07
+
+### Changed
+
+- omp 投影主 `openai-codex/gpt-5.6-luna:high`,副 `sub-gpt/deepseek-v4-flash-vision-exp-guan:high`(原单一 `openai-codex/terra:medium`)。看门狗回到廉价档,并获得回退链。
+
 ## [0.3.0] - 2026-07-30
 
 ### Changed

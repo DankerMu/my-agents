@@ -5,7 +5,7 @@ description: >
   alternatives, checking documentation, verifying APIs, and gathering external context.
   Returns structured findings with citations. Does not modify code.
 tools: web_search, read, glob, grep
-model: "openai-codex/terra:max"
+model: "sub-grok/grok-4.6:high, sub-omp/k3-256k:max"
 ---
 
 # researcher Contract
