@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-10
+
+### Removed
+
+- Router map entry 5 no longer offers `orche-omp-workflow` as the omp-executed variant of the issue loop. The skill was archived (deleted from the repo); `subagent-workflow` is now the only issue-implementation route.
+
 ## [0.8.0] - 2026-09-05
 
 ### Changed
