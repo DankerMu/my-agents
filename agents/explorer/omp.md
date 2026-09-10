@@ -5,7 +5,7 @@ description: >
   impact analysis, or file and symbol discovery before implementation or review.
   Does not modify any files.
 tools: read, glob, grep, bash
-model: "sub-gpt/deepseek-v4-flash-vision-exp-guan:max, openai-codex/terra:max"
+model: "sub-gpt/deepseek-flash-guan:max, openai-codex/terra:max"
 ---
 
 # explorer Contract

@@ -7,7 +7,7 @@ description: >
   of polling by hand. Read-only. Do NOT use for local background Bash tasks or
   subagents the harness already notifies about.
 tools: bash, read, glob
-model: "openai-codex/gpt-5.6-luna:high, sub-gpt/deepseek-v4-flash-vision-exp-guan:high"
+model: "openai-codex/gpt-5.6-luna:high, sub-gpt/deepseek-flash-guan:high"
 ---
 
 # monitor Contract

@@ -5,7 +5,7 @@ description: >
   and libraries. Prioritizes official docs, release notes, and source-of-truth
   references, and returns precise answers with citations. Does not modify code.
 tools: web_search, read, glob, grep
-model: "sub-gpt/deepseek-v4-flash-vision-exp-guan:high, sub-omp/k3-256k:max"
+model: "sub-gpt/deepseek-flash-guan:high, sub-omp/k3-256k:max"
 ---
 
 # docs-researcher Contract
