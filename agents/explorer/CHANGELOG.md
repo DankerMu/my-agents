@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.3] - 2026-09-10
+
+### Changed
+
+- omp 投影模型改名:`sub-gpt/deepseek-v4-flash-vision-exp-guan:max` -> `sub-gpt/deepseek-flash-guan:max`。网关侧已重命名该模型,旧 id 全 key 返回 404。能力不变(推理 + 视觉,实测确认)。
+
 ## [1.5.2] - 2026-09-07
 
 ### Changed

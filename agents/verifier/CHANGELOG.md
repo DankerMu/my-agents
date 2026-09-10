@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.2] - 2026-09-10
+
+### Changed
+
+- omp 投影主副对调:主 `sub-grok/grok-4.6:high`,副 `sub-gpt/gpt-5.6-terra:max`。验证以判断力为主、生成量小,grok 更适合当一线。
+
 ## [0.7.1] - 2026-09-07
 
 ### Changed
