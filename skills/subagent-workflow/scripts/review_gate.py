@@ -38,6 +38,12 @@ finding argument (`--verified`, `--highest`, `--classes`) instead of silently
 discarding it: clean means zero FIX_NOW findings, so those values have no
 place to go.
 
+P2-only rounds (0.35.0): a round whose only verified findings are minor (P2,
+no coverage gap) is recorded `--clean`. Those P2s are noted in the round's
+review/verification records rather than deferred, so they carry no routing
+obligation and never appear in the loop-log `residual_deferred`. This is a
+documented contract change only; no gate math or CLI argument changed.
+
 Reviewer seat caps (0.33.0): every round records its seat list with
 `record-round --lenses a,b+c` (a seat is one parallel reviewer carrying one
 canonical lens id or an `a+b` pair; ids are defined by
@@ -359,8 +365,8 @@ def cmd_record_round(args) -> int:
                                             ("--highest", args.highest != "none"),
                                             ("--classes", bool(classes))) if present]
         print(f"review_gate: refused - --clean conflicts with {', '.join(given)}. A clean round means "
-              "zero FIX_NOW findings (0 / none / []); routed P2 deferrals live in the loop-log "
-              "residual_deferred and the evidence bundle, not in these fields. Nothing was recorded: "
+              "zero FIX_NOW findings (0 / none / []); P2s noted by a P2-only clean round live in "
+              "that round's review/verification records, not in these fields. Nothing was recorded: "
               "drop the finding arguments or record the round --not-clean.", file=sys.stderr)
         return 2
     seats, seat_error = parse_seats(args.lenses)

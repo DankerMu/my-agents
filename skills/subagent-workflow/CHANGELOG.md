@@ -5,6 +5,15 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.35.0] - 2026-09-10
+
+### Changed
+
+- **P2-only rounds note, they no longer defer.** A cross-review round whose verification leaves only minor (P2) findings — no critical/major, no coverage gap — is still recorded clean and still skips the fix pass, but those P2s are now **noted, not batch-deferred**: they stay in the round's reviewer report (`<REVIEW_DIR>/<lens>.md`) and verifier verdict table (`<REVIEW_DIR>/verify-<CLASS_ID>.md`) inside the evidence bundle, and owe no `issue-scribe` filing, no recorded one-line reason, and no loop-log `residual_deferred` entry. The Phase 8 deferral-routing gate no longer fires on them; the Phase 8 work summary carries a one-line `P2 notes: <n>` instead, so the remainder stays visible rather than silent. Filing an issue for a noted P2 remains allowed as a judgement call. Rationale: routing every P2 through issue-scribe bought bookkeeping, not merge safety, on rounds the workflow already exits.
+- **Round cleanliness is defined by what must be fixed, not by routing.** `references/phase-flow.md` now reads: a round is clean when it leaves no P1+ finding to fix and no coverage gap. Deferral routing stays hard for genuine deferrals — a finding dropped out of a P1+ fix pass on Downgrading rationale, or any verifier `DEFER` in a round that was not P2-only — and `residual_deferred` counts those only.
+- Coverage carve-out restated and unchanged (non-negotiable): `test-evidence`/coverage findings for behavior the PR introduces are never downgraded to a note and never deferred; they buy the fix pass like a P1+, and a round carrying one is not clean.
+- `scripts/review_gate.py` `record-round --clean` conflict message and module docstring updated to the note-not-defer wording. No gate math, CLI argument, ledger format, or loop-log schema changed.
+
 ## [0.34.0] - 2026-09-05
 
 ### Added
