@@ -90,7 +90,7 @@
       "path": "skills/ask-danker",
       "displayName": "Ask Danker",
       "description": "本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。",
-      "version": "0.8.0",
+      "version": "0.9.0",
       "maturity": "experimental",
       "categories": [
         "productivity",
@@ -215,7 +215,7 @@
       "path": "skills/codeagent",
       "displayName": "Codeagent",
       "description": "Execute codeagent-wrapper for multi-backend AI code tasks. Supports Codex, Claude, Gemini, OpenCode, and OMP (oh-my-pi) backends with agent presets, skill injection, worktree isolation, parallel task orchestration, and structured JSON output.",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -526,27 +526,6 @@
         "self-review",
         "meta-methodology",
         "rubric"
-      ]
-    },
-    {
-      "name": "orche-omp-workflow",
-      "path": "skills/orche-omp-workflow",
-      "displayName": "Orchestrated omp Issue Workflow",
-      "description": "GitHub issue → verified PR workflow where Claude Code / Codex orchestrates and omp (oh-my-pi) executes: codebase exploration, implementation, cross-review, and finding verification are delegated to omp explorer/implementer/reviewer/verifier sessions through codeagent-wrapper, while Phase 7 final review stays a native subagent. Mandatory OpenSpec fixtures, risk-adaptive review, CI, human-gated merge. Use when the issue loop should run on omp (\"用 omp 跑这个 issue\", \"omp 实现 #XX\"). Not for docs/spec-only work, hotfixes that skip review, or all-native runs (use subagent-workflow).",
-      "version": "0.5.0",
-      "maturity": "experimental",
-      "categories": [
-        "workflow",
-        "coding",
-        "review"
-      ],
-      "tags": [
-        "github-issues",
-        "omp",
-        "codeagent",
-        "openspec",
-        "risk-review",
-        "ci"
       ]
     },
     {
@@ -1654,5 +1633,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-09-10T15:32:40.265Z"
+  "generatedAt": "2026-09-10T15:44:10.703Z"
 }

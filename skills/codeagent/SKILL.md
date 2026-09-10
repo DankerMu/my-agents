@@ -1,7 +1,7 @@
 ---
 name: codeagent
 description: Execute codeagent-wrapper for multi-backend AI code tasks. Supports Codex, Claude, Gemini, OpenCode, and OMP (oh-my-pi) backends with agent presets, skill injection, worktree isolation, parallel task orchestration, and structured JSON output.
-version: 0.2.2
+version: 0.2.3
 ---
 
 # Codeagent Wrapper Integration
@@ -21,7 +21,7 @@ Execute `codeagent-wrapper` commands with pluggable AI backends (Codex, Claude, 
 ## When Not to Use
 
 - Do not use for ordinary local shell commands, lint/test/build commands, or small edits that the main agent can do directly.
-- Do not use inside a delegated codeagent task; nested AI delegation is prohibited by workflows such as `subagent-workflow` and `orche-omp-workflow`.
+- Do not use inside a delegated codeagent task; nested AI delegation is prohibited by workflows such as `subagent-workflow`.
 - Do not use when the task requires interactive product or scope decisions before implementation.
 
 ## Quick Reference
