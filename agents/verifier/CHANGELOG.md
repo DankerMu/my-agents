@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.4] - 2026-09-14
+
+### Changed
+
+- omp 投影改为主 `sub-gpt/gpt-5.6-terra:max`,副 `sub-gpt/deepseek-flash-guan:high`(原主 `sub-grok/grok-4.6:high`、副 `sub-gpt/gpt-5.6-terra:max`)。验证席位让出 grok 额度,主副同走 sub-gpt 通道。
+
 ## [0.7.3] - 2026-09-14
 
 ### Changed
