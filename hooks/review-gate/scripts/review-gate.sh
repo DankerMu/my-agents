@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # review-gate: PreToolUse hook that denies implementer/reviewer subagent
-# spawns while the subagent-workflow three-round hard gate is locked.
+# spawns while the subagent-workflow fix-pass gate is locked.
 #
 # Contains no gate logic: it only reads the `locked`/`lockReason` fields that
-# the skill's review_gate.py CLI precomputes into <project>/.review-gate.json.
+# the skill's fix_gate.py CLI precomputes into <project>/.review-gate.json.
 # No-op unless that state file exists, so it is safe to install everywhere.
 set -euo pipefail
 
@@ -37,13 +37,12 @@ blocked = [s.lower() for s in state.get("blockedSubagents") or ["implementer", "
 if subagent not in blocked:
     sys.exit(0)
 
-reason = state.get("lockReason") or "three-round hard gate is locked"
+reason = state.get("lockReason") or "fix-pass gate is locked"
 sys.stderr.write(
     f"review-gate: blocked `{subagent}` spawn - {reason}. "
-    "Persist the Review Failure Retro, then register it with the skill CLI "
-    "(`python3 <subagent-workflow skill dir>/scripts/review_gate.py record-retro "
-    "--path <retro.md> --shape <breadth|depth|noise|converging>`). "
-    "Ordinary fix/review spawns stay denied until then.\n"
+    "Stop and report to the user. Only a recorded user decision "
+    "(`python3 <subagent-workflow skill dir>/scripts/fix_gate.py extend "
+    "--user-approved '<decision>'`) unlocks one more fix pass.\n"
 )
 sys.exit(2)
 PY

@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-09-14
+
+### Changed
+
+- 工作流状态节对齐 `subagent-workflow` 0.36.0：不再要求携带 review round counter、gate 状态与 `Last clean reviewed SHA`（三轮硬 gate 与 ledger CLI 已删除），改为记录已用修复轮次（上限 2）和未关闭 finding。
+
 ## [0.2.0] - 2026-09-05
 
 ### Changed

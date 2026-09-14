@@ -28,16 +28,16 @@ This pack bundles the repository's design-to-issue and issue-to-PR delivery work
 This pack installs the worker subagents that `subagent-workflow` delegates to:
 
 - `implementer` — implements features, fixes, refactors, and tests from a spec/plan/brief; push-free (the orchestrator owns commit/push/PR).
-- `reviewer` — risk-adaptive cross-review plus read-only fixture and final review.
-- `verifier` — independent Phase 4.5 finding verification (CONFIRMED/PLAUSIBLE/REFUTED).
+- `reviewer` — read-only fixture review, risk-adaptive cross-review seats, and the post-fix re-review.
+- `verifier` — independent adjudication (CONFIRMED/PLAUSIBLE/REFUTED) of P0/P1 review candidates the orchestrator cannot settle from the code.
 - `explorer` — read-only codebase investigation that `reviewer` spawns for deeper context.
-- `monitor` — cheap-model watchdog (Claude: haiku, Codex: spark) for harness-external waits such as CI runs during Phase 8; ID-based completion detection, quiet blocking waits, read-only.
+- `monitor` — cheap-model watchdog (Claude: haiku, Codex: spark) for harness-external waits such as the CI wait before merge; ID-based completion detection, quiet blocking waits, read-only.
 - `issue-scribe` — follow-up capture for scope discipline: when primary work surfaces an out-of-scope finding (bug in passing, tech debt, deferred review finding), the orchestrator delegates the raw observation; issue-scribe verifies it read-only, dedups, and files one structured issue (来源/边界/解决思路/验收标准/readiness) that a later delivery run picks up via the normal issue DAG. Never fixes anything itself.
 
 ## Included Hooks
 
-- `worktree-guard` — PreToolUse path guard that mechanically enforces the parallel-worktree write discipline `subagent-workflow` relies on. Installed everywhere but inert until the orchestrator declares `.worktree-guard.json` at the project root when entering worktree-delegation mode; blocked writes are denied with the reason fed back to the model.
-- `review-gate` — PreToolUse spawn fence for `subagent-workflow`'s review-round gates: while `.review-gate.json` says `locked`, implementer/reviewer subagent spawns are denied until `review_gate.py record-retro` runs. Inert without that state file.
+- `worktree-guard` — PreToolUse path guard that blocks file writes outside declared worktree roots (for example when `session-orchestrator` runs issues in parallel worktrees). Installed everywhere but inert until the project declares `.worktree-guard.json`; blocked writes are denied with the reason fed back to the model.
+- `review-gate` — PreToolUse spawn fence for `subagent-workflow`'s fix-pass gate: once a PR has used its two fix passes and the next review round is still not clean, `.review-gate.json` says `locked` and implementer/reviewer spawns are denied until the user's decision is recorded with `fix_gate.py extend --user-approved`. Inert without that state file.
 
 ## Install
 
@@ -72,6 +72,6 @@ See [Research Engineering flow](../../docs/architecture/research-engineering-flo
 
 ## Pairs With: `codebase-stewardship`
 
-This pack and [`codebase-stewardship`](../codebase-stewardship/README.md) form a loop: stewardship decides _what to improve_ and holds the code-health baseline; this pack turns those decisions into reviewed PRs, and the new code it produces flows back into the next stewardship pass. They share `openspec/glossary.md` + `docs/adr/` as the single source of truth and the grill skills as a common decision base. The in-delivery consistency gate is Phase 4 cross-review itself: `risk-adaptive-cross-review`'s finding contract carries the consistency-axis crosswalk (`conventions` / `contract` / `state-transition` / `reuse` / `altitude` failure classes), so drift is caught by the reviewer seats without a separate pass. `review` (consistency mode) is a standalone per-change check that neither pack bundles; `ask-danker` routes to it.
+This pack and [`codebase-stewardship`](../codebase-stewardship/README.md) form a loop: stewardship decides _what to improve_ and holds the code-health baseline; this pack turns those decisions into reviewed PRs, and the new code it produces flows back into the next stewardship pass. They share `openspec/glossary.md` + `docs/adr/` as the single source of truth and the grill skills as a common decision base. The in-delivery consistency gate is the workflow's cross-review itself: `risk-adaptive-cross-review`'s finding contract carries the consistency-axis crosswalk (`conventions` / `contract` / `state-transition` / `reuse` / `altitude` failure classes), so drift is caught by the reviewer seats without a separate pass. `review` (consistency mode) is a standalone per-change check that neither pack bundles; `ask-danker` routes to it.
 
 Full workflow: [Delivery + Stewardship pairing](../../docs/architecture/delivery-and-stewardship.md).

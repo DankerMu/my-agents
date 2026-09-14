@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-09-14
+
+### Changed
+
+- Skill map 里对 `subagent-workflow` 的引用不再提已删除的 Phase 0.0 一次性 bootstrap：`openspec/project-profile.md` 存在即消费，发现新常驻风险面时追加一行。
+
 ## [0.1.1] - 2026-07-11
 
 - Remove the body invocation-posture restatement; posture lives in frontmatter/description.

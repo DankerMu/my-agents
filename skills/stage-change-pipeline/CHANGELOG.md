@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.20.1] - 2026-09-14
+
+### Changed
+
+- 终局回流措辞对齐 `subagent-workflow` 0.36.0：下游终局事件由"round-ceiling"改为"两轮修复用尽（fix-pass gate 锁定）"，sizing-retro 的 `outcome` 词表 `ceiling-split` 改为 `gate-split`，`rounds_burned` 来源改为下游停机报告（round ledger 已删除）。契约字段 `Suggested fixture level` / `Minimal mergeable slice` 不变。
+
 ## [0.20.0] - 2026-09-05
 
 ### Changed

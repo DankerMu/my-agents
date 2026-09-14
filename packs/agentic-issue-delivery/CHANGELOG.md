@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-09-14
+
+### Changed
+
+- `review-gate` hook 0.4.0 now fences `subagent-workflow` 0.36.0's two-fix-pass gate (`fix_gate.py`) instead of the deleted three-round ledger; membership unchanged.
+- README re-aligned with the slimmed `subagent-workflow`: `verifier` is spawned on demand for unsettled P0/P1 candidates rather than as a mandatory phase; `worktree-guard` is described as a general path guard rather than an enforcer of parallel worktree delegation, which the workflow no longer performs.
+
 ## [0.15.1] - 2026-09-05
 
 ### Fixed

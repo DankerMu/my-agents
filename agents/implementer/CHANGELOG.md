@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.0] - 2026-09-14
+
+### Changed
+
+- **Test discipline keeps the principle, drops the recipe.** The red proof is still mandatory (every new-behavior test fails against pre-change source, then passes; red and green output both go in the report) and expected values still come from an independent source of truth, but the prescribed `git stash push -m "red-proof" -- <source paths>` / pop-immediately / `git stash list` procedure is gone from the contract and the operating guide. The implementer chooses how to obtain the pre-change run (stash, base-commit worktree, temporary revert) and must leave no temporary state behind. Rationale: the stash dance was a step-by-step itinerary written for weaker models, and it was fragile (untracked new sources never entered the stash, hooks interfered, partial-stash semantics varied by project).
+- **Seams**: "pre-agreed seams only" becomes "seams the plan or fixture names, else a public boundary you choose and report" — hand-written issues carry no seam list, and the old wording left the implementer without a rule there.
+- "Refactoring belongs to the review stage" (reviewers are read-only, so it never did) becomes "no refactoring while red".
+
 ## [1.8.4] - 2026-09-07
 
 ### Changed

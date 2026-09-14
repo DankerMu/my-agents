@@ -7,7 +7,7 @@ description: >
   "这块有什么我不知道的坑"，或长任务即将进入不熟悉的模块/子系统、动手前想先摊开问题空间。
   不用于压测已有计划（grill-me）、需求澄清（clarify）或仓库健康度审计（repo-entropy-audit）。
 invocation_posture: hybrid
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Blind Spot Pass
@@ -66,5 +66,5 @@ Prompt、skill、context 是 map；真实代码库、真实约束、真实运行
 ## 与本仓库其它 skill 的关系
 
 - `grill-me`：反向箭头——本 skill 从 territory 出发（代码库 → 问题），grill-me 从 map 出发（计划 → 问题）。陌生区域先跑本 skill，产出的决策点作为 grill 分支输入。
-- `subagent-workflow`：项目级 territory 基线在 Phase 0.0 的 `openspec/project-profile.md`（一次性）；本 skill 是任务级增量挖掘，消费 profile、只挖 delta。
+- `subagent-workflow`：项目级 territory 基线是 `openspec/project-profile.md`（存在即消费，发现新的常驻风险面追加一行）；本 skill 是任务级增量挖掘，消费 profile、只挖 delta。
 - `explorer`：考古 sweep 的天然执行器；本 skill 定义角度与输出契约，explorer 负责跑。

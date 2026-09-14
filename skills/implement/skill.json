@@ -3,7 +3,7 @@
   "name": "implement",
   "displayName": "Implement",
   "description": "Implement a piece of work based on a spec or set of tickets.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "maturity": "experimental",
   "categories": ["coding", "workflow"],
   "tags": ["implementation", "spec-driven", "user-invoked"],

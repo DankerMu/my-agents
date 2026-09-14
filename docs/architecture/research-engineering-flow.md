@@ -103,7 +103,7 @@ project gains a recurring scientific surface. Study-specific detail stays under
 
 ### `openspec/project-profile.md`
 
-Owned by `subagent-workflow`. It records:
+Consumed and extended by `subagent-workflow`: read when present, and given one more line when an issue exposes a new recurring software risk surface. It is created by hand when a project needs one. It records:
 
 - software entry surfaces and public contracts
 - implementation risk axes and domain risk packs

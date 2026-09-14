@@ -7,7 +7,7 @@ description: >
 argument-hint: "下个会话要做什么？（可选）"
 disable-model-invocation: true
 invocation_posture: manual
-version: 0.2.0
+version: 0.2.1
 ---
 
 # Handoff
@@ -37,9 +37,8 @@ version: 0.2.0
 ## 工作流状态
 （处于 subagent-workflow / stage-change-pipeline 等工作流时必填，否则删除本节）
 - Skill/流: <名称> Phase <N>
-- Review round counter: <n>（跨会话不得归零——三轮硬 gate 依赖它）
-- Gate 状态: <未触发 / 已触发，retro 路径: ...>
-- Last clean reviewed SHA: <sha 或 无>
+- 已用修复轮次: <n>/2（subagent-workflow 两轮即停，跨会话不得归零）
+- 未关闭 finding: <列表或 无>
 - 证据束: <.workplans/... 路径>
 
 ## 工件索引（引用不复制）
@@ -62,7 +61,7 @@ version: 0.2.0
 
 1. **引用不复制**：已沉淀在 spec、plan、ADR、issue、commit、diff、评审报告里的内容一律给路径或 URL。交接文档是索引加状态快照，真相留在原始工件——复制出来的第二份会腐烂。
 2. **只写别处没有的**：判断标准——新会话丢了这条会犯错或重做的，写；能从工件重建的，引用。本对话独有的状态（决策理由、计数器、已排除路径、口头约定）才是正文。
-3. **工作流计数器随身带**：review round counter、gate 状态、`Last clean reviewed SHA` 只存在于会话记忆中，丢了会破坏 `subagent-workflow` 三轮硬 gate 的不归零语义。处于工作流时这一节不可省略。
+3. **工作流计数器随身带**：已用修复轮次和未关闭 finding 只存在于会话记忆中，丢了会让 `subagent-workflow` 的两轮即停规则失效。处于工作流时这一节不可省略。
 4. **脱敏**：API key、密码、token、PII 一律删除或以 `<REDACTED>` 占位；写完后按常见 secret 形状（`sk-`、`ghp_`、`AKIA`、`Bearer `）grep 自查一遍。
 5. **带参数时按参数裁剪**：`/handoff 下个会话只做评审修复` → 全文围绕该重点组织，无关背景压到一行。
 6. **交付前自检**：假装自己是只读这份文档的新 agent——"下一步"第一条能直接开工吗？不能就修完再交。

@@ -7,7 +7,7 @@ description: >
   risk-adaptive, multi-perspective, parallel, cross-review, or high-risk PR review. Not for
   ordinary quick review.
 invocation_posture: hybrid
-version: 0.6.0
+version: 0.6.1
 ---
 
 # Risk-Adaptive Cross Review
@@ -74,8 +74,8 @@ re-reading the diff, code, and fixture, not checklist length). Defaults:
   seat-mate may swap which lens leads the seat, never add one.
 - OpenSpec Review: Design Consistency, Spec Completeness, Tasks Executability.
 
-Seat caps are hard (4 at high, 3 otherwise). Inside `subagent-workflow` they are
-checked at ledger time by `review_gate.py record-round --lenses`.
+Seat caps are hard (4 at high, 3 otherwise). Inside `subagent-workflow` the
+orchestrator applies the cap when spawning seats.
 
 Beyond pack scope, every reviewer also applies the change-triggered **cross-cutting
 lenses** in `reviewer-packages.md` — removed-behavior audit, wrapper/proxy

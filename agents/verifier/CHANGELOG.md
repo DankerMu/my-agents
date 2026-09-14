@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.3] - 2026-09-14
+
+### Changed
+
+- Operating guide identity 段对齐 `subagent-workflow` 0.36.0 的按需派发：编排器可自行裁定能从代码判定的候选，交到 verifier 手上的批次其裁决不被推翻。契约不变。
+
 ## [0.7.2] - 2026-09-10
 
 ### Changed

@@ -5,6 +5,25 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.36.0] - 2026-09-14
+
+### Changed
+
+- **BREAKING: the workflow is rewritten around what a capable model needs, not what earlier models had to be told.** Phase 0-8 (13 sub-phases) collapse to Phase 0-4; `references/phase-flow.md` goes from 600 lines to ~90 and the skill from ~1,900 lines of Markdown plus ~2,800 lines of Python to ~300 lines of Markdown. Motivation: runs were slow and looped — profile bootstrap, fixture-review subagent, mandatory verifier pass, invariant audit, full re-review after every fix, a separate final review, then a retro/ledger apparatus whenever the loop ran long. Most of that scaffolding compensated for judgment the model now has.
+- **Review loop**: round-1 seats by fixture level (`none` 0-1, `compact` 1-2, `expanded` 2-3); the orchestrator adjudicates candidates against the diff and spawns a `verifier` only for P0/P1 it cannot settle from the code; a fix pass is bought only by P0/P1 findings and coverage gaps, P2s ride along or are noted; re-review after a fix is one fresh `correctness+test-evidence` seat over the full diff. **Hard stop after two fix passes, enforced by `scripts/fix_gate.py`** (~150 lines replacing the 642-line `review_gate.py`): `open --pr`, `record-round --clean|--not-clean`, `extend --user-approved`, `close`. The third not-clean round exits 2 and sets `locked` in `.review-gate.json`; the `review-gate` hook (0.4.0, same state file, unchanged fields) then denies implementer/reviewer spawns until the user's decision is recorded. Remaining P0/P1 go to the user with a split/descope recommendation (anchored to the issue's `Minimal mergeable slice` when present) and are echoed on the source issue for upstream sizing. No retro forms, shapes, budgets, round ledger, seat-cap violations, or cross-PR ceiling memory.
+- **Fixture**: triage is a ten-line block in `proposal.md`; repair intensity, the `Invariant Matrix`, and the boundary-surface checklist are gone. The read-only fixture-review subagent stays (pass|revise, two revise iterations, a third reports the issue as under-specified). `expanded` `design.md` names the governing invariant and sibling surfaces in two lines instead. The `none|compact|expanded` vocabulary and the `issue-risk-contract.md` filename are unchanged so `stage-change-pipeline`'s `Suggested fixture level` still resolves.
+- **Project profile**: `openspec/project-profile.md` is consumed when present and gets a line when a new recurring risk surface appears; the Phase 0.0 bootstrap and the shared `project-profiles.md` catalog are removed.
+- **Execution model**: one implementer at a time; parallel worktree delegation is removed from the workflow (an issue that needs parallel workers is split upstream). `worktree-guard` remains a general hook, no longer wired here.
+- **Kept**: the fixture-review subagent, the `monitor` (CI wait) and `issue-scribe` (out-of-scope findings) helpers, the `偏离记录` section, `--body-file` posting, and the subagent boundary block, and the `review-gate` hook (now fencing the fix-pass gate).
+- **Phase 2 audit** checks that the implementer's report carries the red-before/green-after evidence for new-behavior tests (`implementer` 1.9.0 keeps that proof mandatory while dropping the stash recipe).
+- **Merge is automatic**: the explicit merge-approval stop and the pre-authorization flag are gone; passing the pre-merge checks merges the PR. Human stops remain only at the fix-pass gate lock (`fix_gate.py extend --user-approved`) and real blockers.
+- **Merge gate**: five checks against the frozen SHA (clean review on that SHA or CI-only repairs after it, green CI, pushed tip, routed deferrals, acceptance criteria satisfied by the diff). The Chinese work summary shrinks to six bullets; `openspec archive` stays as merge follow-up.
+
+### Removed
+
+- `scripts/review_gate.py`, `scripts/evidence_check.py`, `scripts/loop_log_audit.py`, and their tests (`tests/test_fix_gate.py` covers the new counter and the hook denial end to end). Host repos keep their `docs/review-loop-log.jsonl` and `.review-gate-issues.json` files, but nothing appends to or audits them any more.
+- `references/gates.md`, `references/project-profiles.md`, `references/parallel-worktree-delegation.md`, `references/skill-map.md` (routing folded into `SKILL.md`), and `references/phase-4-cross-review.md` (replaced by the shorter `references/review-briefs.md`).
+
 ## [0.35.0] - 2026-09-10
 
 ### Changed

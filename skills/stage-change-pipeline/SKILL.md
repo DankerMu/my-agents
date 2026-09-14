@@ -9,7 +9,7 @@ description: >
 license: MIT
 metadata:
   author: danker
-  version: "0.20.0"
+  version: "0.20.1"
 ---
 
 # Stage Change Pipeline
@@ -63,7 +63,7 @@ Stage 5.5: Issue-Change 对齐审核 (≤2 轮)
 - **Stage 5 宽度门禁**：创建前逐个分组过三条判据——`Minimal mergeable slice` 非 `atomic` 则首刀必须拆出来（剩余部分 `Depends on` 首刀并递归）、验收标准限一条独立验证路径、合并 task 须留痕。唯一出口是 `Width exception: <slice-deferred|multi-path|merged-tasks> - <理由>`，缺失即门禁未过；理由须论证更细的切法对交付没有价值，不是"拆开麻烦"。递归以剩余部分 `atomic` 为终点，不设 issue 数量上限；切片间按真实依赖连边，不机械串成线性链。
 - **Stage 5.5**：issue-change 对齐审核 ≤2 轮（七维度，含专查单模块内过宽的 `over-broad`），P0 + P1 阻塞，残留如实记录到 Epic。
 - **收尾问责**：每次运行把 workflow 返回的 `logEntry` 补 `date` 后 append 到 `docs/stage-pipeline-log.jsonl` 并提交（四步流程见 [references/loop-accountability.md](references/loop-accountability.md)，缺一即漏记）。
-- **终局回流（sizing-retro）**：下游 `subagent-workflow` 任何 PR 以 round-ceiling 拆分/放弃/降档收场，都是本流水线切片或契约失败的证据——拆分子项必须重过 Stage 5 契约（不得以裸 PR/裸 fixture 出生）+ 一轮轻量 Stage 5.5（≤1 轮）；每个终局事件落一行 sizing-retro（`slice-error|contract-gap|genuinely-hard`，schema 见 loop-accountability.md）。仅做问责，不做跨 change 学习——sizing-retro 不注入后续 change 的审核 brief。
+- **终局回流（sizing-retro）**：下游 `subagent-workflow` 任何 PR 在两轮修复用尽（fix-pass gate 锁定）后以拆分/放弃/降档收场，都是本流水线切片或契约失败的证据——拆分子项必须重过 Stage 5 契约（不得以裸 PR/裸 fixture 出生）+ 一轮轻量 Stage 5.5（≤1 轮）；每个终局事件落一行 sizing-retro（`slice-error|contract-gap|genuinely-hard`，schema 见 loop-accountability.md）。仅做问责，不做跨 change 学习——sizing-retro 不注入后续 change 的审核 brief。
 
 ---
 
