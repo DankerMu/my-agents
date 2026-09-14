@@ -109,7 +109,7 @@
       "path": "skills/blind-spot-pass",
       "displayName": "Blind Spot Pass",
       "description": "开工前对陌生区域做一次盲区侦察：从代码库考古（git 历史、相似实现、隐形约定、危险区、邻接面） 挖出你没意识到要问的 unknown unknowns，产出带证据的盲区清单、改写后的更好 prompt 和 reference 清单。 触发词：\"blind spot pass\"、\"盲区扫描\"、\"找盲区\"、\"我还有哪些 unknown unknowns\"、 \"这块有什么我不知道的坑\"，或长任务即将进入不熟悉的模块/子系统、动手前想先摊开问题空间。 不用于压测已有计划（grill-me）、需求澄清（clarify）或仓库健康度审计（repo-entropy-audit）。",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -411,7 +411,7 @@
       "path": "skills/handoff",
       "displayName": "Handoff",
       "description": "把当前会话压缩成一份交接文档（handoff.md），让新会话或另一个 agent 无缝接续工作。 只在有东西要随身带走时用：换 harness/换目录/交给同事、把中途发现的 side task 分叉出去、issue 工作流跨会话续跑；同会话同目录的阶段过渡走原生压缩，不用它。 手动调用（/handoff），可带参数说明下个会话的重点。模型不会自动触发。",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "maturity": "experimental",
       "categories": [
         "productivity",
@@ -448,7 +448,7 @@
       "path": "skills/implement",
       "displayName": "Implement",
       "description": "Implement a piece of work based on a spec or set of tickets.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -791,7 +791,7 @@
       "path": "skills/risk-adaptive-cross-review",
       "displayName": "Risk-Adaptive Cross Review",
       "description": "Multi-perspective, risk-adaptive review for PRs, diffs, branches, OpenSpec changes, or stage artifacts — reviewers split across correctness, integration, security/performance, test evidence, spec compliance, or invariant/state-machine compatibility. Use on explicit asks for risk-adaptive, multi-perspective, parallel, cross-review, or high-risk PR review. Not for ordinary quick review.",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -911,7 +911,7 @@
       "path": "skills/stage-change-pipeline",
       "displayName": "Stage Change Pipeline",
       "description": "设计文档 → OpenSpec change → subagent 并行审核 → 修复 → 实现就绪 GitHub issue 全流水线， tasks 拆为模块边界清晰、适合小 PR 审核的细粒度 issue。用于把设计/阶段文档变成审核过的 OpenSpec change 加 implementation-ready issues——\"开始下一个阶段\"、\"设计到issue\"、 \"run the stage pipeline\"。单个 issue 的实现/修复/合并走 subagent-workflow，不需要 OpenSpec change 与并行审核的普通 issue 不用本流水线。",
-      "version": "0.20.0",
+      "version": "0.20.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -951,8 +951,8 @@
       "name": "subagent-workflow",
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
-      "description": "GitHub issue → verified PR workflow: the orchestrator delegates implementation, cross-review, and finding verification to the implementer/reviewer/verifier subagents, with mandatory OpenSpec fixtures, risk-adaptive review, CI, and human-gated merge. Use to implement a GitHub issue or process the next DAG issue (\"implement #XX\", \"处理下一个issue\"). Not for docs/spec-only work, hotfixes that skip review, or Codex-implements-under-Claude-orchestration (use cc-cx-workflow).",
-      "version": "0.35.0",
+      "description": "Implement one GitHub issue end to end: OpenSpec fixture, implementer subagent, cross-review by reviewer subagents, CI, automatic merge. Use for \"implement #XX\" or \"处理下一个issue\". Not for docs-only PRs or hotfixes that skip review.",
+      "version": "0.36.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -963,7 +963,7 @@
         "github-issues",
         "subagent",
         "openspec",
-        "risk-review",
+        "cross-review",
         "ci"
       ]
     },
@@ -1150,7 +1150,7 @@
       "path": "agents/implementer",
       "displayName": "Implementer",
       "description": "Code implementation agent that writes, modifies, and refactors code based on plans, specs, or direct instructions.",
-      "version": "1.8.4",
+      "version": "1.9.0",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -1318,7 +1318,7 @@
       "path": "agents/verifier",
       "displayName": "Verifier",
       "description": "Independent finding-verification agent. Adjudicates one failure-class batch of candidate review findings (at most 5) with exactly one verdict per candidate — CONFIRMED, PLAUSIBLE, or REFUTED — using only diff/spec/code/test evidence. Read-only; never a reviewer that produced any candidate in its batch.",
-      "version": "0.7.2",
+      "version": "0.7.3",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1371,8 +1371,8 @@
       "name": "review-gate",
       "path": "hooks/review-gate",
       "displayName": "Review Gate",
-      "description": "PreToolUse hook that denies implementer/reviewer subagent spawns while the subagent-workflow three-round hard gate is locked. No-op until the project has a .review-gate.json state file (maintained by the skill's review_gate.py CLI), so it is safe to install everywhere.",
-      "version": "0.3.1",
+      "description": "PreToolUse hook that denies implementer/reviewer subagent spawns once subagent-workflow has used its two fix passes on a PR. No-op until the project has a .review-gate.json state file (maintained by the skill's fix_gate.py CLI), so it is safe to install everywhere.",
+      "version": "0.4.0",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1426,7 +1426,7 @@
       "path": "packs/agentic-issue-delivery",
       "displayName": "Agentic Issue Delivery Pack",
       "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through subagent-driven review and delivery gates.",
-      "version": "0.15.1",
+      "version": "0.16.0",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "agentic-developer",
@@ -1633,5 +1633,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-09-14T15:06:56.520Z"
+  "generatedAt": "2026-09-14T15:08:10.140Z"
 }

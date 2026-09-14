@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-09-14
+
+### Changed
+
+- Dropped the references to `subagent-workflow`'s `review_gate.py` ledger CLI (removed in that skill's 0.36.0): seat caps inside the workflow are applied by the orchestrator at spawn time, and the severity crosswalk names the workflow's evidence vocabulary without CLI flags. No contract change.
+
 ## [0.6.0] - 2026-09-05
 
 ### Added

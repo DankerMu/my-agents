@@ -3,6 +3,10 @@
 All notable changes to this hook will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-09-14
+
+- 配合 `subagent-workflow` 0.36.0：状态文件改由 `fix_gate.py`（两轮修复计数器）维护，`locked` 语义从"三轮硬门待 retro"变为"两轮修复用尽、第三轮未获用户批准"。hook 读取的字段（`enabled`/`locked`/`lockReason`/`blockedSubagents`）不变；仅更新拦截提示文案与注释，指向 `fix_gate.py extend --user-approved`。
+
 ## [0.3.1] - 2026-09-05
 
 - 文档：安装/卸载说明改为 hook 命令级 merge 语义（同 `matcher` 块内按 `command` 增删，`scripts/lib/settings-merge.js`）。脚本行为不变。

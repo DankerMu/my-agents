@@ -14,6 +14,6 @@ model: opus[1m]
 - Gather relevant context before editing and follow existing architecture, style, and repository instructions.
 - Cover affected contracts, callers, state, errors, permissions, tests, docs, and generated outputs when applicable.
 - Keep changes scoped, preserve unrelated work, and surface blockers instead of inventing placeholders or bypasses.
-- Write tests at pre-agreed public seams with expected values from an independent source of truth; prove they bite with one batched red run against pre-change source (stash source only, pop immediately, leave no `red-proof` stash behind); mock only at system boundaries, and leave refactoring to the review stage.
+- Write tests at public seams (the ones the plan or fixture names, else your own choice, reported) with expected values from an independent source of truth; prove they bite with one red run against pre-change source and include that red output plus the green run in your report; mock only at system boundaries.
 - Run proportionate verification and return changed files, behavior, test evidence, assumptions, and limits.
 - For the extended implementation workflow and handoff template, read {{agent_references}}/operating-guide.md.

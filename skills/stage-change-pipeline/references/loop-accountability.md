@@ -43,13 +43,13 @@
 
 **4. sizing-retro 行（终局回流，SKILL.md 跨运行问责第 2 节）**
 
-下游 `subagent-workflow` 的终局事件（round-ceiling 拆分 / 放弃 / 降档）各追加一行：
+下游 `subagent-workflow` 的终局事件（两轮修复用尽后拆分 / 放弃 / 降档）各追加一行：
 
 ```json
-{"date":"<run-date>","change":"<name>","issue":<N>,"sizing_retro":{"outcome":"ceiling-split|abandoned|descoped","rounds_burned":<n>,"prs":[<PR 编号列表>],"verdict":"slice-error|contract-gap|genuinely-hard","note":"<一行：下一个同类阶段怎么切>"}}
+{"date":"<run-date>","change":"<name>","issue":<N>,"sizing_retro":{"outcome":"gate-split|abandoned|descoped","rounds_burned":<n>,"prs":[<PR 编号列表>],"verdict":"slice-error|contract-gap|genuinely-hard","note":"<一行：下一个同类阶段怎么切>"}}
 ```
 
-- `rounds_burned`：该 issue 全部 PR 实际消耗的 comprehensive 轮总数（下游 ledger 可查），这是本行存在的经济学理由。
+- `rounds_burned`：该 issue 全部 PR 实际消耗的 review 轮总数（下游停机报告给出），这是本行存在的经济学理由。
 - `verdict` 判据：拆分后子 PR 快速收敛（如一轮全绿）→ `slice-error`；下游 fixture 修复两轮封顶后上报 → `contract-gap`；两者都不成立才允许 `genuinely-hard`。
 - sizing-retro 行不计入 kill 标准的运行样本（它不是 Stage 4.5 运行），但纳入日志审计——一个 stage-pipeline-log 长期只有成功行而无 sizing-retro 行、下游却有终局事件，说明回流失职。
 
