@@ -952,7 +952,7 @@
       "path": "skills/subagent-workflow",
       "displayName": "Subagent Issue Workflow",
       "description": "Implement one GitHub issue end to end: OpenSpec fixture, implementer subagent, cross-review by reviewer subagents, CI, automatic merge. Use for \"implement #XX\" or \"处理下一个issue\". Not for docs-only PRs or hotfixes that skip review.",
-      "version": "0.36.0",
+      "version": "0.36.1",
       "maturity": "experimental",
       "categories": [
         "workflow",
@@ -1633,5 +1633,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-09-14T15:40:37.011Z"
+  "generatedAt": "2026-09-19T01:46:59.245Z"
 }

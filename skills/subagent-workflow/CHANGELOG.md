@@ -5,6 +5,13 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.36.1] - 2026-09-18
+
+### Fixed
+
+- **Worktree-aware git flow.** Running the workflow inside a linked worktree (the `session-orchestrator` child-session path) broke at merge wrap-up: `git checkout <default> && git pull` fails with "already used by worktree" because the default branch is checked out in the primary worktree, and `gh pr merge --delete-branch` cannot delete a branch that is still checked out. Phase 4 now detects a linked worktree (`git rev-parse --git-dir` vs `--git-common-dir`), detaches before the merge, and ends on a detached `origin/<default>` tip; the primary-worktree path is unchanged. Phase 1 branches from `origin/<default>` after a fetch instead of the local default branch.
+- **New Core Rule: work in the current checkout, never a new worktree.** The working root is `git rev-parse --show-toplevel` of the checkout the session is already in, the workflow never creates or removes worktrees, and the implementer is spawned there without worktree isolation. Pre-0.36 installs still carrying `references/parallel-worktree-delegation.md` (which mandated `.worktrees/` under the current root and therefore nested worktrees when the session itself ran in one) should be reinstalled.
+
 ## [0.36.0] - 2026-09-14
 
 ### Changed

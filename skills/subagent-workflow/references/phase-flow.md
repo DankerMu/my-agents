@@ -19,12 +19,13 @@ Load when running the workflow. Keep briefs short: point subagents at the OpenSp
 
 ## Phase 1: Implementer Subagent
 
-1. Branch from the integration base:
+1. Branch from the integration base, in the checkout you are already in (primary or linked worktree; never add a worktree):
    ```bash
    DEFAULT_BRANCH=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null); DEFAULT_BRANCH=${DEFAULT_BRANCH#origin/}
-   git checkout -b feat/issue-<N>-<change-name> "${DEFAULT_BRANCH:-main}"
+   git fetch origin && git checkout --no-track -b feat/issue-<N>-<change-name> "origin/${DEFAULT_BRANCH:-main}"
    ```
-2. Spawn one `implementer` subagent with the repository root as working directory. Brief:
+   Branching from `origin/<default>` works the same in a linked worktree, where the local default branch is usually checked out elsewhere and cannot be switched to.
+2. Spawn one `implementer` subagent with `git rev-parse --show-toplevel` as working directory and no worktree isolation. Brief:
    - Required subagent boundary (`SKILL.md`).
    - Issue number, the OpenSpec change path, fixture level and selected risk packs, key source files.
    - Scope and acceptance criteria; implementation and tests ship together; the project's verification commands must pass.
@@ -78,10 +79,13 @@ Out-of-scope defects found during review go to `issue-scribe` when installed (on
 4. Pre-merge checks, all against `FULL_SHA`: `.review-gate.json` records the last round as clean on this SHA (or every later commit is a CI-only repair from step 2), or the fixture is `none` and the Phase 2 audit found no risk; CI is green; `git fetch origin && [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/<branch>)" ]`; every deferred finding has an issue URL or a recorded reason; each acceptance criterion in the issue and each selected `tasks.md` item is satisfied by the diff, not by the implementer's say-so. Any failure blocks the merge and returns to the owning phase.
 5. When every check in step 4 passes, merge without asking:
    ```bash
+   LINKED=""; if [ "$(git rev-parse --git-dir)" != "$(git rev-parse --git-common-dir)" ]; then LINKED=1; fi
+   if [ -n "$LINKED" ]; then git switch --detach; fi   # linked worktree: free the PR branch so --delete-branch can remove it
    gh pr merge <PR#> --merge --delete-branch
-   git checkout "${DEFAULT_BRANCH:-main}" && git pull
+   git fetch origin
+   if [ -n "$LINKED" ]; then git switch --detach "origin/${DEFAULT_BRANCH:-main}"; else git checkout "${DEFAULT_BRANCH:-main}" && git pull; fi
    gh issue close <N> --comment "Closed via merged PR #<PR#>. <summary>"
    openspec archive <change-name>
    python3 <skill>/scripts/fix_gate.py close
    ```
-   Commit the archive as merge follow-up. Report the next unblocked issue; start it when the user asked for a queue run (several issues or "all"), otherwise stop.
+   In a linked worktree the default branch is checked out in the primary worktree, so `git checkout <default>` fails with "already used by worktree"; the detached `origin/<default>` tip is the equivalent end state there. Commit the archive as merge follow-up. Report the next unblocked issue; start it when the user asked for a queue run (several issues or "all"), otherwise stop.

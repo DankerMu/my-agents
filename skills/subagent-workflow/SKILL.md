@@ -2,7 +2,7 @@
 name: subagent-workflow
 description: >
   Implement one GitHub issue end to end: OpenSpec fixture, implementer subagent, cross-review by reviewer subagents, CI, automatic merge. Use for "implement #XX" or "处理下一个issue". Not for docs-only PRs or hotfixes that skip review.
-version: 0.36.0
+version: 0.36.1
 ---
 
 # Subagent Issue Workflow
@@ -21,6 +21,7 @@ The orchestrator (Claude Code or Codex) runs one issue from selection to merge. 
 - **OpenSpec change is the fixture**: every implemented issue has `openspec/changes/<change>/` with `proposal.md`, `tasks.md`, at least one spec delta, and `design.md` at the `expanded` level. It carries fixture level, selected risk packs, must-preserve behavior, and required evidence. One read-only `reviewer` fixture review (pass|revise, at most two revise iterations) and `openspec validate <change> --strict --no-interactive` pass before implementation.
 - **Orchestrator edits specs, not implementation**: `openspec/changes/<change>/**` may be edited directly; source, tests, and configs go through the `implementer` subagent unless the user says otherwise.
 - **One issue at a time, one implementer at a time**: serial execution through all phases; no parallel code-writing workers. An issue too large for one implementer pass is split upstream, not parallelized here.
+- **Work in the current checkout, never a new worktree**: the working root is `git rev-parse --show-toplevel` of the checkout the session already runs in, whether it is the primary worktree or a linked one (for example a `session-orchestrator` child). The workflow never creates or removes worktrees, and the implementer is spawned with that root as its working directory, without worktree isolation.
 - **Leaves never nest**: every subagent brief carries the boundary below. Subagents do not spawn agents or invoke this workflow.
 - **Review is risk-scaled and mechanically bounded**: reviewer seats come from the fixture level; only P0/P1 findings and coverage gaps buy a fix pass. Every round is recorded with `scripts/fix_gate.py record-round`; the third not-clean round locks the gate (exit 2, and the `review-gate` hook denies further implementer/reviewer spawns). Then stop and report to the user; only `fix_gate.py extend --user-approved` buys another pass.
 - **Verify before fix**: the orchestrator checks each reviewer candidate against the diff before it reaches the implementer; a `verifier` subagent adjudicates only what the orchestrator cannot settle from the code.
