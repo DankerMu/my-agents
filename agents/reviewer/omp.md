@@ -5,7 +5,7 @@ description: >
   Performs structured, severity-graded reviews covering correctness, security, performance,
   and maintainability. Can spawn explorer for deeper codebase investigation.
 tools: read, glob, grep, bash, task
-model: "sub-omp/k3-256k:max, sub-grok/grok-4.6:high"
+model: "sub-omp/k3-256k:max, sub-grok/grok-4.7:high"
 spawns: explorer
 ---
 

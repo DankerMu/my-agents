@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.5] - 2026-09-21
+
+### Changed
+
+- omp 投影改为主 `sub-grok/grok-4.7:high`,副 `sub-gpt/gpt-5.6-luna:max`(原主 `sub-gpt/gpt-5.6-terra:max`、副 `sub-gpt/deepseek-flash-guan:high`)。
+
 ## [0.7.4] - 2026-09-14
 
 ### Changed

@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.2] - 2026-09-21
+
+### Changed
+
+- omp 投影的 grok 跳从 `sub-grok/grok-4.6` 升到 `sub-grok/grok-4.7`,档位与回退链其余部分不变。
+
 ## [1.4.1] - 2026-09-07
 
 ### Changed
