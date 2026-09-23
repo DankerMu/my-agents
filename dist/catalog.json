@@ -1150,7 +1150,7 @@
       "path": "agents/implementer",
       "displayName": "Implementer",
       "description": "Code implementation agent that writes, modifies, and refactors code based on plans, specs, or direct instructions.",
-      "version": "1.9.1",
+      "version": "1.9.2",
       "maturity": "experimental",
       "categories": [
         "coding",
@@ -1633,5 +1633,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-09-23T14:27:45.036Z"
+  "generatedAt": "2026-09-23T14:31:17.143Z"
 }
