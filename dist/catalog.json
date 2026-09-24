@@ -1291,7 +1291,7 @@
       "path": "agents/reviewer",
       "displayName": "Reviewer",
       "description": "Code review agent that performs structured, severity-graded reviews on PRs, diffs, and code changes.",
-      "version": "2.6.5",
+      "version": "2.6.6",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1318,7 +1318,7 @@
       "path": "agents/verifier",
       "displayName": "Verifier",
       "description": "Independent finding-verification agent. Adjudicates one failure-class batch of candidate review findings (at most 5) with exactly one verdict per candidate — CONFIRMED, PLAUSIBLE, or REFUTED — using only diff/spec/code/test evidence. Read-only; never a reviewer that produced any candidate in its batch.",
-      "version": "0.7.6",
+      "version": "0.7.7",
       "maturity": "experimental",
       "categories": [
         "review",
@@ -1633,5 +1633,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-09-23T14:31:17.143Z"
+  "generatedAt": "2026-09-24T02:21:48.758Z"
 }

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.7] - 2026-09-23
+
+### Changed
+
+- Claude Code 投影的 `model` 从 `opus[1m]` 改为 `sonnet[1m]`,契约与其他平台投影不变。
+
 ## [0.7.6] - 2026-09-23
 
 ### Changed
