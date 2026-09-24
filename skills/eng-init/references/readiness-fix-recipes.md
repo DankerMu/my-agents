@@ -79,11 +79,11 @@ Each recipe uses this shape:
 
 - **Fixability:** A — skill-owned.
 - **Good fixes:** `scripts/test-guardrails.sh` or equivalent selected-entry target that injects known violations and proves guards reject them; CI/cron/entry command runs it.
-- **Bad fixes:** Script that only echoes PASS, tests the happy path only, ignores failures, or is not wired to any command.
+- **Bad fixes:** Script that only echoes PASS, tests the happy path only, ignores failures, or is not wired to any command. Process fixtures that leak: reaping delegated to the guard under test, one pidfile shared across cases, busy-poll resident stubs (`while true; do sleep 0.05; done`), cleanup that only deletes the temp dir, or no residue assertion — the verdict stays green while orphans accumulate on the host.
 - **Required scan:** Existing guardrails, selected entry point, CI workflow, constraints/baseline files.
 - **Allowed files:** `scripts/test-guardrails.sh`, selected entry point, CI workflow, `constraints.yaml` for baseline/ratchet state.
-- **Validator:** Run the guardrail self-test target; it must fail on injected violation and exit 0 only when guards reject it.
-- **Rescore evidence:** `guardrail_self_test=1/1` with command, exit code, and per-guard PASS/FAIL output.
+- **Validator:** Run the guardrail self-test target; it must fail on injected violation and exit 0 only when guards reject it. Snapshot `ps -A -ww -o pid= -o args=` before and after the run: any new process whose command line names the temp dir is a leak (`gate-quality-contract.md`, "Process fixtures"; template helpers `spawn_fixture` / `reap_fixtures` / residue case in `agent-harness-templates.md` § Guardrail self-test).
+- **Rescore evidence:** `guardrail_self_test=1/1` with command, exit code, per-guard PASS/FAIL output, and the residue line plus the before/after process comparison.
 
 ### `lint_config`
 

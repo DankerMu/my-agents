@@ -464,7 +464,7 @@ criteria:
     fixability: A
     layer: Sensorium
     artifact: Enforcement Index
-    validator: scripts/test-guardrails.sh exists, a CI/cron job runs it, and it asserts both directions (clean-tree acceptance plus one staged violation rejected per guard)
+    validator: scripts/test-guardrails.sh exists, a CI/cron job runs it, it asserts both directions (clean-tree acceptance plus one staged violation rejected per guard), and it reaps its process fixtures and fails on residue (one run leaves no new process naming its temp dir)
     rescore_evidence: guardrail_self_test=1/1 when evidence satisfies the criterion; 0/1 when missing; null only if skippable and not applicable
   - id: exemption_registry_hygiene
     level: 3

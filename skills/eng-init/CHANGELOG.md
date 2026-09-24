@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.6.1] - 2026-09-24
+
+### Fixed
+
+- **Self-test process fixtures are owned and reaped by the self-test** (issue #15). The gate quality contract only required filesystem fixtures to be removed, so a downstream `test-guardrails` harness legally leaked resident busy-poll fake upstreams (shared pidfile, delete-only cleanup, guard under test killed before its own cleanup ran) — 130 orphans and ~2400 forks/s on the host while the suite stayed green. `gate-quality-contract.md` gains "Process fixtures": the self-test reaps what it starts (own process group, TERM → polled deadline → KILL from the EXIT trap), one pid record per fixture, a leftover process naming the fixture root FAILs the run, and resident stubs block in one call instead of polling.
+- `agent-harness-templates.md` § Guardrail self-test demonstrates it: `spawn_fixture` / `reap_fixtures` / `fixture_strays` helpers, a canonicalized temp root, per-fixture output logs (a leaked process cannot hold the caller's stdout pipe), cleanup that reaps before deleting, and a verdict-bearing residue case. The residue sweep matches command lines, so a descendant tied to the fixture only by its cwd stays invisible to it; the group reap is the primary mechanism. Verified under bash 3.2 and 5.x on macOS and bash on Debian.
+- `guardrail_self_test` (criteria, registry validator, fix recipe) now audits for leaks by comparing `ps` snapshots before and after one run; eval case-56 and content invariant R60 pin the behavior.
+- The Stage 0 schema-gap literal stays at 3.6.0: `constraints.yaml` schema is unchanged, so 3.6.0 repos are not offered a migration.
+
 ## [3.6.0] - 2026-09-05
 
 ### Added

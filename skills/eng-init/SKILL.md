@@ -2,7 +2,7 @@
 name: eng-init
 disable-model-invocation: true
 metadata:
-  version: "3.6.0"
+  version: "3.6.1"
 description: Agent Engineering Readiness Control Plane — establishes, audits, repairs, and maintains the repo-local agent control plane for safe AI-agent work. Use whenever the user wants to bootstrap a new project, harden a repo for AI-agent work, set up AGENTS.md, create CONTEXT.md, establish unified dev commands, add tests/lint/CI/pre-commit guardrails, audit agent readiness, repair failing readiness signals, install a refactor harness, or prevent AI-coding drift (_v1/_v2 files, scratchpad bloat, dead code). Also governs verification tiers (snapshot replay, built-artifact smokes, per-file coverage), decision-record/agent-notes operational lifecycles (proposed/implemented/rejected/archived, archive freeze), documentation discipline (doc gates, Known Limitations, generated catalogs), and agent-harness architecture clauses (model-visible ⟺ logged, runtime invariant companions). Trigger phrases include "initialize project", "set up AGENTS.md", "bootstrap this repo", "engineering setup", "agent-ready repo", "audit agent readiness", "fix readiness", "repair lint/tests/guardrails", "refactor harness", "create CONTEXT.md", "工程初始化", "项目初始化", "仓库约束", "AI 就绪检查", "文档纪律", "决策记录", "agent notes", "验证分层", "stop the v2 file problem". Produces the hot-path AGENTS.md interface, CONTEXT.md, command entrypoints, validation baseline, readiness report/repair evidence, and mechanical guardrails.
 ---
 
@@ -104,7 +104,7 @@ Gather repo facts silently:
 - Existing command surface: `justfile`, `Makefile`, package scripts, task runners.
 - Verification surface: unit/integration/e2e tests, typecheck, lint, formatter, build, coverage. **Probe, do not execute.** Discovery reads manifests, configs, and test-file layout, and confirms runnability with listing-style flags only (`go test -list '.*' ./...`, `pytest --collect-only -q`, `vitest --run --reporter=dot --passWithNoTests --testNamePattern=$^`, `--listTests`). Never run a full test suite, build, or e2e pass during Stage 0: on a real repository one hanging or slow package stalls the entire init before a single file is written, and discovery does not need the result — `unit_tests_runnable` asks whether the suite *runs*, not whether it passes. Full execution belongs to Stage 5 validation, where it is bounded by a timeout and its exit code is reported.
 - Mechanical guardrails: pre-commit hooks, naming guards, duplicate/dead-code tools, CI workflows, secret scanning, `.editorconfig`, `.gitignore`.
-- **Schema version**: if `constraints.yaml` exists, extract its `strictness_profile.schema_version`. If missing or older than this skill's version (3.6.0), flag the version gap — the incremental-mode schema migration protocol applies. A missing `constraints.yaml` is not a gap; it means the repo was never initialized with eng-init.
+- **Schema version**: if `constraints.yaml` exists, extract its `strictness_profile.schema_version`. If missing or older than 3.6.0 (the schema version — unchanged in 3.6.1), flag the version gap — the incremental-mode schema migration protocol applies. A missing `constraints.yaml` is not a gap; it means the repo was never initialized with eng-init.
 - Architecture signals: directory map, apps/packages, bounded-context hints, public interfaces, migrations, API schemas.
 
 Classify the repo:
@@ -329,7 +329,7 @@ Load only when needed. Files are independent.
 | `references/eng-pillars.md` | Stage 2/4 | Engineering pillars and guardrail rationale |
 | `references/aux-file-templates.md` | Stage 4 | justfile, Makefile, lint, CI, hooks, contract-test templates |
 | `references/agent-harness-templates.md` | Stage 3/4 | Runtime harness, guardrail self-test, agent-native enforcement, baseline/ratchet, toolchain pinning templates |
-| `references/gate-quality-contract.md` | Stage 4 and audit/repair of gates | Gate qualification contract: self-proof dual assertion, error-message protocol, fail-closed scanning, exemption/allowlist hygiene, verify-vs-generate rule |
+| `references/gate-quality-contract.md` | Stage 4 and audit/repair of gates | Gate qualification contract: self-proof dual assertion, process-fixture reaping, error-message protocol, fail-closed scanning, exemption/allowlist hygiene, verify-vs-generate rule |
 | `references/verification-tiers.md` | Stage 3/4 and audit/repair of verification | Tiered verification distilled from the DeepSeek Harness SDK: unit → coverage gate → real-API e2e → keyless snapshot replay → built-artifact smokes → browser snapshots, plus the rules that keep each tier honest (real entry path, verify-the-world, source-plane-only, CI-never-writes-snapshots, zero-skipped) |
 | `references/decision-record-operations.md` | Stage 3/4 if Q6.8 opts in full | Decision-record operational lifecycle: four-zone tree (proposed/implemented/rejected/archived), kinds, archive freeze, note-required rule, GC by future decision value, manifest/verify script, bilingual pairs |
 | `references/documentation-discipline.md` | Stage 3/4 if Q6.11 opts in | Documentation discipline module: doc gate in CI, docs-change-with-code, Known Limitations + allowlist, generated catalogs regenerate-never-hand-patch, one home per fact |
