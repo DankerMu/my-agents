@@ -557,7 +557,7 @@ Rules:
 
 ## § Guardrail self-test
 
-<!-- eng-init template version: 2026-08-08 -->
+<!-- eng-init template version: 2026-09-24 -->
 
 A guard that silently accepts violations — typo'd regex, non-executable hook, missing config — is **phantom enforcement**, worse than no guard because it creates false confidence. This script is the proof against it, and it asserts **both directions** of the dual assertion (`gate-quality-contract.md`): first that each guard accepts the clean worktree (a rejection-only self-test is blind to always-failing guards), then that each guard exits non-zero on one deliberately staged violation.
 
@@ -584,14 +584,84 @@ Path: `scripts/test-guardrails.sh` (chmod +x after writing). bash 3.2 compatible
 # claims to reject. Creates one violation per guard in a throwaway worktree and
 # asserts the guard EXITS NON-ZERO. Exit 126/127 (missing tool, non-executable
 # hook) counts as FAIL — "not runnable" is phantom enforcement, not rejection.
+# Every process a fixture starts is reaped here, and a leftover one is a FAIL.
 set -u
 
 repo_root="$(git rev-parse --show-toplevel)" || exit 1
-tmp="$(mktemp -d "${TMPDIR:-/tmp}/guardrails.XXXXXX")"
+tmp="$(mktemp -d "${TMPDIR:-/tmp}/guardrails.XXXXXX")" || exit 1
+# Canonical path: fixture processes launched under it name it literally, which
+# is what fixture_strays matches on.
+tmp="$(cd "$tmp" && pwd -P)" || exit 1
 wt="$tmp/wt"
+mkdir -p "$tmp/pids" "$tmp/logs" "$tmp/bin"
+
+# Process fixtures (PATH-prepended shims, resident fake upstreams, stubs that
+# ignore TERM) are owned by this script, not by the guard under test: a case
+# that kills the guard, or a guard that crashes, skips the guard's own cleanup,
+# and a fixture in its own process group is then reparented to PID 1 and
+# outlives the run. Deleting $tmp does not stop it (gate-quality-contract.md,
+# "Process fixtures").
+#
+# spawn_fixture NAME CMD... — start CMD in its own process group; its pid (=
+# pgid) goes to a per-fixture record. Never share one pidfile across cases: it
+# keeps only the last writer, so only the last fixture would be reaped. Output
+# goes to $tmp/logs/NAME.log, so a process that does leak cannot hold this
+# script's stdout pipe open and hang the caller (CI step, `| tee`). A resident
+# fake blocks in one call instead of polling, e.g.:
+#   printf '#!/bin/sh\nexec sleep 2147483647\n' > "$tmp/bin/fake-upstream"
+#   chmod +x "$tmp/bin/fake-upstream"; spawn_fixture upstream "$tmp/bin/fake-upstream"
+spawn_fixture() {
+  name="$1"
+  shift
+  if [ -e "$tmp/pids/$name" ]; then
+    echo "FATAL: fixture \"$name\" started twice — pid records are per fixture" >&2
+    exit 1
+  fi
+  ( set -m; "$@" </dev/null >"$tmp/logs/$name.log" 2>&1 & echo "$!" > "$tmp/pids/$name" )
+}
+
+fixture_groups_alive() {
+  for f in "$tmp"/pids/*; do
+    [ -f "$f" ] && kill -0 -- "-$(cat "$f")" 2>/dev/null && return 0
+  done
+  return 1
+}
+
+# reap_fixtures — TERM every recorded group, poll liveness for up to 5s (a
+# fixed sleep is either too short on a loaded host or wasted), KILL the rest.
+reap_fixtures() {
+  for f in "$tmp"/pids/*; do
+    [ -f "$f" ] && kill -TERM -- "-$(cat "$f")" 2>/dev/null
+  done
+  i=0
+  while fixture_groups_alive && [ "$i" -lt 50 ]; do
+    sleep 0.1
+    i=$((i + 1))
+  done
+  for f in "$tmp"/pids/*; do
+    [ -f "$f" ] && kill -KILL -- "-$(cat "$f")" 2>/dev/null
+  done
+  return 0
+}
+
+# fixture_strays — "pid args" of every live process whose command line names
+# the fixture root, whatever group it is in. The root is passed through the
+# environment so awk's own command line does not match itself.
+fixture_strays() {
+  ps -A -ww -o pid= -o args= | FIXTURE_ROOT="$tmp" awk 'index($0, ENVIRON["FIXTURE_ROOT"])'
+}
+
+kill_strays() {
+  kill -KILL $(printf '%s\n' "$1" | awk '{ print $1 }') 2>/dev/null
+}
 
 cleanup() {
   cd "$repo_root" || exit 1
+  # Safety net for early exits (FATAL, Ctrl-C); the verdict-bearing residue
+  # check runs in the main body.
+  reap_fixtures
+  strays=$(fixture_strays)
+  [ -n "$strays" ] && kill_strays "$strays"
   git worktree remove --force "$wt" >/dev/null 2>&1 || true
   rm -rf "$tmp"
 }
@@ -713,12 +783,29 @@ else
   skip "commit-msg guard" "no commit-msg hook found"
 fi
 
+# 5. Residue — reap every recorded fixture group, then sweep for anything that
+#    still names the fixture root. A hit escaped its recorded group (typically
+#    the guard under test moved it into a group of its own) and would outlive
+#    this run: that is a leak, and a leak fails the self-test instead of
+#    surfacing later as host load.
+reap_fixtures
+strays=$(fixture_strays)
+if [ -n "$strays" ]; then
+  echo "FAIL  fixture processes outlived the run (escaped their recorded group):"
+  printf '%s\n' "$strays" | sed 's/^/        /'
+  kill_strays "$strays"
+  fail=$((fail + 1))
+else
+  echo "PASS  no process naming the fixture root outlived the run"
+  pass=$((pass + 1))
+fi
+
 echo
 echo "guardrail self-test: $pass passed, $fail failed"
 [ "$fail" -eq 0 ]
 ```
 
-Adjust `{{EXT}}` to the repo's primary source extension (`ts`, `py`, `go`, `rs`, `java`) so lint-time naming rules and the hook are both exercised. Resolve `{{COMMIT_MSG_REJECT_SUBSTRING}}` by running the repo's commit-message guard against a bad message once and copying a substring of what it prints — leaving it unresolved is caught by `check_rendered_harness.py`, which scans `test-guardrails.sh` for unresolved placeholders. SKIP lines are gaps: if the self-test reports SKIP for a guard the AGENTS.md Enforcement Index lists as `block`, that row is phantom enforcement — fix the wiring or downgrade the row honestly.
+Adjust `{{EXT}}` to the repo's primary source extension (`ts`, `py`, `go`, `rs`, `java`) so lint-time naming rules and the hook are both exercised. Resolve `{{COMMIT_MSG_REJECT_SUBSTRING}}` by running the repo's commit-message guard against a bad message once and copying a substring of what it prints — leaving it unresolved is caught by `check_rendered_harness.py`, which scans `test-guardrails.sh` for unresolved placeholders. Any case that needs a live process (a fake upstream, a PATH shim that stays resident, a TERM-ignoring stub) starts it through `spawn_fixture` from an executable under `$tmp/bin` — never a bare `&` and never a pidfile shared across cases — so the reap and the residue check (case 5) cover it. Processes the guard under test backgrounds on its own are caught by the residue sweep when their command line names a path under `$tmp` — another reason fixtures live there. SKIP lines are gaps: if the self-test reports SKIP for a guard the AGENTS.md Enforcement Index lists as `block`, that row is phantom enforcement — fix the wiring or downgrade the row honestly.
 
 ---
 

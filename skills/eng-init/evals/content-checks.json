@@ -1650,6 +1650,76 @@
           "pattern": "update `openspec/glossary.md` inline"
         }
       ]
+    },
+    {
+      "id": "R60-process-fixture-reaping",
+      "desc": "v3.6.1 (issue #15): self-test process fixtures are reaped by the self-test, recorded per fixture, block instead of polling, and a leftover process fails the run; the template demonstrates it and guardrail_self_test audits it",
+      "checks": [
+        {
+          "file": "references/gate-quality-contract.md",
+          "type": "contains",
+          "pattern": "**The self-test reaps what it starts.**"
+        },
+        {
+          "file": "references/gate-quality-contract.md",
+          "type": "contains",
+          "pattern": "**One pid record per fixture.**"
+        },
+        {
+          "file": "references/gate-quality-contract.md",
+          "type": "contains",
+          "pattern": "**Residue is a failure.**"
+        },
+        {
+          "file": "references/gate-quality-contract.md",
+          "type": "contains",
+          "pattern": "exec sleep 2147483647"
+        },
+        {
+          "file": "references/agent-harness-templates.md",
+          "type": "contains",
+          "pattern": "spawn_fixture() {"
+        },
+        {
+          "file": "references/agent-harness-templates.md",
+          "type": "regex",
+          "pattern": "cleanup\\(\\) \\{\\n(?:.*\\n){0,4}\\s*reap_fixtures\\n",
+          "flags": ""
+        },
+        {
+          "file": "references/agent-harness-templates.md",
+          "type": "contains",
+          "pattern": "FAIL  fixture processes outlived the run"
+        },
+        {
+          "file": "references/agent-harness-templates.md",
+          "type": "not_regex",
+          "pattern": "while true; do sleep 0\\.",
+          "flags": ""
+        },
+        {
+          "file": "references/agent-readiness-criteria.md",
+          "type": "regex",
+          "pattern": "`guardrail_self_test` \\|.*residue assertion",
+          "flags": ""
+        },
+        {
+          "file": "references/readiness-registry.yaml",
+          "type": "regex",
+          "pattern": "id: guardrail_self_test\\n(?:.*\\n){6}.*fails on residue",
+          "flags": ""
+        },
+        {
+          "file": "references/readiness-fix-recipes.md",
+          "type": "contains",
+          "pattern": "one pidfile shared across cases"
+        },
+        {
+          "file": "evals/cases.md",
+          "type": "contains",
+          "pattern": "## case-56 — self-test-process-fixture-leak"
+        }
+      ]
     }
   ]
 }

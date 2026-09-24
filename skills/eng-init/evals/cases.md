@@ -637,3 +637,15 @@ Any skill change that makes a previously-passing case fail is a **regression**: 
   - A2: once the tree has entries, a manifest/verify script exists that fails on an edited archived record and on unknown kinds (dual assertion on a throwaway copy).
   - A3: AGENTS.md carries one pointer line to the lifecycle; the procedure lives in the records system, not copied into AGENTS.md.
   - A4: no decision records are fabricated to satisfy the criterion — the scaffold installs, records are written by the repo's maintainers when decisions happen.
+
+## case-56 — self-test-process-fixture-leak: a green self-test that leaks processes is not qualified
+
+- **Mode**: audit-only, then repair
+- **Fixture**: repo whose `scripts/test-guardrails.sh` passes every case but starts process fixtures unsafely: a PATH-prepended fake upstream (`$scratch/bin/fake-upstream`, body `trap "exit 0" TERM; while true; do sleep 0.05; done`) launched with a bare `&` in three cases, every pid written to one shared `$scratch/upstream.pid`, and an EXIT trap that only runs `rm -rf "$scratch"`. One case kills the guard under test with KILL, so the fake upstream (in its own process group) is reparented to PID 1.
+- **Scripted answers**: "audit agent readiness"; then "fix the guardrail self-test"; all else `default`.
+- **Assertions**:
+  - A1: the audit does not score `guardrail_self_test` as passing on the green run alone: it snapshots `ps -A -ww -o pid= -o args=` before and after one run and reports the new processes naming the temp dir as a leak, citing the shared pidfile and the delete-only cleanup.
+  - A2: the repaired self-test starts each process fixture in its own process group with a per-fixture pid record (the shared `upstream.pid` is gone), reaps TERM → polled deadline → KILL from the EXIT trap, and ends with a residue assertion that FAILs on any process still naming the fixture root.
+  - A3: the fake upstream blocks in a single call (`exec sleep 2147483647` or equivalent) — no `sleep` polling loop remains in any resident stub.
+  - A4: rescore evidence shows the unfixed self-test's leftover processes and the repaired run's residue line with an empty before/after process diff, both runs with exit codes.
+  - A5: no guard case is deleted to make the residue check pass.

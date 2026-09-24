@@ -1,6 +1,6 @@
 # Gate Quality Contract
 
-<!-- eng-init template version: 2026-08-08 -->
+<!-- eng-init template version: 2026-09-24 -->
 
 The qualification contract for every gate eng-init writes, repairs, or audits: naming guards, hooks, CI checks, `verify-*` scripts, generator `--check` modes, and the guardrail self-test itself. "A gate exists" is the weakest possible claim — this file defines what makes a gate trustworthy. Distilled from a production agent-maintained monorepo (see `_archived/ds-harness-mining/01-gates.md` for the source evidence); orchestration (dependency graphs, lane grouping) stays in `agent-harness-templates.md` § Gate runner in code.
 
@@ -24,6 +24,13 @@ A qualified gate satisfies all of:
 2. **Each rule rejects its synthetic violation.** Per accept/reject rule, construct one minimal illegal input, run the gate, assert non-zero exit **and** that the error message contains the location and reason. Assert message substrings, not exact output or line numbers.
 
 Fixture-construction boundary: gates that read the filesystem get a temp-dir fixture (`mktemp -d`, minimal fake structure, removed in cleanup); gates that are pure functions get in-memory strings. Never assert against live-repo state — such a test breaks on unrelated changes and proves no rejection capability.
+
+Process fixtures: a fixture that starts a process — a PATH-prepended shim (`node`, `make`, `bash`), a resident fake upstream, a stub that deliberately ignores TERM — is owned by the self-test, not by the gate under test. Removing the temp dir does not stop it, and a leak is invisible to the verdict: the suite stays green while orphaned fakes pile up across runs and load the host.
+
+- **The self-test reaps what it starts.** Start each fixture in its own process group and, in the EXIT-trap cleanup, send TERM to every recorded group, poll liveness against a deadline (never a fixed sleep), then escalate to KILL. Never delegate this to the gate's own cleanup: a case that kills the gate, or a gate that crashes, skips it, and a fixture in its own group is reparented to PID 1 and outlives the run.
+- **One pid record per fixture.** Each started process gets its own record (per-case file or variable). A pidfile shared across cases keeps only the last writer, so only the last fixture is ever reaped.
+- **Residue is a failure.** After the last case and the reap, assert that no process still names the fixture root (`ps -A -ww -o pid= -o args=`, fixed-string match on the temp dir); any hit is a fixture that escaped its recorded group — FAIL, then kill it. Launch fixtures by absolute path under the fixture root (a PATH shim that is a script already runs as `<interpreter> <fixture-root>/bin/<name>`) so this sweep can see them. The sweep is argv-based: a descendant that runs a bare command (`sleep 60 &`, `node relative/path.mjs &`) and is tied to the fixture only by its cwd is invisible to it, so the per-fixture group reap is the primary mechanism and the sweep is the safety net.
+- **Block, don't poll.** A process that must stay alive until signalled blocks in one call: `exec sleep 2147483647` (in bash, `exec -a "$0" sleep 2147483647` keeps the fixture path in argv for the residue sweep; a `trap '' TERM` set before the `exec` survives it, for a TERM-ignoring stub). A `while true; do sleep 0.05; done` loop forks 20 processes per second per fixture; a few dozen leaked copies saturate a host.
 
 Discipline:
 
