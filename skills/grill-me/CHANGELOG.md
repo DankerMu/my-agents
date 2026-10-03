@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-03
+
+### Changed
+
+- **前沿问题改为优先经结构化提问工具给出**（Claude Code `AskUserQuestion`、Codex `request_user_input`、omp `ask`、Gemini `ask_user`）：新增铁律 9，每题 2–4 个选项、推荐项置首并标注"(推荐)"；前沿超过工具单次题数上限时分批连续调用。原先的编号纯文本格式降为无工具环境的兜底。动机：一轮把问题全部以正文抛出，用户只能逐题打字作答，无法点选。按前沿逐轮的节奏与收敛判据不变。
+
 ## [0.6.0] - 2026-09-05
 
 ### Changed
