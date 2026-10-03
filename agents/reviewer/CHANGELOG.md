@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.6.7] - 2026-10-02
+
+### Changed
+
+- omp 投影的副模型从 `openai-codex/gpt-6-sol:high` 改为 `openai-codex/gpt-6.1-sol:high`,主模型不变。
+
 ## [2.6.6] - 2026-09-23
 
 ### Changed
