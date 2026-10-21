@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.8] - 2026-10-20
+
+### Changed
+
+- omp 投影的副模型从 `sub-gpt/gpt-6-luna:max` 改为 `openai-codex/gpt-6-luna:max`(换渠道,模型与档位不变),主模型不变。
+
 ## [0.7.7] - 2026-09-23
 
 ### Changed

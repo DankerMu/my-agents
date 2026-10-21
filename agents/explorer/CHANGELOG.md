@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.4] - 2026-10-20
+
+### Changed
+
+- omp 投影的副模型从不存在的 `openai-codex/terra:max` 改为 `openai-codex/gpt-6.1-sol:high`,主模型不变。
+
 ## [1.5.3] - 2026-09-10
 
 ### Changed
