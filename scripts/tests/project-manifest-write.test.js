@@ -118,3 +118,73 @@ test("rejects duplicate external entries by canonical identity", async () => {
     await fs.rm(tempDir, { recursive: true, force: true });
   }
 });
+
+test("an external skill can be added once per platform", async () => {
+  const { tempDir, manifestPath } = await createTempManifestPath();
+  const entry = {
+    source: "official",
+    provider: "github",
+    platform: "claude",
+    name: "remotion-best-practices",
+    repo: "remotion-dev/skills",
+    declaredRef: "main",
+    resolvedCommit: "0123456789abcdef0123456789abcdef01234567",
+    path: "skills/remotion-best-practices",
+    sourceUrl: "https://github.com/remotion-dev/skills/tree/main/skills/remotion-best-practices"
+  };
+
+  try {
+    await appendProjectManifestEntry("skills", entry, manifestPath);
+    await appendProjectManifestEntry("skills", { ...entry, platform: "codex" }, manifestPath);
+    await assert.rejects(
+      appendProjectManifestEntry("skills", { ...entry, platform: "codex" }, manifestPath),
+      /already contains this skill entry/
+    );
+
+    const { manifest } = await readWritableProjectManifest(manifestPath);
+    assert.deepEqual(
+      manifest.skills.map((item) => item.platform),
+      ["claude", "codex"]
+    );
+  } finally {
+    await fs.rm(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("the manifest schema accepts claude and codex external skills, not omp", async () => {
+  const { readProjectManifest } = require("../lib/project-manifest");
+  const repoRoot = path.join(__dirname, "..", "..");
+  const { tempDir, manifestPath } = await createTempManifestPath();
+  const entry = {
+    source: "official",
+    provider: "github",
+    name: "remotion-best-practices",
+    repo: "remotion-dev/skills",
+    declaredRef: "main",
+    resolvedCommit: "0123456789abcdef0123456789abcdef01234567",
+    path: "skills/remotion-best-practices",
+    sourceUrl: "https://github.com/remotion-dev/skills/tree/main/skills/remotion-best-practices"
+  };
+  const write = (platform) =>
+    fs.writeFile(
+      manifestPath,
+      JSON.stringify({ schemaVersion: 1, skills: [{ ...entry, platform }] })
+    );
+  const originalError = console.error;
+  console.error = () => {};
+
+  try {
+    for (const platform of ["claude", "codex"]) {
+      await write(platform);
+      const { manifest } = await readProjectManifest(repoRoot, manifestPath);
+      assert.ok(manifest, `${platform} external skill must validate`);
+    }
+
+    await write("omp");
+    const { manifest } = await readProjectManifest(repoRoot, manifestPath);
+    assert.equal(manifest, null, "omp external skill must be rejected");
+  } finally {
+    console.error = originalError;
+    await fs.rm(tempDir, { recursive: true, force: true });
+  }
+});

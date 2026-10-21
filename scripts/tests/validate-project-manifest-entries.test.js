@@ -100,3 +100,39 @@ test("flags duplicate external runtime destinations", () => {
 
   assert.match(errors[0], /duplicate external agent destination/);
 });
+
+test("the same external skill may be declared once per platform", () => {
+  const claudeEntry = {
+    source: "official",
+    provider: "github",
+    platform: "claude",
+    name: "remotion-best-practices",
+    repo: "remotion-dev/skills",
+    declaredRef: "main",
+    resolvedCommit: "0123456789abcdef0123456789abcdef01234567",
+    path: "skills/remotion-best-practices",
+    sourceUrl: "https://github.com/remotion-dev/skills/tree/main/skills/remotion-best-practices"
+  };
+
+  assert.deepEqual(
+    runValidation({
+      schemaVersion: 1,
+      packs: [],
+      skills: [claudeEntry, { ...claudeEntry, platform: "codex" }],
+      agents: []
+    }),
+    []
+  );
+  assert.match(
+    runValidation({
+      schemaVersion: 1,
+      packs: [],
+      skills: [
+        { ...claudeEntry, platform: "codex" },
+        { ...claudeEntry, platform: "codex" }
+      ],
+      agents: []
+    })[0],
+    /duplicate external entry/
+  );
+});

@@ -30,12 +30,14 @@ const USAGE = `Usage:
 Options:
   --all                    Install/uninstall all packages of the selected type
   --manifest <path>        Project manifest path (default: my-agents.project.json)
-  --platform, -p <list>    Platforms: claude, codex, omp, or all (default: all)
+  --platform, -p <list>    Platforms: claude, codex, omp, or all (default: all);
+                           with add, the one platform for an external skill (claude or codex, default claude)
   --prune                  When used with project sync, remove previously managed items no longer desired
   --scope <scope>          Scope: user or project (default: project)
 
 Examples:
   npx my-agents add https://github.com/affaan-m/everything-claude-code/tree/main/skills/agentic-engineering
+  npx my-agents add https://github.com/remotion-dev/skills/tree/main/skills/remotion-best-practices --platform codex
   npx my-agents install skill clarify
   npx my-agents install agent explorer --platform codex --scope project
   npx my-agents install hook worktree-guard --platform claude --scope project

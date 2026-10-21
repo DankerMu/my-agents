@@ -71,7 +71,7 @@
         {
           "properties": {
             "platform": {
-              "const": "claude"
+              "enum": ["claude", "codex"]
             }
           }
         }

@@ -147,6 +147,16 @@ function getExternalAssetTarget(kind, entry, scope) {
     };
   }
 
+  if (kind === "skills" && entry.platform === "codex") {
+    return {
+      platformKey: "codex",
+      platform: "Codex",
+      kind: "skills",
+      destType: "directory",
+      destPath: path.join(base, ".agents", "skills", entry.name)
+    };
+  }
+
   if (kind === "agents" && entry.platform === "claude") {
     return {
       platformKey: "claude",

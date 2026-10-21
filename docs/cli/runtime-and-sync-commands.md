@@ -11,6 +11,7 @@ npx my-agents add https://github.com/affaan-m/everything-claude-code/tree/main/s
 npx my-agents add https://github.com/affaan-m/everything-claude-code/blob/main/agents/code-reviewer.md
 npx my-agents add https://github.com/VoltAgent/awesome-codex-subagents/blob/main/categories/01-core-development/api-designer.toml
 npx my-agents add https://github.com/affaan-m/everything-claude-code/tree/main/skills/agentic-engineering --manifest path/to/my-agents.project.json
+npx my-agents add https://github.com/remotion-dev/skills/tree/main/skills/remotion-best-practices --platform codex
 ```
 
 The command:
@@ -21,7 +22,7 @@ The command:
 
 V1 accepted URL shapes:
 
-- Claude skill directory: GitHub `tree/...`
+- Skill directory: GitHub `tree/...`. It installs to Claude Code by default; pass `--platform codex` to install it to `.agents/skills/` instead. Add the URL once per platform to install it to both.
 - Claude agent Markdown file: GitHub `blob/.../*.md`
 - Codex agent TOML file: GitHub `blob/.../*.toml`
 

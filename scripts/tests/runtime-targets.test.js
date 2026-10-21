@@ -3,7 +3,11 @@ const assert = require("node:assert/strict");
 const os = require("node:os");
 const path = require("node:path");
 
-const { getSkillTargets, getAgentTargets } = require("../lib/runtime-targets");
+const {
+  getSkillTargets,
+  getAgentTargets,
+  getExternalAssetTarget
+} = require("../lib/runtime-targets");
 
 function destFor(targets, platformKey) {
   const target = targets.find((entry) => entry.platformKey === platformKey);
@@ -58,5 +62,21 @@ test("user-invoked skills route codex to .agents/skills-manual", () => {
     destFor(targets, "claude"),
     path.join(process.cwd(), ".claude", "skills", "demo"),
     "claude target must not change: disable-model-invocation is honored natively"
+  );
+});
+
+test("external skills land in the platform's scanned skills directory", () => {
+  const codex = getExternalAssetTarget("skills", { platform: "codex", name: "demo" }, "project");
+  assert.equal(codex.destType, "directory");
+  assert.equal(codex.destPath, path.join(process.cwd(), ".agents", "skills", "demo"));
+
+  const claude = getExternalAssetTarget("skills", { platform: "claude", name: "demo" }, "project");
+  assert.equal(claude.destPath, path.join(process.cwd(), ".claude", "skills", "demo"));
+});
+
+test("external skills reject platforms without external support", () => {
+  assert.throws(
+    () => getExternalAssetTarget("skills", { platform: "omp", name: "demo" }, "project"),
+    /Unsupported external skill platform: omp/
   );
 });

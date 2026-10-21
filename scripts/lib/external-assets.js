@@ -21,7 +21,7 @@ async function withExternalRepositoryCheckout(repo, resolvedCommit, fn) {
 }
 
 async function inspectExternalAssetCandidate(candidate) {
-  const { repo, declaredRef, sourceUrl, mode, path: assetPath } = candidate;
+  const { repo, declaredRef, sourceUrl, mode, path: assetPath, skillPlatform } = candidate;
 
   const resolvedCommit = await resolveGitRemoteRef(`https://github.com/${repo}.git`, declaredRef);
   if (!resolvedCommit) {
@@ -53,7 +53,7 @@ async function inspectExternalAssetCandidate(candidate) {
         entry: {
           source: "official",
           provider: "github",
-          platform: "claude",
+          platform: skillPlatform,
           name: path.basename(assetPath),
           repo,
           declaredRef,
@@ -103,7 +103,10 @@ async function inspectExternalAssetCandidate(candidate) {
   });
 }
 
-async function resolveExternalAssetCandidates(parsedGitHubUrl) {
+// Skill directories are platform-neutral, so the caller picks the platform
+// (default claude). Agent files carry their platform in the extension.
+async function resolveExternalAssetCandidates(parsedGitHubUrl, options = {}) {
+  const skillPlatform = options.skillPlatform ?? "claude";
   const matches = [];
 
   for (const candidate of parsedGitHubUrl.candidates) {
@@ -112,7 +115,8 @@ async function resolveExternalAssetCandidates(parsedGitHubUrl) {
       declaredRef: candidate.declaredRef,
       path: candidate.path,
       sourceUrl: parsedGitHubUrl.sourceUrl,
-      mode: parsedGitHubUrl.mode
+      mode: parsedGitHubUrl.mode,
+      skillPlatform
     });
 
     if (inspected) {

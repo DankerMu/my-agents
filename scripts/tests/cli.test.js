@@ -68,3 +68,13 @@ test("incomplete canonical project command exits nonzero", () => {
   assert.equal(result.status, 2);
   assert.match(result.stderr, /Missing project command/);
 });
+
+test("add rejects a --platform that external skills do not support", () => {
+  const url = "https://github.com/remotion-dev/skills/tree/main/skills/remotion-best-practices";
+
+  for (const platform of ["omp", "claude,codex", "all"]) {
+    const result = runNodeScriptWithStatus(cliPath, ["add", url, "--platform", platform]);
+    assert.equal(result.status, 2, `--platform ${platform} must exit 2`);
+    assert.match(result.stderr, /`add --platform` takes exactly one of: claude, codex/);
+  }
+});

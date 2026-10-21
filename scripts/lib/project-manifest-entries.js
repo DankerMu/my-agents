@@ -13,7 +13,7 @@ function isExternalProjectManifestEntry(value) {
 }
 
 function getExternalProjectManifestEntryId(entry) {
-  return `official:${entry.provider}:${entry.repo}@${entry.resolvedCommit}:${entry.path}`;
+  return `official:${entry.provider}:${entry.platform}:${entry.repo}@${entry.resolvedCommit}:${entry.path}`;
 }
 
 function getProjectManifestRuntimeCollisionKey(kind, platform, name) {

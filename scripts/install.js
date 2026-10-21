@@ -131,9 +131,16 @@ async function runNamedOperation(repoRoot, type, name, platforms, scope, isUnins
     : installSkill(repoRoot, name, platforms, scope);
 }
 
-async function runAddCommand(addUrl, manifestPath) {
+const EXTERNAL_SKILL_PLATFORMS = ["claude", "codex"];
+
+async function runAddCommand(addUrl, manifestPath, skillPlatform) {
   const parsedUrl = parseGitHubPackageUrl(addUrl);
-  const resolved = await resolveExternalAssetCandidates(parsedUrl);
+  const resolved = await resolveExternalAssetCandidates(parsedUrl, { skillPlatform });
+  if (skillPlatform && resolved.kind === "agents" && resolved.entry.platform !== skillPlatform) {
+    throw new Error(
+      `--platform ${skillPlatform} does not match the ${resolved.entry.platform} agent this URL points to`
+    );
+  }
   const { resolvedPath } = await appendProjectManifestEntry(
     resolved.kind,
     resolved.entry,
@@ -175,13 +182,25 @@ async function runInstallCli(argv = process.argv) {
       process.exitCode = 2;
       return;
     }
-    if (type || all || isUninstall || prune || platformsSpecified) {
-      console.error("`add` only supports a GitHub URL and optional --manifest.");
+    if (type || all || isUninstall || prune) {
+      console.error(
+        "`add` only supports a GitHub URL, optional --manifest, and optional --platform."
+      );
+      process.exitCode = 2;
+      return;
+    }
+    if (
+      platformsSpecified &&
+      (platforms.length !== 1 || !EXTERNAL_SKILL_PLATFORMS.includes(platforms[0]))
+    ) {
+      console.error(
+        `\`add --platform\` takes exactly one of: ${EXTERNAL_SKILL_PLATFORMS.join(", ")}.`
+      );
       process.exitCode = 2;
       return;
     }
 
-    await runAddCommand(addUrl, manifestPath);
+    await runAddCommand(addUrl, manifestPath, platformsSpecified ? platforms[0] : undefined);
     return;
   }
 
