@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-11-05
+
+### Fixed
+
+- **Phase 1 scope resolution** (absorbed from the upstream stellarlink `code-review` 2026-11 snapshot): the branch target hard-coded `main`, and nothing covered untracked files or an empty diff, so a review could silently see nothing and report clean. Branch/working-tree scope now resolves `merge-base` against the PR base or the repo's default branch, forbids `@{upstream}` (empty on a pushed feature branch), includes `git diff HEAD` and untracked files, and treats an empty combined diff as `blocked` with the resolved range and file count stated in the output.
+
 ## [0.8.1] - 2026-09-05
 
 ### Changed

@@ -25,6 +25,18 @@ alone.
 | Cutover leaves a legacy production dependency | Cutover owner. | Completion is insufficient; cutover remains blocked. |
 | Release threshold/canary fails | Release Owner. | Release remains blocked; execute declared containment/rollback path. |
 
+**Staleness has two boundaries.** Before merging, the integration owner compares the candidate's
+base and the approved ticket/artifact revision it was built from against the current ones;
+obsolete work is reconciled first. Before attesting, VDD checks the generation, candidate
+snapshot and rulebook bound into the evidence. In degraded execution no producer supplies leases
+or fencing, so do not claim duplicate-attempt rejection that nothing enforces.
+
+**A rule revised because one test failed must be swept across the sites that have no test.** The
+failing test names one site; the revised rule governs every site of that shape, and most are not
+covered. Fixing only the failing site leaves the rule true and the tree wrong, and the next
+evidence arrives at build or in production. Sweep the revision across every governed site and
+report the swept count as a receipt.
+
 Never solve any row by weakening test discovery, ignoring exit status, silently accepting a
 legacy fallback, editing a protected oracle, or treating a current queue projection as the
 source of truth.

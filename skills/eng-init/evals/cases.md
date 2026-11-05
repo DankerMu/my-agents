@@ -563,7 +563,7 @@ Any skill change that makes a previously-passing case fail is a **regression**: 
 ## case-49 — rerun-is-update-not-overwrite: four diff classes, nothing silent
 
 - **Mode**: incremental, on a repo initialized by an older eng-init version.
-- **Fixture**: repo with `constraints.yaml` (`schema_version` two minor versions behind), a hand-edited `AGENTS.md` containing both generated sections and a user-written section, one section the older version generated that the current version no longer does, and a stale root `AGENTS.md.bak.<UTC>`.
+- **Fixture**: repo with `constraints.yaml` (`schema_version` a pre-3.6.0 skill-version literal two minor versions behind, e.g. `3.4.0` — older than constraints schema 1, so a real gap), a hand-edited `AGENTS.md` containing both generated sections and a user-written section, one section the older version generated that the current version no longer does, and a stale root `AGENTS.md.bak.<UTC>`.
 - **Scripted answers**: same profile as recorded in `constraints.yaml`; all else `default`.
 - **Assertions**:
   - A1: the preview separates facts (recomputed), decisions (preserved verbatim, including every recorded downgrade and its reason), user-owned sections (untouched), and retired sections (explicitly proposed for deletion with the version that produced them).
@@ -649,3 +649,14 @@ Any skill change that makes a previously-passing case fail is a **regression**: 
   - A3: the fake upstream blocks in a single call (`exec sleep 2147483647` or equivalent) — no `sleep` polling loop remains in any resident stub.
   - A4: rescore evidence shows the unfixed self-test's leftover processes and the repaired run's residue line with an empty before/after process diff, both runs with exit codes.
   - A5: no guard case is deleted to make the residue check pass.
+
+## case-57 — legacy-schema-literal: a 3.6.x constraints.yaml is current, not outdated
+
+- **Mode**: incremental, on a repo initialized by eng-init 3.6.1 (before the constraints schema version was split from the skill version).
+- **Fixture**: repo with `constraints.yaml` carrying `strictness_profile.schema_version: "3.6.1"`, `generated_sections.agents_md[*].template_version: "3.6.1"`, a recorded profile with one downgrade and its reason, and every section the 3.6.x template defines. A second variant carries `schema_version: "3.4.0"`; a third carries `schema_version: "7"`.
+- **Scripted answers**: same profile as recorded in `constraints.yaml`; all else `default`.
+- **Assertions**:
+  - A1: Stage 0 classifies `"3.6.1"` as constraints schema `1` and reports no schema gap; no migration is proposed and nothing is written to `constraints.yaml` for the literal alone.
+  - A2: when the run writes `constraints.yaml` for another reason, the literal becomes `"1"` and is listed as a fact in the re-run diff; the profile, the downgrade and its reason, and every `template_version` value are unchanged.
+  - A3: the `"3.4.0"` variant is flagged as a schema gap and gets the value-preserving migration proposal, which sets `schema_version: "1"`.
+  - A4: the `"7"` variant is reported as unrecognized and the user is asked; the value is neither migrated nor downgraded.

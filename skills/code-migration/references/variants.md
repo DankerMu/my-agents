@@ -10,6 +10,11 @@ changes it. Use VDD Equivalence and differential/semantic oracles over identical
 Units follow behavioral/dependency boundaries. Strongly connected components and shared seams
 stay atomic under one owner. A compiler green result is an L0 signal, not parity.
 
+**A stress re-round runs new files, weighted toward the sections just amended.** Re-running the
+same files after an amendment only shows the patch applied; it cannot show what the amended
+wording does to text it has never seen. Draw fresh candidates by the same scoring, biased toward
+the changed sections.
+
 Before any translation fan-out, stress-test the rulebook with a disposable shakedown on a few
 high-risk files. Select those files by score, not taste: rank candidates by how many high-risk
 rulebook sections and inventory rows they exercise, and record the scores and the rejections.

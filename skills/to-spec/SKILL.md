@@ -2,7 +2,7 @@
 name: to-spec
 disable-model-invocation: true
 description: Turn conversation context, repo facts, or a feature idea into a compact PRD plus execution spec by default, with independently-grabbable issue slices when requested, or a questionnaire for someone else to fill in. Use when the user asks for a PRD, feature spec, implementation spec, mission handoff, issue breakdown, task slicing, a questionnaire, or to convert requirements into agent-ready work.
-version: 0.1.1
+version: 0.2.0
 ---
 
 # To Spec
@@ -85,7 +85,7 @@ Use for product intent and user-visible behavior.
 
 PRD rules:
 - Requirements describe behavior, not implementation guesses.
-- Acceptance criteria are testable.
+- Acceptance criteria are testable and carry stable ids (`AC-001`, ...). Ids are append-only: never renumber or reuse one; insert by appending the next number; retire by keeping the line and marking it `(withdrawn)`, or `(superseded_by AC-007)` naming a declared replacement. Silent deletion erases a requirement.
 - Non-goals are explicit.
 - Vague adjectives get numbers, examples, or deletion.
 - Every requirement traces to a goal or user story.
@@ -110,6 +110,10 @@ Use for agent implementation, mission intake, or technical handoff.
 ## Technical Direction
 ## Validation Plan
 - VAL-001: <behavior>, Surface: <ui|api|cli|data|business-flow>, Evidence: <test/log/screenshot/stdout/etc>
+## Default decisions
+| Question | Default answer |
+| --- | --- |
+| <likely execution question> | <concrete default> |
 ## Risks / Open Questions
 ## Mission Handoff
 - Suggested milestones:
@@ -121,6 +125,7 @@ Spec rules:
 - Optimize for execution clarity; keep normal specs compact.
 - Preserve user constraints verbatim when paraphrasing weakens a boundary.
 - Do not mark ready while build-blocking ambiguity remains.
+- Fill **Default decisions** with the questions an implementer is likely to hit and a concrete default for each, so execution does not stall on them. Defaults stay inside the user's requirements and authorization: never invent permission to release, publish, or delete data.
 
 ### 5. Issue Slice Output
 
@@ -128,9 +133,10 @@ Break work into vertical tracer bullets. Each slice proves one behavior through 
 
 ```markdown
 ## Issue: <short title>
+Key: <stable-slug>
 Type: AFK | HITL
-Blocked by: <issue title/id or None>
-User stories covered: <ids or summaries>
+Blocked by: <slice keys, issue numbers, or None>
+Covers: AC-001, AC-003
 
 ### What to build
 End-to-end behavior, not a layer-by-layer chore list.
@@ -148,9 +154,13 @@ End-to-end behavior, not a layer-by-layer chore list.
 
 Slice rules:
 - Prefer many thin slices over a few thick slices.
+- Give each slice a stable `Key` that does not derive from its title; `Blocked by` names keys, so retitling or re-running the breakdown does not rewire the graph.
+- Put necessary prefactoring in its own first slice; avoid unrelated cleanup.
+- A new shared entry point lands in the earliest slice its consumers already depend on, or in the prefactor slice. Parallel slices get disjoint file ownership — two independent workers never both create the same shared file.
+- Add only real blocking edges; independent slices have no blockers. Check for dangling references and cycles.
 - Each slice must be independently demoable or verifiable.
 - Mark **HITL** only when a human decision is genuinely required.
-- Publish to the issue tracker only when the user asks or workflow requires it.
+- Publish to the issue tracker only when the user asks or workflow requires it. For GitHub, publish through `gh-create-issue`: it emits the `Depends on #NN` lines that `subagent-workflow` reads, so map each `Blocked by` key to its created issue number.
 - Do not close or modify parent issues unless explicitly asked.
 
 
@@ -175,6 +185,21 @@ Split a slice when it crosses unrelated user flows, has multiple validation seam
 
 Merge slices when they are setup-only chores, cannot be validated independently, or create artificial dependencies without reducing risk.
 
+### 7. Acceptance Coverage Check
+
+When slices are produced, check coverage across the plan before returning or publishing it:
+
+1. Every live `AC-NNN` (not withdrawn or superseded) appears on at least one slice's `Covers:` line. An unclaimed criterion is a plan gap, not delivered behavior.
+2. No slice claims a withdrawn or superseded id, and every `(superseded_by AC-NNN)` names a declared id.
+3. `Covers:` lists ids only and every claimed id is declared; prose or an empty `Covers:` line is a gap.
+4. Ids are unique; a duplicate declaration is a blocker.
+
+Report it as one line: `Acceptance coverage: ok (<declared> declared, <claimed> claimed)`, or `not_applicable` for a coordination plan that declares no criteria (never presented as coverage), or the list of gaps. Any gap keeps Readiness at `Draft`.
+
+### 8. One Combined Confirmation
+
+Before publishing slices, show one combined plan for approval: spec summary, verification seams, numbered slices with keys, titles, blockers, and delivered behavior, the Default decisions table, and the coverage line. Do not confirm seams and granularity separately; if approval needs changes, revise the same combined plan. Reuse an explicit approval already given in the conversation.
+
 ## Questionnaire Mode
 
 When the thing blocking the work isn't in your head or the codebase but in **someone else's**, write them a questionnaire — a Markdown document they fill in async, or together over a meeting. The recipient holds knowledge you lack; the questionnaire pulls it out of them.
@@ -195,4 +220,4 @@ Reason:
 Next:
 ```
 
-Use `Ready` only when the artifact names what to build, what not to build, how to verify it, and, when slices are requested, how to split the work without hidden build-blockers.
+Use `Ready` only when the artifact names what to build, what not to build, how to verify it, and, when slices are requested, how to split the work without hidden build-blockers and with acceptance coverage `ok` or `not_applicable`.

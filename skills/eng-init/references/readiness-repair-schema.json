@@ -16,22 +16,22 @@
   ],
   "properties": {
     "schema_version": { "type": "integer", "const": 1 },
-    "requested_signal": { "type": "string" },
+    "requested_signal": { "type": "string", "minLength": 1 },
     "matched_criterion": { "type": "string", "pattern": "^[a-z0-9_]+$" },
-    "semantic_match_evidence": { "type": "string" },
+    "semantic_match_evidence": { "type": "string", "minLength": 1 },
     "pre_state": {
       "type": "object",
       "required": ["status", "score", "evidence"],
       "properties": {
         "status": { "enum": ["passing", "failing", "partial", "missing", "unknown"] },
-        "score": { "type": ["number", "null"] },
+        "score": { "type": ["number", "null"], "minimum": 0, "maximum": 1, "description": "Normalized criterion score. Null only for an explicitly unmeasured/not-applicable state; not proof of execution." },
         "evidence": { "type": "string" }
       },
       "additionalProperties": false
     },
     "fixability": { "enum": ["A", "B", "C", "D", "A_or_C", "B_or_C"] },
-    "allowed_files": { "type": "array", "items": { "type": "string" } },
-    "change_summary": { "type": "string" },
+    "allowed_files": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "change_summary": { "type": "string", "minLength": 1 },
     "validator": {
       "type": "object",
       "required": ["command", "exit_code", "evidence"],
@@ -47,7 +47,7 @@
       "required": ["status", "score", "rescore_evidence"],
       "properties": {
         "status": { "enum": ["passing", "failing", "partial", "skipped", "pending_external"] },
-        "score": { "type": ["number", "null"] },
+        "score": { "type": ["number", "null"], "minimum": 0, "maximum": 1, "description": "Normalized criterion score. Null only for an explicitly unmeasured/not-applicable state; not proof of execution." },
         "rescore_evidence": { "type": "string" }
       },
       "additionalProperties": false

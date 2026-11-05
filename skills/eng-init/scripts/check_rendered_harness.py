@@ -30,6 +30,9 @@ INLINE_COMMAND = re.compile(r"\b((?:just|make)\s+[A-Za-z0-9_.%/-]+|(?:npm|pnpm|y
 GENERATED_TITLE_RE = re.compile(r"(?m)^\s*-\s*title:\s*[\"']([^\"']+)[\"']")
 ROOT_BACKUP_RE = re.compile(r"(^|.*)(\.bak(\.|$)|_backup\b|_old\b|_copy\b)")
 SUPPORTED_COMMANDS = {"just", "make", "npm", "pnpm", "yarn"}
+# The closed enforcement vocabulary (agents-md-sections.md § Enforcement Index,
+# question-bank.md: advice < review-only < warn < block < gate).
+ENFORCEMENT_LEVELS = {"advice", "review-only", "warn", "block", "gate"}
 
 
 def fail(errors: list[str], message: str) -> None:
@@ -44,10 +47,16 @@ def read_text(path: Path, errors: list[str], *, required: bool = True) -> str:
     return path.read_text(encoding="utf-8", errors="replace")
 
 
-def section(markdown: str, title: str) -> str:
+def section(markdown: str, title: str) -> str | None:
+    """Body of `## <title>`, or None when that heading is absent.
+
+    "" means the heading exists with no body. The two states are distinct: a
+    caller that treats "" as absent silently accepts an empty required section,
+    and one that treats None as empty cannot tell a missing section from a stub.
+    """
     pattern = SECTION_RE_TEMPLATE.format(title=re.escape(title))
     match = re.search(pattern, markdown)
-    return match.group("body") if match else ""
+    return match.group("body") if match else None
 
 
 def top_level_yaml_block(text: str, key: str) -> str:
@@ -521,8 +530,13 @@ def check_root_backups(repo: Path, errors: list[str]) -> None:
 
 
 def check_generated_section_registry(repo: Path, agents: str, errors: list[str]) -> None:
-    constraints = read_text(repo / "constraints.yaml", errors)
+    constraints_path = repo / "constraints.yaml"
+    constraints = read_text(constraints_path, errors)
     if not constraints:
+        # read_text already reported a missing file; an existing zero-byte one
+        # used to return here and skip the registry check it was asked for.
+        if constraints_path.exists():
+            fail(errors, "constraints.yaml exists but is empty — the required generated_sections registry is absent")
         return
     generated_block = top_level_yaml_block(constraints, "generated_sections")
     if not generated_block:
@@ -641,8 +655,11 @@ def check_preserved_sections(agents: str, args: argparse.Namespace, errors: list
 
 def check_enforcement_index(repo: Path, agents: str, errors: list[str], selected_kind: str | None) -> None:
     index = section(agents, "Enforcement Index")
-    if not index:
+    if index is None:
         fail(errors, "AGENTS.md missing ## Enforcement Index")
+        return
+    if not index.strip():
+        fail(errors, "AGENTS.md ## Enforcement Index is empty — a heading with no rows verifies nothing")
         return
 
     targets = command_targets(repo)
@@ -651,9 +668,17 @@ def check_enforcement_index(repo: Path, agents: str, errors: list[str], selected
     for row in rows[1:]:
         cells = [cell.strip() for cell in row.strip("|").split("|")]
         if len(cells) < 4:
+            fail(errors, f"Enforcement Index row has {len(cells)} columns, expected 4 "
+                         f"(rule | where | checked by | level): {row[:80]}")
             continue
         rule, where, checked_by, level = cells[0], cells[1], cells[2], cells[3].lower()
-        if "block" not in level and "gate" not in level:
+        if level not in ENFORCEMENT_LEVELS:
+            # A misspelled level used to skip the row entirely, hiding a dead path
+            # behind a typo. The vocabulary is closed; an unknown value is an error.
+            fail(errors, f"Enforcement Index row `{rule}` has unknown level {cells[3]!r}; "
+                         f"expected one of {', '.join(sorted(ENFORCEMENT_LEVELS))}")
+            continue
+        if level not in {"block", "gate"}:
             continue
         checked_rows += 1
         if not checked_by or checked_by in {"-", "—", "todo", "tbd"}:
@@ -674,33 +699,10 @@ def check_enforcement_index(repo: Path, agents: str, errors: list[str], selected
         fail(errors, "Enforcement Index contains no block/gate rows to verify")
 
 
-def check_agents(repo: Path, args: argparse.Namespace, errors: list[str]) -> None:
-    agents = read_text(repo / "AGENTS.md", errors)
-    if not agents:
-        return
-
-    line_count = len(agents.splitlines())
-    if args.max_agents_lines and line_count > args.max_agents_lines:
-        fail(errors, f"AGENTS.md has {line_count} lines, exceeds {args.max_agents_lines}")
-
-    for required in args.require_section:
-        if f"## {required}" not in agents:
-            fail(errors, f"AGENTS.md missing required section: {required}")
-
-    check_canonicality_first(agents, errors)
-    check_preserved_sections(agents, args, errors)
-
-    matrix = section(agents, "Verification Matrix")
-    if not matrix:
-        # Absence is not failed here: an L1 repo legitimately has no matrix, and
-        # the checks above (line budget, section order, preserved sections) still
-        # apply to it. Presence is demanded by `--require-section "Verification
-        # Matrix"`, which the Stage 5 command passes at L2+. Validate what is
-        # there; let explicit flags demand what must be there.
-        return
-
+def check_verification_matrix(repo: Path, matrix: str, selected_kind: str | None,
+                              errors: list[str]) -> str | None:
+    """Validate a non-empty Verification Matrix; return the entry-point kind it selects."""
     targets = command_targets(repo)
-    selected_kind = selected_command_kind(repo, errors)
     if not targets["just"] and not targets["make"] and not targets["package"]:
         fail(errors, "justfile/Makefile/package.json scripts missing or contain no runnable targets, but Verification Matrix exists")
     if selected_kind is not None and not targets[selected_kind]:
@@ -731,11 +733,57 @@ def check_agents(repo: Path, args: argparse.Namespace, errors: list[str]) -> Non
         for command in matrix_commands:
             if command not in constraints_command_set:
                 fail(errors, f"Verification Matrix command `{command}` is not mirrored in constraints.yaml verification")
+    return effective_kind
+
+
+def check_agents(repo: Path, args: argparse.Namespace, errors: list[str]) -> None:
+    agents_path = repo / "AGENTS.md"
+    agents = read_text(agents_path, errors)
+    if not agents:
+        # read_text already reported a missing file. An existing but empty file is
+        # a different failure: it satisfies "AGENTS.md exists" while carrying no
+        # rule, and returning here would skip every required-section check.
+        if agents_path.exists():
+            fail(errors, "AGENTS.md exists but is empty — a zero-byte rule file enforces nothing")
+        return
+
+    line_count = len(agents.splitlines())
+    if args.max_agents_lines and line_count > args.max_agents_lines:
+        fail(errors, f"AGENTS.md has {line_count} lines, exceeds {args.max_agents_lines}")
+
+    for required in args.require_section:
+        body = section(agents, required)
+        if body is None:
+            fail(errors, f"AGENTS.md missing required section: {required}")
+        elif not body.strip():
+            fail(errors, f"AGENTS.md required section '{required}' is empty — the heading must carry its content")
+
+    check_canonicality_first(agents, errors)
+    check_preserved_sections(agents, args, errors)
+
+    selected_kind = selected_command_kind(repo, errors)
+    matrix = section(agents, "Verification Matrix")
+    # Absence is not failed here: an L1 repo legitimately has no matrix, and
+    # the checks above (line budget, section order, preserved sections) still
+    # apply to it. Presence is demanded by `--require-section "Verification
+    # Matrix"`, which the Stage 5 command passes at L2+. Validate what is
+    # there; let explicit flags demand what must be there. An empty body is the
+    # same state as absence for the matrix checks, but it must never skip the
+    # checks below — that early return is how --require-enforcement-index was
+    # silently ignored for the malformed file it exists to catch.
+    effective_kind = selected_kind
+    if matrix is not None and matrix.strip():
+        effective_kind = check_verification_matrix(repo, matrix, selected_kind, errors)
+    matrix_command_set = set(verification_matrix_commands(matrix)) if matrix else set()
+    targets = command_targets(repo)
 
     source = section(agents, "Source of Truth & Refactor Contract")
-    if not source:
+    if source is None:
         if args.require_refactor_contract or args.require_compare:
             fail(errors, "AGENTS.md missing ## Source of Truth & Refactor Contract")
+    elif not source.strip():
+        if args.require_refactor_contract or args.require_compare:
+            fail(errors, "AGENTS.md ## Source of Truth & Refactor Contract is empty")
     else:
         source_commands = source_table_commands(source)
         if args.require_compare and not source_commands:

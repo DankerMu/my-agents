@@ -358,20 +358,58 @@ Honesty rules for the report body:
 3. <concrete, executable step>
 ```
 
-JSON companion shape:
+JSON companion shape (a complete example that passes `scripts/score_readiness_report.py`; field contract in `readiness-report-schema.json`):
 
 ```json
 {
-  "generated_at": "{{ISO_TIMESTAMP}}",
-  "level": "Level X",
-  "score": 0.0,
-  "applications": [{"path": ".", "description": ""}],
-  "control_plane_layers": [{"layer": "Memory", "status": "partial", "finding": ""}],
-  "constraint_dimensions": [{"dimension": "Glossary", "present": "partial", "quality": "", "location": ""}],
-  "failing_criteria": [{"id": "dead_code_detection", "score": 0, "reason": ""}],
-  "configured_but_not_blocking": [{"id": "lint_config", "score": 0.5, "reason": ""}],
-  "readiness_gaps": [{"id": "compare_oracle_exists", "reason": ""}],
-  "priority_actions": [{"rank": 1, "action": "", "why": ""}]
+  "schema_version": 1,
+  "generated_at": "2026-11-05T00:00:00Z",
+  "applications": [{"path": ".", "description": "single-package CLI"}],
+  "score": {"level": "L3", "average": 0.5, "applications_identified": 1},
+  "criteria": [
+    {
+      "id": "agents_md",
+      "scope": "repository",
+      "numerator": 1,
+      "denominator": 1,
+      "status": "passing",
+      "evidence": "AGENTS.md at root, 2.1 KB, documents check/test commands",
+      "fixability": "A",
+      "validator": "AGENTS.md exists at repo root, >=100 characters, documents scripts/commands",
+      "rescore_rule": "agents_md=1/1 when evidence satisfies the criterion"
+    },
+    {
+      "id": "dead_code_detection",
+      "scope": "application",
+      "numerator": 0,
+      "denominator": 1,
+      "status": "failing",
+      "evidence": "no vulture/knip config or CI step found",
+      "evidence_locations": ["pyproject.toml", ".github/workflows/ci.yml"],
+      "fixability": "B",
+      "validator": "knip / vulture / equivalent runs in CI",
+      "rescore_rule": "dead_code_detection=k/N over APPLICATIONS_IDENTIFIED"
+    },
+    {
+      "id": "lint_config",
+      "scope": "application",
+      "numerator": 0.5,
+      "denominator": 1,
+      "status": "partial",
+      "evidence": "ruff configured; CI runs it with --exit-zero",
+      "evidence_locations": ["pyproject.toml", ".github/workflows/ci.yml"],
+      "fixability": "B",
+      "validator": "ruff / equivalent configured and blocking",
+      "rescore_rule": "half credit while configured but not blocking"
+    }
+  ],
+  "configured_but_not_blocking": ["lint_config"],
+  "control_plane_layers": {"Memory": "partial", "Invariant": "partial"},
+  "agents_md_constraint_dimensions": {"Glossary": "missing", "Commands": "present"},
+  "priority_actions": [
+    "Make CI run ruff without --exit-zero",
+    "Add vulture to the check command and CI"
+  ]
 }
 ```
 

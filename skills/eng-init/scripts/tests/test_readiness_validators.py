@@ -11,6 +11,7 @@ rejected with its message asserted.
 
 import importlib.util
 import json
+import subprocess
 import sys
 from copy import deepcopy
 from pathlib import Path
@@ -48,11 +49,21 @@ def valid_report() -> dict:
     and the acceptance assertion caught it.
     """
     return {
-        "applications": [{"name": "api"}, {"name": "web"}],
-        "score": {"applications_identified": 2, "average": 1.0},
+        # Schema-complete since 3.7.0: the CLI executes readiness-report-schema.json
+        # before scoring, and this fixture predates that (it used `name`, which the
+        # schema never allowed). It gains only fields the schema already required.
+        "schema_version": 1,
+        "generated_at": "2026-11-05T00:00:00Z",
+        "applications": [{"path": "api", "description": "api"}, {"path": "web", "description": "web"}],
+        "score": {"level": "L5", "applications_identified": 2, "average": 1.0},
+        "control_plane_layers": {},
+        "agents_md_constraint_dimensions": {},
+        "priority_actions": [],
         "criteria": [
             {
                 "id": "agents_md",
+                "scope": "repository",
+                "fixability": "A",
                 "denominator": 1,
                 "numerator": 1,
                 "status": "passing",
@@ -62,6 +73,8 @@ def valid_report() -> dict:
             },
             {
                 "id": "strict_typing",
+                "scope": "application",
+                "fixability": "B",
                 "denominator": 2,
                 "numerator": None,
                 "status": "skipped",
@@ -129,6 +142,196 @@ def test_score_rejects_configured_but_not_blocking_row_claiming_full_pass():
     assert any("must be partial" in e for e in errors), errors
 
 
+# --- 3.7.0: false passes closed (cherry-picked from upstream harness-init 4.3.x/4.4.x)
+
+def test_schema_accepts_the_valid_report():
+    """Clean side of the wire-schema gate the CLI now executes."""
+    assert score_mod.validate_schema(valid_report()) == []
+
+
+def test_score_rejects_a_level_inconsistent_with_the_average():
+    """score.level is a claim about the average; it was never checked, so a
+    report with every criterion failing could declare Level 5."""
+    report = valid_report()
+    _, errors = score_mod.score(report, REGISTRY_DATA)
+    assert errors == [], errors  # control: the matching level passes
+    report["score"]["level"] = "L1"
+    _, errors = score_mod.score(report, REGISTRY_DATA)
+    assert any("score.level" in e for e in errors), errors
+
+
+@pytest.mark.parametrize("average,declared,ok", [
+    (0.8, "L5", True),
+    (0.8, "L4", False),   # L4 is 60–79; 80% belongs to L5
+    (0.79, "L4", True),
+    (0.2, "L2", True),    # a boundary belongs to the higher band
+    (0.2, "L1", False),
+    (0.0, "L1", True),
+    (1.0, "L5", True),
+    (1.0, "Level 5", True),
+    (0.5, "Level X", False),
+    (0.5, 3, False),
+])
+def test_score_level_band_boundaries(average, declared, ok):
+    assert score_mod.level_matches(average, declared)[0] is ok
+
+
+@pytest.mark.parametrize("value,valid", [
+    ("2026-09-22T00:00:00Z", True),
+    ("2026-09-22t08:30:00.123456789+08:00", True),
+    ("2016-12-31T23:59:60Z", True),
+    ("2017-01-01T07:59:60+08:00", True),
+    ("2026-09-22T00:00:00z", True),
+    ("2026-09-22T00:00:00+23:59", True),
+    ("not a timestamp", False),
+    ("{{ISO_TIMESTAMP}}", False),
+    ("2026-09-22", False),
+    ("2026-09-22T00:00:00", False),
+    ("2026-02-30T00:00:00Z", False),
+    ("2026-09-22T24:00:00Z", False),
+    ("2026-09-22T10:00:00+25:00", False),
+    ("2026-09-22T12:34:60Z", False),
+    ("2026-12-31T23:59:60Z", False),
+    ("2026-09-22T00:00:00+01:60", False),
+    ("٢٠٢٦-09-22T00:00:00Z", False),
+])
+def test_schema_checks_generated_at_as_rfc3339_date_time(value, valid):
+    """The schema's date-time format holds without the optional rfc3339-validator package."""
+    report = valid_report()
+    report["generated_at"] = value
+    errors = [e for e in score_mod.validate_schema(report) if e.startswith("schema generated_at")]
+    assert (errors == []) is valid, errors
+
+
+def _fail_row(report):
+    report["criteria"][0].update(numerator=0, status="failing",
+                                 evidence_locations=["ls -a repo root: no AGENTS.md"])
+    report["score"].update(average=0.0, level="L1")
+
+
+def test_score_accepts_a_failing_row_with_evidence_locations():
+    report = valid_report()
+    _fail_row(report)
+    _, errors = score_mod.score(report, REGISTRY_DATA)
+    assert errors == [], errors
+    assert score_mod.validate_schema(report) == []
+
+
+def test_score_accepts_half_credit_listed_as_configured_but_not_blocking():
+    """Clean side of the status/credit rule: the documented half-credit path."""
+    report = valid_report()
+    report["criteria"][0].update(numerator=0.5, status="partial",
+                                 evidence_locations=["CI runs lint without --max-warnings 0"])
+    report["configured_but_not_blocking"] = ["agents_md"]
+    report["score"].update(average=0.5, level="L3")
+    _, errors = score_mod.score(report, REGISTRY_DATA)
+    assert errors == [], errors
+    assert score_mod.validate_schema(report) == []
+
+
+def test_score_accepts_zero_credit_pending_external():
+    """Clean side: zero credit may be pending_external, not only failing."""
+    report = valid_report()
+    report["criteria"][0].update(numerator=0, status="pending_external",
+                                 evidence_locations=["gh api: not permitted in this run"])
+    report["score"].update(average=0.0, level="L1")
+    _, errors = score_mod.score(report, REGISTRY_DATA)
+    assert errors == [], errors
+    assert score_mod.validate_schema(report) == []
+
+
+@pytest.mark.parametrize(
+    "mutate,expected",
+    [
+        (lambda r: r["criteria"][0].update(status="THIS_IS_NOT_A_STATUS"), "unknown status"),
+        (lambda r: r["criteria"][0].update(status=["passing"]), "unknown status"),
+        (lambda r: r["criteria"][0].update(numerator=True), "numerator must be number or null"),
+        (lambda r: r["criteria"][0].update(numerator=float("nan")), "numerator must be number or null"),
+        (lambda r: r["criteria"][0].update(scope="application"), "scope must match registry"),
+        (lambda r: r["criteria"][0].update(id=["agents_md"]), "unknown id"),
+        (lambda r: (r["criteria"][0].update(numerator=0), r["score"].update(average=0.0, level="L1")),
+         "zero credit requires failing"),
+        (lambda r: r["criteria"][0].update(status="failing", evidence_locations=["x"]),
+         "full credit requires passing"),
+        (lambda r: (r["criteria"][1].update(numerator=1, status="passing"),
+                    r["score"].update(average=0.75, level="L4")),
+         "partial credit must have partial status"),
+        (lambda r: (_fail_row(r), r["criteria"][0].pop("evidence_locations")),
+         "evidence_locations is required on failing rows"),
+        (lambda r: (_fail_row(r), r["criteria"][0].update(evidence_locations=[""])),
+         "non-empty strings"),
+        (lambda r: r["score"].update(average=True), "score.average must be numeric"),
+        (lambda r: r.update(configured_but_not_blocking="agents_md"), "must be a list of criterion ids"),
+        (lambda r: r.update(configured_but_not_blocking=["agents_md", "agents_md"]), "must be unique"),
+    ],
+    ids=[
+        "unknown-status", "status-array", "bool-numerator", "nan-numerator", "scope-mismatch",
+        "unhashable-id", "zero-credit-passing", "full-credit-failing", "partial-credit-passing",
+        "failing-without-locations", "empty-location-entry", "bool-average",
+        "cbnb-not-list", "cbnb-duplicate",
+    ],
+)
+def test_score_rejects_each_contradiction(mutate, expected):
+    report = valid_report()
+    mutate(report)
+    try:
+        _, errors = score_mod.score(report, REGISTRY_DATA)
+    except Exception as exc:  # a gate reports; it does not crash
+        pytest.fail(f"scorer crashed instead of rejecting: {type(exc).__name__}: {exc}")
+    assert any(expected in e for e in errors), f"{expected!r} not in {errors}"
+
+
+@pytest.mark.parametrize("report,expected", [
+    ([1, 2, 3], "report must be an object"),
+    ({"applications": [{"path": "."}], "score": [], "criteria": []}, "score must be an object"),
+])
+def test_score_rejects_non_object_shapes_without_crashing(report, expected):
+    _, errors = score_mod.score(report, REGISTRY_DATA)
+    assert any(expected in e for e in errors), errors
+
+
+def _run_cli(script: str, payload: Path):
+    return subprocess.run(
+        [sys.executable, str(SKILL / "scripts" / script), str(payload), "--registry", str(REGISTRY)],
+        capture_output=True, text=True, timeout=30)
+
+
+def _dup_app(r):
+    r["applications"] = [{"path": ".", "description": "first"}, {"path": "./", "description": "same app"}]
+
+
+@pytest.mark.parametrize("case", [
+    "duplicate_key", "nonfinite", "invalid_json", "top_level_array", "bad_date",
+    "missing_required", "duplicate_app_path", "failing_without_locations",
+])
+def test_score_cli_rejects_malformed_wire_input_without_a_traceback(tmp_path, case):
+    report = valid_report()
+    if case == "bad_date":
+        report["generated_at"] = "not a timestamp"
+    elif case == "missing_required":
+        del report["schema_version"]
+    elif case == "duplicate_app_path":
+        _dup_app(report)
+    elif case == "failing_without_locations":
+        _fail_row(report)
+        del report["criteria"][0]["evidence_locations"]
+    text = json.dumps(report)
+    if case == "duplicate_key":
+        text = text.replace('"schema_version": 1', '"schema_version": 9, "schema_version": 1')
+    elif case == "nonfinite":
+        text = text.replace('"average": 1.0', '"average": NaN')
+    elif case == "invalid_json":
+        text = "{"
+    elif case == "top_level_array":
+        text = "[1, 2, 3]"
+    path = tmp_path / "report.json"
+    path.write_text(text, encoding="utf-8")
+    proc = _run_cli("score_readiness_report.py", path)
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    assert "violation(s) found" in proc.stderr, proc.stderr
+    assert "Traceback" not in proc.stderr, proc.stderr
+
+
 def test_score_cli_exits_zero_then_nonzero(tmp_path, monkeypatch, capsys):
     """The CLI wrapper, not just the scoring function, must carry the exit code."""
     good = tmp_path / "good.json"
@@ -158,15 +361,18 @@ def valid_handoff() -> dict:
         "requested_signal": "fix the guardrail self-test",
         "matched_criterion": "guardrail_self_test",
         "fixability": "A",
-        "pre_state": {"status": "failing", "evidence": "scripts/test-guardrails.sh absent"},
+        "pre_state": {"status": "failing", "score": 0, "evidence": "scripts/test-guardrails.sh absent"},
         "allowed_files": ["scripts/test-guardrails.sh", ".github/workflows/agents-md-liveness.yml"],
         "validator": {
             "command": "bash scripts/test-guardrails.sh",
             "exit_code": 0,
             "evidence": "3 passed, 0 failed",
         },
+        # `score` was always required by readiness-repair-schema.json; the fixture
+        # gains it now that validate() executes the schema (3.7.0).
         "post_state": {
             "status": "passing",
+            "score": 1,
             "rescore_evidence": "guardrail_self_test=1/1",
         },
         "decision": "repaired",
@@ -250,6 +456,104 @@ def test_repair_rejects_blocked_decision_claiming_a_passing_post_state():
     assert any("cannot produce a passing post_state" in e for e in errors), errors
 
 
+# --- 3.7.0: wire and state contract (cherry-picked from upstream harness-init 4.3.1)
+
+@pytest.mark.parametrize("mutator", [
+    lambda d: [],
+    lambda d: {**d, "schema_version": 99},
+    lambda d: {**d, "validator": []},
+    lambda d: {**d, "matched_criterion": []},
+    lambda d: {**d, "pre_state": {"status": "failing", "evidence": "x"}},
+    lambda d: {**d, "validator": {**d["validator"], "exit_code": False}},
+    lambda d: {**d, "requested_signal": "   "},
+    lambda d: {**d, "allowed_files": ["../outside"]},
+    lambda d: {**d, "allowed_files": ["a", "./a"]},
+    lambda d: {**d, "allowed_files": ["a", "a"]},
+    lambda d: {**d, "allowed_files": ["/tmp/outside"]},
+    lambda d: {**d, "allowed_files": ["x\\y"]},
+    lambda d: {**d, "allowed_files": [".git/hooks/pre-commit"]},
+    lambda d: {**d, "surprise_authorization": True},
+], ids=[
+    "top-level-array", "schema-version", "validator-array", "criterion-array",
+    "state-without-score", "bool-exit-code", "blank-signal", "traversal", "alias-path",
+    "duplicate-path", "absolute-path", "backslash-path", "dot-git-path", "unknown-field",
+])
+def test_repair_rejects_malformed_wire_types_without_crashing(mutator):
+    data = mutator(valid_handoff())
+    try:
+        errors = repair_mod.validate(data, REGISTRY_DATA)
+    except Exception as exc:
+        pytest.fail(f"validator crashed instead of rejecting: {type(exc).__name__}: {exc}")
+    assert errors, f"accepted malformed repair handoff: {data!r}"
+
+
+@pytest.mark.parametrize("kind,expected", [
+    ("noop_failed_validator", "no-op decision requires validator.exit_code=0"),
+    ("passing_zero", "passing requires score=1"),
+    ("non_skippable_skip", "requires a skippable registry criterion"),
+    ("partial_full", "partial requires 0 < score < 1"),
+    ("nonfinite", "must be null or a finite number"),
+    ("pending_mismatch", "pending_external decision requires pending_external post_state"),
+])
+def test_repair_rejects_inconsistent_terminal_state(kind, expected):
+    d = valid_handoff()
+    if kind == "noop_failed_validator":
+        d["decision"] = "no_op_already_passing"
+        d["pre_state"].update(status="passing", score=1)
+        d["validator"]["exit_code"] = 9
+    elif kind == "passing_zero":
+        d["post_state"]["score"] = 0
+    elif kind == "non_skippable_skip":
+        d["matched_criterion"] = "agents_md"  # registry marks this criterion non-skippable
+        d["post_state"].update(status="skipped", score=None)
+    elif kind == "partial_full":
+        d["post_state"].update(status="partial", score=1)
+    elif kind == "nonfinite":
+        d["post_state"]["score"] = float("inf")
+    else:
+        d["decision"] = "pending_external"
+        d["post_state"].update(status="failing", score=0)
+    errors = repair_mod.validate(d, REGISTRY_DATA)
+    assert any(expected in e for e in errors), errors
+
+
+def test_repair_accepts_a_skipped_post_state_on_a_skippable_criterion():
+    """Clean side: the skippable rule must not over-reject a legitimate skip."""
+    d = valid_handoff()
+    d["post_state"].update(status="skipped", score=None,
+                           rescore_evidence="Not applicable: no guardrails selected; scope reviewed.")
+    assert repair_mod.validate(d, REGISTRY_DATA) == []
+
+
+def _valid_json_with(prefix: str) -> str:
+    """A valid handoff with `prefix` injected first: with last-key-wins parsing
+    the payload would be accepted, so only duplicate-key rejection fails it."""
+    return "{" + prefix + ", " + json.dumps(valid_handoff())[1:]
+
+
+@pytest.mark.parametrize("raw", [
+    _valid_json_with('"schema_version": 99'),
+    _valid_json_with('"decision": "nonsense"'),
+    json.dumps(valid_handoff()).replace('"score": 1', '"score": NaN'),
+    "[1,2,3]",
+    "{",
+], ids=["duplicate-key", "duplicate-decision", "nonfinite", "array", "truncated"])
+def test_repair_cli_rejects_malformed_wire_input_without_a_traceback(tmp_path, raw):
+    path = tmp_path / "payload.json"
+    path.write_text(raw, encoding="utf-8")
+    proc = _run_cli("validate_readiness_repair.py", path)
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    assert "violation(s) found" in proc.stderr, proc.stderr
+    assert "Traceback" not in proc.stderr, proc.stderr
+
+
+def test_repair_cli_accepts_the_valid_payload_the_duplicate_cases_build_on(tmp_path):
+    path = tmp_path / "payload.json"
+    path.write_text(json.dumps(valid_handoff()), encoding="utf-8")
+    proc = _run_cli("validate_readiness_repair.py", path)
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
 def test_repair_cli_exits_zero_then_nonzero(tmp_path, monkeypatch, capsys):
     good = tmp_path / "good.json"
     good.write_text(json.dumps(valid_handoff()), encoding="utf-8")
@@ -265,3 +569,22 @@ def test_repair_cli_exits_zero_then_nonzero(tmp_path, monkeypatch, capsys):
     assert repair_mod.main(sys.argv) == 1
     err = capsys.readouterr().err
     assert "validate-readiness-repair:" in err and "violation(s) found" in err, err
+
+
+def test_documented_json_companion_example_is_a_valid_report():
+    """The JSON companion example in agent-readiness-criteria.md is what agents copy.
+
+    It drifted from the schema once (it used `level`/`failing_criteria` keys the
+    schema never allowed) and nothing noticed; pin it through the same schema and
+    scorer the CLI runs.
+    """
+    doc = (SKILL / "references" / "agent-readiness-criteria.md").read_text(encoding="utf-8")
+    marker = "JSON companion shape"
+    assert marker in doc
+    block = doc[doc.index(marker):]
+    start = block.index("```json\n") + len("```json\n")
+    example = json.loads(block[start:block.index("```", start)])
+    assert score_mod.validate_schema(example) == []
+    computed, errors = score_mod.score(example, REGISTRY_DATA)
+    assert errors == [], errors
+    assert computed == pytest.approx(example["score"]["average"])

@@ -84,7 +84,7 @@ def test_missing_prerequisite_exits_127_not_green(tmp_path):
     """A gate that cannot run has not passed.
 
     selfcheck runs every Python gate through `uv run --with pytest --with
-    pyyaml`, so uv is the one prerequisite. A PATH without uv must exit 127
+    pyyaml --with jsonschema`, so uv is the one prerequisite. A PATH without uv must exit 127
     with the prerequisite named, never fall through to a green report.
     """
     clone = clone_skill(tmp_path)

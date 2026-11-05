@@ -82,6 +82,16 @@ oracle exists, assume it affects the entire dependent lineage: fresh bootstrap/p
 required. Never use a candidate-supplied list of “unaffected” units as evidence for selective
 reuse.
 
+## Review sampling is a design, not a spot check
+
+When two reviewers check a generated artifact, decide what each reads. Draw random samples from
+**non-overlapping halves** so their agreement is independent evidence; assign adversarial
+samples by category (largest or macro-heavy files to one, platform-specific and generated code to
+the other), because those fail differently and a random draw under-samples both. Reviewers
+return cited `file:line` lines, not conclusions, and reconciliation runs **both directions**:
+edges the review found that the artifact missed, and edges the artifact claims that the review
+could not find — the second is where a fabricated dependency survives.
+
 ## Artifact validation
 
 Run the bundled semantic validator from the skills root before approving a plan or issuing a

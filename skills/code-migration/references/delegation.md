@@ -133,6 +133,11 @@ coordinating session owns execution, and disk state is the only execution state:
   field; the filesystem is the execution state and the artifacts remain domain facts.
 - The degraded limitation stays recorded in the brief. Without VDD, direct execution produces
   candidate work and receipts, never parity, cutover, or release acceptance.
+- Ticketed execution in this repository: `to-spec` slices the approved scope (one ticket per
+  bounded unit group, `Covers:` naming the units' acceptance ids), `gh-create-issue` publishes
+  them when tracker issues are wanted, and `implement` or `subagent-workflow` executes them.
+  Each ticket branch starts from the current integration tip, and its output lands as the unit's
+  on-disk artifact; done is still the shape-checked artifact, never a closed ticket.
 
 ## Other skills
 

@@ -263,6 +263,133 @@ def test_enforcement_index_rejects_a_missing_section_when_required(tmp_path, mon
     assert "Enforcement Index" in out
 
 
+# --------------------------------------------------------------------------
+# False passes closed in 3.7.0 (cherry-picked from upstream harness-init
+# 4.4.2/4.4.4): section() conflated "absent" with "present but empty", empty
+# files returned before any check ran, and the Enforcement Index skipped short
+# rows and unknown levels silently. Each fix is pinned in both directions.
+# --------------------------------------------------------------------------
+
+EMPTY_CANONICALITY = """# AGENTS.md
+
+## Code Canonicality
+
+## Project Identity
+
+A service.
+"""
+
+
+def test_required_section_with_content_still_passes(tmp_path, monkeypatch, capsys):
+    """Clean side: the empty-body rule must not reject a section that carries its rule."""
+    seed_repo(tmp_path, MATRIX_AGENTS)
+    rc, out = run_checker(tmp_path, monkeypatch, capsys, "--require-section", "Code Canonicality")
+    assert rc == 0, out
+
+
+def test_required_section_with_an_empty_body_is_rejected(tmp_path, monkeypatch, capsys):
+    """A heading with no body satisfies presence and nothing else."""
+    seed_repo(tmp_path, EMPTY_CANONICALITY)
+    rc, out = run_checker(tmp_path, monkeypatch, capsys, "--require-section", "Code Canonicality")
+    assert rc == 1, f"empty required section passed:\n{out}"
+    assert "Code Canonicality" in out and "empty" in out
+
+
+def test_empty_matrix_does_not_skip_the_enforcement_index_check(tmp_path, monkeypatch, capsys):
+    """An empty matrix body used to return before --require-enforcement-index ran."""
+    agents = """# AGENTS.md
+
+## Code Canonicality
+
+One implementation per concept.
+
+## Verification Matrix
+"""
+    seed_repo(tmp_path, agents)
+    rc, out = run_checker(
+        tmp_path, monkeypatch, capsys,
+        "--require-section", "Verification Matrix", "--require-enforcement-index",
+    )
+    assert rc == 1, f"empty matrix short-circuited the enforcement check:\n{out}"
+    assert "missing ## Enforcement Index" in out
+    assert "required section 'Verification Matrix' is empty" in out
+
+
+def test_absent_matrix_still_runs_the_flag_gated_checks(tmp_path, monkeypatch, capsys):
+    """Clean side of the early-return fix: no matrix (L1) plus a valid index passes."""
+    agents = MATRIX_AGENTS.replace(
+        "## Verification Matrix\n\n| Surface | Command |\n|---|---|\n| unit tests | `just test` |\n\n", "")
+    assert "Verification Matrix" not in agents
+    seed_repo(tmp_path, agents)
+    rc, out = run_checker(tmp_path, monkeypatch, capsys, "--require-enforcement-index")
+    assert rc == 0, out
+
+
+def test_empty_agents_md_is_rejected(tmp_path, monkeypatch, capsys):
+    """A zero-byte AGENTS.md satisfied `exists` and skipped every section check."""
+    seed_repo(tmp_path, "")
+    rc, out = run_checker(tmp_path, monkeypatch, capsys, "--require-section", "Verification Matrix")
+    assert rc == 1, f"empty AGENTS.md passed:\n{out}"
+    assert "AGENTS.md exists but is empty" in out
+
+
+def test_empty_constraints_yaml_is_rejected_by_the_registry_flag(tmp_path, monkeypatch, capsys):
+    """A zero-byte constraints.yaml silently skipped --require-generated-section-registry."""
+    seed_repo(tmp_path, MATRIX_AGENTS)
+    tmp_path.joinpath("constraints.yaml").write_text("", encoding="utf-8")
+    rc, out = run_checker(tmp_path, monkeypatch, capsys, "--require-generated-section-registry")
+    assert rc == 1, f"empty constraints.yaml passed:\n{out}"
+    assert "constraints.yaml exists but is empty" in out
+
+
+def test_empty_enforcement_index_is_rejected(tmp_path, monkeypatch, capsys):
+    agents = MATRIX_AGENTS.split("## Enforcement Index")[0] + "## Enforcement Index\n"
+    seed_repo(tmp_path, agents)
+    rc, out = run_checker(tmp_path, monkeypatch, capsys, "--require-enforcement-index")
+    assert rc == 1, out
+    assert "Enforcement Index is empty" in out
+
+
+def test_empty_source_of_truth_is_rejected_when_the_contract_is_required(tmp_path, monkeypatch, capsys):
+    seed_repo(tmp_path, MATRIX_AGENTS + "\n## Source of Truth & Refactor Contract\n")
+    rc, out = run_checker(tmp_path, monkeypatch, capsys, "--require-refactor-contract")
+    assert rc == 1, out
+    assert "Source of Truth & Refactor Contract is empty" in out
+
+
+@pytest.mark.parametrize("level", ["advice", "review-only", "warn", "gate", "Block"])
+def test_enforcement_index_accepts_every_vocabulary_level(tmp_path, monkeypatch, capsys, level):
+    """Clean side of the closed vocabulary: every documented level (any case) passes."""
+    agents = MATRIX_AGENTS + f"| extra rule | `eslint.config.mjs` | `just test` | {level} |\n"
+    seed_repo(tmp_path, agents)
+    rc, out = run_checker(tmp_path, monkeypatch, capsys, "--require-enforcement-index")
+    assert rc == 0, out
+
+
+def test_enforcement_index_rejects_an_unknown_level(tmp_path, monkeypatch, capsys):
+    """A misspelled level used to skip the row, hiding a dead path behind a typo."""
+    agents = MATRIX_AGENTS + "| dead | `scripts/nope.sh` | `just test` | enforced |\n"
+    seed_repo(tmp_path, agents)
+    rc, out = run_checker(tmp_path, monkeypatch, capsys, "--require-enforcement-index")
+    assert rc == 1, f"unknown level accepted:\n{out}"
+    assert "unknown level" in out and "enforced" in out
+
+
+def test_enforcement_index_rejects_a_short_row(tmp_path, monkeypatch, capsys):
+    """A row with fewer than four columns used to be skipped silently."""
+    agents = MATRIX_AGENTS + "| dead | `scripts/nope.sh` | block |\n"
+    seed_repo(tmp_path, agents)
+    rc, out = run_checker(tmp_path, monkeypatch, capsys, "--require-enforcement-index")
+    assert rc == 1, out
+    assert "expected 4" in out
+
+
+def test_section_distinguishes_absent_from_empty():
+    empty = crh.section("# x\n\n## A\n\n## B\nbody\n", "A")
+    assert empty is not None and empty.strip() == "", repr(empty)
+    assert crh.section("# x\n\n## B\nbody\n", "A") is None
+
+
 PROSE_TOOLS_AGENTS = """# AGENTS.md
 
 ## Code Canonicality
