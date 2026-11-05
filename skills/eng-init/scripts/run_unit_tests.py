@@ -2,7 +2,9 @@
 """Run eng-init unit tests in a uv-managed pytest environment.
 
 The suite lives in scripts/tests (not tests/): scripts/selfcheck.sh is one of
-the things under test and its fixture tests clone the whole skill.
+the things under test and its fixture tests clone the whole skill. jsonschema is
+attached because the readiness validators execute their wire schemas and fail
+closed without it.
 """
 
 from __future__ import annotations
@@ -35,6 +37,8 @@ def build_command(tests_path: Path, pytest_args: list[str]) -> list[str]:
         "pytest",
         "--with",
         "pyyaml",
+        "--with",
+        "jsonschema",
         "python",
         "-m",
         "pytest",

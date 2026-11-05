@@ -1720,6 +1720,67 @@
           "pattern": "## case-56 — self-test-process-fixture-leak"
         }
       ]
+    },
+    {
+      "id": "R61-constraints-schema-version-axis",
+      "desc": "v3.7.0 (cherry-picked from upstream harness-init 4.4.3): constraints.yaml carries a shape version separate from the skill version, so a skill release does not flag every initialized repo as needing a schema migration; legacy skill-version literals written by eng-init <=3.6.x keep a value-preserving meaning (>=3.6.0 is schema 1, no prompt)",
+      "checks": [
+        {
+          "file": "references/constraints-yaml-template.md",
+          "type": "contains",
+          "pattern": "schema_version: \"{{CONSTRAINTS_SCHEMA_VERSION}}\""
+        },
+        {
+          "file": "references/constraints-yaml-template.md",
+          "type": "contains",
+          "pattern": "template_version: \"{{SKILL_VERSION}}\""
+        },
+        {
+          "file": "references/constraints-yaml-template.md",
+          "type": "not_contains",
+          "pattern": "{{SCHEMA_VERSION}}"
+        },
+        {
+          "file": "SKILL.md",
+          "type": "regex",
+          "pattern": "^  constraints_schema_version: \"[0-9]+\"$",
+          "flags": ""
+        },
+        {
+          "file": "SKILL.md",
+          "type": "regex",
+          "pattern": "\\*\\*Schema version\\*\\*: .*compare it with `metadata\\.constraints_schema_version`",
+          "flags": ""
+        },
+        {
+          "file": "SKILL.md",
+          "type": "regex",
+          "pattern": "\\*\\*Legacy skill-version literal\\*\\*.*`3\\.6\\.0` or later denotes constraints schema `1`.*\\*\\*not\\*\\* a gap",
+          "flags": ""
+        },
+        {
+          "file": "SKILL.md",
+          "type": "regex",
+          "pattern": "never migrate and never downgrade",
+          "flags": ""
+        },
+        {
+          "file": "SKILL.md",
+          "type": "not_regex",
+          "pattern": "older than 3\\.6\\.0 \\(the schema version",
+          "flags": ""
+        },
+        {
+          "file": "SKILL.md",
+          "type": "contains",
+          "pattern": "set `schema_version` to `metadata.constraints_schema_version`"
+        },
+        {
+          "file": "evals/cases.md",
+          "type": "contains",
+          "pattern": "## case-57 — legacy-schema-literal"
+        }
+      ]
     }
   ]
 }

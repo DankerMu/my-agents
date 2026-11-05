@@ -132,3 +132,21 @@ def test_cross_reference_rejects_a_criterion_missing_from_the_reference(tmp_path
     errors, _ = crr.validate(reg, ref)
     assert any("registry has criteria not in reference" in e and "criterion_only_in_registry" in e
                for e in errors), errors
+
+
+def test_registry_rejects_an_unsupported_schema_version(tmp_path):
+    """The checker must read the declared version, not just find the token.
+
+    Regression (cherry-picked from upstream harness-init 4.4.2): `schema_version: 999`
+    validated clean, so an altered or newer registry scored reports under a
+    contract this checker does not implement.
+    """
+    reg, ref = write_pair(tmp_path, IDS, IDS)
+    errors, _ = crr.validate(reg, ref)
+    assert errors == [], errors  # control: the supported version passes
+    text = reg.read_text(encoding="utf-8")
+    assert "schema_version: 1" in text
+    for bad in ("999", "one", "1.0"):
+        reg.write_text(text.replace("schema_version: 1", f"schema_version: {bad}"), encoding="utf-8")
+        errors, _ = crr.validate(reg, ref)
+        assert any("unsupported schema_version" in e for e in errors), (bad, errors)

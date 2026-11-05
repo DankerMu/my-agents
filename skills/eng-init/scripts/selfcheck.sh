@@ -41,11 +41,13 @@ require() {
 # pass on code that is no longer there is the failure this skill exists to catch.
 find "$SKILL_ROOT" -name '__pycache__' -type d -prune -exec rm -rf {} + 2>/dev/null || true
 
-# Every Python invocation goes through uv with the suite's two dependencies
-# attached, so the only prerequisite is uv itself (the monorepo convention:
-# `uv run`, never a bare interpreter or pip). A gate that cannot find uv has not run.
+# Every Python invocation goes through uv with the suite's dependencies attached
+# (jsonschema: the readiness validators execute their wire schemas and fail
+# closed without it), so the only prerequisite is uv itself (the monorepo
+# convention: `uv run`, never a bare interpreter or pip). A gate that cannot
+# find uv has not run.
 require uv "install uv — https://docs.astral.sh/uv/getting-started/installation/"
-PY=(uv run --with pytest --with pyyaml python)
+PY=(uv run --with pytest --with pyyaml --with jsonschema python)
 
 # --criteria-reference is load-bearing: without it the registry can drift out of
 # sync with the markdown criteria table (a criterion in one and not the other).

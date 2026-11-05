@@ -51,9 +51,11 @@ The cheapest gate — if the artifact is structurally broken, nothing else matte
 
 **Question:** Did the artifact get at least as good as the previous best?
 
-**GT Suite / Hybrid PASS:** `current_pass_rate >= previous_best_pass_rate`
-**Scoreboard PASS:** primary scalar metric is better than the previous best in the configured direction, or tied while the artifact is simpler or cheaper.
-**FAIL:** quality is worse than previous best, or the scalar metric moves in the wrong direction.
+Compare against the measured `noise_band` (`references/evaluation.md`, noise mitigation item 8):
+
+**GT Suite / Hybrid PASS:** `current_pass_rate > previous_best_pass_rate + noise_band`, or within `noise_band` of the previous best (a tie) while buying simplification or lower cost.
+**Scoreboard PASS:** primary scalar metric beats the previous best by more than `noise_band` in the configured direction, or ties within it while the artifact is simpler or cheaper.
+**FAIL:** a gain no larger than `noise_band` with no simplification or cost win, or any result below `previous_best − noise_band`. The floor prevents small steps downhill: a sequence of in-band "ties" may never walk the kept artifact below the best it has been.
 
 "Previous best" means the best kept iteration, not the immediately previous one (discarded iterations are skipped).
 

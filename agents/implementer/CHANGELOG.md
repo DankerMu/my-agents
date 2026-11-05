@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.9.5] - 2026-11-05
+
+### Fixed
+
+- Operating guide, Test Discipline: a check that did not run is not a pass — zero collected tests, assertion-free tests, vanished targets, and skipped checks report as failures, and check output is never piped through `tail`/`head`/pagers that replace the exit status (absorbed from the upstream stellarlink `AGENTS.md` evidence rules, 2026-11 snapshot).
+
 ## [1.9.4] - 2026-10-20
 
 ### Changed

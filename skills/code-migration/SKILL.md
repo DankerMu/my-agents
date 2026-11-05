@@ -6,10 +6,11 @@ description: >-
   runtime or framework uplifts, strangler rewrites, migration feasibility, migration pilots,
   phased cutovers, or resuming an artifact-backed code migration. This skill owns migration
   classification, domain artifacts, phase gates, and handoffs. It delegates durable execution
-  to Missions and executable oracle qualification and acceptance to VDD. Do not use for a
+  to Missions when present, otherwise to ticketed execution (to-spec, implement or
+  subagent-workflow), and executable oracle qualification and acceptance to VDD. Do not use for a
   local file conversion, routine refactor, data/schema-only migration, or a small incremental
   language adoption that fits ordinary TDD/VDD.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Code Migration
@@ -58,6 +59,14 @@ from disk state per `references/delegation.md`: a unit is done when its verified
 artifact exists, and batches are rebuilt from disk each round. Never model a queue in chat or
 in migration artifacts. Without VDD, no parity, cutover, or release claim may be issued
 regardless of the chosen route.
+
+This repository ships no Missions runtime, so degraded direct execution is the usual choice
+here. Its executors are existing skills, not a new queue: `to-spec` (slice mode) turns an
+approved pilot, phase, or wave into keyed tickets that cover its units, `gh-create-issue`
+publishes them when the user wants tracker issues, and `implement` (one ticket) or
+`subagent-workflow` (issue → PR cycles in dependency order) executes them. Disk state per
+`references/delegation.md` stays the execution state; ticket status never becomes migration
+disposition.
 
 ## 3. Initialize durable migration artifacts
 

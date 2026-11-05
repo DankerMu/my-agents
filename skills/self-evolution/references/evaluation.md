@@ -246,7 +246,11 @@ Same artifact, same GT, same LLM — run 4 times and pass_rates may range 0.79�
 5. **Temperature 0**: Always use temperature 0 for LLM-as-judge. Note that it is not sufficient — the flip above was measured with judging already pinned to a single deterministic-looking configuration.
 6. **Swap order on any comparison**: For pairwise or A/B judging, judge each pair twice with the candidates in both orders. Disagreement between orders means the judge measured position, not quality — score it a tie.
 7. **Cap judge context**: Keep the evaluator prompt within 30–40% of the judge's maximum input length to avoid context rot, and apply identical truncation to both sides of a comparison.
-8. **Significance threshold**: Don't count pass_rate changes <2% as meaningful.
+8. **Measured noise band**: Don't count a change inside the noise band as meaningful. Measure it at baseline (0.6): evaluate the unchanged artifact twice and take the score spread as `noise_band`, computed per independent unit (one GT case, one task, one seed), not per nested observation — repeated judgments of one case are not independent samples. Without a measurement, the default is 0.02 pass_rate (or the scoreboard's minimum meaningful delta). Re-measure whenever the GT set, judge, or rubric changes; a new evaluator is a new baseline. Record `noise_band` in `evolve_plan.md`.
+
+### Resolution Check (before every iteration)
+
+Before running L2, estimate the largest score change the proposed mutation could produce if it fully works — a mutation aimed at two of forty dev cases can move pass_rate by at most 0.05. If that ceiling is not larger than `noise_band`, the iteration cannot tell KEEP from DISCARD and only spends oracle runs. Instead: add cases or judge repeats, measure the targeted cases directly with the full suite as a regression guard, or fold the change into a larger single-concept candidate. Apply the same test to the run as a whole: when everything still failing, fixed at once, could not move the score past `noise_band`, the evaluator can no longer separate better versions — stop and run the completion gate, or switch to a stronger evaluator as a new baseline.
 
 The gate's regression check (Dimension 3) is most vulnerable. If exactly 1 case regressed while others improved, run that case 3x before declaring regression.
 

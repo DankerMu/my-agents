@@ -97,6 +97,22 @@ def run_suite() -> tuple[int, list[str]]:
     return proc.returncode, re.findall(r"FAILED (\S+)", proc.stdout + proc.stderr)
 
 
+def classify_suite(returncode: int) -> str:
+    """Classify a pytest exit code as green, caught, or unmeasured.
+
+    pytest reports more than pass and fail: 0 = all passed, 1 = tests failed,
+    2 = interrupted/collection error, 3 = internal error, 4 = usage error,
+    5 = no tests collected. Only 1 is a test detecting the mutant. Every other
+    non-zero code means the suite stopped before measuring, so counting it as a
+    kill would report proof the run does not have.
+    """
+    if returncode == 0:
+        return "green"
+    if returncode == 1:
+        return "caught"
+    return "unmeasured"
+
+
 def single_statement(lines: list[str], index: int) -> bool:
     """True when the failable call is one physical line (balanced parens)."""
     line = lines[index]
@@ -127,6 +143,7 @@ def main() -> int:
 
     survivors: list[tuple[str, int, str]] = []
     skipped: list[tuple[str, int]] = []
+    unmeasured: list[tuple[str, int, str, int]] = []
     caught = 0
     done = 0
 
@@ -153,11 +170,15 @@ def main() -> int:
                 mutated[index] = f"{indent}pass  # MUTATED\n"
                 path.write_text("".join(mutated))
                 rc, failed = run_suite()
-                if rc == 0:
+                outcome = classify_suite(rc)
+                if outcome == "green":
                     print(f"  SURVIVED  L{index + 1}: {text}")
                     survivors.append((name, index + 1, text))
-                else:
+                elif outcome == "caught":
                     caught += 1
+                else:
+                    print(f"  UNMEASURED  L{index + 1}: suite exited {rc} without a failing test — {text}")
+                    unmeasured.append((name, index + 1, text, rc))
             finally:
                 shutil.copyfile(backup.name, str(path))
                 _PENDING_RESTORE.pop(str(path), None)
@@ -171,12 +192,20 @@ def main() -> int:
         return 2
     rc, _ = run_suite()
     print(f"\nrestored: suite {'green' if rc == 0 else 'NOT GREEN — INVESTIGATE'}")
-    print(f"caught {caught}/{caught + len(survivors)} mutations; {len(survivors)} survived")
+    print(f"caught {caught}/{caught + len(survivors)} mutations; {len(survivors)} survived; "
+          f"{len(unmeasured)} unmeasured")
     if survivors:
         print("\nUNTESTED INVARIANTS (each is a promise with no proof it rejects anything):")
         for name, line, text in survivors:
             print(f"  {name}:{line}  {text}")
-    return 1 if survivors or rc != 0 else 0
+    if unmeasured:
+        # A non-zero pytest exit that is not a test failure (collection error,
+        # internal error, usage error, no tests collected) is not a kill. Counting
+        # it as one reports a mutant as detected when nothing measured it.
+        print("\nUNMEASURED (the suite stopped without a failing test; not evidence of a kill):")
+        for name, line, text, code in unmeasured:
+            print(f"  {name}:{line}  exit {code}  {text}")
+    return 1 if survivors or unmeasured or rc != 0 else 0
 
 
 if __name__ == "__main__":

@@ -41,6 +41,13 @@ with `unknown` where a value cannot be measured — and end every gate report wi
 duration estimate for the next phase derived from the counts just measured. Record the model
 plan and the banded cost estimate in `FEASIBILITY.md` at this gate.
 
+**Scope has two directions; survey both.** Inbound — what outside the slice depends on it — is
+what the external-consumer census finds. Outbound — references from inside the slice to things
+outside it — is missing from a dependency graph built over the slice's own files and from a
+delta catalog scoped to the slice, so it surfaces at build or cutover as a reference nobody
+planned to migrate. Record each outbound edge in `FEASIBILITY.md` with its target and whether it
+is in scope, migrating separately, or staying.
+
 A feasibility report is not approval. The Contract Owner approves the decision to proceed.
 
 ## G1 — Judge qualified

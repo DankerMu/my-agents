@@ -11,7 +11,7 @@
 # Enforcement vocabulary: advice < review-only < warn < block < gate.
 
 strictness_profile:
-  schema_version: "{{SCHEMA_VERSION}}"  # resolved from SKILL.md version at render time
+  schema_version: "{{CONSTRAINTS_SCHEMA_VERSION}}"  # shape of this file; from SKILL.md metadata.constraints_schema_version, not the skill version
   level: "{{PROFILE_LEVEL}}"          # L1 | L2 | L3 | L4
   chosen_by_user: true                # must be true — eng-init never defaults this
   downgrades:                         # every deviation below the profile default, with reason
@@ -24,65 +24,69 @@ strictness_profile:
 # Repair mode uses this registry to update only sections eng-init owns while
 # preserving hand-written project rules. Do not use inline HTML markers in
 # AGENTS.md unless the user asks for them.
+# `template_version` records which skill release generated the section, so repair
+# can tell a stale projection from a user edit. It is NOT the constraints.yaml
+# shape version (strictness_profile.schema_version, above): a skill release that
+# does not change this file's shape must not make every repo look outdated.
 
 generated_sections:
   agents_md:
     - title: "Code Canonicality"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     - title: "Project Identity"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     - title: "Stack & Versions"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     - title: "Directory Map"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     - title: "Development Workflow"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     - title: "Verification Matrix"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     {{IF_RUNTIME_LIFECYCLE}}
     - title: "Runtime Lifecycle"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     {{END_IF}}
     {{IF_REFACTOR_CONTRACT}}
     - title: "Source of Truth & Refactor Contract"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     {{END_IF}}
     - title: "Important Development Notes"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     - title: "Conventions"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     - title: "Code Review Self-Check"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     {{IF_ARCHITECTURE_DISCIPLINE}}
     - title: "Architecture Discipline"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     {{END_IF}}
     - title: "Critical Paths"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     {{IF_OBSERVABILITY}}
     - title: "Observability"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     {{END_IF}}
     - title: "Agent Operating Rules"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
     - title: "Enforcement Index"
       owner: "eng-init"
-      template_version: "{{SCHEMA_VERSION}}"
+      template_version: "{{SKILL_VERSION}}"
   preserve_unknown_sections: true
   backup_policy: ".eng-init/backups/<UTC>/ only when explicitly requested"
 

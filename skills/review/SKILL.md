@@ -9,7 +9,7 @@ description: >
   severity-graded findings with fix directions. Do NOT activate for brainstorming, open-ended
   design feedback, governance/library audits, or whether-an-approach-seems-good conversations.
 invocation_posture: hybrid
-version: 0.8.1
+version: 0.8.2
 ---
 
 # Review
@@ -48,7 +48,10 @@ Unified review skill for agent-performed reviews. Auto-detects content types in 
 
 ## Phase 1 — Scope
 
-1. **Gather the target**: PR (`gh pr diff <n>` / `git diff <base>...<head>` + description and linked issues), branch (`git log --oneline main..<branch>` + `git diff main...<branch>`), staged (`git diff --cached`), unstaged (`git diff`), specific files, or pasted content. If diff >2000 lines, chunk by directory/feature and inform the user.
+1. **Gather the target**: PR (`gh pr diff <n>` / `git diff <base>...<head>` + description and linked issues), branch, staged (`git diff --cached`), unstaged (`git diff`), specific files, or pasted content. If diff >2000 lines, chunk by directory/feature and inform the user. For branch and working-tree targets, resolve the scope explicitly:
+   - Base: `base=$(git merge-base HEAD <BASE_REF>)`, where `BASE_REF` is the PR's base, else `origin/HEAD`, `origin/main`, or the repo's default branch — not a hard-coded `main`. Never use `@{upstream}`: on a pushed feature branch it names the branch's own remote, so `@{upstream}...HEAD` is empty.
+   - Diff `$base...HEAD`, plus `git diff HEAD` for uncommitted work, plus untracked files from `git status --porcelain --untracked-files=all` (invisible to every `git diff`; read them directly or diff against `/dev/null`).
+   - **An empty scope is a failure, not a clean review**: if the combined diff is empty, stop and report `blocked: no diff for <base>..HEAD`. State the resolved range and changed-file count in the output so "no findings" can never be mistaken for coverage.
 2. **Read project conventions** — instruction files, linter configs, PR template, recent commits; don't flag what automation already covers. Detail: [references/analysis-guides.md](references/analysis-guides.md).
 3. **Understand intent**: summarize the change in one sentence before diving in. If intent is unclear from diff + description, ask the user first — reviewing without intent produces noise.
 4. **Classify content types** (most specific match wins; priority resolves overlaps — a `*.tsx` in `__tests__/` is Tests, not Frontend):

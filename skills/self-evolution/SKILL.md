@@ -15,7 +15,7 @@ description: >
   "evolve this skill", "train this skill", "optimize skill quality", "autonomous
   research", "autoresearch", or whenever the user has a measurable artifact that needs
   data-driven improvement with automatic keep/revert decisions.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Evolve
@@ -151,7 +151,7 @@ For Scoreboard:
 
 ### 0.6 Baseline Run
 
-Run the current artifact state through the oracle. This is iteration 0.
+Run the current artifact state through the oracle. This is iteration 0. Run it twice and record the spread as `noise_band` in `evolve_plan.md` (`references/evaluation.md`, noise mitigation item 8); the Progress gate compares against it.
 
 - GT Suite: run L2 evaluation on the full dev set. Save traces to `traces/iteration-0/`, results to `iterations/iteration-0/l2_results.json`.
 - Scoreboard: run the fixed command unchanged, parse the metric, save the raw log to `traces/iteration-0/`, and append the baseline row to `results.tsv`.
@@ -187,7 +187,7 @@ Iteration {N}:
 - [ ] Phase 2: Ideate — propose ONE atomic change with trace evidence
 - [ ] Phase 3: Modify — execute the change
 - [ ] Phase 4: Commit — git commit (before verify)
-- [ ] Phase 5: Verify — L1 → L2 (→ L3 if triggered)
+- [ ] Phase 5: Verify — L1 → critic → L2 (→ L3 if triggered)
 - [ ] Phase 6: Gate — deterministic AND gate → KEEP or DISCARD
 - [ ] Phase 7: Log — results.tsv + experiments.jsonl + traces
 - [ ] Phase 8: Loop — continue / promote / stop
@@ -291,6 +291,8 @@ scripts/structural_check.py <artifact-path> --type <type> --gt-path <gt/dev.json
 ```
 
 The scope check is what turns "do not edit the oracle" from a promise into a fact. The contract already forbids it and Phase 3 already says to stay in scope, but neither is checked by anything, and a loop that can quietly widen its own editable scope can quietly do everything else. `--diff-base HEAD~1` works because Phase 4 commits before verifying. A scope violation is a broken run rather than a failed experiment — reset and investigate rather than logging a DISCARD and continuing.
+
+**Critic (every iteration, before L2):** a subagent that did not propose the mutation reviews the committed diff and its declared hypothesis against `references/critic.md` — sample leakage, judge gaming, degenerate edits, undeclared bundling, unbounded loops, re-proposed falsified hypotheses. Reject → fix with its reasons at most twice, else `git revert HEAD` and log DISCARD with `critic_reject` in the description; no oracle runs are spent on it. Before L2, also run the resolution check in `references/evaluation.md`.
 
 **L2 Dev Eval (every iteration):**
 - Run all dev GT cases through the artifact using the execution method
@@ -446,7 +448,7 @@ If several consecutive experiments fail:
 - Try combining two previous near-misses only if the combined hypothesis is still one concept
 - Prefer simplification experiments: delete complexity and keep if the metric ties or improves
 - Escalate mutation layer only after the cheaper layer stops producing gains
-- If the metric appears noisy, re-run the current best and candidate once before discarding a tiny delta
+- If the metric appears noisy, re-measure `noise_band` rather than re-running until a delta looks real (`references/evaluation.md`, noise mitigation and resolution check)
 
 Do not pause between successful experiments just to ask whether to continue. The user can redirect, stop, or adjust the contract at any time.
 
@@ -470,6 +472,7 @@ Read these when entering the relevant phase:
 - `references/ground-truth.md` — GT case format, 8 assertion types, split strategy, generation
 - `references/evaluation.md` — 3-layer evaluation pipeline, who runs the judge, noise mitigation
 - `references/gate.md` — 5-dimension AND gate, the blocking promotion and completion gates, logging
+- `references/critic.md` — Pre-evaluation critic checklist (Phase 5, before L2)
 - `references/budget-parity.md` — Budget ledger, control-arm protocol, run verdicts. Read before Phase 8.
 - `references/mutation.md` — Layered mutation strategy, mutation families, priority ladder, evidence protocol
 - `references/pairwise-mode.md` — Pairwise Mode loop, preference history, convergence stopping

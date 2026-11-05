@@ -16,6 +16,9 @@ REQUIRED_TOP_LEVEL = [
     "control_plane_layers:",
     "criteria:",
 ]
+# The registry contract this checker implements. A newer or altered registry
+# must fail here rather than be scored under semantics nobody validated.
+SUPPORTED_SCHEMA_VERSIONS = {1}
 REQUIRED_FIELDS = [
     "id",
     "level",
@@ -89,6 +92,13 @@ def validate(path: Path, criteria_reference: Path | None = None) -> tuple[list[s
     for token in REQUIRED_TOP_LEVEL:
         if token not in text:
             errors.append(f"missing top-level field {token}")
+    declared = re.search(r"(?m)^schema_version:\s*(\S+)\s*(?:#.*)?$", text)
+    if declared is not None:
+        value = parse_scalar(declared.group(1))
+        if not value.isdigit() or int(value) not in SUPPORTED_SCHEMA_VERSIONS:
+            errors.append(
+                f"unsupported schema_version {value!r}; this checker implements "
+                f"{sorted(SUPPORTED_SCHEMA_VERSIONS)} — update the checker with the registry")
     criteria = load_criteria(text)
     if len(criteria) < 12:
         errors.append(f"expected at least 12 criteria, found {len(criteria)}")
