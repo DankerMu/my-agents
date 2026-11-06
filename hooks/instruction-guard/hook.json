@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "name": "instruction-guard",
+  "displayName": "Instruction Guard",
+  "description": "PreToolUse hook that requires the user's approval before AGENTS.md or CLAUDE.md is modified (any directory, file tools and write-capable shell commands). Claude Code shows its native approval prompt; omp asks through its confirm dialog; Codex, whose hooks cannot ask, denies until the user runs a one-shot approval command.",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "categories": ["security", "workflow"],
+  "tags": ["agents-md", "claude-md", "approval", "guardrail", "pre-tool-use", "instruction-files"],
+  "authors": [
+    {
+      "name": "danker"
+    }
+  ],
+  "events": ["PreToolUse"],
+  "requirements": {
+    "os": ["macos", "linux"],
+    "tools": ["bash", "python3"],
+    "network": "none"
+  }
+}

@@ -18,7 +18,7 @@ PreToolUse hook：文件写入前校验目标路径是否在声明的 worktree �
 }
 ```
 
-3. 此后所有 `Edit|Write|MultiEdit|NotebookEdit`（Claude Code）/ `apply_patch`（Codex）/ `edit|write`（omp）调用都会被校验：目标路径不在任何 `allowedRoots` 之内 → 拒绝，stderr 提示写回模型。
+3. 此后所有 `Edit|Write|MultiEdit|NotebookEdit`（Claude Code）/ `apply_patch`（Codex）/ `edit|write`（omp）调用都会被校验：目标路径不在任何 `allowedRoots` 之内 → 拒绝，stderr 提示写回模型。Codex 的 `apply_patch` 没有路径字段，目标取自补丁头（`*** Add/Update/Delete File:`、`*** Move to:`），任一越界即拒绝。
 4. 退出 worktree 模式时删除该清单文件（或置 `"enabled": false`）。
 
 ## 安装
