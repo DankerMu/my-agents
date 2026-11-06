@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.2] - 2026-11-06
+
+- 修复：Codex 上此前完全不拦截。Codex `apply_patch` 的 payload 没有路径字段，目标写在 `tool_input.command` 的补丁头里（codex-cli 0.158 实测），旧脚本只读 `file_path`/`path`/`notebook_path`，因此一律放行。现在解析 `*** Add File:` / `Update File:` / `Delete File:` / `Move to:`，补丁里任一目标越界即拒绝。
+- 加固：内嵌 Python 以 `python3 -I` 运行，工具调用 cwd 下的同名模块（如 `json.py`）不再能让 guard 失效。
+- 新增 `tests/test-worktree-guard.sh`（16 项，覆盖 Claude Code / Codex / omp 三种 payload），经 `scripts/tests/worktree-guard.test.js` 接入 `npm test`。
+
 ## [0.2.1] - 2026-09-05
 
 - 文档：安装/卸载说明改为 hook 命令级 merge 语义（同 `matcher` 块内按 `command` 增删，`scripts/lib/settings-merge.js`）。脚本行为不变。

@@ -5,6 +5,16 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-11-06
+
+### Added
+
+- `instruction-guard` hook 0.1.0: changes to `AGENTS.md` / `CLAUDE.md` require the user's approval (Claude Code native prompt, omp confirm dialog, Codex deny plus one-shot user approval command).
+
+### Fixed
+
+- `worktree-guard` hook 0.2.2 now actually guards Codex: `apply_patch` targets are read from the patch headers instead of path fields Codex never sends.
+
 ## [0.16.0] - 2026-09-14
 
 ### Changed
