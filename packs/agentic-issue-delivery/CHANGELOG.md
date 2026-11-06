@@ -5,6 +5,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-11-06
+
+### Changed
+
+- `instruction-guard` hook 0.2.0 is now a size gate instead of an approval point. `AGENTS.md` / `CLAUDE.md` are capped at 32 KiB per file and 307 bytes per line, old content included. Violations are denied with a hint to slim the file with `eng-init`, and `check` scans existing files. Read-only shell commands such as `grep install AGENTS.md` are no longer treated as writes, and omp hashline edits are recognised.
+
 ## [0.17.0] - 2026-11-06
 
 ### Added

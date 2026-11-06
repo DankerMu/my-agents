@@ -1,33 +1,29 @@
 // omp extension shim for instruction-guard. Installed at
 // <config>/hooks/pre/instruction-guard.ts; delegates to the canonical shell
 // guard copied to ../instruction-guard/instruction-guard.sh. omp's exec API has
-// no stdin option, so the Claude-style tool JSON is piped in via bash argv.
-// Exit code 2 means "needs the user's approval": with a UI, omp's own confirm
-// dialog asks (dialog wait time does not count toward the handler timeout);
-// without one, the call is blocked with the guard's reason, which tells the
-// model how the user can approve. Any other exit code lets the call through.
+// no stdin option, so the tool JSON is piped in via bash argv.
+// edit / write calls pass their full input (path + content, replace strings,
+// apply_patch or hashline text), so the guard can find the target files and
+// compute the result where the edit mode allows; bash calls pass the command.
+// Exit code 2 means a size-limit violation: the call is blocked with the guard's
+// reason, which tells the model how to slim the file. Any other exit code lets
+// the call through.
 const SCRIPT = decodeURIComponent(
   new URL("../instruction-guard/instruction-guard.sh", import.meta.url).pathname
 );
+// A file tool can only reach a guarded file by naming it.
+const GUARD_HINT = /AGENTS\.md|CLAUDE\.md/;
 
 export default function hook(pi: any): void {
-  pi.on("tool_call", async (event: any, ctx: any) => {
+  pi.on("tool_call", async (event: any) => {
     const tool = event.toolName;
     if (tool !== "edit" && tool !== "write" && tool !== "bash") return;
     const input = event.input ?? {};
-    const toolInput =
-      tool === "bash"
-        ? { command: String(input.command ?? "") }
-        : {
-            paths: Array.isArray(input.paths)
-              ? input.paths.map(String)
-              : input.path
-                ? [String(input.path)]
-                : []
-          };
+    const hinted = GUARD_HINT.test(JSON.stringify(input));
+    if (tool !== "bash" && !hinted) return;
     const payload = JSON.stringify({
       tool_name: tool === "bash" ? "Bash" : tool,
-      tool_input: toolInput,
+      tool_input: tool === "bash" ? { command: String(input.command ?? "") } : input,
       cwd: process.cwd()
     });
     let result: any;
@@ -38,19 +34,18 @@ export default function hook(pi: any): void {
         { timeout: 15000 }
       );
     } catch {
-      return; // Script or runtime failure is non-blocking, same as a non-2 exit code.
-    }
-    if (result.code !== 2) return;
-    const reason =
-      result.stderr.trim() || "instruction-guard: AGENTS.md / CLAUDE.md change needs approval";
-    if (ctx?.hasUI && typeof ctx.ui?.confirm === "function") {
-      const approved = await ctx.ui.confirm("Allow this AGENTS.md / CLAUDE.md change?", reason);
-      if (approved) return;
+      // Fail closed only when the call names an instruction file; anything else
+      // stays non-blocking, same as a non-2 exit code.
+      if (!hinted) return;
       return {
         block: true,
-        reason: "instruction-guard: the user declined this AGENTS.md / CLAUDE.md change"
+        reason: "instruction-guard: could not check this AGENTS.md / CLAUDE.md change"
       };
     }
-    return { block: true, reason };
+    if (result.code !== 2) return;
+    return {
+      block: true,
+      reason: result.stderr.trim() || "instruction-guard: AGENTS.md / CLAUDE.md size limit"
+    };
   });
 }

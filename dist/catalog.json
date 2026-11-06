@@ -1344,8 +1344,8 @@
       "name": "instruction-guard",
       "path": "hooks/instruction-guard",
       "displayName": "Instruction Guard",
-      "description": "PreToolUse hook that requires the user's approval before AGENTS.md or CLAUDE.md is modified (any directory, file tools and write-capable shell commands). Claude Code shows its native approval prompt; omp asks through its confirm dialog; Codex, whose hooks cannot ask, denies until the user runs a one-shot approval command.",
-      "version": "0.1.0",
+      "description": "PreToolUse size gate for AGENTS.md / CLAUDE.md in any directory: at most 32 KiB per file and 307 bytes per line, old content included. Violations are denied with a hint to slim the file with the eng-init skill; `check` scans existing files. File tools and patches are judged on the resulting file, shell writes on the current one.",
+      "version": "0.2.0",
       "maturity": "experimental",
       "categories": [
         "security",
@@ -1354,7 +1354,8 @@
       "tags": [
         "agents-md",
         "claude-md",
-        "approval",
+        "size-limit",
+        "token-budget",
         "guardrail",
         "pre-tool-use",
         "instruction-files"
@@ -1454,7 +1455,7 @@
       "path": "packs/agentic-issue-delivery",
       "displayName": "Agentic Issue Delivery Pack",
       "description": "Workflow pack for turning design-stage work into implementation-ready issues, then executing those issues through subagent-driven review and delivery gates.",
-      "version": "0.17.0",
+      "version": "0.18.0",
       "maturity": "experimental",
       "packType": "role-pack",
       "persona": "agentic-developer",
@@ -1662,5 +1663,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-11-06T13:28:24.504Z"
+  "generatedAt": "2026-11-06T15:14:35.070Z"
 }
