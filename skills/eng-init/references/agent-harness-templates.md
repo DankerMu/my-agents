@@ -909,7 +909,8 @@ AGENTS.md baseline section — the removal trigger is the FIRST sentence (render
 ```markdown
 ### Legacy violation baseline (temporary)
 
-Remove this section — together with the `baseline` block in `constraints.yaml` and the baseline-comparison CI step — when every Baseline count below reaches 0. This freeze is valid only under its precondition: new and changed code is held to the full {{PROFILE_LEVEL}} gates and ceilings only decrease; it is a debt schedule with an end state of zero, not a permanent exemption.
+Remove this section — together with the `baseline` block in `constraints.yaml` and the baseline-comparison CI step — when every Baseline count below reaches 0.
+This freeze is valid only under its precondition: new and changed code is held to the full {{PROFILE_LEVEL}} gates and ceilings only decrease; it is a debt schedule with an end state of zero, not a permanent exemption.
 
 | Gate | Baseline | Next milestone target | Owner |
 |------|----------|----------------------|-------|

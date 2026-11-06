@@ -46,7 +46,7 @@ PreToolUse 体积闸：任意目录层级的 `AGENTS.md` / `CLAUDE.md` 不得超
 
 **拒绝方式**：Claude Code 返回 `permissionDecision: "deny"`；Codex 与 omp 以 exit 2 拦截。拒绝原因里写明超限位置和瘦身指引：
 
-- 用 `eng-init` skill 的 incremental 模式瘦身，让 AGENTS.md 只保留高频要用的索引，细节放到链接文档。
+- 用 `eng-init` skill 的 **repair 模式**瘦身，按其 SKILL.md 的“AGENTS.md repair style”，以及 `references/agents-md-sections.md` 的“Rendering strategy — concise hard kernel”、“Size budget”、“Byte budget”三节：只保留紧凑的硬性规则，先挪走再压缩，规则一条都不能丢。决策、用户原话和用户自己写的段落只能原样移到链接文档，不能改写。
 - AGENTS.md / CLAUDE.md 是由源片段生成的，就改源片段再重新渲染。
 
 ## 扫描已有文件

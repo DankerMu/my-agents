@@ -736,6 +736,20 @@ def check_verification_matrix(repo: Path, matrix: str, selected_kind: str | None
     return effective_kind
 
 
+def check_byte_budget(name: str, text: str, args: argparse.Namespace, errors: list[str]) -> None:
+    """Byte budget shared with the my-agents instruction-guard hook (UTF-8 bytes)."""
+    size = len(text.encode("utf-8"))
+    if args.max_agents_bytes and size > args.max_agents_bytes:
+        fail(errors, f"{name} is {size} bytes, exceeds {args.max_agents_bytes}")
+    if args.max_line_bytes:
+        long_lines = [(number, len(line.encode("utf-8"))) for number, line in enumerate(text.splitlines(), 1)
+                      if len(line.encode("utf-8")) > args.max_line_bytes]
+        if long_lines:
+            number, width = long_lines[0]
+            fail(errors, f"{name} has {len(long_lines)} line(s) over {args.max_line_bytes} bytes "
+                         f"(first: line {number}, {width} bytes)")
+
+
 def check_agents(repo: Path, args: argparse.Namespace, errors: list[str]) -> None:
     agents_path = repo / "AGENTS.md"
     agents = read_text(agents_path, errors)
@@ -750,6 +764,10 @@ def check_agents(repo: Path, args: argparse.Namespace, errors: list[str]) -> Non
     line_count = len(agents.splitlines())
     if args.max_agents_lines and line_count > args.max_agents_lines:
         fail(errors, f"AGENTS.md has {line_count} lines, exceeds {args.max_agents_lines}")
+    check_byte_budget("AGENTS.md", agents, args, errors)
+    claude_path = repo / "CLAUDE.md"
+    if claude_path.is_file():
+        check_byte_budget("CLAUDE.md", claude_path.read_text(encoding="utf-8"), args, errors)
 
     for required in args.require_section:
         body = section(agents, required)
@@ -807,6 +825,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Check rendered eng-init artifacts in a fixture repo")
     parser.add_argument("repo", type=Path)
     parser.add_argument("--max-agents-lines", type=int, default=320)
+    parser.add_argument("--max-agents-bytes", type=int, default=32768)
+    parser.add_argument("--max-line-bytes", type=int, default=307)
     parser.add_argument("--require-section", action="append", default=[])
     parser.add_argument("--require-preserved-section", action="append", default=[])
     parser.add_argument("--require-refactor-contract", action="store_true")

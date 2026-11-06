@@ -99,6 +99,25 @@ def test_agents_line_budget_is_enforced(tmp_path, monkeypatch, capsys):
     assert rc == 1 and "exceeds 50" in out, out
 
 
+def test_agents_byte_budget_is_enforced(tmp_path, monkeypatch, capsys):
+    """Branch: AGENTS.md over the per-file byte budget (shared with instruction-guard)."""
+    fat = GOOD_AGENTS + "\n" + "\n".join("x" * 200 for _ in range(200))
+    rc, out = check(repo_with(tmp_path, agents=fat), monkeypatch, capsys, "--max-agents-lines", "0")
+    assert rc == 1 and "AGENTS.md is" in out and "exceeds 32768" in out, out
+
+
+def test_agents_line_byte_budget_counts_utf8(tmp_path, monkeypatch, capsys):
+    """Branch: a line over 307 UTF-8 bytes; 110 CJK chars are 330 bytes."""
+    rc, out = check(repo_with(tmp_path, agents=GOOD_AGENTS + "\n- " + "规" * 110 + "\n"), monkeypatch, capsys)
+    assert rc == 1 and "line(s) over 307 bytes" in out, out
+
+
+def test_claude_md_byte_budget_is_enforced(tmp_path, monkeypatch, capsys):
+    """Branch: CLAUDE.md is checked too when present."""
+    rc, out = check(repo_with(tmp_path, CLAUDE__md="@AGENTS.md\n" + "y" * 400 + "\n"), monkeypatch, capsys)
+    assert rc == 1 and "CLAUDE.md has 1 line(s) over 307 bytes" in out, out
+
+
 def test_required_section_absence_is_reported(tmp_path, monkeypatch, capsys):
     """Branch: AGENTS.md missing required section."""
     rc, out = check(repo_with(tmp_path), monkeypatch, capsys, "--require-section", "Critical Paths")

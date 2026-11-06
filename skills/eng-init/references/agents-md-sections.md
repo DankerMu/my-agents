@@ -46,7 +46,8 @@ This section captures the universal code-canonicality rule plus project-specific
 Same logic must have exactly one implementation in the repo. Version evolution belongs in git history, not in filenames or identifiers.
 
 - Before adding any function, class, module, or file: grep the codebase for existing similar implementations. If found, extend or refactor the existing one. Only create new if truly absent.
-- Forbidden suffixes for filenames, class names, function names, and module names: `_v1`, `_v2`, `_v3`, `_new`, `_old`, `_backup`, `_temp`, `_copy`, `_final`, `_real`, `_improved`, `_refactored`, `_fixed`, `_legacy`, `_deprecated`. If one exists in the codebase already, treat it as debt to unify, not a pattern to extend.
+- Forbidden suffixes for filenames, class names, function names, and module names: `_v1`, `_v2`, `_v3`, `_new`, `_old`, `_backup`, `_temp`, `_copy`, `_final`, `_real`, `_improved`, `_refactored`, `_fixed`, `_legacy`, `_deprecated`.
+  If one exists in the codebase already, treat it as debt to unify, not a pattern to extend.
 - Refactor in place: commit the working state first, modify the original file, run tests. If it breaks, `git revert`. Never keep an old version alongside the new "just in case" — git is the safety net.
 - No parallel implementations as a transition unless `## Source of Truth & Refactor Contract` explicitly names a staged dual-run or compatibility-bridge cutover policy. Without that written exception, do not ship v2 while v1 still exists; replace atomically.
 - Commented-out code is a lint error, not a safety net. Delete it; git remembers.
@@ -227,7 +228,8 @@ Rendered immediately after `## Development Workflow`. Maps every runtime surface
 | Background job | Trigger job, observe completion | `{{JOB_VERIFY_CMD}}` | Job log + resulting state |
 
 - Every command in this table must resolve to the selected dev entry point: a real `justfile` recipe, `Makefile` recipe, or `package.json` script. A row whose command does not exist is forbidden — wire the target/script in the same change or delete the row.
-- When Stage 0 detects a CLI/binary surface (for example Rust `[[bin]]`, Go `cmd/`, Python console scripts, or Node `bin`), keep the CLI command row and wire `{{CLI_VERIFY_CMD}}` to the selected entry point (smoke/test/verify-cli target or package script) that invokes the binary with real fixture arguments and asserts exit code/output.
+- When Stage 0 detects a CLI/binary surface (for example Rust `[[bin]]`, Go `cmd/`, Python console scripts, or Node `bin`),
+  keep the CLI command row and wire `{{CLI_VERIFY_CMD}}` to the selected entry point (smoke/test/verify-cli target or package script) that invokes the binary with real fixture arguments and asserts exit code/output.
 - A surface with no verification command means changes to it are review-only, and the PR must say so.
 
 Every row requires fresh evidence from the current session — see `## Agent Operating Rules → Evidence requirements`.
@@ -388,7 +390,9 @@ Max 10 entries, dated, pruned at milestones. An undated note is unverifiable —
 
 - {{BRANCH_MODEL_DESC}} (e.g., trunk-based on `main`; feature branches named `<author>/<short-slug>`).
 - Branch protection on `main`: {{BRANCH_PROTECTION_RULES}}.
-- Stacked PRs: a branch may be deleted only when no open PR bases on it — deleting a base branch auto-closes every PR that bases on it, silently destroying the chain. Use the platform's native stacked-PR mechanism whenever available (e.g. GitHub `gh stack`): the platform owns stack identity, ordering, retargeting, and merge state. If unavailable, do not use a stacked-PR chain at all — no per-PR merges with manual retargeting. Land dependent PRs sequentially (open the next only after the previous one merges), or fold the chain into a single change. Rewriting pushed history is allowed only with `--force-with-lease`, aborts if the remote moved, and never uses raw `--force`.
+- Stacked PRs: a branch may be deleted only when no open PR bases on it — deleting a base branch auto-closes every PR that bases on it, silently destroying the chain. Use the platform's native stacked-PR mechanism whenever available (e.g.
+  GitHub `gh stack`): the platform owns stack identity, ordering, retargeting, and merge state. If unavailable, do not use a stacked-PR chain at all — no per-PR merges with manual retargeting.
+  Land dependent PRs sequentially (open the next only after the previous one merges), or fold the chain into a single change. Rewriting pushed history is allowed only with `--force-with-lease`, aborts if the remote moved, and never uses raw `--force`.
 
 ### Coverage threshold
 
@@ -581,7 +585,8 @@ When CI fails, do not guess. Identify which layer failed, reproduce locally with
 ### Evidence requirements
 
 - Success claims require fresh command output from the current session: command + exit code + relevant output.
-- **Verify the world, not the self-report.** Evidence for "the agent/tool did X" must observe the world: re-execute the command, re-read the file externally, hit the real endpoint, query the row. Keyword-probing the agent's own transcript or output is not evidence — a cheating or confused agent passes that probe.
+- **Verify the world, not the self-report.** Evidence for "the agent/tool did X" must observe the world: re-execute the command, re-read the file externally, hit the real endpoint, query the row.
+  Keyword-probing the agent's own transcript or output is not evidence — a cheating or confused agent passes that probe.
 - When a claim implies "and nothing else changed", assert it: untouched files byte-identical, no unexpected rows, no stray processes.
 - UI claims require a screenshot + zero new console errors.
 - A success claim without fresh output is treated as unverified.
@@ -647,7 +652,8 @@ When CI fails, do not guess. Identify which layer failed, reproduce locally with
 - **Discover**: reproduce the failure, compare with the `Reference`, identify root cause, and write the evidence into the claimed work unit or single-owner handoff note. No implementation edits.
 - **Fixer**: edit only the allowed files named by the work unit, tracker item, or current refactor handoff after a Discover note or failing regression identifies the scope. Add or update the smallest regression/compare case that proves the fix.
 - **Reviewer**: compare the result against `## Source of Truth & Refactor Contract`; reject untested divergence, weakened or skipped compare tests, silent fallback, and files outside the allowed scope.
-- **Delegation is trust-but-verify.** A delegated agent's report describes intent, not necessarily what landed: the accepting role re-runs the gates itself on the real tree. For a regression guard, prove it fails on the unfixed code (introduce the regression, watch it go red, revert) — a guard that passes on both sides guards nothing. An agent that reframes the problem as "already handled" is a signal to dig in personally, not to close the unit.
+- **Delegation is trust-but-verify.** A delegated agent's report describes intent, not necessarily what landed: the accepting role re-runs the gates itself on the real tree. For a regression guard, prove it fails on the unfixed code (introduce the regression, watch it go red, revert)
+  — a guard that passes on both sides guards nothing. An agent that reframes the problem as "already handled" is a signal to dig in personally, not to close the unit.
 - **Environment attribution needs evidence.** Claiming a failure is environment-specific requires the exact command, exit code, and the platform difference; without that, treat it as a real failure.
 - A single person may play multiple roles only on small repos, but the evidence must still be separated: discovery evidence, fix evidence, review evidence.
 {{END_IF}}
@@ -746,5 +752,6 @@ When generating `docs/agent-readiness-report.md` in audit-only mode, do **not** 
 - **Quote user wording verbatim** in Project Identity and any rule the user phrased directly. Paraphrasing strips meaning.
 - **Keep auxiliary file paths absolute-from-repo-root.** Never relative paths in this file. E.g., `.husky/pre-commit`, not `husky/pre-commit`.
 - **Size budget.** Rendered root `AGENTS.md` must stay under 320 lines, with a target of ≲290 lines. (Raised from 275 when v3.1/v3.2 added roughly 40 lines of always-rendered rules — Scoped verification, Known blind spots, debt markers, deviations, stacked-PR deletion; a ceiling that ignores content the skill itself mandates is a budget bug.) When over budget, **relocate before condensing and condense before raising**: push stack detail to module-level `AGENTS.md`, `agent_tasks/README.md`, or linked reference files first. The two largest sections in a full L3/L4 render are Agent Operating Rules and Enforcement Index — relocate from there, and never drop a rule to fit. Ordering encodes priority — never reorder to save space.
+- **Byte budget.** Every rendered `AGENTS.md` and `CLAUDE.md`, root or module-level, stays within **32768 bytes per file and 307 bytes per line**, counted in UTF-8 (a CJK character is 3 bytes, so about 100 per line). These are the limits the my-agents `instruction-guard` hook enforces, so a render over them is denied in repos that install it. Split a long rule into several bullets, or continue it on an indented line at a sentence boundary; never truncate a rule to fit. Over the file budget, apply the same order as the line budget: relocate, then condense, never drop a rule. `scripts/check_rendered_harness.py` fails on either limit (`--max-agents-bytes`, `--max-line-bytes`).
 - **Preserve user-owned sections in repair mode.** Generated section names may be updated by eng-init; unknown or hand-written sections are preserved by default and listed separately in the preview and final report unless the user explicitly requests full replacement. Use `constraints.yaml` `generated_sections.agents_md` as the registry of sections eng-init owns; do not add noisy inline markers to AGENTS.md just to find them later.
 - **Temporary rules embed their own removal trigger.** Any rendered rule that is time-boxed or condition-boxed — a frozen violation baseline, a rehabilitation gate, a pre-release no-compatibility stance, a staged compatibility layer — states its removal condition in its **first sentence** (e.g., "Remove this section at the first tagged release."), names the precondition that makes it valid ("with no external consumers"), and gives executable consequences rather than an attitude. A temporary policy without a removal trigger is permanent debt: nobody ever deletes it.

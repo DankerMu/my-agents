@@ -51,10 +51,10 @@ expect_allow() { # <platform> <name> <json>
 expect_deny() { # <platform> <name> <json>: denied with the size-limit reason and the eng-init hint
     run "$1" "$3"
     if [ "$1" = claude ]; then
-        if [ "$rc" = 0 ] && grep -q '"permissionDecision": "deny"' "$OUT" && grep -q "size limit" "$OUT" && grep -q "eng-init" "$OUT"; then
+        if [ "$rc" = 0 ] && grep -q '"permissionDecision": "deny"' "$OUT" && grep -q "size limit" "$OUT" && grep -q "eng-init skill in repair mode" "$OUT"; then
             ok "$2"
         else bad "$2 (rc=$rc out=$(cat "$OUT"))"; fi
-    elif [ "$rc" = 2 ] && grep -q "size limit" "$ERR" && grep -q "eng-init" "$ERR"; then
+    elif [ "$rc" = 2 ] && grep -q "size limit" "$ERR" && grep -q "eng-init skill in repair mode" "$ERR"; then
         ok "$2"
     else bad "$2 (rc=$rc err=$(cat "$ERR"))"; fi
 }

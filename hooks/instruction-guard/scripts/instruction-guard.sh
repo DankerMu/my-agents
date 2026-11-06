@@ -46,10 +46,13 @@ PLATFORM = os.environ["IG_PLATFORM"]
 MAX_BYTES = int(os.environ["IG_MAX_BYTES"])
 MAX_LINE = int(os.environ["IG_MAX_LINE"])
 SLIM_HINT = (
-    "Slim it with the eng-init skill (incremental mode): keep AGENTS.md a short hot-path index and move "
-    "detail into linked docs; when AGENTS.md / CLAUDE.md is generated from source fragments, slim the "
-    "sources and re-render. Make the change with a file edit tool (Write / Edit / apply_patch) so the "
-    "result can be checked."
+    "Slim it with the eng-init skill in repair mode, following its 'AGENTS.md repair style' (SKILL.md) "
+    "and references/agents-md-sections.md 'Rendering strategy - concise hard kernel', 'Size budget' and "
+    "'Byte budget': keep a compact hard kernel, relocate before condensing, condense before raising, "
+    "never drop a rule; decisions, the user's verbatim wording and user-owned sections are moved intact "
+    "into linked docs, never rewritten. When AGENTS.md / CLAUDE.md is generated from source fragments, "
+    "slim the sources and re-render. Make the change with a file edit tool (Write / Edit / apply_patch) "
+    "so the result can be checked."
 )
 
 # A guarded name as a shell word or path tail: `AGENTS.md`, `docs/CLAUDE.md`,

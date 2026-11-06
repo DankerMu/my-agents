@@ -704,6 +704,32 @@
       ]
     },
     {
+      "id": "FIELD-agents-md-byte-budget",
+      "desc": "rendered AGENTS.md / CLAUDE.md byte budget matches instruction-guard (32768 B/file, 307 B/line) in the reference, the repair style and the checker",
+      "checks": [
+        {
+          "file": "references/agents-md-sections.md",
+          "type": "contains",
+          "pattern": "32768 bytes per file and 307 bytes per line"
+        },
+        {
+          "file": "SKILL.md",
+          "type": "contains",
+          "pattern": "307 bytes per line"
+        },
+        {
+          "file": "scripts/check_rendered_harness.py",
+          "type": "contains",
+          "pattern": "--max-line-bytes\", type=int, default=307"
+        },
+        {
+          "file": "scripts/check_rendered_harness.py",
+          "type": "contains",
+          "pattern": "--max-agents-bytes\", type=int, default=32768"
+        }
+      ]
+    },
+    {
       "id": "FIELD-ci-aggregator-render-check",
       "desc": "the CI aggregator is verified at render time, not only scored at audit time (field: ci.yml shipped without it and the checker passed)",
       "checks": [

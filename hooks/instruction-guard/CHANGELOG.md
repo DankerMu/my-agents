@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1] - 2026-11-06
+
+### Fixed
+
+- 拒绝信息里的瘦身指引原先写的是 eng-init 的“incremental 模式”，指错了。eng-init 处理臃肿指令文件的流程是 repair 模式的“AGENTS.md repair style”，配合 `references/agents-md-sections.md` 的 “Rendering strategy — concise hard kernel”、“Size budget”和 eng-init 3.8.0 新增的“Byte budget”，现在提示直接点名这几节。提示还写明了 eng-init 的硬约束：先挪走再压缩、规则一条不丢；决策、用户原话、用户自己写的段落只能原样移到链接文档。
+
 ## [0.2.0] - 2026-11-06
 
 ### Changed
