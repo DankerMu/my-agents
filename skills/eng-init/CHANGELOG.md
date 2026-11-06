@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.8.0] - 2026-11-06
+
+### Added
+
+- **Byte budget for rendered instruction files.** Every `AGENTS.md` / `CLAUDE.md` eng-init renders, root or module-level, stays within 32768 bytes per file and 307 bytes per line, counted in UTF-8. These are the limits the my-agents `instruction-guard` hook enforces. The rule is in `references/agents-md-sections.md` (next to the 320-line budget, with the same relocate-then-condense order) and in the SKILL.md AGENTS.md repair style, which is the slimming route the hook points to.
+- `scripts/check_rendered_harness.py` enforces it with `--max-agents-bytes` (default 32768) and `--max-line-bytes` (default 307), on `AGENTS.md` and, when present, `CLAUDE.md`. Unit tests cover the file budget, UTF-8 line width (CJK) and `CLAUDE.md`; content check `FIELD-agents-md-byte-budget` pins the reference, SKILL.md and checker defaults together.
+
+### Changed
+
+- Six template lines that render into `AGENTS.md` were over 307 bytes. Five are in `agents-md-sections.md` (forbidden suffixes, CLI verify wiring, stacked PRs, verify-the-world, trust-but-verify delegation) and one in `agent-harness-templates.md` (legacy violation baseline). They are now split at sentence boundaries into indented continuation lines, so the rendered Markdown and every word are unchanged.
+
 ## [3.7.0] - 2026-11-05
 
 Cherry-picked from upstream harness-init 4.4.x (4.3.1 → 4.4.4 release notes): validator fixes only, adapted to the 3.6.1 code. Nothing was re-imported wholesale; local patches (root-instruction ownership split, `CLAUDE.md` `@AGENTS.md` bridge and `claude_md_bridge`, `openspec/glossary.md`, process-fixture reaping, uv + `run_unit_tests.py`, L1–L4 profiles) are unchanged.

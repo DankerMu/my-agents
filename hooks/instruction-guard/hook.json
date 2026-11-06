@@ -3,7 +3,7 @@
   "name": "instruction-guard",
   "displayName": "Instruction Guard",
   "description": "PreToolUse size gate for AGENTS.md / CLAUDE.md in any directory: at most 32 KiB per file and 307 bytes per line, old content included. Violations are denied with a hint to slim the file with the eng-init skill; `check` scans existing files. File tools and patches are judged on the resulting file, shell writes on the current one.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "maturity": "experimental",
   "categories": ["security", "workflow"],
   "tags": [
