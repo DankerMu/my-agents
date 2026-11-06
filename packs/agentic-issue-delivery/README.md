@@ -38,7 +38,7 @@ This pack installs the worker subagents that `subagent-workflow` delegates to:
 
 - `worktree-guard` — PreToolUse path guard that blocks file writes outside declared worktree roots (for example when `session-orchestrator` runs issues in parallel worktrees). Installed everywhere but inert until the project declares `.worktree-guard.json`; blocked writes are denied with the reason fed back to the model.
 - `review-gate` — PreToolUse spawn fence for `subagent-workflow`'s fix-pass gate: once a PR has used its two fix passes and the next review round is still not clean, `.review-gate.json` says `locked` and implementer/reviewer spawns are denied until the user's decision is recorded with `fix_gate.py extend --user-approved`. Inert without that state file.
-- `instruction-guard` — PreToolUse approval point for `AGENTS.md` / `CLAUDE.md` in any directory (file tools and write-capable shell commands). Claude Code shows its native permission prompt, omp its confirm dialog; Codex, whose hooks cannot ask, denies until the user runs the one-shot `approve` command named in the block message. Active as soon as it is installed, so `project-instruction-bootstrap` writes go through the same approval.
+- `instruction-guard` — PreToolUse size gate for `AGENTS.md` / `CLAUDE.md` in any directory: at most 32 KiB per file and 307 bytes per line, old content included. Violations are denied (Claude Code `deny`, Codex / omp exit 2) with a hint to slim the file with `eng-init`; file tools and patches are judged on the resulting file, shell writes on the current one. `instruction-guard.sh check` reports files already over, so run it and slim existing files before relying on the gate.
 
 ## Install
 
