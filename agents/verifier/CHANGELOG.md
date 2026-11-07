@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.9] - 2026-11-07
+
+### Changed
+
+- omp 投影模型链改为 `sub-gpt/deepseek-flash-guan:high`(主),`openai-codex/gpt-6.1-terra:max`(副);不再使用 `sub-grok/grok-4.7:high` 与 `gpt-6-luna:max`。
+
 ## [0.7.8] - 2026-10-20
 
 ### Changed

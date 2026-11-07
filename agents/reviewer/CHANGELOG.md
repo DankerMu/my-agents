@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.6.9] - 2026-11-07
+
+### Changed
+
+- omp 投影主模型从 `sub-omp/k3-256k:max` 改为 `sub-omp/k3.1-pro:max`,副模型 `openai-codex/gpt-6-astra:high` 不变。
+
 ## [2.6.8] - 2026-10-20
 
 ### Changed
