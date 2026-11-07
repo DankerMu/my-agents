@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.8.1] - 2026-11-07
+
+### Changed
+
+- `references/aux-file-templates.md` CI notes: docs-only commits are sped up by skipping steps inside each job behind a diff-based `docs_only` flag, never by `paths:` / `paths-ignore:` filters or job-level `if:` skips, which leave required checks pending or fail the aggregator. Shipped Markdown and empty diffs are never exempt, and the Q6.11 doc gate never takes the fast path.
+
 ## [3.8.0] - 2026-11-06
 
 ### Added
