@@ -1,0 +1,398 @@
+{
+ "suites": [
+  {
+   "name": "baseline",
+   "workers": 2,
+   "grouping": "file",
+   "tests": [
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 7.6
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 6.8
+    },
+    {
+     "file": "e2e/reasoning-effort.e2e.ts",
+     "seconds": 14.6
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 7.8
+    },
+    {
+     "file": "e2e/reasoning-effort.e2e.ts",
+     "seconds": 11.9
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 6.3
+    },
+    {
+     "file": "e2e/reasoning-effort.e2e.ts",
+     "seconds": 7.8
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 6.2
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 6.1
+    },
+    {
+     "file": "e2e/reasoning-effort.e2e.ts",
+     "seconds": 10.5
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 5.8
+    },
+    {
+     "file": "e2e/reasoning-effort.e2e.ts",
+     "seconds": 7.6
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 7.6
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 5.7
+    },
+    {
+     "file": "e2e/reasoning-effort.e2e.ts",
+     "seconds": 9.9
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 5.5
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 4.2
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 5.0
+    },
+    {
+     "file": "e2e/reasoning-effort.e2e.ts",
+     "seconds": 15.0
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 4.8
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 2.9
+    },
+    {
+     "file": "e2e/auth-bootstrap.e2e.ts",
+     "seconds": 3.1
+    },
+    {
+     "file": "e2e/smoke.e2e.ts",
+     "seconds": 0.965
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 4.0
+    },
+    {
+     "file": "e2e/smoke.e2e.ts",
+     "seconds": 3.9
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 5.7
+    },
+    {
+     "file": "e2e/vite-cache.e2e.ts",
+     "seconds": 2.4
+    },
+    {
+     "file": "e2e/vite-cache.e2e.ts",
+     "seconds": 0.032
+    },
+    {
+     "file": "e2e/vite-cache.e2e.ts",
+     "seconds": 0.056
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 6.7
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 10.4
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 5.1
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 5.1
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 6.3
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 5.1
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 4.8
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 5.1
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 6.2
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 2.2
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 2.0
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 4.0
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 1.6
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 2.0
+    },
+    {
+     "file": "e2e/skins.e2e.ts",
+     "seconds": 5.8
+    }
+   ]
+  },
+  {
+   "name": "ocu",
+   "workers": 1,
+   "grouping": "file",
+   "tests": [
+    {
+     "file": "e2e/ocu-controls.e2e.ts",
+     "seconds": 3.3
+    },
+    {
+     "file": "e2e/ocu-controls.e2e.ts",
+     "seconds": 3.0
+    },
+    {
+     "file": "e2e/ocu-controls.e2e.ts",
+     "seconds": 2.9
+    },
+    {
+     "file": "e2e/ocu-controls.e2e.ts",
+     "seconds": 2.9
+    },
+    {
+     "file": "e2e/ocu-controls.e2e.ts",
+     "seconds": 4.3
+    },
+    {
+     "file": "e2e/ocu-controls.e2e.ts",
+     "seconds": 4.5
+    },
+    {
+     "file": "e2e/ocu-controls.e2e.ts",
+     "seconds": 7.9
+    },
+    {
+     "file": "e2e/ocu-controls.e2e.ts",
+     "seconds": 6.1
+    },
+    {
+     "file": "e2e/ocu-controls.e2e.ts",
+     "seconds": 16.0
+    },
+    {
+     "file": "e2e/ocu-controls.e2e.ts",
+     "seconds": 8.2
+    },
+    {
+     "file": "e2e/ocu-controls.e2e.ts",
+     "seconds": 3.7
+    },
+    {
+     "file": "e2e/ocu-controls.e2e.ts",
+     "seconds": 21.0
+    },
+    {
+     "file": "e2e/ocu-drawio.e2e.ts",
+     "seconds": 3.2
+    },
+    {
+     "file": "e2e/ocu-drawio.e2e.ts",
+     "seconds": 3.9
+    },
+    {
+     "file": "e2e/ocu-image-placeholder.e2e.ts",
+     "seconds": 14.8
+    },
+    {
+     "file": "e2e/ocu-image-placeholder.e2e.ts",
+     "seconds": 14.3
+    },
+    {
+     "file": "e2e/ocu-image-placeholder.e2e.ts",
+     "seconds": 7.2
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 2.8
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 5.3
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 5.1
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 5.7
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 4.1
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 4.5
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 5.5
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 8.1
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 5.8
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 9.2
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 6.7
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 9.4
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 12.4
+    },
+    {
+     "file": "e2e/ocu-office.e2e.ts",
+     "seconds": 12.7
+    },
+    {
+     "file": "e2e/ocu-reconciliation.e2e.ts",
+     "seconds": 4.3
+    },
+    {
+     "file": "e2e/ocu-reconciliation.e2e.ts",
+     "seconds": 10.3
+    },
+    {
+     "file": "e2e/ocu-reconciliation.e2e.ts",
+     "seconds": 4.2
+    },
+    {
+     "file": "e2e/ocu-resources.e2e.ts",
+     "seconds": 26.2
+    },
+    {
+     "file": "e2e/ocu-resources.e2e.ts",
+     "seconds": 25.6
+    },
+    {
+     "file": "e2e/ocu-resources.e2e.ts",
+     "seconds": 26.1
+    },
+    {
+     "file": "e2e/ocu-tree.e2e.ts",
+     "seconds": 11.5
+    },
+    {
+     "file": "e2e/ocu-tree.e2e.ts",
+     "seconds": 6.1
+    },
+    {
+     "file": "e2e/ocu-tree.e2e.ts",
+     "seconds": 7.9
+    },
+    {
+     "file": "e2e/ocu-tree.e2e.ts",
+     "seconds": 4.8
+    },
+    {
+     "file": "e2e/ocu-tree.e2e.ts",
+     "seconds": 10.9
+    },
+    {
+     "file": "e2e/ocu-tree.e2e.ts",
+     "seconds": 6.0
+    },
+    {
+     "file": "e2e/ocu-tree.e2e.ts",
+     "seconds": 8.2
+    },
+    {
+     "file": "e2e/ocu-video-switch.e2e.ts",
+     "seconds": 7.1
+    },
+    {
+     "file": "e2e/ocu-workspace.e2e.ts",
+     "seconds": 6.2
+    },
+    {
+     "file": "e2e/ocu-workspace.e2e.ts",
+     "seconds": 10.1
+    },
+    {
+     "file": "e2e/ocu-workspace.e2e.ts",
+     "seconds": 15.1
+    },
+    {
+     "file": "e2e/ocu-workspace.e2e.ts",
+     "seconds": 8.0
+    },
+    {
+     "file": "e2e/ocu-workspace.e2e.ts",
+     "seconds": 5.0
+    },
+    {
+     "file": "e2e/ocu-workspace.e2e.ts",
+     "seconds": 6.9
+    }
+   ]
+  }
+ ]
+}

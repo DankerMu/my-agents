@@ -457,18 +457,40 @@ def gates_pull_requests(text: str) -> bool:
     ) is not None
 
 
-def has_conforming_aggregator(text: str) -> bool:
-    jobs = workflow_jobs(text)
-    for body in jobs.values():
-        if "needs:" not in body:
-            continue
-        if not re.search(r"^\s*if:\s*always\(\)", body, re.MULTILINE):
-            continue
-        # The word "skipped" in a step *name* proves nothing; the result
-        # matcher itself must include it.
-        if re.search(r"^.*result.*skipped.*$", body, re.MULTILINE | re.IGNORECASE):
-            return True
-    return False
+VERDICT_SCRIPT = re.compile(r"(?<![\w./-])((?:\./)?[\w.-]+(?:/[\w.-]+)*\.(?:py|sh|js|mjs|cjs|ts))\b")
+
+
+def aggregator_shape(body: str, repo: Path | None) -> tuple[str, str]:
+    """Classify one job body: ("inline" | "delegated" | "missing-script" | "none", detail).
+
+    Two shapes conform. Inline: the step's own result matcher names `skipped`.
+    Delegated: the step hands `toJSON(needs)` to a repo script, and that script
+    names `skipped`. A delegated verdict may enumerate skips that pass (a PR-only
+    job on push, a code job on a docs-only PR), so its rules live in a tested
+    script rather than inline YAML. Like the inline check, this is a shape check,
+    not a proof of the script's semantics; the script's own tests carry those.
+    """
+    if "needs:" not in body or not re.search(r"^\s*if:\s*always\(\)", body, re.MULTILINE):
+        return "none", ""
+    # The word "skipped" in a step *name* proves nothing; the result
+    # matcher itself must include it.
+    if re.search(r"^.*result.*skipped.*$", body, re.MULTILINE | re.IGNORECASE):
+        return "inline", ""
+    if "toJSON(needs)" not in body.replace(" ", "") or repo is None:
+        return "none", ""
+    run_text = "\n".join(line for line in body.splitlines() if not re.match(r"^\s*-?\s*(uses|name):", line))
+    missing = ""
+    for candidate in VERDICT_SCRIPT.findall(run_text):
+        script = (repo / candidate).resolve()
+        if not script.is_file():
+            missing = missing or candidate
+        elif re.search(r"skipped", script.read_text(encoding="utf-8", errors="replace"), re.IGNORECASE):
+            return "delegated", candidate
+    return ("missing-script", missing) if missing else ("none", "")
+
+
+def has_conforming_aggregator(text: str, repo: Path | None = None) -> bool:
+    return any(aggregator_shape(body, repo)[0] in {"inline", "delegated"} for body in workflow_jobs(text).values())
 
 
 def check_ci_aggregator(repo: Path, errors: list[str]) -> None:
@@ -477,7 +499,8 @@ def check_ci_aggregator(repo: Path, errors: list[str]) -> None:
     GitHub counts a skipped required check as passing, so per-job required
     checks are silently disabled by a dependency failure. The aggregator is the
     only shape that closes that hole — and it only closes it when it runs
-    unconditionally and treats `skipped` as failure.
+    unconditionally and treats `skipped` as failure, either inline or through a
+    verdict script it hands `toJSON(needs)` (see `aggregator_shape`).
 
     This is repository-scope, matching the `ci_aggregator_gate` criterion:
     branch protection points at one check, so one conforming aggregator anywhere
@@ -492,7 +515,7 @@ def check_ci_aggregator(repo: Path, errors: list[str]) -> None:
     pr_gates: list[Path] = []
     for workflow in workflows:
         text = workflow.read_text(encoding="utf-8", errors="replace")
-        if has_conforming_aggregator(text):
+        if has_conforming_aggregator(text, repo):
             return
         if gates_pull_requests(text) and len(workflow_jobs(text)) >= 2:
             pr_gates.append(workflow)
@@ -511,8 +534,11 @@ def check_ci_aggregator(repo: Path, errors: list[str]) -> None:
     if near_miss:
         workflow, name, body = near_miss
         rel = workflow.relative_to(repo)
+        shape, detail = aggregator_shape(body, repo)
         if not re.search(r"^\s*if:\s*always\(\)", body, re.MULTILINE):
             fail(errors, f"{rel}: aggregator job `{name}` is missing `if: always()` — a dependency failure would skip it, and GitHub counts a skipped required check as passing")
+        elif shape == "missing-script":
+            fail(errors, f"{rel}: aggregator `{name}` delegates its verdict to `{detail}`, which does not exist — a verdict nobody computes passes nothing")
         else:
             fail(errors, f"{rel}: aggregator `{name}` does not treat `skipped` as failure — that is the hole it exists to close")
         return

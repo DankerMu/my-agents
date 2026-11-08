@@ -186,7 +186,7 @@ Applications:
 | `devcontainer_runnable` | 3 | yes | Devcontainer actually builds and runs | Development Workflow |
 | `runbooks_documented` | 2 | no | Runbooks/playbooks linked (Notion, Confluence, `runbooks/` dir) | Enforcement Index |
 | `branch_protection` | 2 | yes | Modern rulesets or legacy protection on main/dev | Enforcement Index |
-| `ci_aggregator_gate` | 2 | yes | CI defines an `if: always()` aggregator job that fails on any failed/cancelled/skipped required dependency; branch protection requires that single check (GitHub counts a skipped required check as passing, so per-job required checks are silently disabled by dependency failures); skippable only when no CI exists | Enforcement Index |
+| `ci_aggregator_gate` | 2 | yes | CI defines an `if: always()` aggregator job that fails on any failed/cancelled/skipped required dependency (inline, or via a tested verdict script fed `toJSON(needs)` that passes only enumerated by-design skips); branch protection requires that single check (GitHub counts a skipped required check as passing, so per-job required checks are silently disabled by dependency failures); skippable only when no CI exists | Enforcement Index |
 | `secret_scanning` | 3 | yes | gitleaks/trufflehog/native scanning configured | Enforcement Index |
 | `codeowners` | 2 | no | CODEOWNERS file with valid team assignments | Conventions |
 | `automated_security_review` | 2 | yes | Semgrep/CodeQL/Snyk SAST or equivalent in CI | Enforcement Index |

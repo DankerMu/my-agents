@@ -18,3 +18,5 @@ agents/**/claude-code.md
 skills/**/*.md
 skills/**/references/**
 skills/**/eval/**
+# Frozen CI/run data: tests compare against it byte for byte.
+skills/**/tests/fixtures/**
