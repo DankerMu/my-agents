@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "name": "ci-speedup",
+  "displayName": "CI Speedup",
+  "description": "Measured GitHub Actions speed-up without dropping any required check: inventory every check, baseline the last N runs into queue/setup/test per job and the critical path, diagnose against a slow-CI pattern catalog, simulate sharding, implement behind required-check guardrails, verify on warm-cache reruns, iterate, and deliver a before/after comparison. Manual (/ci-speedup); the model never triggers it, because it pushes several rounds and spends CI minutes. Not for fixing a failing CI (diagnosing-bugs) or building CI from scratch (eng-init).",
+  "version": "0.1.0",
+  "maturity": "experimental",
+  "categories": ["devops", "testing", "workflow"],
+  "tags": [
+    "github-actions",
+    "ci",
+    "performance",
+    "sharding",
+    "caching",
+    "required-checks",
+    "user-invoked"
+  ],
+  "authors": [
+    {
+      "name": "danker"
+    }
+  ],
+  "license": "MIT",
+  "entrypoints": {
+    "skillDoc": "SKILL.md",
+    "changelog": "CHANGELOG.md"
+  },
+  "requirements": {
+    "runtimes": {
+      "python": ">=3.9"
+    },
+    "network": "required"
+  },
+  "capabilities": {
+    "shell": true,
+    "network": true,
+    "filesystemRead": true,
+    "filesystemWrite": true
+  }
+}

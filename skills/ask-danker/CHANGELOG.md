@@ -3,6 +3,12 @@
 All notable changes to this skill will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-11-07
+
+### Added
+
+- 仓库健康节新增 `ci-speedup`（user-invoked）路由：实测驱动的 GitHub Actions 提速。它与 `diagnosing-bugs`（修 CI 功能性失败）、`eng-init`（从零搭 CI 和门禁）的分界写在路由里；user-invoked 清单同步。
+
 ## [Unreleased]
 
 ## [0.9.0] - 2026-09-10

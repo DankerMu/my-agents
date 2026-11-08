@@ -188,11 +188,11 @@ Each recipe uses this shape:
 ### `ci_aggregator_gate`
 
 - **Fixability:** A — skill-owned.
-- **Good fixes:** Add an `all-checks-passed` job guarded by `if: always()` whose `needs` lists every blocking job, failing when any dependency result is `failure`, `cancelled`, or `skipped`; point branch protection at that single check and drop the per-job required checks.
-- **Bad fixes:** Listing individual jobs as required checks; omitting `if: always()` (a dependency failure then skips the aggregator, and GitHub counts a skipped required check as passing); whitelisting `skipped` inside the aggregator; leaving a job-level `if:` skip on an aggregated job without recording the documented exception.
+- **Good fixes:** Add an `all-checks-passed` job guarded by `if: always()` whose `needs` lists every blocking job, failing when any dependency result is `failure`, `cancelled`, or `skipped` (inline, or through a tested verdict script it hands `toJSON(needs)` that passes only enumerated by-design skips); point branch protection at that single check and drop the per-job required checks.
+- **Bad fixes:** Listing individual jobs as required checks; omitting `if: always()` (a dependency failure then skips the aggregator, and GitHub counts a skipped required check as passing); excusing `skipped` inline in the aggregator YAML (by-design skips belong in a tested verdict script fed by a required classification job); leaving a job-level `if:` skip on an aggregated job without recording the documented exception.
 - **Required scan:** Workflow files, the blocking-job set, existing branch-protection configuration, any job-level `if:` on those jobs, secret-gated jobs (which stay out of `needs`).
 - **Allowed files:** `.github/workflows/*.yml`, AGENTS.md Enforcement Index and branch-model rows.
-- **Validator:** The aggregator exists with `if: always()`, `needs` equals the blocking-job set, and the step exits non-zero on any failed/cancelled/skipped dependency; branch protection requires only that check (external setting — report as manual when unauthenticated).
+- **Validator:** The aggregator exists with `if: always()`, `needs` equals the blocking-job set, and the step exits non-zero on any failed/cancelled/skipped dependency, or delegates that verdict to an existing repo script that receives `toJSON(needs)`; branch protection requires only that check (external setting — report as manual when unauthenticated).
 - **Rescore evidence:** `ci_aggregator_gate=1/1` when the aggregator exists and branch protection requires it; `0.5/1` when the aggregator exists but protection still lists individual jobs; `0/1` when absent; null only when the repo has no CI.
 
 ### `generated_docs_check_mode`

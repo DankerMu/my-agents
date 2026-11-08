@@ -184,3 +184,59 @@ def test_repo_with_only_manual_workflows_is_not_penalised(tmp_path):
     errors: list[str] = []
     crh.check_ci_aggregator(repo, errors)
     assert errors == [], errors
+
+
+DELEGATED_AGGREGATOR = GOOD_AGGREGATOR.replace(
+    """        run: |
+          if echo "$NEEDS" | grep -Eq '"result": "(failure|cancelled|skipped)"'; then
+            exit 1
+          fi
+""",
+    """        run: python3 scripts/ci-gate.py verdict
+""",
+)
+
+VERDICT_SCRIPT = '''
+PR_ONLY_JOBS = ("diff-size-guard",)
+def failures(needs, event):
+    # A skip passes only by design; every other skipped job fails the verdict.
+    return [n for n, j in needs.items() if j["result"] != "success"
+            and not (j["result"] == "skipped" and event == "push" and n in PR_ONLY_JOBS)]
+'''
+
+
+def test_delegated_verdict_script_passes(tmp_path):
+    """open-webui#758: the aggregator hands toJSON(needs) to a tested script that
+    enumerates the skips that pass. That is the same hole closed, not reopened."""
+    repo = repo_with_workflow(tmp_path, DELEGATED_AGGREGATOR)
+    (repo / "scripts").mkdir()
+    (repo / "scripts" / "ci-gate.py").write_text(VERDICT_SCRIPT, encoding="utf-8")
+    errors: list[str] = []
+    crh.check_ci_aggregator(repo, errors)
+    assert errors == [], errors
+
+
+def test_delegated_verdict_script_missing_is_rejected(tmp_path):
+    errors: list[str] = []
+    crh.check_ci_aggregator(repo_with_workflow(tmp_path, DELEGATED_AGGREGATOR), errors)
+    assert any("scripts/ci-gate.py" in e and "does not exist" in e for e in errors), errors
+
+
+def test_delegated_script_that_never_mentions_skipped_is_rejected(tmp_path):
+    repo = repo_with_workflow(tmp_path, DELEGATED_AGGREGATOR)
+    (repo / "scripts").mkdir()
+    (repo / "scripts" / "ci-gate.py").write_text("print('ok')\n", encoding="utf-8")
+    errors: list[str] = []
+    crh.check_ci_aggregator(repo, errors)
+    assert any("skipped" in e for e in errors), errors
+
+
+def test_delegated_verdict_without_needs_json_is_rejected(tmp_path):
+    """A script that never receives the needs context cannot judge it."""
+    content = DELEGATED_AGGREGATOR.replace("          NEEDS: ${{ toJSON(needs) }}\n", "")
+    repo = repo_with_workflow(tmp_path, content)
+    (repo / "scripts").mkdir()
+    (repo / "scripts" / "ci-gate.py").write_text(VERDICT_SCRIPT, encoding="utf-8")
+    errors: list[str] = []
+    crh.check_ci_aggregator(repo, errors)
+    assert errors, "a verdict script without toJSON(needs) proves nothing"

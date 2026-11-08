@@ -3,7 +3,7 @@ name: ask-danker
 description: 本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。
 disable-model-invocation: true
 invocation_posture: manual
-version: 0.9.0
+version: 0.10.0
 ---
 
 # Ask Danker
@@ -47,6 +47,7 @@ version: 0.9.0
 - `repo-entropy-audit` — 全仓六轴熵体检，产出优先级清单（变更集级的一致性评审走 `review` consistency 模式）。
 - `improve-codebase-architecture` — 深模块机会扫描；选中的候选回到主流第 2 步压测。
 - `project-documentation` — docs 漂移检查与刷新。
+- `ci-speedup` — GitHub Actions 太慢，在不减少任何必要检查的前提下提速。先实测最近 N 次运行，算出关键路径，按模式清单诊断；分片数靠模拟决定；按必需检查的护栏实施；在热缓存上至少复测两次，最后交付优化前后的对比。CI 挂了（功能性失败）走 `diagnosing-bugs`；从零搭 CI 或给仓库补门禁走 `eng-init`。
 - `project-instruction-bootstrap` — 安装 pack 后对齐目标项目的根指令文件（安装命令会提示这一步）；控制面内容归 `eng-init`，分工见 Stellarlink 流。
 - `editorial-review` / `readme-craftsman` — 文档编辑评审 / README 打磨。
 
@@ -83,6 +84,6 @@ version: 0.9.0
 
 以下 skill 设了 `disable-model-invocation: true`——只能由你 `/name` 调用，模型不会自动触发，也不占常驻上下文：
 
-`ask-danker`（本 skill）、`agentic-development`、`git-worktree-workflows`、`handoff`、`improve-codebase-architecture`、`project-instruction-bootstrap`、`prompt-engineering`、`repo-entropy-audit`，以及 stellarlink pack 的 `architecture-design`、`to-spec`、`implement`、`code-migration`、`eng-init`、`self-evolution`、`reverse-skill`、`visual-design`（该 pack 仅 `tdd`、`vdd` 保持模型可调）。
+`ask-danker`（本 skill）、`agentic-development`、`git-worktree-workflows`、`handoff`、`improve-codebase-architecture`、`project-instruction-bootstrap`、`prompt-engineering`、`repo-entropy-audit`、`ci-speedup`，以及 stellarlink pack 的 `architecture-design`、`to-spec`、`implement`、`code-migration`、`eng-init`、`self-evolution`、`reverse-skill`、`visual-design`（该 pack 仅 `tdd`、`vdd` 保持模型可调）。
 
 > 维护约定：新增、改名、删除任何 skill，或改动上述任何流的走向时，必须回查本地图并更新——路由器撒谎比没有路由器更糟。校验器会检查每个 user-invoked skill 都出现在本地图中。

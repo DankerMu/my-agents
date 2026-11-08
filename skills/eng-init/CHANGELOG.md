@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.9.0] - 2026-11-07
+
+### Added
+
+- **Delegated aggregator verdict.** `check_rendered_harness.py --require-ci-aggregator` accepts a second conforming shape: an `if: always()` aggregator whose step hands `toJSON(needs)` to a repo script that names `skipped`. A delegated verdict whose script is missing fails with its own message. Four new tests in `scripts/tests/test_ci_aggregator.py`; content check `FIELD-ci-delegated-verdict`. Field case: DankerMu/open-webui#758, whose docs-only skips go through `scripts/ci-gate.py verdict` and which the inline-only check rejected.
+
+### Changed
+
+- `references/aux-file-templates.md`: by-design skips (a PR-only job on push, a code job on a docs-only PR) are allowed only through a tested verdict script fed by a required `changes` job. Excusing skips inline in the aggregator YAML stays forbidden.
+- The docs-only fast path now offers two shapes: in-job step skipping (from 3.8.1) and job-level skipping through the verdict script, which also saves each skipped job's runner and setup time. Both fail closed on shipped or runtime-read Markdown, renames' old paths, empty diffs and truncated file lists.
+- `ci_aggregator_gate` wording in `readiness-registry.yaml`, `agent-readiness-criteria.md` and `readiness-fix-recipes.md` follows the same rule.
+
 ## [3.8.1] - 2026-11-07
 
 ### Changed

@@ -1,0 +1,321 @@
+# CI — risk-layered gates for the fork (origin = DankerMu/open-webui). Local
+# enforcement: pre-commit hooks + `make check` (AGENTS.md § Enforcement Index).
+# setup-uv is pinned to an exact tag: v8+ publishes no floating major tags, and
+# v4 talked to the retired cache backend (every job re-downloaded 293 packages).
+name: CI
+
+on:
+  pull_request:
+    # Exemption label changes must reevaluate CI without a new commit.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+# `uv sync` would build the editable open-webui wheel, and hatch_build.py runs
+# `npm install` + `npm run build` (the whole SvelteKit frontend, ~2 min) inside
+# that build. Nothing in CI imports the installed distribution: pytest, alembic
+# (`prepend_sys_path = ..`) and uvicorn (`--app-dir`) all import `open_webui`
+# from backend/ source, and env.py reads the version from package.json unless
+# FROM_INIT_PY is set. So every job syncs with --no-install-project, and
+# UV_NO_SYNC keeps later `uv run` calls from installing the project anyway.
+env:
+  UV_NO_SYNC: '1'
+
+jobs:
+  # Docs-only pull requests skip the code jobs. A workflow-level `paths` filter would not do:
+  # the required `All checks passed` check would then never report and block the PR forever.
+  # Pushes to main always run everything.
+  changes:
+    name: Change classification
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    # The pull request files API; explicit so the job keeps working if the repo turns private.
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      code: ${{ steps.classify.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/ci-gate.py
+          sparse-checkout-cone-mode: false
+      - name: Classify changed paths
+        id: classify
+        # An explicit bash runs with pipefail, so a failed classification is not hidden by tee.
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          CHANGED_FILES: ${{ github.event.pull_request.changed_files }}
+        run: |
+          if [ "$EVENT" != "pull_request" ]; then echo "code=true" | tee -a "$GITHUB_OUTPUT"; exit 0; fi
+          gh api --paginate "repos/$REPO/pulls/$PR/files" \
+            --jq '.[] | [.filename, (.previous_filename // "")] | @tsv' > "$RUNNER_TEMP/paths"
+          echo "classifying $(wc -l < "$RUNNER_TEMP/paths") of $CHANGED_FILES changed file(s)"
+          python3 scripts/ci-gate.py classify --expected-files "$CHANGED_FILES" < "$RUNNER_TEMP/paths" | tee -a "$GITHUB_OUTPUT"
+
+  layer1-fast-checks:
+    name: Fast checks (fmt + lint + typecheck)
+    needs: changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # Full history with blobs: lint-scoped lints every modified file's baseline revision.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          node: 'true'
+          python: dev
+      # fmt-check also covers Markdown (prettier), so it runs on docs-only PRs.
+      - run: make fmt-check
+      - if: needs.changes.outputs.code == 'true'
+        run: make lint
+      - if: needs.changes.outputs.code == 'true'
+        run: make typecheck
+      - if: needs.changes.outputs.code == 'true'
+        run: make lint-scoped
+
+  # Its pytest run is CI's backend test run (make test-backend would repeat it), so the
+  # gate prints the whole pytest log when a test fails.
+  layer2-backend-tests:
+    name: Backend tests + coverage gate
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # The change scope needs commits and trees back to the upstream base, not old blobs.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          node: 'false'
+          python: full
+      - run: make coverage-gate PART=backend
+
+  layer2-frontend-tests:
+    name: Frontend tests + coverage gate
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          node: 'true'
+          python: none
+      # test-frontend also runs the e2e/ Vitest files the coverage run excludes.
+      - run: make test-frontend
+      - run: make coverage-gate PART=frontend
+
+  layer3-runtime-smoke:
+    name: Runtime smoke (migrations + API + proxy)
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          node: 'true'
+          python: full
+          runtime: 'true'
+      - run: make db-verify
+      - run: make dev-bg
+      - run: make smoke
+      - name: Native proxy smoke
+        env:
+          OCU_CHECKOUT: ${{ github.workspace }}/.run/open-computer-use
+        run: make smoke-proxy
+      - run: make dev-stop
+        if: always()
+
+  # The baseline and OCU browser runs split into Playwright shards, one per runner; together
+  # the shards are exactly `make verify-ui`. Three balance best on the measured per-file times
+  # (each shard's step took 5-6.5 min on PR #758); a fourth would not shorten the longest one.
+  layer3-browser:
+    name: Browser verification (shard ${{ matrix.shard }})
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      # Every shard reports, so one failure does not hide another.
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          node: 'true'
+          python: full
+          runtime: 'true'
+          browser: 'true'
+      - name: Baseline and isolated workspace browser verification
+        id: workspace_browser
+        env:
+          OCU_CHECKOUT: ${{ github.workspace }}/.run/open-computer-use
+        run: make verify-ui SHARD=${{ matrix.shard }}/${{ strategy.job-total }}
+      - name: Upload workspace browser failure evidence
+        if: failure() && steps.workspace_browser.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: workspace-browser-failure-shard-${{ matrix.shard }}
+          retention-days: 7
+          if-no-files-found: error
+          include-hidden-files: true
+          path: |
+            test-results/*/test-failed-*.png
+            test-results/*/error-context.md
+            .run/ui-evidence/workspace-*.png
+            .run/ui-evidence/workspace-network-failure.json
+            .run/ui-evidence/popup-trace/**
+            .run/ui-evidence/workspace-ui-*/vite.log
+            .run/ui-evidence/workspace-ui-*/proxy.log
+            .run/ui-evidence/workspace-ui-*/stub.log
+            .run/ui-evidence/workspace-ui-*/backend.log
+            .run/ui-evidence/workspace-ui-*/stub-restart.log
+            .run/ui-evidence/workspace-ui-*/backend-restart.log
+            .run/ui-evidence/workspace-ui-*/test-results/**
+      - run: make dev-stop
+        if: always()
+
+  layer4-anti-drift:
+    name: Anti-drift (duplicate + dead code, scoped) + docs
+    needs: changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # knip's ratchet diffs modified files against the baseline revision's blobs.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-toolchain
+        with:
+          node: 'true'
+          python: dev
+      - name: Verify constraints.yaml is the naming-guard source
+        run: grep -q 'constraints\.yaml' .git-hooks/check-naming.sh
+      - if: needs.changes.outputs.code == 'true'
+        run: make anti-drift
+      - run: make doc-gate
+      - run: make decisions-verify
+
+  layer5-secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  lockfile-consistency:
+    name: Lockfile–manifest consistency
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check lockfile–manifest pairs
+        if: "!contains(github.event.pull_request.labels.*.name, 'lockfile-refresh')"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          changed="$(git diff --name-only "$BASE_SHA"...HEAD)"
+          check_pair() {
+            lock="$1"; manifest="$2"
+            if echo "$changed" | grep -qx "$lock" && ! echo "$changed" | grep -qx "$manifest"; then
+              echo "::error::$lock changed but $manifest did not. Revert the lockfile, or add the 'lockfile-refresh' label with a justification."
+              exit 1
+            fi
+          }
+          check_pair package-lock.json package.json
+          check_pair uv.lock pyproject.toml
+
+  # L3: PR diff size guard. Inert until the fork has a remote; review-only via PR template meanwhile.
+  layer6-diff-size-guard:
+    name: PR diff size guard
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce max PR diff lines
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'diff-limit-exempt') }}
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          MAX_DIFF_LINES=$(sed -n '/^  max_pr_diff_lines:/,/severity/p' constraints.yaml | sed -n 's/^ *value: *\([0-9]*\).*/\1/p' | head -n 1)
+          LINES=$(git diff --diff-filter=ACDMR --ignore-all-space "$BASE_SHA"...HEAD -- . \
+            ':(exclude)*.lock' ':(exclude)**/package-lock.json' ':(exclude)**/__snapshots__/**' ':(exclude)src/lib/i18n/**' | grep -c '^[+-][^+-]' || true)
+          echo "Changed lines (excluding lockfiles/snapshots/i18n): $LINES (limit: $MAX_DIFF_LINES)"
+          if [ "$LINES" -gt "$MAX_DIFF_LINES" ]; then
+            echo "::error::PR exceeds the ${MAX_DIFF_LINES}-line diff limit. Split it, or add the 'diff-limit-exempt' label with a justification."
+            exit 1
+          fi
+
+  # Branch protection points at ONLY this check. `if: always()` is load-bearing:
+  # GitHub treats a skipped required check as passing.
+  all-checks-passed:
+    name: All checks passed
+    if: always()
+    needs:
+      - changes
+      - layer1-fast-checks
+      - layer2-backend-tests
+      - layer2-frontend-tests
+      - layer3-runtime-smoke
+      - layer3-browser
+      - layer4-anti-drift
+      - layer5-secret-scan
+      - lockfile-consistency
+      - layer6-diff-size-guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/ci-gate.py
+          sparse-checkout-cone-mode: false
+      - name: Fail on any failed, cancelled, or wrongly skipped required job
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+          EVENT: ${{ github.event_name }}
+          CODE: ${{ needs.changes.outputs.code }}
+        run: |
+          echo "$NEEDS"
+          python3 scripts/ci-gate.py verdict

@@ -1,0 +1,152 @@
+# Template from the ci-speedup skill: the job-level docs-only fast path.
+# It matches the CONFIG defaults in templates/ci-gate.py, and test_ci_gate.py pins the two together.
+# Replace the `make` targets with the repository's own commands. Never drop a check to adopt this.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A newer push to the same pull request cancels the older run. Main is never cancelled:
+# every commit on main gets a complete run.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  # Docs-only pull requests skip the code jobs. A workflow-level `paths` filter would not do:
+  # the required `All checks passed` check would then never report, and the PR could never merge.
+  changes:
+    name: Change classification
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      code: ${{ steps.classify.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/ci-gate.py
+          sparse-checkout-cone-mode: false
+      - name: Classify changed paths
+        id: classify
+        # An explicit bash runs with pipefail, so a failed classification is not hidden by tee.
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          CHANGED_FILES: ${{ github.event.pull_request.changed_files }}
+        run: |
+          if [ "$EVENT" != "pull_request" ]; then echo "code=true" | tee -a "$GITHUB_OUTPUT"; exit 0; fi
+          gh api --paginate "repos/$REPO/pulls/$PR/files" \
+            --jq '.[] | [.filename, (.previous_filename // "")] | @tsv' > "$RUNNER_TEMP/paths"
+          python3 scripts/ci-gate.py classify --expected-files "$CHANGED_FILES" < "$RUNNER_TEMP/paths" | tee -a "$GITHUB_OUTPUT"
+
+  # Formatting covers Markdown too, so this job runs on every change.
+  fast-checks:
+    name: Fast checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: npm ci
+      - run: make fmt-check lint typecheck
+
+  unit-tests:
+    name: Unit tests
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: npm ci
+      - run: make test
+
+  browser:
+    name: Browser verification (shard ${{ matrix.shard }})
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # The count comes from shard_sim.py on measured per-file times, not from "more is faster".
+        shard: [1/3, 2/3, 3/3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --shard ${{ matrix.shard }}
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  diff-size-guard:
+    name: PR diff size guard
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: make diff-size-guard BASE=${{ github.event.pull_request.base.sha }}
+
+  # Branch protection requires ONLY this check. GitHub treats a skipped required check as
+  # passing, so the verdict script decides which skips are by design and fails every other one.
+  all-checks-passed:
+    name: All checks passed
+    if: always()
+    needs:
+      - changes
+      - fast-checks
+      - unit-tests
+      - browser
+      - secret-scan
+      - diff-size-guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/ci-gate.py
+          sparse-checkout-cone-mode: false
+      - name: Fail on any failed, cancelled, or wrongly skipped required job
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+          EVENT: ${{ github.event_name }}
+          CODE: ${{ needs.changes.outputs.code }}
+        run: |
+          echo "$NEEDS"
+          python3 scripts/ci-gate.py verdict

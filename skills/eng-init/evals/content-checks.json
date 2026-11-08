@@ -1807,6 +1807,27 @@
           "pattern": "## case-57 — legacy-schema-literal"
         }
       ]
+    },
+    {
+      "id": "FIELD-ci-delegated-verdict",
+      "desc": "a by-design skip passes only through a tested verdict script fed toJSON(needs), and the render check accepts that shape (field: open-webui#758 docs-only skips failed the inline-only check)",
+      "checks": [
+        {
+          "file": "scripts/check_rendered_harness.py",
+          "type": "contains",
+          "pattern": "def aggregator_shape"
+        },
+        {
+          "file": "references/aux-file-templates.md",
+          "type": "contains",
+          "pattern": "**By-design skips go through a verdict script.**"
+        },
+        {
+          "file": "references/aux-file-templates.md",
+          "type": "contains",
+          "pattern": "Docs-only fast path: never `paths:` / `paths-ignore:`"
+        }
+      ]
     }
   ]
 }

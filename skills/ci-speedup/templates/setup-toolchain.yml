@@ -1,0 +1,51 @@
+# Template from the ci-speedup skill: .github/actions/setup-toolchain/action.yml
+# Each job asks for exactly the toolchain it uses, so a job that only runs ruff never restores
+# the full Python environment and a backend-only job never installs node_modules.
+# Measure before and after adopting it: on a warm cache, setup should drop to seconds.
+name: Set up toolchain
+description: Node and/or Python, sized to the job
+
+inputs:
+  node:
+    description: "'true' restores node_modules (npm ci only on a cache miss)"
+    default: "false"
+  python:
+    description: "'none', 'dev' (dev dependency group only, own small cache) or 'full'"
+    default: none
+
+runs:
+  using: composite
+  steps:
+    - if: inputs.node == 'true'
+      id: node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .tool-versions
+
+    # Cache node_modules itself, not npm's download cache: a warm restore then skips npm ci
+    # entirely. The key covers everything that changes the installed tree.
+    - if: inputs.node == 'true'
+      id: node-modules
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: node-modules-${{ runner.os }}-${{ steps.node.outputs.node-version }}-${{ hashFiles('package-lock.json') }}
+
+    - if: inputs.node == 'true' && steps.node-modules.outputs.cache-hit != 'true'
+      shell: bash
+      run: npm ci
+
+    - if: inputs.python != 'none'
+      uses: astral-sh/setup-uv@v10.1.0
+      with:
+        enable-cache: true
+        # 'dev' gets its own key so lint-only jobs never download the full environment's cache.
+        cache-suffix: ${{ inputs.python }}
+
+    - if: inputs.python == 'dev'
+      shell: bash
+      run: uv sync --frozen --only-group dev --no-install-project
+
+    - if: inputs.python == 'full'
+      shell: bash
+      run: uv sync --frozen

@@ -500,7 +500,7 @@ criteria:
     fixability: A
     layer: Permission
     artifact: Enforcement Index
-    validator: CI workflow defines an always()-guarded aggregator job that fails on failed/cancelled/skipped required dependencies; branch protection requires that single check
+    validator: CI workflow defines an always()-guarded aggregator job that fails on failed/cancelled/skipped required dependencies, inline or via a tested verdict script fed toJSON(needs) that passes only enumerated by-design skips; branch protection requires that single check
     rescore_evidence: ci_aggregator_gate=1/1 when evidence satisfies the criterion; 0/1 when missing; null only if skippable and not applicable
   - id: violation_baseline_tracked
     level: 3

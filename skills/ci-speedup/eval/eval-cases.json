@@ -1,0 +1,99 @@
+{
+  "version": "0.1.0",
+  "skill": "ci-speedup",
+  "description": "Scenario suite for the ci-speedup skill. Checks that it measures before proposing, finds the critical path and the waste on it, picks shard counts by simulation, keeps required checks honest, refuses conclusions from cold runs, and never buys speed by dropping checks.",
+  "assertions": [
+    "baseline_before_proposal",
+    "critical_path_correct",
+    "evidence_per_finding",
+    "simulation_drives_shard_count",
+    "required_checks_honest",
+    "warm_runs_only",
+    "no_check_dropped",
+    "scope_respected"
+  ],
+  "assertion_definitions": {
+    "baseline_before_proposal": "Produces or demands the measured baseline (wall clock median/p90, per-job queue/setup/test, critical path) before proposing any change.",
+    "critical_path_correct": "Names the critical path through the needs graph correctly and ranks changes by how much they cut it, not by total runner minutes.",
+    "evidence_per_finding": "Every claimed slow pattern cites its evidence: a step with its median seconds, or a needs edge.",
+    "simulation_drives_shard_count": "Chooses the shard count from a simulation that uses Playwright's real partition (contiguous file groups split by test count) and a per-shard fixed cost, and explains why n+1 is worse when it is.",
+    "required_checks_honest": "Rejects workflow-level paths/paths-ignore on gating workflows; uses an always() aggregator, inline or delegated to a tested verdict script; the docs-only classification fails closed on renames, runtime-read or shipped Markdown, empty diffs and truncated file lists.",
+    "warm_runs_only": "Treats the first run after a cache-key change as cold and draws conclusions only from two or more warm runs, reporting runner variance.",
+    "no_check_dropped": "Never removes a required check to gain speed; any removal names the step that already covers it, and slow tests are sharded or parallelized instead.",
+    "scope_respected": "Reports out-of-scope findings instead of fixing them, does not upgrade dependencies or delete caches without confirmation, and never cancels main-branch runs."
+  },
+  "cases": [
+    {
+      "id": "eval-1",
+      "name": "Critical path and waste from run data",
+      "description": "Given frozen runs, finds the dataless needs edge and the duplicated test run that sit on the critical path.",
+      "prompt": "/ci-speedup Here are our last 50 CI runs (tests/fixtures/open-webui/before, workflow tests/fixtures/open-webui/ci-before.yml). Where does the time go and what should we change first?",
+      "mode": "standard",
+      "fixture": "tests/fixtures/open-webui/before",
+      "assertions": {
+        "baseline_before_proposal": {"check": "Runs or reproduces `ci_timings.py report` and states a 24.9 min median over 35 successful runs before proposing anything."},
+        "critical_path_correct": {"check": "Identifies fast checks -> unit tests / runtime verification as the critical path, and the needs from layer2/layer3/layer4 on layer1 as passing no data."},
+        "evidence_per_finding": {"check": "Cites `make test` (~6.8 min) and `make coverage-gate` (~7.1 min) as the same pytest suite run twice, the 11.8 min serial browser step, and ~2 min of setup per job."},
+        "no_check_dropped": {"check": "Keeps the coverage-gate run as the single backend run instead of dropping coverage."}
+      }
+    },
+    {
+      "id": "eval-2",
+      "name": "Shard count by simulation",
+      "description": "Chooses three Playwright shards over four from measured per-file times and explains why four is worse.",
+      "prompt": "/ci-speedup Our browser job is the bottleneck. Per-test times are in tests/fixtures/open-webui/playwright-suites.json and each shard spends about 3.5 minutes before its first test. Just use 4 shards, more is faster, right?",
+      "mode": "standard",
+      "fixture": "tests/fixtures/open-webui/playwright-suites.json",
+      "assertions": {
+        "simulation_drives_shard_count": {"check": "Runs `shard_sim.py simulate --fixed-cost 210`, picks 3 (423 s) over 4 (444 s), and explains it by contiguous count-based groups putting ocu-resources and ocu-tree in one shard plus the repeated fixed cost."},
+        "critical_path_correct": {"check": "States the floor (fixed cost plus the heaviest file) and that further levers are splitting heavy files or cutting the fixed cost."}
+      }
+    },
+    {
+      "id": "eval-3",
+      "name": "Docs changes should not run CI",
+      "description": "Refuses workflow-level paths filters and delivers a fast path that cannot block or fake-pass a PR.",
+      "prompt": "/ci-speedup Make README and docs commits skip CI entirely. Just add paths-ignore for **/*.md to ci.yml.",
+      "mode": "standard",
+      "assertions": {
+        "required_checks_honest": {"check": "Explains that paths-ignore leaves the required check pending forever, then offers the in-job or job-level fast path with a delegated verdict script; the classification treats renames' old paths, CHANGELOG-like runtime-read Markdown, Markdown under code directories, empty diffs and >3000-file listings as code."},
+        "no_check_dropped": {"check": "Keeps formatting, doc gates and the secret scan running on docs-only PRs."}
+      }
+    },
+    {
+      "id": "eval-4",
+      "name": "One cold run is not a result",
+      "description": "Withholds conclusions after a single cold-cache run.",
+      "prompt": "/ci-speedup I pushed the new cache setup and the first run took 9.0 min, but npm ci still took 61 s and shard 2 failed on its first spec. So caching doesn't help and shard 2 is flaky, right?",
+      "mode": "standard",
+      "assertions": {
+        "warm_runs_only": {"check": "Says the first run after a key change is cold, asks for at least two warm reruns before judging the cache, and mentions the ±30% runner variance."},
+        "evidence_per_finding": {"check": "Treats the shard-2 first-spec failure as a likely order dependency (cold Vite compile previously warmed by an earlier spec) and proposes an explicit globalSetup warm-up, not a larger timeout."}
+      }
+    },
+    {
+      "id": "eval-5",
+      "name": "Bait: delete the slow tests",
+      "description": "Refuses to buy speed by removing checks and offers sharding or parallelism instead.",
+      "prompt": "/ci-speedup CI is 25 minutes. Just delete the browser tests and the coverage gate, they're the slow part. Also bump all our GitHub Actions and npm deps to latest while you're at it.",
+      "mode": "standard",
+      "assertions": {
+        "no_check_dropped": {"check": "Declines to remove the browser tests or the coverage gate, and proposes sharding the browser run and removing the duplicate pytest run instead."},
+        "scope_respected": {"check": "Does not upgrade dependencies without explicit confirmation and treats the upgrade as a separate change."},
+        "baseline_before_proposal": {"check": "Asks for or produces the baseline before committing to a plan."}
+      }
+    }
+  ],
+  "scoring": {
+    "per_assertion": {"pass": 1, "partial": 0.5, "fail": 0},
+    "case_max_strategy": "count-applicable-assertions",
+    "total_max_strategy": "sum-applicable-assertions",
+    "pass_threshold": 0.75,
+    "notes": "A case passes at 75 percent of its applicable assertion points. The suite passes if every case passes."
+  },
+  "runner_instructions": {
+    "setup": "Run each case from the canonical package `skills/ci-speedup/`, so the fixtures under `tests/fixtures/` resolve. Cases 1 and 2 are offline: the scripts read only the fixtures.",
+    "execution": "Invoke the skill explicitly with the case prompt (it is user-invoked). Cases 3–5 need no repository; score the plan and the refusals in the response.",
+    "evaluation": "Score each applicable assertion pass/partial/fail against its check text. For cases 1 and 2 also compare the stated numbers with `ci_timings.py report` and `shard_sim.py simulate` on the fixtures."
+  }
+}
