@@ -90,7 +90,7 @@
       "path": "skills/ask-danker",
       "displayName": "Ask Danker",
       "description": "本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。",
-      "version": "0.10.0",
+      "version": "0.10.1",
       "maturity": "experimental",
       "categories": [
         "productivity",
@@ -1648,8 +1648,8 @@
       "name": "stellarlink",
       "path": "packs/stellarlink",
       "displayName": "Stellarlink Pack",
-      "description": "从 stellarlink-skills 吸收的工程方法论组合：证据驱动交付（tdd/vdd/implement）、代码库级迁移（code-migration）、架构设计与 spec 化（architecture-design/to-spec）、视觉设计工程（visual-design）、仓库就绪控制面（eng-init）、可度量工件进化（self-evolution）与逆向工程路由（reverse-skill）。除 tdd/vdd（被其他 skill 运行中调用，保持模型可调）外全部手动调用。",
-      "version": "0.2.1",
+      "description": "从 stellarlink-skills 吸收的工程方法论组合：证据驱动交付（tdd/vdd/implement）、代码库级迁移（code-migration）、架构设计与 spec 化（architecture-design/to-spec）、视觉设计工程（visual-design）、仓库就绪控制面（eng-init）及其配套的实测驱动 CI 提速（ci-speedup，本仓自研）、可度量工件进化（self-evolution）与逆向工程路由（reverse-skill）。除 tdd/vdd（被其他 skill 运行中调用，保持模型可调）外全部手动调用。",
+      "version": "0.3.0",
       "maturity": "experimental",
       "packType": "role-pack",
       "categories": [
@@ -1657,7 +1657,8 @@
         "testing",
         "workflow",
         "security",
-        "design"
+        "design",
+        "devops"
       ],
       "tags": [
         "stellarlink",
@@ -1666,6 +1667,7 @@
         "migration",
         "spec",
         "bootstrap",
+        "ci",
         "reverse-engineering",
         "visual-design"
       ],
@@ -1677,6 +1679,7 @@
         "vdd",
         "code-migration",
         "eng-init",
+        "ci-speedup",
         "self-evolution",
         "reverse-skill",
         "visual-design"
@@ -1685,5 +1688,5 @@
       "hooks": []
     }
   ],
-  "generatedAt": "2026-11-08T03:13:41.038Z"
+  "generatedAt": "2026-11-08T03:23:11.110Z"
 }

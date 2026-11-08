@@ -3,6 +3,12 @@
 All notable changes to this skill will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.1] - 2026-11-07
+
+### Changed
+
+- `ci-speedup` 并入 stellarlink pack，它的路由从仓库健康节移到 Stellarlink 流，放在 `eng-init` 之后；user-invoked 清单里也改到 stellarlink pack 名下。
+
 ## [0.10.0] - 2026-11-07
 
 ### Added
