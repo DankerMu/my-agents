@@ -50,6 +50,12 @@ def test_one_heavy_file_bounds_the_longest_shard():
     assert result["floor"] == 100
 
 
+def test_input_order_is_kept_when_requested():
+    tests = [{"file": "z.e2e.ts", "seconds": 9}, {"file": "a.e2e.ts", "seconds": 1}]
+    assert ss.test_groups({"workers": 1, "tests": tests}) == [(1, 1), (1, 9)]
+    assert ss.test_groups({"workers": 1, "order": "input", "tests": tests}) == [(1, 9), (1, 1)]
+
+
 def test_test_grouping_splits_files():
     suite = {"name": "s", "workers": 1, "grouping": "test", "tests": [{"file": "a", "seconds": 5}] * 4}
     assert ss.test_groups(suite) == [(1, 5)] * 4

@@ -27,7 +27,8 @@ Four shards lose to three. Playwright splits by test count, so the 4-way split p
 
 Source: `filterForShard` and `createTestGroups` in `playwright/lib/runner/testGroups.js` (1.59).
 
-- **Groups.** Without `fullyParallel`, a file is one group. With `fullyParallel` or `test.describe.configure({ mode: 'parallel' })`, each test is a group. Files are taken in Playwright's file order.
+- **Groups.** Without `fullyParallel`, a file is one group. With `fullyParallel` or `test.describe.configure({ mode: 'parallel' })`, each test is a group.
+- **File order.** `collectFiles` in `runner/projectUtils.js` walks `testDir` depth-first and sorts each directory's entries with `localeCompare`. `shard_sim.py` sorts by path, which gives the same order for a flat directory of lowercase ASCII names. For nested directories or mixed-case names, list the tests in `npx playwright test --list` order and set `"order": "input"` on the suite.
 - **Partition.** Let `total` be the number of tests. Each shard size is `floor(total / n)`, and the remainder goes one each to the first shards. A group joins the shard whose index range contains the group's first test. The split counts tests, not time.
 - **Weights.** `PWTEST_SHARD_WEIGHTS` scales the sizes. `shard_sim.py` does not model weights. If the user wants weights, extend the simulation first, and don't guess.
 - **Within a shard.** Groups go in order to the first free worker.

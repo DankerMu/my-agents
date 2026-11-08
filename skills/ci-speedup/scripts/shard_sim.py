@@ -14,6 +14,10 @@ suites.json: {"suites": [{"name": "baseline", "workers": 2, "grouping": "file",
                "tests": [{"file": "e2e/a.e2e.ts", "seconds": 7.6}, ...]}]}
   grouping "file" (default config): one group per file, as Playwright groups tests without
   fullyParallel. grouping "test": every test is its own group (fullyParallel / parallel mode).
+  order "sorted" (default): files sorted by path. Playwright 1.59 collects files depth-first,
+  sorting each directory's entries with localeCompare (runner/projectUtils.js collectFiles),
+  which equals a path sort for a flat, lowercase-ASCII test directory. Otherwise list the tests
+  in `npx playwright test --list` order and set order "input" to keep it.
 
 The partition is Playwright's filterForShard (playwright/lib/runner/testGroups.js, 1.59):
 groups in file order, total test count split into n sizes of floor(total / n), the remainder
@@ -55,13 +59,15 @@ def parse_log(text: str, names: list[str] | None = None) -> dict:
 
 def test_groups(suite: dict) -> list[tuple[int, float]]:
     """(test count, seconds) per group, in Playwright's file order."""
+    keep = suite.get("order", "sorted") == "input"
     if suite.get("grouping", "file") == "test":
-        ordered = sorted(suite["tests"], key=lambda t: t["file"])
+        ordered = suite["tests"] if keep else sorted(suite["tests"], key=lambda t: t["file"])
         return [(1, t["seconds"]) for t in ordered]
     files: dict[str, list[float]] = {}
     for test in suite["tests"]:
         files.setdefault(test["file"], []).append(test["seconds"])
-    return [(len(times), sum(times)) for _, times in sorted(files.items())]
+    items = list(files.items()) if keep else sorted(files.items())
+    return [(len(times), sum(times)) for _, times in items]
 
 
 def shard_sizes(total: int, n: int) -> list[int]:

@@ -36,7 +36,7 @@ runs:
       run: npm ci
 
     - if: inputs.python != 'none'
-      uses: astral-sh/setup-uv@v6
+      uses: astral-sh/setup-uv@v10.1.0
       with:
         enable-cache: true
         # 'dev' gets its own key so lint-only jobs never download the full environment's cache.
