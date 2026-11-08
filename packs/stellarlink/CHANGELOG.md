@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.3.0] - 2026-11-07
+
+- 新增 `ci-speedup`（0.1.0，本仓自研，手动调用）：实测驱动的 GitHub Actions 提速。它与 `eng-init` 3.9.0 共用必需检查、汇总 job 和委托判定脚本的规则，所以和 `eng-init` 一起打包。
+
 ## [0.2.1] - 2026-09-05
 
 - `eng-init` 与本仓 `project-instruction-bootstrap` 的关系由"二选一"改为固定分工（`control-plane-auditor` 退役）；README 相应更新。

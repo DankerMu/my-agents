@@ -2,7 +2,7 @@
 
 ## Purpose
 
-从 stellarlink-skills 整体吸收的一组工程方法论 skill，打成一个可安装单元。核心是一条**证据驱动的交付链**（spec → 实现 → 验证 → 验收），外加三个独立的重型工作流（迁移、仓库就绪、进化循环）和一个逆向工程路由器。
+从 stellarlink-skills 整体吸收的一组工程方法论 skill，打成一个可安装单元。核心是一条**证据驱动的交付链**（spec → 实现 → 验证 → 验收），外加四个独立的重型工作流（迁移、仓库就绪、CI 提速、进化循环）和一个逆向工程路由器。`ci-speedup` 不来自 stellarlink-skills，是本仓自研的；因为它和 `eng-init` 共用必需检查与汇总 job 的规则，所以随 `eng-init` 一起打包。
 
 调用姿势：**除 `tdd` 与 `vdd` 外全部 `disable-model-invocation: true`（手动 `/name` 调用）**。`tdd`/`vdd` 被 `implement` 与 `code-migration` 在运行中调用，按本仓 `instructions/root/reference/skill-flags.md` 的规则（被其他 skill 中途调用的 skill 不得打 manual 标）保持模型可调。
 
@@ -20,6 +20,12 @@
 
 - `code-migration` — 代码库级迁移：语言移植、同栈升级、strangler 重写的分类、领域工件、阶段闸门与交接；验收委托给 `vdd`（Equivalence / `large_equivalence`），局部实现与修复委托给 `tdd` / `diagnosing-bugs`。执行运行时假定外部 Missions 系统，无 Missions 时按 SKILL.md 的降级路径征询用户。
 - `eng-init` — Agent Engineering Readiness Control Plane：bootstrap / audit / repair 仓库级 agent 控制面（AGENTS.md、CONTEXT.md、统一命令入口、验证分层、决策记录生命周期、机械 guardrails）。控制面审计（七层 / AGENTS.md 约束维度）也归它。与本仓 `project-instruction-bootstrap` 分工固定：项目用后者的生成模式（有 `instructions/agents/` 源）时 eng-init 把段落写进源再重生成；否则 eng-init 直接写 `AGENTS.md`，后者只增量补段并为 Claude Code 桥接 `CLAUDE.md`（一行 `@AGENTS.md`）。
+- `ci-speedup` — 实测驱动的 GitHub Actions 提速，不减少任何必要检查：
+  - 先写检查覆盖表；用 `ci_timings.py` 拉最近 N 次运行，测出排队/准备/测试三段耗时和关键路径；
+  - 对照慢因清单逐项诊断；分片数用 `shard_sim.py` 按 Playwright 的真实分片算法模拟决定；
+  - 按必需检查的护栏实施，然后在热缓存上至少复测两次，最后交付优化前后的对比。
+  - 它的委托式汇总判定（`templates/ci-gate.py`）能通过 `eng-init` 3.9.0 的 `check_rendered_harness.py --require-ci-aggregator` 检查。
+  - 修 CI 的功能性失败走 `diagnosing-bugs`；从零搭 CI 走 `eng-init`。
 - `self-evolution` — 可度量工件（prompt、skill、代码、配置、实验）的变异-评估-门控自主进化循环，支持 GT 用例集、标量指标循环与成对偏好循环。eval 工作区放 `workspaces/self-evolution/`。
 
 ### 独立工具
