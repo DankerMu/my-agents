@@ -3,6 +3,12 @@
 All notable changes to this skill will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.2] - 2026-11-10
+
+### Added
+
+- Route `image-prompt-craft` for interactive image-generation prompt design, distinct from UI/artifact `visual-design` and LLM `prompt-engineering`.
+
 ## [0.10.1] - 2026-11-07
 
 ### Changed

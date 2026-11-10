@@ -3,7 +3,7 @@ name: ask-danker
 description: 本仓库 skills 的路由器——按你当前的处境指路：该用哪个 skill、走哪条流、下一步交给谁。手动调用（/ask-danker），模型不会自动触发。
 disable-model-invocation: true
 invocation_posture: manual
-version: 0.10.1
+version: 0.10.2
 ---
 
 # Ask Danker
@@ -62,6 +62,7 @@ version: 0.10.1
 - `skill-lifecycle-manager` — skill 的创建、验证、评测、投影、发布、审计全周期；深度生态调研委托 `skill-researcher`。
 - `agent-lifecycle-manager` / `agent-architect` — agent 合约的同套治理 / 设计。
 - `prompt-engineering` — 提示词与系统提示设计（知识型 skill，显式调用最可靠）。
+- `image-prompt-craft` — 交互式生图提示词设计：按需引导确认画面风格、构图与约束，再适配 Qwen-Image-2.1 或其他图像模型；支持参考图编辑和失败结果修复。与 `visual-design`（界面/原型等可运行视觉工件）及 `prompt-engineering`（LLM/系统提示词）分工不同。
 - `hook-development` — Claude Code hooks 开发。
 - `agentic-development` — 多 agent 系统的运行时调试与开发方法。
 - `git-worktree-workflows` — worktree 并行开发的手动指引与恢复。

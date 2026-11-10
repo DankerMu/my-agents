@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "name": "image-prompt-craft",
+  "displayName": "Image Prompt Craft",
+  "description": "交互式视觉创作与生图提示词设计：理解用户口语意图，按信息充分度决定直接输出还是用少量高价值问题引导选择视觉风格、构图、光影、材质、色彩；维护可追踪的视觉方案与已确认约束，不擅自补写核心创作决策。支持文生图、图像编辑、参考图一致性、海报、科学示意图及失败生成结果的定向修复。默认适配本地 Qwen-Image-2.1，也兼容其他模型。当用户说“帮我想画面”“我不知道选什么风格”“优化生图提示词”“给 Qwen Image 的 prompt”“参考图改图”“生成得不满意”时使用。",
+  "version": "2.0.0",
+  "maturity": "experimental",
+  "categories": [
+    "ai",
+    "design"
+  ],
+  "tags": [
+    "image-generation",
+    "prompt-optimization",
+    "interactive-design",
+    "qwen-image",
+    "visual-art-direction"
+  ],
+  "authors": [
+    {
+      "name": "DankerMu"
+    }
+  ],
+  "license": "MIT",
+  "entrypoints": {
+    "skillDoc": "SKILL.md",
+    "changelog": "CHANGELOG.md"
+  },
+  "requirements": {
+    "network": "none"
+  },
+  "capabilities": {
+    "shell": false,
+    "network": false,
+    "filesystemRead": true,
+    "filesystemWrite": false
+  }
+}
