@@ -1,6 +1,6 @@
 # Image Prompt Craft — 交互式视觉创作与生图提示词 Skill
 
-**版本：2.0.0 | 默认目标：本地 Qwen-Image-2.1 | 离线可用 | 无运行依赖**
+**版本：2.0.1 | 默认目标：本地 Qwen-Image-2.1 | 离线可用 | 无运行依赖**
 
 这个 Skill 不再只是把一句话扩写成几十行术语，而是让 Agent **先帮助用户明确画面，再转成专业提示词**。当用户不熟悉美术、摄影或设计词汇时，Agent 会给出简明的视觉方向和通俗解释，根据用户回复逐步完善。方向已经清楚时则直接生成，不强制问卷。
 
@@ -57,30 +57,13 @@ image-prompt-craft/
 
 ## 安装
 
-解压后将**完整 `image-prompt-craft` 文件夹**复制到 Agent 的 skills 目录。不要只拷贝 `SKILL.md`，否则交互规则和专业参考库无法按需加载。
-
-**Codex（用户级）**
+在 my-agents 仓库里用 CLI 安装，不要手工复制，也不要只拷贝 `SKILL.md`（交互规则和参考库按需加载）。在目标项目根目录执行：
 
 ```bash
-mkdir -p ~/.agents/skills
-cp -R image-prompt-craft ~/.agents/skills/
+node <my-agents>/scripts/cli.js install skill image-prompt-craft --platform claude --scope project
 ```
 
-**Claude Code（用户级）**
-
-```bash
-mkdir -p ~/.claude/skills
-cp -R image-prompt-craft ~/.claude/skills/
-```
-
-**Pi / oh-my-pi（路径视实际版本和扫描配置）**
-
-```bash
-mkdir -p ~/.pi/agent/skills
-cp -R image-prompt-craft ~/.pi/agent/skills/
-```
-
-项目级可复制到 `.agents/skills/`、`.claude/skills/` 或 `.pi/skills/`。若目录里已有旧版，可先备份旧目录，再用新版覆盖；部分客户端需开启新会话或重载才能读取更新。实际路径以客户端当前配置为准。
+`--platform` 可换成 `codex` 或 `omp`；`--scope user` 装到用户级。各平台的落点（`.claude/skills/`、`.agents/skills/`、`.omp/skills/`）由 CLI 决定。安装只投影 `SKILL.md`、`references/` 和 `examples/`；本 README 与 CHANGELOG 不随包安装。部分客户端需新开会话才能读到更新。
 
 ## 运行边界
 
