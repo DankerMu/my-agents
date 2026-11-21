@@ -5,7 +5,7 @@ description: >
   refactoring, and applying plans. Takes specs or planner output and produces working code
   with tests. Can spawn explorer to gather context before making changes.
 tools: read, glob, grep, bash, edit, write, task
-model: "openai-codex/gpt-6-astra:high, sub-gpt/deepseek-flash-guan:max"
+model: "openai-codex/gpt-6.2-sol:xhigh, sub-gpt/deepseek-flash-guan:max"
 spawns: explorer
 ---
 
