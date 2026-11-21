@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.9.7] - 2026-11-21
+
+### Changed
+
+- omp 投影主模型从 `openai-codex/gpt-6-astra:high` 改为 `openai-codex/gpt-6.2-sol:xhigh`,副模型 `sub-gpt/deepseek-flash-guan:max` 不变。
+
 ## [1.9.6] - 2026-11-07
 
 ### Changed
